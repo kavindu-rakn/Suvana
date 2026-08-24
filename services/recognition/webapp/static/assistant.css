@@ -1,5 +1,5 @@
 /* ============================================================================
-   සවන AI ASSISTANT — premium chat widget
+   සුවණ AI ASSISTANT — premium chat widget
    ----------------------------------------------------------------------------
    Every selector is namespaced under .svn-ai* so this stylesheet cannot collide
    with, override, or inherit into any existing rule in styles.css / index.html.
@@ -8,9 +8,9 @@
    ========================================================================== */
 
 .svn-ai-root {
-  --svn-accent: var(--accent, #f49867);
-  --svn-accent-2: var(--accent-2, #ae67fa);
-  --svn-grad: linear-gradient(103.22deg, #ae67fa -13.86%, #f49867 99.55%);
+  --svn-accent: var(--accent, #daa520);
+  --svn-accent-2: var(--accent-2, #2dd4bf);
+  --svn-grad: linear-gradient(103.22deg, #2dd4bf -13.86%, #daa520 99.55%);
   --svn-text: var(--text, #f4f7ff);
   --svn-dim: var(--text-dim, #9bc0e6);
   --svn-faint: var(--text-faint, #5f7fa8);
@@ -21,7 +21,7 @@
   position: fixed;
   inset: auto 0 0 auto;
   z-index: 9000;
-  font-family: "Manrope", "Noto Sans Sinhala", "Iskoola Pota", ui-sans-serif,
+  font-family: "Noto Serif", "Noto Serif Sinhala", "Iskoola Pota", ui-sans-serif,
     system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   pointer-events: none;
 }
@@ -45,7 +45,7 @@
   display: grid;
   place-items: center;
   background: var(--svn-grad);
-  box-shadow: 0 14px 44px rgba(174, 103, 250, 0.42),
+  box-shadow: 0 14px 44px rgba(45, 212, 191, 0.42),
     0 4px 14px rgba(2, 10, 24, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
@@ -57,7 +57,7 @@
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.svn-ai-launcher:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 20px 56px rgba(174, 103, 250, 0.55), 0 6px 18px rgba(2, 10, 24, 0.65); }
+.svn-ai-launcher:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 20px 56px rgba(45, 212, 191, 0.55), 0 6px 18px rgba(2, 10, 24, 0.65); }
 .svn-ai-launcher:active { transform: scale(0.95); }
 .svn-ai-launcher:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
 
@@ -68,7 +68,7 @@
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  border: 1px solid rgba(244, 152, 103, 0.55);
+  border: 1px solid rgba(218, 165, 32, 0.55);
   animation: svn-ai-ping 3.4s ease-out infinite;
   pointer-events: none;
 }
@@ -174,7 +174,7 @@
   gap: 12px;
   padding: 16px 16px 14px;
   border-bottom: 1px solid var(--svn-border);
-  background: linear-gradient(180deg, rgba(174, 103, 250, 0.13), transparent);
+  background: linear-gradient(180deg, rgba(45, 212, 191, 0.13), transparent);
   flex-shrink: 0;
 }
 
@@ -184,7 +184,7 @@
   display: grid;
   place-items: center;
   background: var(--svn-grad);
-  box-shadow: 0 6px 20px rgba(174, 103, 250, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: 0 6px 20px rgba(45, 212, 191, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
   flex-shrink: 0;
 }
 
@@ -231,7 +231,7 @@
 }
 .svn-ai-headbtn:hover { background: rgba(255, 255, 255, 0.14); color: var(--svn-text); }
 .svn-ai-headbtn:active { transform: scale(0.92); }
-.svn-ai-headbtn.is-active { color: var(--svn-accent); border-color: rgba(244, 152, 103, 0.5); }
+.svn-ai-headbtn.is-active { color: var(--svn-accent); border-color: rgba(218, 165, 32, 0.5); }
 
 /* -------------------------------------------------------------- MESSAGES */
 
@@ -244,10 +244,10 @@
   flex-direction: column;
   gap: 14px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(244, 152, 103, 0.5) transparent;
+  scrollbar-color: rgba(218, 165, 32, 0.5) transparent;
 }
 .svn-ai-body::-webkit-scrollbar { width: 6px; }
-.svn-ai-body::-webkit-scrollbar-thumb { background: rgba(244, 152, 103, 0.45); border-radius: 99px; }
+.svn-ai-body::-webkit-scrollbar-thumb { background: rgba(218, 165, 32, 0.45); border-radius: 99px; }
 .svn-ai-body::-webkit-scrollbar-track { background: transparent; }
 
 .svn-ai-msg {
@@ -286,7 +286,7 @@
   color: #fff;
   font-weight: 600;
   max-width: 86%;
-  box-shadow: 0 8px 24px rgba(174, 103, 250, 0.3);
+  box-shadow: 0 8px 24px rgba(45, 212, 191, 0.3);
 }
 
 .svn-ai-bubble strong { font-weight: 800; }
@@ -308,8 +308,8 @@
   align-self: flex-start;
   font-size: 11.5px;
   color: #ffcf9a;
-  background: rgba(244, 152, 103, 0.12);
-  border: 1px solid rgba(244, 152, 103, 0.3);
+  background: rgba(218, 165, 32, 0.12);
+  border: 1px solid rgba(218, 165, 32, 0.3);
   padding: 7px 11px;
   border-radius: 10px;
   line-height: 1.5;
@@ -322,13 +322,13 @@
 .svn-ai-card {
   border-radius: 15px;
   border: 1px solid var(--svn-border);
-  background: linear-gradient(160deg, rgba(174, 103, 250, 0.11), rgba(9, 27, 52, 0.5));
+  background: linear-gradient(160deg, rgba(45, 212, 191, 0.11), rgba(9, 27, 52, 0.5));
   padding: 12px 13px;
   position: relative;
   overflow: hidden;
   transition: border-color 0.25s ease, transform 0.25s ease;
 }
-.svn-ai-card:hover { border-color: rgba(244, 152, 103, 0.45); transform: translateY(-1px); }
+.svn-ai-card:hover { border-color: rgba(218, 165, 32, 0.45); transform: translateY(-1px); }
 
 .svn-ai-card::after {
   content: "";
@@ -366,9 +366,9 @@
   text-transform: uppercase;
   padding: 3px 8px;
   border-radius: 99px;
-  border: 1px solid rgba(244, 152, 103, 0.35);
+  border: 1px solid rgba(218, 165, 32, 0.35);
   color: var(--svn-accent);
-  background: rgba(244, 152, 103, 0.1);
+  background: rgba(218, 165, 32, 0.1);
   margin-top: 7px;
 }
 
@@ -384,7 +384,7 @@
   place-items: center;
   transition: background 0.18s ease, transform 0.18s ease;
 }
-.svn-ai-speak:hover { background: rgba(244, 152, 103, 0.2); }
+.svn-ai-speak:hover { background: rgba(218, 165, 32, 0.2); }
 .svn-ai-speak:active { transform: scale(0.9); }
 .svn-ai-speak.is-playing { background: var(--svn-grad); color: #fff; border-color: transparent; }
 
@@ -438,8 +438,8 @@
 }
 .svn-ai-chips button:hover {
   color: var(--svn-text);
-  border-color: rgba(244, 152, 103, 0.5);
-  background: rgba(244, 152, 103, 0.12);
+  border-color: rgba(218, 165, 32, 0.5);
+  background: rgba(218, 165, 32, 0.12);
   transform: translateY(-1px);
 }
 
@@ -474,7 +474,7 @@
   flex-shrink: 0;
   padding: 12px 14px 14px;
   border-top: 1px solid var(--svn-border);
-  background: linear-gradient(0deg, rgba(174, 103, 250, 0.08), transparent);
+  background: linear-gradient(0deg, rgba(45, 212, 191, 0.08), transparent);
 }
 
 .svn-ai-inputrow {
@@ -488,8 +488,8 @@
   transition: border-color 0.22s ease, box-shadow 0.22s ease;
 }
 .svn-ai-inputrow:focus-within {
-  border-color: rgba(244, 152, 103, 0.55);
-  box-shadow: 0 0 0 3px rgba(244, 152, 103, 0.1);
+  border-color: rgba(218, 165, 32, 0.55);
+  box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
 }
 
 .svn-ai-input {
@@ -518,7 +518,7 @@
   display: grid;
   place-items: center;
   transition: transform 0.18s ease, opacity 0.18s ease;
-  box-shadow: 0 6px 18px rgba(174, 103, 250, 0.35);
+  box-shadow: 0 6px 18px rgba(45, 212, 191, 0.35);
 }
 .svn-ai-send:hover:not(:disabled) { transform: scale(1.07); }
 .svn-ai-send:active:not(:disabled) { transform: scale(0.92); }
@@ -560,7 +560,7 @@
   padding: 12px 13px;
   border-radius: 13px;
   border: 1px solid var(--svn-border);
-  background: rgba(174, 103, 250, 0.09);
+  background: rgba(45, 212, 191, 0.09);
 }
 .svn-ai-set-intro strong { color: var(--svn-text); }
 
@@ -586,7 +586,7 @@
   transition: border-color 0.2s ease;
 }
 .svn-ai-field input:focus,
-.svn-ai-field select:focus { border-color: rgba(244, 152, 103, 0.6); }
+.svn-ai-field select:focus { border-color: rgba(218, 165, 32, 0.6); }
 .svn-ai-field select option { background: #071a33; color: #f4f7ff; }
 .svn-ai-field small { font-size: 11px; color: var(--svn-faint); line-height: 1.5; }
 .svn-ai-field small a { color: var(--svn-accent); text-decoration: none; font-weight: 700; }
@@ -600,7 +600,7 @@
   margin-top: 8px;
   padding: 10px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(244, 152, 103, 0.35);
+  border: 1px solid rgba(218, 165, 32, 0.35);
   background: rgba(4, 14, 30, 0.85);
   color: var(--svn-text);
   font-size: 12px;
@@ -608,7 +608,7 @@
   outline: none;
   max-width: 100%;
 }
-.svn-ai-modelpick:focus { border-color: rgba(244, 152, 103, 0.65); }
+.svn-ai-modelpick:focus { border-color: rgba(218, 165, 32, 0.65); }
 .svn-ai-modelpick option { background: #071a33; color: #f4f7ff; }
 
 .svn-ai-set-actions { display: flex; gap: 9px; }
@@ -632,7 +632,7 @@
   transition: all 0.2s ease;
 }
 .svn-ai-btn:hover { background: rgba(255, 255, 255, 0.13); }
-.svn-ai-btn.primary { background: var(--svn-grad); border-color: transparent; box-shadow: 0 8px 22px rgba(174, 103, 250, 0.32); }
+.svn-ai-btn.primary { background: var(--svn-grad); border-color: transparent; box-shadow: 0 8px 22px rgba(45, 212, 191, 0.32); }
 .svn-ai-btn.primary:hover { filter: brightness(1.08); }
 .svn-ai-btn:disabled { opacity: 0.5; cursor: default; }
 

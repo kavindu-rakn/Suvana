@@ -1,5 +1,5 @@
 /* ============================================================================
-   සවන AI ASSISTANT — front-end widget
+   සුවණ AI ASSISTANT — front-end widget
    ----------------------------------------------------------------------------
    Fully self-contained and non-invasive:
      • Runs inside an IIFE, so it leaks nothing into the global scope.
@@ -63,16 +63,16 @@
   const root = document.createElement("div");
   root.className = "svn-ai-root";
   root.innerHTML = `
-    <button class="svn-ai-launcher" type="button" aria-label="Open සවන AI assistant">
+    <button class="svn-ai-launcher" type="button" aria-label="Open Suvana AI assistant">
       ${ICON.orb}<span class="svn-ai-spark">AI</span>
     </button>
-    <div class="svn-ai-tip">Ask සවන AI about any sign</div>
+    <div class="svn-ai-tip">Ask Suvana AI about any sign</div>
 
-    <section class="svn-ai-panel" role="dialog" aria-label="සවන AI assistant">
+    <section class="svn-ai-panel" role="dialog" aria-label="Suvana AI assistant">
       <header class="svn-ai-head">
         <span class="svn-ai-avatar">${ICON.spark}</span>
         <span class="svn-ai-title">
-          <strong>සවන AI</strong>
+          <strong>Suvana AI</strong>
           <span><i></i><em data-role="engine">Offline engine · ready</em></span>
         </span>
         <button class="svn-ai-headbtn" type="button" data-act="clear" title="Clear conversation" aria-label="Clear conversation">${ICON.trash}</button>
@@ -97,7 +97,7 @@
         </header>
         <div class="svn-ai-set-body">
           <div class="svn-ai-set-intro">
-            සවන AI already answers <strong>fully offline</strong> from this project's own sign dataset — no key needed.
+            Suvana AI already answers <strong>fully offline</strong> from this project's own sign dataset — no key needed.
             <br><br>To upgrade it to a full conversational model, paste a <strong>free</strong> API key below. No credit card is required by any of these providers, and the key is stored only in this browser.
           </div>
 
@@ -372,7 +372,7 @@
       payload = await res.json();
     } catch (err) {
       payload = {
-        text: "I couldn't reach the app server. Make sure the සවන server is still running, then try again.",
+        text: "I couldn't reach the app server. Make sure the Suvana server is still running, then try again.",
         cards: [],
         chips: [],
       };
@@ -549,7 +549,7 @@
         // If the server resolved a pasted display name to a real id, write it
         // back so the box holds the value that actually works.
         if (data.model && data.model !== modelInput.value.trim()) modelInput.value = data.model;
-        setStatus("ok", `${data.note ? data.note + " " : ""}Connected to ${data.provider} (${data.model}). Hit Save to switch සවන AI over.`);
+        setStatus("ok", `${data.note ? data.note + " " : ""}Connected to ${data.provider} (${data.model}). Hit Save to switch සුවණ AI over.`);
       } else {
         setStatus("err", data.error || "That key didn't work.");
       }
@@ -570,7 +570,7 @@
     }
     persist();
     updateEngineTag();
-    setStatus("ok", settings.provider && settings.apiKey ? "Saved. සවන AI is now running on the cloud model." : "Saved. සවන AI is running fully offline.");
+    setStatus("ok", settings.provider && settings.apiKey ? "Saved. Suvana AI is now running on the cloud model." : "Saved. සුවණ AI is running fully offline.");
     setTimeout(() => settingsPane.classList.remove("is-open"), 900);
   }
 
@@ -591,7 +591,7 @@
     const count = meta?.signCount;
     addBot({
       text:
-        `ආයුබෝවන් 👋 I'm **සවන AI**, your built-in sign-language tutor.\n\n` +
+        `ආයුබෝවන් 👋 I'm **Suvana AI**, your built-in sign-language tutor.\n\n` +
         (count
           ? `I know all **${count}** signs this model was trained on. Ask me how to sign something, what a sign means, or ask for one to practise.`
           : `Ask me how to sign something, what a sign means, or ask for one to practise.`),

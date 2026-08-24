@@ -6,9 +6,9 @@
   --text: #f4f7ff;
   --text-dim: #9bc0e6;
   --text-faint: #5f7fa8;
-  --accent: #f49867;
-  --accent-2: #ae67fa;
-  --accent-grad: linear-gradient(103.22deg, #ae67fa -13.86%, #f49867 99.55%);
+  --accent: #daa520;
+  --accent-2: #2dd4bf;
+  --accent-grad: linear-gradient(103.22deg, #2dd4bf -13.86%, #daa520 99.55%);
   --danger: #ff6b6b;
   --success: #33e0a2;
   --radius-lg: 22px;
@@ -25,7 +25,7 @@ html, body {
   min-height: 100%;
   background: var(--bg);
   color: var(--text);
-  font-family: "Manrope", "Noto Sans Sinhala", "Iskoola Pota", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+  font-family: "Noto Serif", "Noto Serif Sinhala", "Iskoola Pota", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, Arial, sans-serif;
   overflow-x: hidden;
 }
 
@@ -56,8 +56,8 @@ html::-webkit-scrollbar-track { background: var(--bg); }
   border-radius: 50%;
   animation: float 22s ease-in-out infinite;
 }
-.blob-a { background: #ae67fa; top: -10%; left: -8%; animation-delay: 0s; }
-.blob-b { background: #f49867; top: 20%; right: -12%; animation-delay: -7s; }
+.blob-a { background: #2dd4bf; top: -10%; left: -8%; animation-delay: 0s; }
+.blob-b { background: #daa520; top: 20%; right: -12%; animation-delay: -7s; }
 .blob-c { background: #3d5aa8; bottom: -18%; left: 20%; animation-delay: -14s; }
 
 @keyframes float {
@@ -132,7 +132,7 @@ html::-webkit-scrollbar-track { background: var(--bg); }
   place-items: center;
   background: #ffffff;
   padding: 5px;
-  box-shadow: 0 8px 24px rgba(174, 103, 250, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(45, 212, 191, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
 }
 .brand-mark img {
@@ -321,10 +321,10 @@ html::-webkit-scrollbar-track { background: var(--bg); }
   position: absolute;
   width: 26px;
   height: 26px;
-  border: 2px solid rgba(174, 103, 250, 0.9);
+  border: 2px solid rgba(45, 212, 191, 0.9);
   opacity: 0;
   transition: opacity 0.4s ease;
-  filter: drop-shadow(0 0 6px rgba(174, 103, 250, 0.5));
+  filter: drop-shadow(0 0 6px rgba(45, 212, 191, 0.5));
   z-index: 2;
 }
 .video-wrap.scanning .scan-corner { opacity: 0.85; }
@@ -339,7 +339,7 @@ html::-webkit-scrollbar-track { background: var(--bg); }
   right: 8%;
   height: 2px;
   top: 0;
-  background: linear-gradient(90deg, transparent, rgba(174, 103, 250, 0.85), transparent);
+  background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.85), transparent);
   opacity: 0;
   pointer-events: none;
   z-index: 2;
@@ -389,11 +389,11 @@ html::-webkit-scrollbar-track { background: var(--bg); }
 .btn-primary {
   background: var(--accent-grad);
   color: #04070d;
-  box-shadow: 0 10px 26px rgba(244, 152, 103, 0.32);
+  box-shadow: 0 10px 26px rgba(218, 165, 32, 0.32);
 }
-.btn-primary:hover { box-shadow: 0 12px 30px rgba(244, 152, 103, 0.5); }
+.btn-primary:hover { box-shadow: 0 12px 30px rgba(218, 165, 32, 0.5); }
 .btn-primary.stop {
-  background: linear-gradient(135deg, #ff6b6b, #f49867);
+  background: linear-gradient(135deg, #ff6b6b, #daa520);
   box-shadow: 0 10px 26px rgba(255, 107, 107, 0.3);
 }
 
@@ -592,7 +592,7 @@ html::-webkit-scrollbar-track { background: var(--bg); }
 .label-chip.active {
   border-color: var(--accent);
   color: var(--text);
-  background: rgba(244, 152, 103, 0.16);
+  background: rgba(218, 165, 32, 0.16);
 }
 
 .app-footer {
@@ -720,8 +720,8 @@ html::-webkit-scrollbar-track { background: var(--bg); }
   transition: transform 0.2s ease, background 0.2s ease;
 }
 .toggle-row input:checked + .toggle-track {
-  background: rgba(244, 152, 103, 0.35);
-  border-color: rgba(244, 152, 103, 0.6);
+  background: rgba(218, 165, 32, 0.35);
+  border-color: rgba(218, 165, 32, 0.6);
 }
 .toggle-row input:checked + .toggle-track .toggle-thumb {
   transform: translateX(16px);
@@ -823,7 +823,7 @@ html::-webkit-scrollbar-track { background: var(--bg); }
   display: grid;
   place-items: center;
   background: var(--accent-grad);
-  box-shadow: 0 20px 60px rgba(174, 103, 250, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 60px rgba(45, 212, 191, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
   z-index: 1;
 }
 .floating-chip {
@@ -870,7 +870,7 @@ html::-webkit-scrollbar-track { background: var(--bg); }
   display: grid;
   place-items: center;
   background: var(--accent-grad);
-  box-shadow: 0 8px 20px rgba(174, 103, 250, 0.3);
+  box-shadow: 0 8px 20px rgba(45, 212, 191, 0.3);
   flex-shrink: 0;
 }
 

@@ -9,7 +9,7 @@ One platform for real-time two-way Deaf–hearing communication in Sri Lankan Si
 | `apps/web` | **Learn** — gamified SSL learning & practice; will also grow the Suvana shell/landing | React + Vite, MediaPipe Tasks Vision in-browser, DTW scoring |
 | `apps/communicate` | **Communicate** — speech → 3D signing avatar, with audio emotion recognition | Next.js 16 full-stack (MongoDB + Auth.js, Cloudinary, Three.js); ASR/emotion served externally |
 | `apps/mobile` | **Alerts** — sound awareness / SOS companion app | Expo / React Native, TF.js |
-| `services/recognition` | Sign → speech recognition API | FastAPI + TensorFlow |
+| `services/recognition` | **Recognize** — sign → speech: browser-side capture streamed over a WebSocket, plus its own Suvana-branded frontend | FastAPI + TensorFlow + MediaPipe |
 | `services/sound-awareness` | Sound-classification backend utilities for the mobile app | Python |
 | `services/speech` | Sinhala Whisper ASR + audio emotion service (extracted from the Colab notebook; deploys as a Docker container, e.g. a Hugging Face Space) | FastAPI + PyTorch |
 | `tools/reference-converter` | Dataset video → landmark reference pipeline feeding `apps/web` | Python + MediaPipe |
@@ -34,6 +34,7 @@ One domain serves the whole web product. The shell (`apps/web`) owns the root; `
 
 - **Production**: the two `rewrites` in `apps/web/vercel.json` forward `/communicate/*` to the communicate deployment. **Deploy order matters**: deploy `apps/communicate` first (its own Vercel project, env vars from `.env.local.example` set in the dashboard), paste its production URL over the `REPLACE-WITH-COMMUNICATE-DEPLOYMENT` placeholder, then deploy `apps/web`.
 - **Dev**: Vite proxies `/communicate` → `localhost:3000`, so `localhost:5173/communicate` mirrors production. Start both dev servers.
+- **`services/recognition` is the exception**: it streams camera frames over a WebSocket, and Vercel rewrites do not proxy WebSocket upgrades. It runs on its own origin (a `recognize.` subdomain or the container host) and serves its own Suvana-branded frontend, so it needs no CORS. See `services/recognition/DEPLOY-SUVANA.md`.
 - Client code must never call `fetch("/api/...")` with a bare absolute path — route it through `apiPath()` from `lib/basePath.ts` (basePath does not rewrite raw fetches). Unset `NEXT_PUBLIC_BASE_PATH` and everything collapses to standalone behaviour, matching Lithira's original deployment.
 
 ## Running

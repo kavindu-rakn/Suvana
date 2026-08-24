@@ -440,7 +440,7 @@
     overlay.className = "sg-modal-overlay";
     overlay.id = "sgModalOverlay";
     overlay.setAttribute("role", "dialog");
-    overlay.setAttribute("aria-label", "SoundGuard Mobile Connection");
+    overlay.setAttribute("aria-label", "Alerts mobile app connection");
 
     overlay.innerHTML = `
       <div class="sg-modal">
@@ -453,7 +453,7 @@
             <span class="sg-pulse-dot"></span>
             <span id="sgMetroStatusText">Checking Metro Bundler...</span>
           </span>
-          <h3>Connect SoundGuard App</h3>
+          <h3>Connect the Alerts app</h3>
           <p>Scan the live QR code with <strong>Expo Go</strong> on Android to start the mobile companion.</p>
         </div>
 
@@ -483,7 +483,7 @@
           <ol>
             <li>Install &amp; open <strong>Expo Go</strong> on your Android phone (or use Camera).</li>
             <li>Scan the QR code above or paste the <code>exp://</code> URL.</li>
-            <li>SoundGuard will launch immediately with Sound Awareness &amp; SOS!</li>
+            <li>Alerts will launch immediately with sound awareness &amp; SOS!</li>
           </ol>
         </div>
 
@@ -600,7 +600,7 @@
         statusBadge.style.color = "#33e0a2";
       } else {
         statusBadge.textContent = `Expo Ready · exp://${currentIp}:${currentPort}`;
-        statusBadge.style.color = "#a3b8d4";
+        statusBadge.style.color = "#a2bdb8";
       }
     }
 

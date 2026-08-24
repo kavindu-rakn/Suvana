@@ -1,0 +1,17 @@
+# Training-time material never needed to serve predictions.
+notebooks/
+tests/
+data/raw/
+data/interim/
+*.log
+
+# Keep data/processed/labels.npy — it is the label map the server needs, and
+# it is metadata (171 label strings), not dataset content.
+data/processed/*
+!data/processed/labels.npy
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.git/

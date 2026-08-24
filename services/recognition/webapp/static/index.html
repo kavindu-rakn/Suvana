@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sinhala Sign Language Translator</title>
-  <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
+  <title>Recognize — සුවණ Suvana</title>
+  <link rel="icon" type="image/png" href="/suvana-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Noto+Serif+Sinhala:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     /* ============================================================
        ROOT VARIABLES — lifted & polished from the target design
@@ -17,26 +17,26 @@
          Deeper and slightly less saturated than before: a near-neutral
          base makes the purple/orange accent read as deliberate rather
          than ambient, which is what separates "colourful" from "premium". */
-      --bg: #050a14;
-      --bg-deep: #03060d;
-      --panel: rgba(14, 27, 48, 0.52);
-      --panel-border: rgba(146, 182, 224, 0.16);
-      --panel-strong: rgba(10, 21, 39, 0.74);
+      --bg: #0a1414;
+      --bg-deep: #040a0a;
+      --panel: rgba(18, 33, 32, 0.52);
+      --panel-border: rgba(147, 177, 172, 0.18);
+      --panel-strong: rgba(16, 27, 26, 0.74);
       --surface-raise: rgba(255, 255, 255, 0.035);
       --hairline: rgba(255, 255, 255, 0.07);
 
       /* --- Type ----------------------------------------------------- */
-      --text: #f3f6fc;
-      --text-dim: #a3b8d4;
-      --text-faint: #6d84a3;
+      --text: #ecf4f2;
+      --text-dim: #a2bdb8;
+      --text-faint: #6c8983;
 
       /* --- Accent (identity preserved exactly) ----------------------- */
-      --accent: #f49867;
-      --accent-2: #ae67fa;
-      --accent-grad: linear-gradient(103.22deg, #ae67fa -13.86%, #f49867 99.55%);
-      --accent-soft: rgba(244, 152, 103, 0.14);
-      --accent-2-soft: rgba(174, 103, 250, 0.14);
-      --ring: rgba(244, 152, 103, 0.6);
+      --accent: #daa520;
+      --accent-2: #2dd4bf;
+      --accent-grad: linear-gradient(103.22deg, #2dd4bf -13.86%, #daa520 99.55%);
+      --accent-soft: rgba(218, 165, 32, 0.14);
+      --accent-2-soft: rgba(45, 212, 191, 0.14);
+      --ring: rgba(45, 212, 191, 0.6);
       --danger: #ff6b6b;
       --success: #33e0a2;
 
@@ -77,7 +77,7 @@
       min-height: 100%;
       background: var(--bg);
       color: var(--text);
-      font-family: "Manrope", "Noto Sans Sinhala", "Iskoola Pota", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+      font-family: "Noto Serif", "Noto Serif Sinhala", "Iskoola Pota", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, Arial, sans-serif;
       overflow-x: hidden;
       /* Crisper glyph edges on dark backgrounds -- the single cheapest
          thing that makes a dark UI look professionally rendered. */
@@ -101,7 +101,7 @@
     html::-webkit-scrollbar-thumb:hover { background-color: rgba(146, 182, 224, 0.4); }
     html::-webkit-scrollbar-track { background: transparent; }
 
-    ::selection { background: rgba(174, 103, 250, 0.32); color: #fff; }
+    ::selection { background: rgba(45, 212, 191, 0.32); color: #fff; }
 
     /* ============================================================
        BACKGROUND LAYERS — depth, aurora, grain
@@ -129,8 +129,8 @@
       border-radius: 50%;
       animation: float 22s ease-in-out infinite;
     }
-    .blob-a { background: #ae67fa; top: -10%; left: -8%; animation-delay: 0s; }
-    .blob-b { background: #f49867; top: 20%; right: -12%; animation-delay: -7s; }
+    .blob-a { background: #2dd4bf; top: -10%; left: -8%; animation-delay: 0s; }
+    .blob-b { background: #daa520; top: 20%; right: -12%; animation-delay: -7s; }
     .blob-c { background: #3d5aa8; bottom: -18%; left: 20%; animation-delay: -14s; }
 
     @keyframes float {
@@ -167,7 +167,7 @@
       left: 5%;
       right: 5%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(174, 103, 250, 0.3), rgba(244, 152, 103, 0.3), transparent);
+      background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.3), rgba(218, 165, 32, 0.3), transparent);
       opacity: 0.6;
     }
 
@@ -228,7 +228,7 @@
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
       padding: 6px;
       box-shadow: 
-        0 8px 32px rgba(174, 103, 250, 0.35),
+        0 8px 32px rgba(45, 212, 191, 0.35),
         0 0 0 1px rgba(255, 255, 255, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
       flex-shrink: 0;
@@ -259,7 +259,7 @@
     .brand-mark:hover {
       transform: scale(1.05);
       box-shadow: 
-        0 12px 40px rgba(174, 103, 250, 0.45),
+        0 12px 40px rgba(45, 212, 191, 0.45),
         0 0 0 1px rgba(255, 255, 255, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
@@ -287,12 +287,12 @@
       background-clip: text;
       color: transparent;
       line-height: 1.2;
-      text-shadow: 0 0 40px rgba(174, 103, 250, 0.15);
+      text-shadow: 0 0 40px rgba(45, 212, 191, 0.15);
     }
 
     /* Sinhala text in brand title with premium styling */
     .brand-text h1 .sinhala-brand {
-      background: linear-gradient(135deg, #ae67fa, #f49867);
+      background: linear-gradient(135deg, #2dd4bf, #daa520);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
@@ -563,10 +563,10 @@
       position: absolute;
       width: 26px;
       height: 26px;
-      border: 2px solid rgba(174, 103, 250, 0.9);
+      border: 2px solid rgba(45, 212, 191, 0.9);
       opacity: 0;
       transition: opacity 0.4s ease;
-      filter: drop-shadow(0 0 6px rgba(174, 103, 250, 0.5));
+      filter: drop-shadow(0 0 6px rgba(45, 212, 191, 0.5));
       z-index: 2;
     }
     .video-wrap.scanning .scan-corner { opacity: 0.85; }
@@ -581,7 +581,7 @@
       right: 8%;
       height: 2px;
       top: 0;
-      background: linear-gradient(90deg, transparent, rgba(174, 103, 250, 0.85), transparent);
+      background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.85), transparent);
       opacity: 0;
       pointer-events: none;
       z-index: 2;
@@ -631,11 +631,11 @@
     .btn-primary {
       background: var(--accent-grad);
       color: #04070d;
-      box-shadow: 0 10px 26px rgba(244, 152, 103, 0.32);
+      box-shadow: 0 10px 26px rgba(218, 165, 32, 0.32);
     }
-    .btn-primary:hover { box-shadow: 0 12px 30px rgba(244, 152, 103, 0.5); }
+    .btn-primary:hover { box-shadow: 0 12px 30px rgba(218, 165, 32, 0.5); }
     .btn-primary.stop {
-      background: linear-gradient(135deg, #ff6b6b, #f49867);
+      background: linear-gradient(135deg, #ff6b6b, #daa520);
       box-shadow: 0 10px 26px rgba(255, 107, 107, 0.3);
     }
 
@@ -837,7 +837,7 @@
     .label-chip.active {
       border-color: var(--accent);
       color: var(--text);
-      background: rgba(244, 152, 103, 0.16);
+      background: rgba(218, 165, 32, 0.16);
     }
 
     /* ============================================================
@@ -875,7 +875,7 @@
       left: 20%;
       right: 20%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(174, 103, 250, 0.3), rgba(244, 152, 103, 0.3), transparent);
+      background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.3), rgba(218, 165, 32, 0.3), transparent);
       opacity: 0.6;
     }
 
@@ -917,7 +917,7 @@
       color: var(--text);
       border-color: var(--accent);
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(174, 103, 250, 0.2);
+      box-shadow: 0 8px 20px rgba(45, 212, 191, 0.2);
     }
 
     .footer-col h4 {
@@ -1136,8 +1136,8 @@
       transition: transform 0.2s ease, background 0.2s ease;
     }
     .toggle-row input:checked + .toggle-track {
-      background: rgba(244, 152, 103, 0.35);
-      border-color: rgba(244, 152, 103, 0.6);
+      background: rgba(218, 165, 32, 0.35);
+      border-color: rgba(45, 212, 191, 0.6);
     }
     .toggle-row input:checked + .toggle-track .toggle-thumb {
       transform: translateX(16px);
@@ -1236,7 +1236,7 @@
       display: grid;
       place-items: center;
       background: var(--accent-grad);
-      box-shadow: 0 20px 60px rgba(174, 103, 250, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 60px rgba(45, 212, 191, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
       z-index: 1;
     }
 
@@ -1265,10 +1265,10 @@
       top: 6%;
       right: 4%;
       animation-delay: 0s;
-      background: linear-gradient(135deg, rgba(174, 103, 250, 0.35), rgba(99, 102, 241, 0.35));
-      border: 1px solid rgba(174, 103, 250, 0.5);
-      text-shadow: 0 0 30px rgba(174, 103, 250, 0.3);
-      font-family: "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.35), rgba(99, 102, 241, 0.35));
+      border: 1px solid rgba(45, 212, 191, 0.5);
+      text-shadow: 0 0 30px rgba(45, 212, 191, 0.3);
+      font-family: "Noto Serif Sinhala", "Iskoola Pota", serif;
       font-size: 17px;
       padding: 14px 24px;
     }
@@ -1278,7 +1278,7 @@
       inset: -1px;
       border-radius: 999px;
       padding: 1px;
-      background: linear-gradient(135deg, rgba(174, 103, 250, 0.6), rgba(99, 102, 241, 0.2));
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.6), rgba(99, 102, 241, 0.2));
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -1287,7 +1287,7 @@
     }
     .chip-a:hover {
       transform: scale(1.05);
-      box-shadow: 0 12px 40px rgba(174, 103, 250, 0.3), 0 0 0 2px rgba(174, 103, 250, 0.3);
+      box-shadow: 0 12px 40px rgba(45, 212, 191, 0.3), 0 0 0 2px rgba(45, 212, 191, 0.3);
     }
 
     /* English chip - Orange/Gold gradient */
@@ -1295,9 +1295,9 @@
       bottom: 10%;
       left: 2%;
       animation-delay: -2.5s;
-      background: linear-gradient(135deg, rgba(244, 152, 103, 0.35), rgba(251, 191, 36, 0.25));
-      border: 1px solid rgba(244, 152, 103, 0.5);
-      text-shadow: 0 0 30px rgba(244, 152, 103, 0.3);
+      background: linear-gradient(135deg, rgba(218, 165, 32, 0.35), rgba(251, 191, 36, 0.25));
+      border: 1px solid rgba(218, 165, 32, 0.5);
+      text-shadow: 0 0 30px rgba(218, 165, 32, 0.3);
       font-size: 16px;
       padding: 14px 24px;
     }
@@ -1307,7 +1307,7 @@
       inset: -1px;
       border-radius: 999px;
       padding: 1px;
-      background: linear-gradient(135deg, rgba(244, 152, 103, 0.6), rgba(251, 191, 36, 0.2));
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.6), rgba(251, 191, 36, 0.2));
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -1316,7 +1316,7 @@
     }
     .chip-b:hover {
       transform: scale(1.05);
-      box-shadow: 0 12px 40px rgba(244, 152, 103, 0.3), 0 0 0 2px rgba(244, 152, 103, 0.3);
+      box-shadow: 0 12px 40px rgba(218, 165, 32, 0.3), 0 0 0 2px rgba(218, 165, 32, 0.3);
     }
 
     @keyframes floatChip {
@@ -1354,13 +1354,13 @@
       border-radius: var(--radius-lg);
       overflow: hidden;
       position: relative;
-      box-shadow: 0 20px 60px rgba(174, 103, 250, 0.25), 0 0 0 1px rgba(129, 175, 221, 0.08);
+      box-shadow: 0 20px 60px rgba(45, 212, 191, 0.25), 0 0 0 1px rgba(129, 175, 221, 0.08);
       transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
 
     .what-is-image:hover {
       transform: scale(1.02);
-      box-shadow: 0 30px 80px rgba(174, 103, 250, 0.35), 0 0 0 1px rgba(129, 175, 221, 0.15);
+      box-shadow: 0 30px 80px rgba(45, 212, 191, 0.35), 0 0 0 1px rgba(129, 175, 221, 0.15);
     }
 
     .what-is-image img {
@@ -1374,7 +1374,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(174, 103, 250, 0.15), rgba(244, 152, 103, 0.05));
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.15), rgba(218, 165, 32, 0.05));
       pointer-events: none;
     }
 
@@ -1443,7 +1443,7 @@
       display: grid;
       place-items: center;
       background: var(--accent-grad);
-      box-shadow: 0 8px 20px rgba(174, 103, 250, 0.3);
+      box-shadow: 0 8px 20px rgba(45, 212, 191, 0.3);
       flex-shrink: 0;
     }
 
@@ -1551,7 +1551,7 @@
       position: relative;
       border-radius: var(--radius-lg);
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(174, 103, 250, 0.2), 0 0 0 1px rgba(129, 175, 221, 0.08);
+      box-shadow: 0 20px 60px rgba(45, 212, 191, 0.2), 0 0 0 1px rgba(129, 175, 221, 0.08);
       transition: transform 0.4s ease, box-shadow 0.4s ease;
       background: var(--panel);
       max-width: 100%;
@@ -1559,7 +1559,7 @@
 
     .working-image-container:hover {
       transform: scale(1.01);
-      box-shadow: 0 30px 80px rgba(174, 103, 250, 0.3), 0 0 0 1px rgba(129, 175, 221, 0.15);
+      box-shadow: 0 30px 80px rgba(45, 212, 191, 0.3), 0 0 0 1px rgba(129, 175, 221, 0.15);
     }
 
     .working-image-container img {
@@ -1575,7 +1575,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(174, 103, 250, 0.08), rgba(244, 152, 103, 0.03));
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.08), rgba(218, 165, 32, 0.03));
       pointer-events: none;
     }
 
@@ -1803,7 +1803,7 @@
       height: 46px;
       border-radius: 13px;
       background: linear-gradient(160deg, #ffffff, #e8eef8);
-      box-shadow: 0 6px 22px rgba(174, 103, 250, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.1),
+      box-shadow: 0 6px 22px rgba(45, 212, 191, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.7);
       transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease),
         width var(--dur-2) var(--ease), height var(--dur-2) var(--ease);
@@ -2052,12 +2052,12 @@
 
     .btn-primary {
       color: #180a04;
-      box-shadow: 0 8px 22px rgba(174, 103, 250, 0.26), 0 1px 0 rgba(255, 255, 255, 0.28) inset;
+      box-shadow: 0 8px 22px rgba(45, 212, 191, 0.26), 0 1px 0 rgba(255, 255, 255, 0.28) inset;
     }
     .btn-primary:hover {
       transform: translateY(-2px);
       filter: brightness(1.05);
-      box-shadow: 0 14px 34px rgba(174, 103, 250, 0.38), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+      box-shadow: 0 14px 34px rgba(45, 212, 191, 0.38), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
     }
 
     .btn-ghost {
@@ -2152,10 +2152,10 @@
       -webkit-backdrop-filter: blur(10px);
     }
 
-    .scan-corner { border-color: rgba(174, 103, 250, 0.75); width: 24px; height: 24px; }
+    .scan-corner { border-color: rgba(45, 212, 191, 0.75); width: 24px; height: 24px; }
 
     .buffer-track { height: 5px; background: rgba(255, 255, 255, 0.06); }
-    .buffer-fill { box-shadow: 0 0 14px rgba(244, 152, 103, 0.5); }
+    .buffer-fill { box-shadow: 0 0 14px rgba(218, 165, 32, 0.5); }
 
     .controls { gap: 10px; padding-top: 2px; }
 
@@ -2167,7 +2167,7 @@
     .caption-gloss { font-size: 12.5px; font-weight: 500; letter-spacing: 0.03em; color: var(--text-faint); }
 
     .confidence-track { height: 7px; background: rgba(255, 255, 255, 0.06); }
-    .confidence-fill { transition: width var(--dur-2) var(--ease); box-shadow: 0 0 12px rgba(174, 103, 250, 0.45); }
+    .confidence-fill { transition: width var(--dur-2) var(--ease); box-shadow: 0 0 12px rgba(45, 212, 191, 0.45); }
     .confidence-value {
       font-size: 12.5px;
       font-weight: 700;
@@ -2207,8 +2207,8 @@
       transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease), background var(--dur-1) var(--ease);
     }
     .search-input:focus {
-      border-color: rgba(244, 152, 103, 0.55);
-      box-shadow: 0 0 0 3px rgba(244, 152, 103, 0.1);
+      border-color: rgba(218, 165, 32, 0.55);
+      box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
       background: rgba(3, 8, 17, 0.75);
     }
 
@@ -2223,7 +2223,7 @@
         background var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
     }
     .label-chip:hover {
-      border-color: rgba(244, 152, 103, 0.4);
+      border-color: rgba(218, 165, 32, 0.4);
       color: var(--text);
       background: var(--accent-soft);
       transform: translateY(-1px);
@@ -2240,7 +2240,7 @@
     .hero-medallion {
       width: 156px;
       height: 156px;
-      box-shadow: 0 24px 70px rgba(174, 103, 250, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1),
+      box-shadow: 0 24px 70px rgba(45, 212, 191, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1),
         inset 0 2px 0 rgba(255, 255, 255, 0.22);
     }
     .ping-ring { border-color: rgba(146, 182, 224, 0.22); }
@@ -2257,8 +2257,8 @@
     .chip-a {
       font-size: 16px;
       padding: 12px 22px;
-      background: linear-gradient(135deg, rgba(174, 103, 250, 0.26), rgba(99, 102, 241, 0.2));
-      border-color: rgba(174, 103, 250, 0.34);
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.26), rgba(99, 102, 241, 0.2));
+      border-color: rgba(45, 212, 191, 0.34);
       text-shadow: none;
     }
 
@@ -2270,7 +2270,7 @@
     .step h3 { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
 
     .icon-medallion-sm {
-      box-shadow: 0 8px 24px rgba(174, 103, 250, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      box-shadow: 0 8px 24px rgba(45, 212, 191, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
     .what-is-image {
@@ -2297,7 +2297,7 @@
       border-color: var(--hairline);
       transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
     }
-    .flow-step:hover { border-color: rgba(244, 152, 103, 0.35); transform: translateY(-2px); }
+    .flow-step:hover { border-color: rgba(218, 165, 32, 0.35); transform: translateY(-2px); }
     .flow-step span { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
     .flow-arrow { color: rgba(146, 182, 224, 0.4); }
 
@@ -2305,7 +2305,7 @@
     .testimonial-card blockquote { font-size: 14px; font-weight: 300; line-height: 1.78; font-style: normal; color: var(--text-dim); }
     .testimonial-header h4 { font-size: 14.5px; font-weight: 700; letter-spacing: -0.01em; }
     .testimonial-header p { font-size: 12px; color: var(--text-faint); }
-    .testimonial-avatar { box-shadow: 0 6px 18px rgba(174, 103, 250, 0.22); }
+    .testimonial-avatar { box-shadow: 0 6px 18px rgba(45, 212, 191, 0.22); }
 
     /* ------------------------------------------------------------------
        15. CALL TO ACTION
@@ -2313,7 +2313,7 @@
     .cta-bar {
       padding: 2.2rem 2.6rem;
       border-radius: var(--radius-xl);
-      box-shadow: 0 26px 70px rgba(174, 103, 250, 0.24);
+      box-shadow: 0 26px 70px rgba(45, 212, 191, 0.24);
     }
     .cta-content h3 { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.35; }
     .cta-button {
@@ -2350,7 +2350,7 @@
       border-color: var(--hairline);
       transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
     }
-    .footer-social a:hover { transform: translateY(-2px); border-color: rgba(244, 152, 103, 0.4); }
+    .footer-social a:hover { transform: translateY(-2px); border-color: rgba(218, 165, 32, 0.4); }
     .footer-bottom { border-top: 1px solid var(--hairline); font-size: 12.5px; color: var(--text-faint); }
 
     /* ------------------------------------------------------------------
@@ -2410,7 +2410,7 @@
        Layer 1 above fixed the system: grid, elevation, spacing, sticky header.
        This layer gives the page a *voice*. Three moves do most of the work:
 
-         1. A high-contrast serif (Playfair Display) for display headings.
+         1. A high-contrast serif (Noto Serif, the Suvana brand face) for display headings.
             An all-sans page reads "dashboard"; a serif/sans pairing reads
             "brand". This is the single largest lever on perceived class.
          2. A champagne-gold hairline accent alongside the existing purple to
@@ -2424,11 +2424,11 @@
        ============================================================================ */
 
     :root {
-      --display: "Playfair Display", "Noto Serif", "Iskoola Pota", Georgia, "Times New Roman", serif;
-      --gold: #dcbb90;
-      --gold-bright: #f0d7b6;
-      --gold-line: rgba(220, 187, 144, 0.32);
-      --gold-faint: rgba(220, 187, 144, 0.13);
+      --display: "Noto Serif", "Iskoola Pota", Georgia, "Times New Roman", serif;
+      --gold: #daa520;
+      --gold-bright: #f0cd7a;
+      --gold-line: rgba(218, 165, 32, 0.32);
+      --gold-faint: rgba(218, 165, 32, 0.13);
     }
 
     /* A single foil line across the very top of the document. */
@@ -2472,7 +2472,7 @@
 
     /* The Sinhala mark keeps the brand gradient; the serif carries the rest. */
     .hero-content h1 .gradient-text {
-      font-family: "Manrope", "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+      font-family: "Noto Serif", "Noto Serif Sinhala", "Iskoola Pota", sans-serif;
       font-weight: 800;
       letter-spacing: -0.02em;
     }
@@ -2639,11 +2639,11 @@
        ------------------------------------------------------------------ */
     .btn-primary {
       color: #1a0d05;
-      box-shadow: 0 6px 20px rgba(174, 103, 250, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      box-shadow: 0 6px 20px rgba(45, 212, 191, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(174, 103, 250, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      box-shadow: 0 12px 30px rgba(45, 212, 191, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.45);
     }
 
     .btn-ghost, .cta-button { border-radius: 999px; }
@@ -2671,7 +2671,7 @@
     .stat-label { font-size: 9.5px; letter-spacing: 0.16em; color: var(--text-faint); }
 
     .caption-text {
-      font-family: "Manrope", "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+      font-family: "Noto Serif", "Noto Serif Sinhala", "Iskoola Pota", sans-serif;
       font-size: clamp(27px, 4vw, 36px);
     }
     .caption-text.placeholder {
@@ -2809,8 +2809,8 @@
       transform: translateX(-50%);
       pointer-events: none;
       background:
-        radial-gradient(closest-side, rgba(174, 103, 250, 0.2), transparent 72%),
-        radial-gradient(closest-side, rgba(244, 152, 103, 0.13), transparent 68%);
+        radial-gradient(closest-side, rgba(45, 212, 191, 0.2), transparent 72%),
+        radial-gradient(closest-side, rgba(218, 165, 32, 0.13), transparent 68%);
       filter: blur(28px);
     }
 
@@ -2868,7 +2868,7 @@
     .footer-mark img { border-radius: 8px; width: 100%; height: 100%; object-fit: contain; }
 
     .footer-wordmark {
-      font-family: "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+      font-family: "Noto Serif Sinhala", "Iskoola Pota", serif;
       font-size: 24px;
       font-weight: 800;
       line-height: 1;
@@ -2910,7 +2910,7 @@
     /* --------------------------------------------------------------- links */
     .footer-col h4 {
       margin: 0 0 1.1rem;
-      font-family: "Manrope", sans-serif;
+      font-family: "Noto Serif", Georgia, serif;
       font-size: 9.5px;
       font-weight: 700;
       letter-spacing: 0.22em;
@@ -3086,7 +3086,7 @@
     }
 
     .brand-text h1 .sinhala-brand {
-      font-family: "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+      font-family: "Noto Serif Sinhala", "Iskoola Pota", serif;
       font-size: 23px;
       font-weight: 800;
       line-height: 1;
@@ -3098,7 +3098,7 @@
     .brand-en {
       position: relative;
       padding-left: 12px;
-      font-family: "Manrope", sans-serif;
+      font-family: "Noto Serif", Georgia, serif;
       font-size: 9.5px;
       font-weight: 600;
       letter-spacing: 0.14em;
@@ -3261,7 +3261,7 @@
       .header-actions { gap: 9px; }
     }
   </style>
-  <!-- සවන AI assistant (additive; namespaced under .svn-ai*) -->
+  <!-- සුවණ AI assistant (additive; namespaced under .svn-ai*) -->
   <link rel="stylesheet" href="/assistant.css" />
   <!-- SoundGuard mobile companion (additive; namespaced under .sg-*) -->
   <link rel="stylesheet" href="/soundguard.css" />
@@ -3279,11 +3279,11 @@
   <!-- PREMIUM HEADER -->
   <header class="app-header">
     <div class="brand">
-      <span class="brand-mark"><img src="/logo.jpeg" alt="App logo" /></span>
+      <span class="brand-mark"><img src="/suvana-logo.png" alt="Suvana logo" /></span>
       <div class="brand-text">
         <h1>
-          <span class="sinhala-brand">සවන</span>
-          <span class="brand-en">Sinhala Sign Language Translator</span>
+          <span class="sinhala-brand">සුවණ</span>
+          <span class="brand-en">Recognize — Sign to Speech</span>
         </h1>
         <p>
           Real-time gesture recognition
@@ -3326,7 +3326,7 @@
   <section class="hero">
     <div class="hero-content">
       <span class="hero-eyebrow">AI-Powered &middot; On-Device &middot; Real-Time</span>
-      <h1>Increase your Cognitive Brain Power with <span class="gradient-text">සවන</span>.</h1>
+      <h1>Sign naturally. Watch it become <span class="gradient-text">speech</span>.</h1>
       <p>It has been proven in studies that learning sign language keeps you sharp as you age and increases your thinking power. Learning sign language also helps you communicate with over <strong>72 million</strong> speakers worldwide. So test out our tool, learn and practice sign language, and have fun.</p>
       <div class="hero-actions">
         <a href="#tool" class="btn btn-primary">Get Started</a>
@@ -3663,7 +3663,7 @@
        ============================================================ -->
   <footer class="premium-footer">
     <!-- oversized brand watermark, clipped by the footer's own overflow -->
-    <span class="footer-watermark" aria-hidden="true">සවන</span>
+    <span class="footer-watermark" aria-hidden="true">සුවණ</span>
     <span class="footer-aura" aria-hidden="true"></span>
 
     <div class="footer-grid">
@@ -3671,9 +3671,9 @@
       <div class="footer-brand">
         <div class="footer-identity">
           <span class="brand-mark footer-mark">
-            <img src="/logo.jpeg" alt="සවන logo" />
+            <img src="/suvana-logo.png" alt="Suvana logo" />
           </span>
-          <span class="footer-wordmark">සවන</span>
+          <span class="footer-wordmark">සුවණ</span>
         </div>
         <p>Bridging communication gaps through AI-powered sign language recognition. Learn, practice, and connect.</p>
         <div class="footer-social">
@@ -3720,7 +3720,7 @@
 
     <!-- bottom bar -->
     <div class="footer-bottom">
-      <span>&copy; 2026 සවන — Sinhala Sign Language Translator</span>
+      <span>&copy; 2026 සුවණ Suvana — Recognize</span>
       <span class="footer-origin">Designed &amp; built in Sri Lanka</span>
       <div class="legal-links">
         <a href="#">Privacy</a>
@@ -3832,7 +3832,7 @@
     })();
   </script>
 
-  <!-- සවන AI assistant — self-injecting widget, loads after the main app -->
+  <!-- සුවණ AI assistant — self-injecting widget, loads after the main app -->
   <script src="/assistant.js" defer></script>
   <!-- SoundGuard mobile companion module -->
   <script src="/soundguard.js" defer></script>
