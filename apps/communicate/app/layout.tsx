@@ -10,7 +10,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SignSpeak — Audio to Sign Language",
+  title: "Communicate — සුවණ Suvana",
   description:
     "Speak, and watch your words come to life as 3D sign language animations. Audio-to-text, emotion detection, and real-time gloss-to-3D-model translation.",
 };

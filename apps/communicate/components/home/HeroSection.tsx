@@ -58,7 +58,7 @@ export function HeroSection() {
           </h1>
 
           <p className="hero-sub mt-6 max-w-lg text-base text-foreground-muted sm:text-lg">
-            Record or upload audio and SignSpeak transcribes it, reads the emotion behind it, and
+            Record or upload audio and Suvana transcribes it, reads the emotion behind it, and
             drives a 3D avatar through the matching signs — in real time.
           </p>
 

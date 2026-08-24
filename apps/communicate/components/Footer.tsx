@@ -7,9 +7,9 @@ export function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-foreground-muted sm:flex-row">
         <div className="flex items-center gap-2">
           <Sparkles size={14} className="text-accent" />
-          <span>SignSpeak</span>
+          <span>Suvana</span>
         </div>
-        <p>&copy; {new Date().getFullYear()} SignSpeak. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Suvana. All rights reserved.</p>
         <div className="flex items-center gap-6">
           <Link href="/#features" className="hover:text-foreground">
             Features

@@ -28,10 +28,10 @@ export function CTASection() {
       <div className="relative overflow-hidden rounded-2xl border border-border">
         <Image
           src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1600&auto=format&fit=crop&q=80"
-          alt="Abstract purple gradient backdrop"
+          alt="Abstract teal gradient backdrop"
           fill
           sizes="100vw"
-          className="object-cover opacity-30"
+          className="object-cover opacity-30 -hue-rotate-90"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/85 to-background" />
 

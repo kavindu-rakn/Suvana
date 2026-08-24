@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ContributeClient } from "./ContributeClient";
 
 export const metadata: Metadata = {
-  title: "Contribute your voice — SignSpeak",
+  title: "Contribute your voice — Suvana",
   description:
     "Help build a Sinhala speech-emotion dataset for a sign-language research project. Takes about 20 minutes.",
 };

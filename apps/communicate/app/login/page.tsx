@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { LoginForm } from "./LoginForm";
 
-export const metadata: Metadata = { title: "Log in — SignSpeak" };
+export const metadata: Metadata = { title: "Log in — Suvana" };
 
 export default function LoginPage() {
   return (

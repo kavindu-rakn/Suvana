@@ -18,7 +18,7 @@ export function AuthShell({
 
         <div className="relative z-10 flex items-center gap-2 text-lg font-semibold">
           <Sparkles size={20} className="text-accent" />
-          SignSpeak
+          Suvana
         </div>
 
         <div className="relative z-10">
@@ -34,7 +34,7 @@ export function AuthShell({
         </div>
 
         <p className="relative z-10 text-xs text-foreground-muted">
-          &copy; {new Date().getFullYear()} SignSpeak
+          &copy; {new Date().getFullYear()} Suvana
         </p>
       </div>
 

@@ -12,7 +12,7 @@ export async function Navbar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <Sparkles size={18} className="text-accent" />
-          SignSpeak
+          Suvana
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm text-foreground-muted sm:flex">

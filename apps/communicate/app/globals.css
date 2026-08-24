@@ -1,14 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #08070a;
-  --background-elevated: #121017;
-  --foreground: #f5f5f7;
-  --foreground-muted: #a1a0a8;
-  --accent: #c4b5fd;
-  --accent-strong: #a78bfa;
-  --accent-soft: #ede9fe;
-  --border: #232130;
+  /* Suvana brand (see packages/branding/palette.css). Same dark-teal ramp and
+     accent variants as apps/web, mapped onto the original token roles by
+     luminance: light accent, strong accent, pale wash. */
+  --background: #0a1414;
+  --background-elevated: #122120;
+  --foreground: #e6eeec;
+  --foreground-muted: #93b1ac;
+  --accent: #5eead4;
+  --accent-strong: #2dd4bf;
+  --accent-soft: #ccfbf1;
+  --border: #26403e;
 }
 
 @theme inline {

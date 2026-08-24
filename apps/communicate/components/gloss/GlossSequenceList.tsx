@@ -9,7 +9,7 @@ const MATCH_STYLES: Record<GlossMatch["matchType"], string> = {
   exact: "bg-accent/15 text-accent border-accent/30",
   synonym: "bg-blue-400/15 text-blue-300 border-blue-400/30",
   stem: "bg-teal-400/15 text-teal-300 border-teal-400/30",
-  phonetic: "bg-violet-400/15 text-violet-300 border-violet-400/30",
+  phonetic: "bg-teal-400/15 text-teal-300 border-teal-400/30",
   fuzzy: "bg-yellow-400/15 text-yellow-300 border-yellow-400/30",
   ml: "bg-pink-400/15 text-pink-300 border-pink-400/30",
 };
