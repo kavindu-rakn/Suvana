@@ -52,8 +52,10 @@ export type Palette = {
    *
    * The dashboard offers two doors into two different pieces of hardware
    * behaviour, and they must be told apart at a glance and without relying on
-   * reading. Violet is deliberately far from `primary` (blue) in hue and from
+   * reading. Violet is deliberately far from `primary` (teal) in hue and from
    * every semantic colour, so it can never be mistaken for a threat level.
+   * (Kept violet in the Suvana retheme for exactly that reason: brand gold
+   * sits next to `warning` amber and would break this rule.)
    */
   accent: string;
   accentSoft: string;
@@ -83,22 +85,25 @@ export type Palette = {
 export const darkPalette: Palette = {
   scheme: 'dark',
 
-  bg: '#0B0E13',
-  bgElevated: '#10141B',
-  surface: '#141922',
-  surfaceAlt: '#1A2029',
-  surfaceHover: '#222A36',
+  // Suvana retheme: the blue-tinted neutrals became teal-tinted at the same
+  // lightness steps, and primary is the shared Suvana accent (#2DD4BF — see
+  // packages/branding/palette.css). Semantic colours are untouched.
+  bg: '#0A1414',
+  bgElevated: '#101B1A',
+  surface: '#142221',
+  surfaceAlt: '#1A2C2A',
+  surfaceHover: '#223634',
 
-  border: '#232B37',
-  borderStrong: '#323C4B',
+  border: '#233735',
+  borderStrong: '#324B48',
 
-  text: '#ECEFF4',
-  textSecondary: '#A2ADBD',
-  textMuted: '#6C7889',
+  text: '#ECF4F2',
+  textSecondary: '#A2BDB8',
+  textMuted: '#6C8983',
 
-  primary: '#5B8CFF',
-  primarySoft: 'rgba(91, 140, 255, 0.16)',
-  onPrimary: '#FFFFFF',
+  primary: '#2DD4BF',
+  primarySoft: 'rgba(45, 212, 191, 0.16)',
+  onPrimary: '#04201D',
 
   accent: '#A78BFA',
   accentSoft: 'rgba(167, 139, 250, 0.16)',
@@ -116,28 +121,31 @@ export const darkPalette: Palette = {
   overlay: 'rgba(0, 0, 0, 0.66)',
   shadow: '#000000',
 
-  tabBar: '#10141B',
-  tabBarBorder: '#1E2530',
+  tabBar: '#101B1A',
+  tabBarBorder: '#1E302E',
 };
 
 export const lightPalette: Palette = {
   scheme: 'light',
 
-  bg: '#F5F7FA',
+  // Suvana light mode: teal-tinted neutrals; primary is the darkened brand
+  // teal (#00776A) so white text on it clears WCAG AA (5.9:1), where pure
+  // #00A693 would not.
+  bg: '#F4F8F7',
   bgElevated: '#FFFFFF',
   surface: '#FFFFFF',
-  surfaceAlt: '#F1F4F8',
-  surfaceHover: '#E7ECF3',
+  surfaceAlt: '#EFF5F3',
+  surfaceHover: '#E5F0ED',
 
-  border: '#E2E7EF',
-  borderStrong: '#C9D2DF',
+  border: '#DFE9E6',
+  borderStrong: '#C6D6D2',
 
-  text: '#0F1521',
-  textSecondary: '#4B5567',
-  textMuted: '#8792A4',
+  text: '#0F1F1C',
+  textSecondary: '#4B6560',
+  textMuted: '#87A49D',
 
-  primary: '#2563EB',
-  primarySoft: 'rgba(37, 99, 235, 0.10)',
+  primary: '#00776A',
+  primarySoft: 'rgba(0, 166, 147, 0.10)',
   onPrimary: '#FFFFFF',
 
   accent: '#6D28D9',
@@ -153,11 +161,11 @@ export const lightPalette: Palette = {
   critical: '#D92D3E',
   criticalSoft: 'rgba(217, 45, 62, 0.10)',
 
-  overlay: 'rgba(12, 18, 28, 0.45)',
-  shadow: '#0F1521',
+  overlay: 'rgba(10, 20, 20, 0.45)',
+  shadow: '#0F1F1C',
 
   tabBar: '#FFFFFF',
-  tabBarBorder: '#E2E7EF',
+  tabBarBorder: '#DFE9E6',
 };
 
 /** Spacing scale (4pt grid). */

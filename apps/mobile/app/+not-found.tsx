@@ -28,7 +28,7 @@ export default function NotFoundScreen() {
       <View style={styles.root}>
         <Text style={styles.title}>This screen does not exist</Text>
         <Text style={styles.body}>
-          The link you followed points somewhere SoundGuard does not have a page for.
+          The link you followed points somewhere Suvana does not have a page for.
         </Text>
         <AppButton
           label="Back to the dashboard"

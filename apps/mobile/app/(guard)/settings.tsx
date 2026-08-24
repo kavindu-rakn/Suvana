@@ -266,7 +266,7 @@ export default function SettingsScreen() {
       if (granted !== 'granted') {
         Alert.alert(
           'Notifications are off',
-          'SoundGuard cannot alert you while it is closed until notifications are allowed for this app in system settings.',
+          'Suvana cannot alert you while it is closed until notifications are allowed for this app in system settings.',
         );
         return;
       }
@@ -336,7 +336,7 @@ export default function SettingsScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenHeader title="Settings" subtitle="Tune how SoundGuard listens and alerts" />
+        <ScreenHeader title="Settings" subtitle="Tune how Suvana listens and alerts" />
 
         {/* ── Appearance ── */}
         <SectionLabel icon="color-palette-outline">Appearance</SectionLabel>
@@ -492,7 +492,7 @@ export default function SettingsScreen() {
             description={
               notificationPermission === 'denied'
                 ? 'Blocked in system settings. Tap Test below to see how to re-enable it.'
-                : 'Post a phone notification for sounds detected while SoundGuard is in the background, using that sound’s vibration rhythm.'
+                : 'Post a phone notification for sounds detected while Suvana is in the background, using that sound’s vibration rhythm.'
             }
             value={settings.backgroundAlerts}
             onValueChange={(v) => update('backgroundAlerts', v)}
@@ -545,7 +545,7 @@ export default function SettingsScreen() {
         </Card>
         <Text style={styles.dictionaryNote}>
           Tap any row to feel it. These are the same patterns the phone uses for notifications when
-          SoundGuard is closed, so what you learn here works everywhere.
+          Suvana is closed, so what you learn here works everywhere.
         </Text>
 
         {/* ── Sound classes ── */}
@@ -845,7 +845,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerTitle}>SoundGuard 4.0 · Always on</Text>
+          <Text style={styles.footerTitle}>Suvana 4.0 · Always on</Text>
           <Text style={styles.footerText}>
             Expo SDK 54 · ONNX Runtime Mobile · OS speech recognition{'\n'}
             Research build — R26-SE-019

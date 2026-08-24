@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "SoundGuard",
+    "name": "Suvana",
     "slug": "soundguard",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,13 +11,13 @@
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0A0A0F"
+      "backgroundColor": "#FDFDFD"
     },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "SoundGuard listens to your surroundings to recognise important sounds, and captions speech in real time. Audio is processed on this device and never uploaded by the app.",
-        "NSSpeechRecognitionUsageDescription": "SoundGuard uses speech recognition to turn what people say into large, high-contrast captions you can read and show to the person you are talking to.",
+        "NSMicrophoneUsageDescription": "Suvana listens to your surroundings to recognise important sounds, and captions speech in real time. Audio is processed on this device and never uploaded by the app.",
+        "NSSpeechRecognitionUsageDescription": "Suvana uses speech recognition to turn what people say into large, high-contrast captions you can read and show to the person you are talking to.",
         "NSLocationWhenInUseUsageDescription": "Your location is attached to an SOS message so the people in your Safety Circle know where to find you. It is used only when an SOS is sent.",
         "UIBackgroundModes": ["audio"]
       }
@@ -25,7 +25,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#0A0A0F"
+        "backgroundColor": "#FDFDFD"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -52,8 +52,8 @@
       [
         "expo-speech-recognition",
         {
-          "microphonePermission": "SoundGuard listens to your surroundings to recognise important sounds, and captions speech in real time. Audio is processed on this device and never uploaded by the app.",
-          "speechRecognitionPermission": "SoundGuard uses speech recognition to turn what people say into large, high-contrast captions you can read and show to the person you are talking to.",
+          "microphonePermission": "Suvana listens to your surroundings to recognise important sounds, and captions speech in real time. Audio is processed on this device and never uploaded by the app.",
+          "speechRecognitionPermission": "Suvana uses speech recognition to turn what people say into large, high-contrast captions you can read and show to the person you are talking to.",
           "androidSpeechServicePackages": [
             "com.google.android.googlequicksearchbox",
             "com.google.android.tts",

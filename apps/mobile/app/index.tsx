@@ -348,7 +348,7 @@ export default function DashboardScreen() {
                 {hello}
               </Text>
               <Text style={styles.brandName} numberOfLines={1}>
-                SoundGuard
+                Suvana
               </Text>
             </View>
           </View>
@@ -385,7 +385,7 @@ export default function DashboardScreen() {
         <View style={[styles.modes, twoColumn ? { flexDirection: 'row' } : null, { gap: r.gap + 6 }]}>
           <ModeCard
             eyebrow="Mode 1"
-            title="SoundGuard"
+            title="Sound detection"
             body="Recognises important sounds around you — knocks, sirens, breaking glass — and turns them into something you can see and feel."
             icon="pulse"
             tint={c.primary}

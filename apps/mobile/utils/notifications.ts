@@ -122,7 +122,7 @@ async function createChannels(): Promise<void> {
       try {
         await Notifications.setNotificationChannelAsync(soundChannelId(label), {
           name: SOUND_DISPLAY_NAMES[label],
-          description: `Alerts when SoundGuard recognises ${SOUND_DISPLAY_NAMES[label].toLowerCase()}. Vibration: ${signature.rhythm.toLowerCase()}.`,
+          description: `Alerts when Suvana recognises ${SOUND_DISPLAY_NAMES[label].toLowerCase()}. Vibration: ${signature.rhythm.toLowerCase()}.`,
           importance: importanceFor(threat),
           vibrationPattern: expandPattern(signature),
           enableVibrate: true,
@@ -162,7 +162,7 @@ async function createChannels(): Promise<void> {
   try {
     await Notifications.setNotificationChannelAsync(STATUS_CHANNEL_ID, {
       name: 'Monitoring status',
-      description: 'Quiet notices about SoundGuard itself. Never used for alerts.',
+      description: 'Quiet notices about Suvana itself. Never used for alerts.',
       importance: Notifications.AndroidImportance.LOW,
       enableVibrate: false,
       showBadge: false,
@@ -238,7 +238,7 @@ export async function notifyDetection(input: {
 
   const body =
     input.threat === 'critical'
-      ? `Critical sound, ${percent}% confidence. Open SoundGuard now.`
+      ? `Critical sound, ${percent}% confidence. Open Suvana now.`
       : input.threat === 'warning'
         ? `Detected nearby, ${percent}% confidence.`
         : `Recognised nearby, ${percent}% confidence.`;
@@ -287,7 +287,7 @@ export async function notifyThreat(input: {
         title: `${input.name} — safety check`,
         body:
           input.secondsLeft > 0
-            ? `An SOS will be sent in ${input.secondsLeft}s. Open SoundGuard to cancel.`
+            ? `An SOS will be sent in ${input.secondsLeft}s. Open Suvana to cancel.`
             : 'Sending your SOS now.',
         data: { kind: 'threat', label: input.label } satisfies NotificationPayload,
         vibrate: expandPattern(signatureFor('threat_armed')),

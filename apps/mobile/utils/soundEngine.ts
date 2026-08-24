@@ -240,7 +240,7 @@ export async function requestMicrophonePermission(): Promise<boolean> {
     const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO, {
       title: 'Microphone access',
       message:
-        'SoundGuard listens to your surroundings on-device to recognise important sounds. Audio never leaves your phone.',
+        'Suvana listens to your surroundings on-device to recognise important sounds. Audio never leaves your phone.',
       buttonPositive: 'Allow',
       buttonNegative: 'Not now',
     });
@@ -585,7 +585,7 @@ class SoundEngine {
   private async promoteToBackgroundService(): Promise<void> {
     if (!backgroundCapture.available) return;
     await backgroundCapture.start(
-      'SoundGuard is listening',
+      'Suvana is listening',
       'Recognising important sounds around you. Audio never leaves this phone.',
     );
   }

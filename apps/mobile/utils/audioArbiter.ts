@@ -256,6 +256,6 @@ export const audioArbiter = new AudioArbiter();
 
 /** Human-readable owner, for the dashboard's hardware status strip. */
 export const OWNER_LABELS: Record<AudioOwnerId, string> = {
-  soundguard: 'SoundGuard',
+  soundguard: 'Sound detection',
   transcribe: 'Live Transcribe',
 };

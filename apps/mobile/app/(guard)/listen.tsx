@@ -285,7 +285,7 @@ export default function ListenScreen() {
             </Pressable>
             <View style={styles.brandText}>
               <Text style={styles.brandName} numberOfLines={1}>
-                SoundGuard
+                Sound detection
               </Text>
               {r.isCompact ? null : (
                 <Text style={styles.brandSub} numberOfLines={1}>

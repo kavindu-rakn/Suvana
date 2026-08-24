@@ -304,7 +304,7 @@ export default function SosAlertScreen() {
         const line = !settings.shareLocation
           ? ''
           : (coordinates ?? ' My location could not be determined.');
-        return `EMERGENCY — I need help. This alert was sent by SoundGuard.${line}`;
+        return `EMERGENCY — I need help. This alert was sent by Suvana.${line}`;
       };
 
       if (entry.drill) {
@@ -321,7 +321,7 @@ export default function SosAlertScreen() {
         if (AppState.currentState !== 'active') {
           setStatus('Message ready. Waiting for the screen to be unlocked…');
           void notifySosDispatched(
-            `A message to ${numbers.length} contact${numbers.length > 1 ? 's' : ''} is ready to send. Open SoundGuard to send it.`,
+            `A message to ${numbers.length} contact${numbers.length > 1 ? 's' : ''} is ready to send. Open Suvana to send it.`,
           );
           await whenForeground();
           if (cancelled) return;

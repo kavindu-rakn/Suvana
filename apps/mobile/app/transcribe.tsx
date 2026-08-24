@@ -809,13 +809,13 @@ export default function TranscribeScreen() {
 
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Switch to SoundGuard sound detection"
+              accessibilityLabel="Switch to sound detection"
               onPress={switchToSoundGuard}
               style={({ pressed }) => [styles.switchRow, pressed && styles.pressed]}
             >
               <Ionicons name="pulse" size={19} color={ACCENT} />
               <View style={{ flex: 1 }}>
-                <Text style={styles.switchLabel}>Switch to SoundGuard</Text>
+                <Text style={styles.switchLabel}>Switch to sound detection</Text>
                 <Text style={styles.switchDesc}>
                   Releases the microphone here and hands it to sound detection.
                 </Text>
@@ -825,7 +825,7 @@ export default function TranscribeScreen() {
 
             <Text style={styles.sheetFoot}>
               Recognition is performed by the {localeLabel} speech services built into this phone.
-              SoundGuard never uploads audio of its own.
+              Suvana never uploads audio of its own.
             </Text>
           </ScrollView>
 

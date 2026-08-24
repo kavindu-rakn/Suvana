@@ -317,7 +317,7 @@ export default function CircleScreen() {
         <View style={styles.info}>
           <Ionicons name="information-circle-outline" size={17} color={c.textMuted} />
           <Text style={styles.infoText}>
-            SoundGuard opens your messaging app with the alert pre-filled. You confirm the send, so
+            Suvana opens your messaging app with the alert pre-filled. You confirm the send, so
             an accidental SOS never leaves the device on its own.
           </Text>
         </View>

@@ -262,7 +262,7 @@ export default function HistoryScreen() {
       <View style={[styles.header, { paddingHorizontal: r.hPadding }]}>
         <ScreenHeader
           title="History"
-          subtitle="Every sound SoundGuard has recognised"
+          subtitle="Every sound Suvana has recognised"
           right={
             events.length > 0 ? (
               <AppButton label="Clear" icon="trash-outline" variant="danger" onPress={confirmClear} />

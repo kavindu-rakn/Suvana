@@ -231,14 +231,14 @@ export function ThreatLockOverlay() {
           <Text style={styles.explain}>
             {state.drill
               ? 'This is a rehearsal from the demo controls. The full flow will run, but no message will be sent.'
-              : 'If you do not respond, SoundGuard will message your Safety Circle with your location.'}
+              : 'If you do not respond, Suvana will message your Safety Circle with your location.'}
           </Text>
 
           {state.wasBackgrounded ? (
             <View style={styles.noticeRow}>
               <Ionicons name="phone-portrait-outline" size={13} color={MUTED} />
               <Text style={styles.noticeText}>
-                Detected while SoundGuard was in the background.
+                Detected while Suvana was in the background.
               </Text>
             </View>
           ) : null}

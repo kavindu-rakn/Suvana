@@ -48,7 +48,7 @@ const PAGES: Page[] = [
     icon: 'ear-outline',
     eyebrow: 'Welcome',
     title: 'Sound awareness,\nwithout the noise',
-    body: 'SoundGuard listens to your surroundings and turns the sounds that matter into something you can see and feel.',
+    body: 'Suvana listens to your surroundings and turns the sounds that matter into something you can see and feel.',
   },
   {
     icon: 'hardware-chip-outline',
@@ -76,7 +76,7 @@ const PAGES: Page[] = [
     icon: 'shield-checkmark-outline',
     eyebrow: 'Safety net',
     title: 'Help, when a\nsound means danger',
-    body: 'A critical sound such as breaking glass or a siren takes over the screen with a countdown. Confirm you are safe and it stops. Say nothing, and SoundGuard messages the contacts you choose, with your location.',
+    body: 'A critical sound such as breaking glass or a siren takes over the screen with a countdown. Confirm you are safe and it stops. Say nothing, and Suvana messages the contacts you choose, with your location.',
   },
 ];
 
