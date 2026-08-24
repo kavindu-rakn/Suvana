@@ -3,18 +3,372 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- viewport-fit=cover lets the bottom tab bar sit under the home indicator
-         and pad itself with env(safe-area-inset-bottom). -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0b1020" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#FDFDFD" />
     <meta
       name="description"
-      content="Interactive Sri Lankan Sign Language learning and practice for hearing users"
+      content="සුවණ Suvana — one platform for two-way communication between Deaf and hearing people in Sri Lankan Sign Language."
     />
-    <title>SSL Learn — Practice Module</title>
+    <title>සුවණ Suvana</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Landing shell for Suvana. Deliberately light-only: every brand asset
+         has a baked white background, so the page is designed around white.
+         Colour tokens mirror packages/branding/palette.css — keep in sync. */
+      :root {
+        --teal: #00a693;
+        --slate: #2f4f4f;
+        --gold: #daa520;
+        --paper: #fdfdfd;
+        --ink: #333333;
+        /* Darkened for WCAG AA text contrast on white; pure brand colours
+           are reserved for large/decorative use. */
+        --teal-ink: #00776a;
+        --gold-ink: #8a6410;
+        --line: #e0e8e6;
+        --mono: ui-monospace, Consolas, monospace; /* matches the Learn app */
+        --sinhala: "Noto Serif Sinhala", "Nirmala UI", "Iskoola Pota", serif;
+        --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.55;
+      }
+      img {
+        max-width: 100%;
+      }
+      /* The brand PNGs have baked white backgrounds; multiply blending makes
+         white read as transparent against our light surfaces, so no boxes. */
+      .nav img,
+      .hero .logo,
+      .hero .wordmark-si {
+        mix-blend-mode: multiply;
+      }
+      a:focus-visible,
+      .btn:focus-visible {
+        outline: 2px solid var(--teal-ink);
+        outline-offset: 2px;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+      .wrap {
+        max-width: 1060px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* ---- header ---- */
+      header {
+        border-bottom: 1px solid var(--line);
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 24px;
+        max-width: 1060px;
+        margin: 0 auto;
+      }
+      .nav img {
+        height: 26px;
+        width: auto;
+        display: block;
+      }
+      .nav .meta {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: var(--slate);
+      }
+
+      /* ---- hero ---- */
+      .hero {
+        text-align: center;
+        padding: 56px 24px 40px;
+      }
+      .hero .logo {
+        width: min(280px, 70vw);
+        height: auto;
+      }
+      .hero .wordmark-si {
+        width: min(220px, 55vw);
+        height: auto;
+        margin-top: 4px;
+      }
+      .tagline {
+        font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+        font-weight: 650;
+        color: var(--slate);
+        max-width: 620px;
+        margin: 22px auto 10px;
+        text-wrap: balance;
+      }
+      .subline {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: var(--teal-ink);
+        margin: 0 auto 28px;
+        max-width: 700px;
+      }
+      .btn {
+        display: inline-block;
+        background: var(--slate);
+        color: var(--paper);
+        text-decoration: none;
+        font-weight: 650;
+        font-size: 15px;
+        padding: 12px 26px;
+        border-radius: 10px;
+        transition: background 0.15s;
+      }
+      .btn:hover {
+        background: var(--teal-ink);
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--slate);
+        border: 1.5px solid var(--slate);
+        padding: 10.5px 24px;
+      }
+      .btn.ghost:hover {
+        color: var(--teal-ink);
+        border-color: var(--teal-ink);
+        background: transparent;
+      }
+
+      /* ---- modules ---- */
+      .modules {
+        padding: 24px 24px 64px;
+      }
+      .modules-head {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+      .kicker {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--teal-ink);
+        margin: 0 0 6px;
+      }
+      .modules-head h2 {
+        font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+        color: var(--slate);
+        margin: 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+        gap: 18px;
+        max-width: 1060px;
+        margin: 0 auto;
+      }
+      .card {
+        background: #ffffff;
+        border: 1px solid var(--line);
+        border-top: 3px solid var(--teal);
+        border-radius: 14px;
+        padding: 20px 20px 18px;
+        display: flex;
+        flex-direction: column;
+      }
+      .card h3 {
+        margin: 2px 0 8px;
+        font-size: 1.2rem;
+        color: var(--slate);
+      }
+      .card .desc {
+        margin: 0 0 18px;
+        font-size: 0.92rem;
+        flex: 1;
+      }
+      .card-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .card .btn {
+        font-size: 13.5px;
+        padding: 8px 16px;
+        border-radius: 8px;
+      }
+      .badge {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 4px 9px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+      .badge.live {
+        background: rgba(0, 166, 147, 0.12);
+        color: var(--teal-ink);
+      }
+      .badge.soon {
+        background: rgba(218, 165, 32, 0.16);
+        color: var(--gold-ink);
+      }
+
+      /* ---- footer ---- */
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 30px 24px 44px;
+        text-align: center;
+        font-size: 13px;
+        color: #5c5c5c;
+      }
+      footer .brandline {
+        font-size: 15px;
+        color: var(--slate);
+        margin: 0 0 8px;
+      }
+      footer .si {
+        font-family: var(--sinhala);
+        font-weight: 700;
+      }
+      footer p {
+        margin: 4px 0;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <header>
+      <div class="nav">
+        <a href="/" aria-label="Suvana home">
+          <img src="/branding/suvana-wordmark-en.png" alt="SUVANA" />
+        </a>
+        <span class="meta">R26-SE-019 · SLIIT</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1 class="sr-only">Suvana</h1>
+        <img
+          class="logo"
+          src="/branding/suvana-logo.png"
+          alt="Suvana logo — a signing hand cradled inside the outline of an ear"
+        />
+        <div>
+          <img
+            class="wordmark-si"
+            src="/branding/suvana-wordmark-si.png"
+            alt="සුවණ (Suvana in Sinhala)"
+          />
+        </div>
+        <p class="tagline">
+          One platform for two-way communication between Deaf and hearing
+          people, in Sri Lankan Sign Language.
+        </p>
+        <p class="subline">
+          Learn to sign · Speak to a signing avatar · Turn signs into speech ·
+          Stay aware of every sound
+        </p>
+        <a class="btn" href="/learn/">Start learning SSL</a>
+      </section>
+
+      <section class="modules" aria-labelledby="modules-title">
+        <div class="modules-head">
+          <p class="kicker">Modules</p>
+          <h2 id="modules-title">One platform, four bridges</h2>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <p class="kicker">For hearing learners</p>
+            <h3>Learn</h3>
+            <p class="desc">
+              Practice Sri Lankan Sign Language with your camera. Every attempt
+              is scored against real-signer references, with corrective
+              feedback down to individual fingers.
+            </p>
+            <div class="card-foot">
+              <a class="btn" href="/learn/">Open Learn</a>
+              <span class="badge live">Live</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <p class="kicker">Speech → Sign</p>
+            <h3>Communicate</h3>
+            <p class="desc">
+              Speak Sinhala and watch a 3D avatar sign it, with the emotion in
+              your voice detected along the way.
+            </p>
+            <div class="card-foot">
+              <a
+                class="btn ghost"
+                href="https://sign-detector-tawny.vercel.app"
+                target="_blank"
+                rel="noopener"
+                >Open app</a
+              >
+              <span class="badge live">Live · Standalone</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <p class="kicker">Sign → Speech</p>
+            <h3>Recognize</h3>
+            <p class="desc">
+              Sign to the camera and have it recognised and spoken aloud, built
+              on a transformer recognition model.
+            </p>
+            <div class="card-foot">
+              <span class="badge soon">In integration</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <p class="kicker">Sound awareness</p>
+            <h3>Alerts</h3>
+            <p class="desc">
+              A companion phone app that keeps Deaf users aware of important
+              sounds around them and can send SOS alerts.
+            </p>
+            <div class="card-foot">
+              <span class="badge soon">Mobile app · In integration</span>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p class="brandline"><span class="si" lang="si">සුවණ</span> Suvana</p>
+      <p>
+        Transformer-based real-time two-way Deaf–hearing communication in Sri
+        Lankan Sign Language.
+      </p>
+      <p>
+        Final-year research project R26-SE-019 · SLIIT · External partner: The
+        School for the Deaf, Ratmalana
+      </p>
+    </footer>
   </body>
 </html>

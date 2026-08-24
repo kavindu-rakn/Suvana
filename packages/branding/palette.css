@@ -1,0 +1,21 @@
+/* සුවණ Suvana — brand palette.
+   Source of truth: suvana-ColorPalette.png in this folder.
+   The landing page (apps/web/index.html) inlines these values — keep in sync. */
+:root {
+  --suvana-teal: #00a693; /* Verdigris — primary brand colour */
+  --suvana-slate: #2f4f4f; /* Dark Slate Grey — headings, primary buttons */
+  --suvana-gold: #daa520; /* Goldenrod — accents, highlights */
+  --suvana-white: #fdfdfd; /* page background */
+  --suvana-graphite: #333333; /* body text */
+
+  /* Derived shades (not in the swatch image): darkened for WCAG AA contrast
+     when used as text on white. Use the pure brand colours above for
+     large or decorative elements only. */
+  --suvana-teal-ink: #00776a; /* 5.5:1 on white */
+  --suvana-gold-ink: #8a6410; /* 5.4:1 on white */
+
+  /* Typography */
+  --suvana-font-sinhala: "Noto Serif Sinhala", "Nirmala UI", "Iskoola Pota",
+    serif;
+  --suvana-mono: ui-monospace, Consolas, monospace; /* matches apps/web */
+}
