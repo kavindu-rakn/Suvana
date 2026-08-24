@@ -97,8 +97,10 @@ function App() {
       )}
 
       <header className="app-header">
-        <p className="app-kicker">R26-SE-019 · Component 4 — Learning &amp; Practice Module</p>
-        <h1>SSL Learn</h1>
+        <p className="app-kicker">
+          <a href="/">සුවණ Suvana</a> · R26-SE-019 · Learning &amp; Practice Module
+        </p>
+        <h1>Learn</h1>
         <p className="app-sub">
           Learn and practise Sri Lankan Sign Language — record a sign, get it scored against a
           reference, and see what to fix.

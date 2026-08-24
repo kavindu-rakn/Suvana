@@ -13,48 +13,54 @@
    ========================================================================== */
 
 :root {
-  /* ---- tier 1: palette ---------------------------------------------------- */
-  --p-navy-900: #0b1020;
-  --p-navy-800: #131a2e;
-  --p-navy-700: #1b2440;
-  --p-navy-600: #26304f;
-  --p-slate-500: #5b6ea8;
-  --p-slate-300: #8ea0c0;
-  --p-slate-050: #e2e8f0;
-  --p-cyan-400: #22d3ee;
-  --p-cyan-300: #67e8f9;
+  /* ---- tier 1: palette ----------------------------------------------------
+     Suvana brand (packages/branding/palette.css): teal #00A693, dark slate
+     #2F4F4F, goldenrod #DAA520. Pure brand teal is too dark to be the accent
+     on these surfaces, so --p-teal-400 is a brightened same-hue variant with
+     the same luminance the old cyan accent had — every contrast measurement
+     below survives the retheme. Pure #00A693 lives in the ambient washes. */
+  --p-teal-900: #0a1414;
+  --p-teal-800: #122120;
+  --p-teal-700: #1a2c2b;
+  --p-teal-600: #26403e;
+  --p-sage-500: #558781;
+  --p-sage-300: #93b1ac;
+  --p-sage-050: #e6eeec;
+  --p-teal-400: #2dd4bf;
+  --p-teal-300: #5eead4;
   --p-lime-400: #a3e635;
-  --p-amber-400: #fbbf24;
+  --p-gold-400: #daa520; /* brand goldenrod, replacing the old amber */
   --p-red-400: #f87171;
   --p-red-500: #ef4444;
   --p-red-600: #dc2626;
-  --p-void: #05070f;
-  --p-ink: #04141a;
+  --p-void: #040a0a;
+  --p-ink: #04201d;
   --p-white: #fff;
 
   /* ---- tier 2: semantic --------------------------------------------------- */
-  --bg: var(--p-navy-900);
-  --surface: var(--p-navy-800); /* cards */
-  --surface-2: var(--p-navy-700); /* inset rows, fields */
+  --bg: var(--p-teal-900);
+  --surface: var(--p-teal-800); /* cards */
+  --surface-2: var(--p-teal-700); /* inset rows, fields */
   --stage: var(--p-void); /* camera + canvas letterbox */
 
-  --text: var(--p-slate-050);
-  --text-dim: var(--p-slate-300);
+  --text: var(--p-sage-050);
+  --text-dim: var(--p-sage-300);
   --on-accent: var(--p-ink); /* text on an accent fill */
   --on-overlay: var(--p-white); /* text over the camera image */
 
   /* Two border roles, because they answer to different rules. A card edge is
      decorative and may be quiet; the boundary of a control is information, and
-     WCAG 2.1 SC 1.4.11 wants 3:1 against its background. The old single
-     --border measured 1.33:1 on --surface, which failed for every input,
-     chip and ghost button. --border-interactive measures 3.49:1. */
-  --border-subtle: var(--p-navy-600); /* card edges, dividers, tracks */
-  --border-interactive: var(--p-slate-500); /* inputs, chips, ghost buttons */
+     WCAG 2.1 SC 1.4.11 wants 3:1 against its background. A single --border
+     once measured 1.33:1 on --surface, which failed for every input, chip and
+     ghost button. --border-interactive measures 4.1:1 on --surface and 3.6:1
+     on --surface-2 in the Suvana palette. */
+  --border-subtle: var(--p-teal-600); /* card edges, dividers, tracks */
+  --border-interactive: var(--p-sage-500); /* inputs, chips, ghost buttons */
 
-  --accent: var(--p-cyan-400);
-  --accent-soft: var(--p-cyan-300);
+  --accent: var(--p-teal-400);
+  --accent-soft: var(--p-teal-300);
   --success: var(--p-lime-400);
-  --caution: var(--p-amber-400);
+  --caution: var(--p-gold-400);
   --danger: var(--p-red-400);
   --recording: var(--p-red-500);
   --recording-strong: var(--p-red-600);
@@ -63,20 +69,22 @@
      DRAFT scenario-order note. Deliberately its own token even though it shares
      a value with --caution: restyling a warning must never quietly restyle a
      statement about what is and is not validated SSL. */
-  --integrity: var(--p-amber-400);
+  --integrity: var(--p-gold-400);
 
   /* Hand overlay. These MUST match HAND_COLORS in src/vision/drawing.ts, which
      stays the source of truth because canvas cannot read a CSS variable per
      frame. Declared here so UI chrome that labels a hand agrees with it. */
-  --hand-left: var(--p-cyan-400);
+  --hand-left: var(--p-teal-400);
   --hand-right: var(--p-lime-400);
 
   /* Decorative washes and overlays. Alpha values belong in the palette tier
-     rather than sprinkled through component rules as raw rgba(). */
-  --glow-accent: rgb(34 211 238 / 0.08);
+     rather than sprinkled through component rules as raw rgba(). The washes
+     use pure brand teal (#00A693) — slightly higher alpha than the old cyan
+     had, because the brand hue is darker. */
+  --glow-accent: rgb(0 166 147 / 0.1);
   --glow-success: rgb(163 230 53 / 0.05);
-  --glow-stage: rgb(34 211 238 / 0.06);
-  --scrim: rgb(5 7 15 / 0.35); /* dims the camera behind the countdown */
+  --glow-stage: rgb(0 166 147 / 0.07);
+  --scrim: rgb(4 10 10 / 0.35); /* dims the camera behind the countdown */
   --track-on-overlay: rgb(255 255 255 / 0.12); /* progress track over video */
   --recording-badge: rgb(220 38 38 / 0.85);
   --shadow-text: 0 4px 30px rgb(0 0 0 / 0.6);
@@ -227,8 +235,8 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(1000px 500px at 70% -10%, rgb(34 211 238 / 0.08), transparent),
-    radial-gradient(800px 400px at 10% 110%, rgb(163 230 53 / 0.05), transparent);
+    radial-gradient(1000px 500px at 70% -10%, var(--glow-accent), transparent),
+    radial-gradient(800px 400px at 10% 110%, var(--glow-success), transparent);
 }
 
 #root {
@@ -256,6 +264,16 @@ body::before {
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: var(--accent);
+}
+
+/* The kicker's Suvana wordmark links back to the platform landing page. */
+.app-kicker a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-kicker a:hover {
+  text-decoration: underline;
 }
 
 .app-sub {

@@ -1,7 +1,9 @@
 import type { TrackedHand } from './types'
 
 export const HAND_COLORS: Record<string, string> = {
-  Left: '#22d3ee',
+  // Must match --hand-left / --hand-right in src/index.css (Suvana teal-400
+  // and lime-400) — this file is the source of truth for the canvas.
+  Left: '#2dd4bf',
   Right: '#a3e635',
 }
 const FALLBACK_COLOR = '#f472b6'

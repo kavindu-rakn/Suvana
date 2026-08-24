@@ -23,7 +23,7 @@ function openDb(): Promise<IDBDatabase> {
     req.onblocked = () =>
       reject(
         new Error(
-          'Database upgrade is blocked. Close other tabs running SSL Learn, then reload.',
+          'Database upgrade is blocked. Close other tabs running Suvana, then reload.',
         ),
       )
     req.onsuccess = () => resolve(req.result)
