@@ -23,7 +23,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AppButton, Card, EmptyState, ScreenHeader, type IconName } from '@/components/ui';
-import { alpha, radius, space, threatColors, typography as typeScale } from '@/constants/theme';
+import { alpha, fonts, radius, space, threatColors, typography as typeScale } from '@/constants/theme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { makeStyles, useColors } from '@/providers/ThemeProvider';
 import { useSettings } from '@/providers/SettingsProvider';
@@ -130,7 +130,7 @@ const useStyles = makeStyles((c) => ({
     borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth * 2,
   },
-  tagText: { fontSize: 10, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase' },
+  tagText: { fontSize: 10, fontFamily: fonts.bold, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase' },
 
   loading: { paddingTop: space.xxxl * 2, alignItems: 'center' },
   footer: { alignItems: 'center', paddingVertical: space.xxl },
@@ -308,7 +308,10 @@ export default function HistoryScreen() {
               ]}
             >
               <Text
-                style={[styles.chipText, active && { color: c.primary, fontWeight: '700' }]}
+                style={[
+                  styles.chipText,
+                  active && { color: c.primary, fontFamily: fonts.bold, fontWeight: '700' },
+                ]}
                 numberOfLines={1}
               >
                 {option.label}

@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
-import { Geist_Mono } from "next/font/google";
+import { Noto_Serif, Noto_Serif_Sinhala } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { Navbar } from "@/components/Navbar";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Suvana brand typeface (packages/branding/README.md) — Noto Serif for
+// English, Noto Serif Sinhala for Sinhala, so both scripts share one voice.
+// Replaces Geist Mono, which this app previously used for every role.
+const notoSerif = Noto_Serif({
+  variable: "--font-noto-serif",
   subsets: ["latin"],
+  weight: ["400", "600", "700"],
+});
+
+const notoSerifSinhala = Noto_Serif_Sinhala({
+  variable: "--font-noto-serif-sinhala",
+  subsets: ["sinhala"],
+  weight: ["500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -17,7 +27,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistMono.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      className={`${notoSerif.variable} ${notoSerifSinhala.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Providers>
           <Navbar />

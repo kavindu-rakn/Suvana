@@ -90,7 +90,7 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
 import { ReplyComposer } from '@/components/ReplyComposer';
 import { type IconName } from '@/components/ui';
-import { radius, space, typography as typeScale } from '@/constants/theme';
+import { fonts, radius, space, typography as typeScale } from '@/constants/theme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useSettings } from '@/providers/SettingsProvider';
 import { useTheme } from '@/providers/ThemeProvider';
@@ -957,8 +957,8 @@ const styles = StyleSheet.create({
   },
   statusRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 3 },
   statusDot: { width: 6, height: 6, borderRadius: 3 },
-  statusText: { fontSize: 11, fontWeight: '700', letterSpacing: 0.3 },
-  statusMeta: { fontSize: 11, color: MUTED },
+  statusText: { fontSize: 11, fontFamily: fonts.bold, fontWeight: '700', letterSpacing: 0.3 },
+  statusMeta: { fontSize: 11, fontFamily: fonts.regular, color: MUTED },
 
   banner: {
     flexDirection: 'row',
@@ -971,8 +971,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,90,114,0.12)',
     marginBottom: space.sm,
   },
-  bannerText: { flex: 1, fontSize: 12, color: WHITE, lineHeight: 17 },
-  bannerAction: { fontSize: 12, fontWeight: '700', color: ALERT, paddingHorizontal: 4 },
+  bannerText: { flex: 1, fontSize: 12, fontFamily: fonts.regular, color: WHITE, lineHeight: 17 },
+  bannerAction: { fontSize: 12, fontFamily: fonts.bold, fontWeight: '700', color: ALERT, paddingHorizontal: 4 },
 
   panel: {
     flex: 1,
@@ -981,15 +981,17 @@ const styles = StyleSheet.create({
   },
   caption: {
     color: WHITE,
+    fontFamily: fonts.bold,
     fontWeight: '700',
     letterSpacing: -0.4,
   },
-  captionPending: { color: PENDING, fontWeight: '600' },
+  captionPending: { color: PENDING, fontFamily: fonts.semibold, fontWeight: '600' },
 
   empty: { alignItems: 'center', justifyContent: 'center', gap: space.lg, paddingVertical: space.xl },
   emptyText: {
     color: MUTED,
     textAlign: 'center',
+    fontFamily: fonts.semibold,
     fontWeight: '600',
     paddingHorizontal: space.lg,
   },
@@ -1021,7 +1023,7 @@ const styles = StyleSheet.create({
   primaryListen: { flex: 1.25 },
   primaryReply: { flex: 1, backgroundColor: ACCENT },
   primaryButtonActive: { backgroundColor: ALERT },
-  primaryLabel: { fontSize: 16, fontWeight: '800', color: BLACK, letterSpacing: 0.2 },
+  primaryLabel: { fontSize: 16, fontFamily: fonts.bold, fontWeight: '800', color: BLACK, letterSpacing: 0.2 },
 
   secondaryRow: { flexDirection: 'row', marginTop: space.md },
   secondaryButton: {
@@ -1037,7 +1039,7 @@ const styles = StyleSheet.create({
     backgroundColor: SURFACE,
   },
   secondaryButtonActive: { backgroundColor: WHITE, borderColor: WHITE },
-  secondaryLabel: { fontSize: 11, fontWeight: '700', color: WHITE },
+  secondaryLabel: { fontSize: 11, fontFamily: fonts.bold, fontWeight: '700', color: WHITE },
 
   pressed: { opacity: 0.65 },
 
@@ -1088,9 +1090,9 @@ const styles = StyleSheet.create({
   },
   localeRowActive: { backgroundColor: WHITE, borderColor: WHITE },
   localeText: { flex: 1 },
-  localeNative: { fontSize: 17, fontWeight: '700', color: WHITE },
+  localeNative: { fontSize: 17, fontFamily: fonts.bold, fontWeight: '700', color: WHITE },
   localeNativeActive: { color: BLACK },
-  localeMeta: { fontSize: 11, color: MUTED, marginTop: 2 },
+  localeMeta: { fontSize: 11, fontFamily: fonts.regular, color: MUTED, marginTop: 2 },
   localeAction: {
     width: 34,
     height: 34,
@@ -1109,7 +1111,7 @@ const styles = StyleSheet.create({
     backgroundColor: SURFACE,
   },
   optionChipActive: { backgroundColor: WHITE, borderColor: WHITE },
-  optionChipText: { fontSize: 13, fontWeight: '600', color: WHITE },
+  optionChipText: { fontSize: 13, fontFamily: fonts.semibold, fontWeight: '600', color: WHITE },
   optionChipTextActive: { color: BLACK },
 
   toggleRow: {

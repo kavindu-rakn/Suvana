@@ -48,7 +48,7 @@ import {
   ScreenHeader,
   type IconName,
 } from '@/components/ui';
-import { alpha, radius, space, typography as typeScale } from '@/constants/theme';
+import { alpha, fonts, radius, space, typography as typeScale } from '@/constants/theme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useEngineActions } from '@/providers/EngineProvider';
 import { useSettings } from '@/providers/SettingsProvider';
@@ -166,7 +166,7 @@ const useStyles = makeStyles((c) => ({
     borderWidth: 4,
   },
   stepLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 },
-  stepLabel: { width: 40, textAlign: 'center', fontSize: 11, color: c.textMuted },
+  stepLabel: { width: 40, textAlign: 'center', fontSize: 11, fontFamily: fonts.regular, color: c.textMuted },
   stepLabelActive: { color: c.primary, fontWeight: '700' },
 
   choiceBlock: { padding: space.lg, gap: space.md },
@@ -224,7 +224,7 @@ const useStyles = makeStyles((c) => ({
     backgroundColor: c.surfaceAlt,
   },
   localeChipNative: { ...typeScale.bodyStrong, color: c.text },
-  localeChipMeta: { fontSize: 11, color: c.textMuted, marginTop: 1 },
+  localeChipMeta: { fontSize: 11, fontFamily: fonts.regular, color: c.textMuted, marginTop: 1 },
 
   footer: { alignItems: 'center', gap: 4, paddingTop: space.xxxl },
   footerTitle: { ...typeScale.captionStrong, color: c.textSecondary },

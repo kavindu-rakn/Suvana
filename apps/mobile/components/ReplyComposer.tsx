@@ -51,7 +51,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-import { radius, space, typography as typeScale } from '@/constants/theme';
+import { fonts, radius, space, typography as typeScale } from '@/constants/theme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useTheme } from '@/providers/ThemeProvider';
 import { getReplyHistory, quickRepliesFor, saveReply } from '@/utils/storage';
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.4,
     textTransform: 'uppercase',
   },
-  headerSub: { fontSize: 11, color: MUTED, marginTop: 3 },
+  headerSub: { fontSize: 11, fontFamily: fonts.regular, color: MUTED, marginTop: 3 },
 
   // ── Compose ──
   input: {
@@ -500,6 +500,7 @@ const styles = StyleSheet.create({
     backgroundColor: SURFACE,
     color: WHITE,
     fontSize: 21,
+    fontFamily: fonts.semibold,
     lineHeight: 29,
     fontWeight: '600',
   },
@@ -511,7 +512,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   counter: { fontSize: 11, color: MUTED, fontVariant: ['tabular-nums'] },
-  clear: { fontSize: 12, fontWeight: '700', color: ACCENT, paddingHorizontal: 4 },
+  clear: { fontSize: 12, fontFamily: fonts.bold, fontWeight: '700', color: ACCENT, paddingHorizontal: 4 },
 
   showButton: {
     flexDirection: 'row',
@@ -523,7 +524,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     backgroundColor: WHITE,
   },
-  showLabel: { fontSize: 17, fontWeight: '800', color: BLACK, letterSpacing: 0.2 },
+  showLabel: { fontSize: 17, fontFamily: fonts.bold, fontWeight: '800', color: BLACK, letterSpacing: 0.2 },
 
   sectionLabel: {
     ...typeScale.overline,
@@ -542,7 +543,7 @@ const styles = StyleSheet.create({
     backgroundColor: SURFACE_STRONG,
   },
   chipMuted: { backgroundColor: SURFACE },
-  chipText: { fontSize: 16, fontWeight: '600', color: WHITE, lineHeight: 23 },
+  chipText: { fontSize: 16, fontFamily: fonts.semibold, fontWeight: '600', color: WHITE, lineHeight: 23 },
 
   // ── Sign ──
   signPanel: {
@@ -554,6 +555,7 @@ const styles = StyleSheet.create({
   },
   sign: {
     color: WHITE,
+    fontFamily: fonts.bold,
     fontWeight: '800',
     textAlign: 'center',
     letterSpacing: -0.4,
@@ -577,5 +579,5 @@ const styles = StyleSheet.create({
     backgroundColor: SURFACE,
   },
   footerButtonPrimary: { backgroundColor: WHITE, borderColor: WHITE },
-  footerLabel: { fontSize: 11, fontWeight: '700', color: WHITE },
+  footerLabel: { fontSize: 11, fontFamily: fonts.bold, fontWeight: '700', color: WHITE },
 });

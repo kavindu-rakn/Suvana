@@ -189,17 +189,35 @@ export const radius = {
   pill: 999,
 } as const;
 
+/**
+ * Suvana brand typeface — Noto Serif (packages/branding/README.md), loaded in
+ * app/_layout.tsx.
+ *
+ * Android ignores `fontWeight` once an explicit family is set, so weight is
+ * carried by the family name itself and every entry below names the face it
+ * wants. `fontWeight` is kept alongside so the system fallback still looks
+ * right in the moment before the faces register.
+ *
+ * Anything with its own `fontSize` outside this scale must set `fontFamily`
+ * too — there is no inheritance in React Native.
+ */
+export const fonts = {
+  regular: 'NotoSerif_400Regular',
+  semibold: 'NotoSerif_600SemiBold',
+  bold: 'NotoSerif_700Bold',
+} as const;
+
 /** Type ramp. */
 export const typography = {
-  display: { fontSize: 34, fontWeight: '700' as const, letterSpacing: -0.8 },
-  title: { fontSize: 26, fontWeight: '700' as const, letterSpacing: -0.5 },
-  heading: { fontSize: 19, fontWeight: '700' as const, letterSpacing: -0.2 },
-  subtitle: { fontSize: 16, fontWeight: '600' as const },
-  body: { fontSize: 15, fontWeight: '400' as const },
-  bodyStrong: { fontSize: 15, fontWeight: '600' as const },
-  caption: { fontSize: 13, fontWeight: '400' as const },
-  captionStrong: { fontSize: 13, fontWeight: '600' as const },
-  overline: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 1.1 },
+  display: { fontSize: 34, fontFamily: fonts.bold, fontWeight: '700' as const, letterSpacing: -0.8 },
+  title: { fontSize: 26, fontFamily: fonts.bold, fontWeight: '700' as const, letterSpacing: -0.5 },
+  heading: { fontSize: 19, fontFamily: fonts.bold, fontWeight: '700' as const, letterSpacing: -0.2 },
+  subtitle: { fontSize: 16, fontFamily: fonts.semibold, fontWeight: '600' as const },
+  body: { fontSize: 15, fontFamily: fonts.regular, fontWeight: '400' as const },
+  bodyStrong: { fontSize: 15, fontFamily: fonts.semibold, fontWeight: '600' as const },
+  caption: { fontSize: 13, fontFamily: fonts.regular, fontWeight: '400' as const },
+  captionStrong: { fontSize: 13, fontFamily: fonts.semibold, fontWeight: '600' as const },
+  overline: { fontSize: 11, fontFamily: fonts.bold, fontWeight: '700' as const, letterSpacing: 1.1 },
 } as const;
 
 /**

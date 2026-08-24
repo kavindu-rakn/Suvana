@@ -28,7 +28,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-import { alpha, radius, space, typography as typeScale } from '@/constants/theme';
+import { alpha, fonts, radius, space, typography as typeScale } from '@/constants/theme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { makeStyles, useColors } from '@/providers/ThemeProvider';
 import { useSettings } from '@/providers/SettingsProvider';
@@ -231,7 +231,7 @@ export function Onboarding() {
             </View>
 
             <Text style={styles.eyebrow}>{page.eyebrow}</Text>
-            <Text style={[styles.title, { fontSize: titleSize, lineHeight: titleSize * 1.22 }]}>
+            <Text style={[styles.title, { fontSize: titleSize, fontFamily: fonts.regular, lineHeight: titleSize * 1.22 }]}>
               {page.title}
             </Text>
             <Text style={styles.body}>{page.body}</Text>

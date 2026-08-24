@@ -48,7 +48,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
-import { radius, space, typography as typeScale } from '@/constants/theme';
+import { fonts, radius, space, typography as typeScale } from '@/constants/theme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useTheme } from '@/providers/ThemeProvider';
 import { signatureForSound } from '@/utils/hapticSignatures';
@@ -215,7 +215,7 @@ export function ThreatLockOverlay() {
 
         {/* ── How long is left ── */}
         <View style={styles.centre}>
-          <Text style={[styles.timer, { fontSize: timerSize }]} allowFontScaling={false}>
+          <Text style={[styles.timer, { fontSize: timerSize , fontFamily: fonts.regular}]} allowFontScaling={false}>
             {firing ? '0' : state.secondsLeft}
           </Text>
           <Text style={styles.timerCaption}>
@@ -306,6 +306,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 32,
+    fontFamily: fonts.bold,
     fontWeight: '800',
     color: WHITE,
     letterSpacing: -0.6,
@@ -324,7 +325,7 @@ const styles = StyleSheet.create({
     borderColor: FAINT,
     backgroundColor: 'rgba(255,255,255,0.06)',
   },
-  signatureText: { fontSize: 11, fontWeight: '700', color: MUTED, letterSpacing: 0.4 },
+  signatureText: { fontSize: 11, fontFamily: fonts.bold, fontWeight: '700', color: MUTED, letterSpacing: 0.4 },
 
   centre: { alignItems: 'center', alignSelf: 'stretch' },
   timer: {
@@ -361,7 +362,7 @@ const styles = StyleSheet.create({
     gap: 6,
     marginTop: space.md,
   },
-  noticeText: { fontSize: 11, color: MUTED },
+  noticeText: { fontSize: 11, fontFamily: fonts.regular, color: MUTED },
 
   footer: { alignSelf: 'stretch', gap: space.md },
   safeButton: {
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     backgroundColor: SAFE,
   },
-  safeLabel: { fontSize: 19, fontWeight: '800', color: INK, letterSpacing: 0.2 },
+  safeLabel: { fontSize: 19, fontFamily: fonts.bold, fontWeight: '800', color: INK, letterSpacing: 0.2 },
 
   sendButton: {
     flexDirection: 'row',

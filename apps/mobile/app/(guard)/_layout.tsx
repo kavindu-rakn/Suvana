@@ -51,6 +51,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { fonts } from '@/constants/theme';
 import { useSettings } from '@/providers/SettingsProvider';
 import { useColors } from '@/providers/ThemeProvider';
 import { audioArbiter } from '@/utils/audioArbiter';
@@ -139,7 +140,7 @@ export default function GuardLayout() {
           paddingTop: 8,
           elevation: 0,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600', letterSpacing: 0.2 },
+        tabBarLabelStyle: { fontSize: 11, fontFamily: fonts.semibold, fontWeight: '600', letterSpacing: 0.2 },
         tabBarItemStyle: { paddingTop: 2 },
       }}
     >

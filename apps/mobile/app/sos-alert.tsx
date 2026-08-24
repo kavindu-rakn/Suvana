@@ -65,7 +65,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import * as Location from 'expo-location';
 import * as SMS from 'expo-sms';
 
-import { radius, space, typography as typeScale } from '@/constants/theme';
+import { fonts, radius, space, typography as typeScale } from '@/constants/theme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useSettings } from '@/providers/SettingsProvider';
 import { useTheme } from '@/providers/ThemeProvider';
@@ -477,7 +477,7 @@ export default function SosAlertScreen() {
         <View style={styles.centre}>
           {phase === 'countdown' ? (
             <>
-              <Text style={[styles.timer, { fontSize: timerSize }]}>
+              <Text style={[styles.timer, { fontSize: timerSize , fontFamily: fonts.regular}]}>
                 {`0:${String(remaining).padStart(2, '0')}`}
               </Text>
               <Text style={styles.timerCaption}>until your contacts are messaged</Text>
@@ -576,6 +576,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 15,
+    fontFamily: fonts.bold,
     fontWeight: '800',
     letterSpacing: 2.4,
     textTransform: 'uppercase',

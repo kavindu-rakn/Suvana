@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Serif+Sinhala:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&family=Noto+Serif+Sinhala:wght@500;700&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -33,7 +33,9 @@
         --line: #e0e8e6;
         --mono: ui-monospace, Consolas, monospace; /* matches the Learn app */
         --sinhala: "Noto Serif Sinhala", "Nirmala UI", "Iskoola Pota", serif;
-        --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+        /* Brand typeface: Noto Serif pairs with Noto Serif Sinhala by design,
+           so English and Sinhala share one voice. */
+        --sans: "Noto Serif", Georgia, "Times New Roman", serif;
       }
       * {
         box-sizing: border-box;

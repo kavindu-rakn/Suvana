@@ -49,6 +49,12 @@ import {
   type Theme,
 } from '@react-navigation/native';
 import { Stack, usePathname } from 'expo-router';
+import {
+  NotoSerif_400Regular,
+  NotoSerif_600SemiBold,
+  NotoSerif_700Bold,
+  useFonts,
+} from '@expo-google-fonts/noto-serif';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -99,12 +105,24 @@ function AppShell() {
 
   const [booted, setBooted] = useState(false);
 
+  // Suvana brand typeface. React Native has no font fallback chain: until the
+  // faces are registered, anything asking for "NotoSerif_*" renders in the
+  // system font, so the splash is held until they load. `fontsError` still
+  // releases it — a missing font must never be the reason the app won't open.
+  const [fontsLoaded, fontsError] = useFonts({
+    NotoSerif_400Regular,
+    NotoSerif_600SemiBold,
+    NotoSerif_700Bold,
+  });
+
   // The correct route is live once hydration has finished *and* the router has
   // actually resolved to the side of the guard the settings ask for. Waiting
   // for both means the first-run route swap happens entirely behind the cover.
   const onOnboardingRoute = pathname === '/onboarding';
   const routeSettled =
-    ready && (settings.onboardingComplete ? !onOnboardingRoute : onOnboardingRoute);
+    ready &&
+    (fontsLoaded || !!fontsError) &&
+    (settings.onboardingComplete ? !onOnboardingRoute : onOnboardingRoute);
 
   useEffect(() => {
     if (booted || !routeSettled) return;

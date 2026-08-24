@@ -23,14 +23,17 @@
   --color-accent-strong: var(--accent-strong);
   --color-accent-soft: var(--accent-soft);
   --color-border: var(--border);
-  --font-sans: var(--font-geist-mono);
-  --font-mono: var(--font-geist-mono);
+  /* Brand typeface everywhere; --font-mono keeps a real monospace stack for
+     anything that needs fixed-width alignment. */
+  --font-sans: var(--font-noto-serif);
+  --font-serif-sinhala: var(--font-noto-serif-sinhala);
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-family: var(--font-noto-serif), Georgia, "Times New Roman", serif;
 }
 
 * {

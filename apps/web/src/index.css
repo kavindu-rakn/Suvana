@@ -124,10 +124,12 @@
   --fs-display: 28px;
   --fs-title: clamp(1.625rem, 1.164rem + 1.54vw, 2.125rem);
 
-  /* system-ui resolves to Segoe UI on Windows, San Francisco on Apple and
-     Roboto on Android. The old stack hardcoded 'Segoe UI' first, so every
-     non-Windows device fell through to a generic sans. */
-  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* Suvana brand typeface (packages/branding/README.md): Noto Serif for
+     English, pairing with Noto Serif Sinhala so both scripts share one voice.
+     Loaded in learn/index.html. Georgia is the fallback because it is a
+     screen-designed serif present on every desktop OS — a system-ui fallback
+     would swap the whole page between serif and sans on a slow font load. */
+  --sans: 'Noto Serif', Georgia, 'Times New Roman', serif;
   /* Left as it was on purpose: inserting another family ahead of Consolas
      changes the glyph metrics, and the live readouts (fps, inference ms,
      elapsed seconds) are sized against these. ui-monospace already picks
@@ -264,6 +266,12 @@ body::before {
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: var(--accent);
+}
+
+/* Sinhala script needs its own face — --mono and --sans carry no Sinhala
+   glyphs, so without this the browser falls back to whatever the OS has. */
+.si {
+  font-family: 'Noto Serif Sinhala', 'Nirmala UI', 'Iskoola Pota', serif;
 }
 
 /* The kicker's Suvana wordmark links back to the platform landing page. */

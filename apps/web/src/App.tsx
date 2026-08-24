@@ -98,7 +98,13 @@ function App() {
 
       <header className="app-header">
         <p className="app-kicker">
-          <a href="/">සුවණ Suvana</a> · R26-SE-019 · Learning &amp; Practice Module
+          <a href="/">
+            <span className="si" lang="si">
+              සුවණ
+            </span>{' '}
+            Suvana
+          </a>{' '}
+          · R26-SE-019 · Learning &amp; Practice Module
         </p>
         <h1>Learn</h1>
         <p className="app-sub">

@@ -4,7 +4,7 @@ type Variant = "primary" | "outline" | "ghost";
 type Size = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-md font-mono font-medium tracking-tight transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "inline-flex items-center justify-center gap-2 rounded-md font-medium tracking-tight transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 const variants: Record<Variant, string> = {
   primary: "bg-accent text-[#0a0a0a] hover:bg-accent-strong",

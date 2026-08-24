@@ -33,7 +33,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { type IconName } from '@/components/ui';
-import { alpha, elevation, radius, space, typography as typeScale } from '@/constants/theme';
+import { alpha, elevation, fonts, radius, space, typography as typeScale } from '@/constants/theme';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useEngineState } from '@/providers/EngineProvider';
 import { useTranscribeState } from '@/providers/TranscribeProvider';
@@ -145,7 +145,7 @@ const useStyles = makeStyles((c) => ({
     borderWidth: StyleSheet.hairlineWidth * 2,
     borderColor: c.border,
   },
-  chipText: { fontSize: 11, fontWeight: '600', color: c.textSecondary },
+  chipText: { fontSize: 11, fontFamily: fonts.semibold, fontWeight: '600', color: c.textSecondary },
 
   cta: {
     flexDirection: 'row',
@@ -179,7 +179,7 @@ const useStyles = makeStyles((c) => ({
     borderColor: c.border,
     backgroundColor: c.surface,
   },
-  quickText: { fontSize: 11, fontWeight: '600', color: c.textSecondary, textAlign: 'center' },
+  quickText: { fontSize: 11, fontFamily: fonts.semibold, fontWeight: '600', color: c.textSecondary, textAlign: 'center' },
 
   // ── Footer ──
   footer: { alignItems: 'center', gap: 4, marginTop: space.xxl },

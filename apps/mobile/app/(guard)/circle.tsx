@@ -25,7 +25,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AppButton, Card, Divider, EmptyState, ScreenHeader, SectionLabel, SettingRow } from '@/components/ui';
-import { alpha, radius, space, typography as typeScale } from '@/constants/theme';
+import { alpha, fonts, radius, space, typography as typeScale } from '@/constants/theme';
 import { useSettings } from '@/providers/SettingsProvider';
 import { useResponsive } from '@/hooks/useResponsive';
 import { makeStyles, useColors } from '@/providers/ThemeProvider';
@@ -81,7 +81,7 @@ const useStyles = makeStyles((c) => ({
 
   contactRow: { flexDirection: 'row', alignItems: 'center', gap: space.md, padding: space.lg },
   avatar: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontSize: 16, fontWeight: '700' },
+  avatarText: { fontSize: 16, fontFamily: fonts.bold, fontWeight: '700' },
   contactInfo: { flex: 1 },
   contactName: { ...typeScale.subtitle, color: c.text },
   contactPhone: { ...typeScale.caption, color: c.textMuted, marginTop: 2 },

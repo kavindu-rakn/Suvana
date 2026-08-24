@@ -29,7 +29,7 @@ import { router } from 'expo-router';
 import { DetectionCard } from '@/components/DetectionCard';
 import { LevelMeter, ListeningOrb } from '@/components/ListeningVisualizer';
 import { AppButton, Card, SectionLabel, type IconName } from '@/components/ui';
-import { alpha, radius, space, threatColors, typography as typeScale } from '@/constants/theme';
+import { alpha, fonts, radius, space, threatColors, typography as typeScale } from '@/constants/theme';
 import { orbDiameter, useResponsive } from '@/hooks/useResponsive';
 import { useEngineActions, useEngineState } from '@/providers/EngineProvider';
 import { useSettings } from '@/providers/SettingsProvider';
@@ -158,7 +158,7 @@ const useStyles = makeStyles((c) => ({
     backgroundColor: c.surface,
   },
   demoChipLabel: { ...typeScale.captionStrong, color: c.text, textAlign: 'center' },
-  demoChipCaption: { fontSize: 10, color: c.textMuted, textAlign: 'center' },
+  demoChipCaption: { fontSize: 10, fontFamily: fonts.regular, color: c.textMuted, textAlign: 'center' },
   demoNote: { ...typeScale.caption, color: c.textMuted, marginTop: space.md, lineHeight: 18 },
 }));
 

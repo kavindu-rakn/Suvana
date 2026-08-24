@@ -28,7 +28,7 @@ export function AudioFilePicker({
       >
         <UploadCloud size={26} />
       </button>
-      <p className="font-mono text-sm text-foreground-muted">Click to choose an audio file</p>
+      <p className="text-sm text-foreground-muted">Click to choose an audio file</p>
       <input
         ref={inputRef}
         type="file"
