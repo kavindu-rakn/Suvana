@@ -1,5 +1,6 @@
 "use client";
 
+import { apiPath } from "@/lib/basePath";
 import { useEffect, useState } from "react";
 import { Loader2, Settings as SettingsIcon, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -14,7 +15,7 @@ export function SettingsClient() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    fetch("/api/admin/ngrok-url")
+    fetch(apiPath("/api/admin/ngrok-url"))
       .then((res) => res.json())
       .then((data) => setCurrentUrl(data.url ?? null))
       .catch(() => setCurrentUrl(null));
@@ -27,7 +28,7 @@ export function SettingsClient() {
     setSaving(true);
 
     try {
-      const res = await fetch("/api/admin/ngrok-url", {
+      const res = await fetch(apiPath("/api/admin/ngrok-url"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: urlInput.trim() }),

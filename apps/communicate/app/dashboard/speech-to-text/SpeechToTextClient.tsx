@@ -1,5 +1,6 @@
 "use client";
 
+import { apiPath } from "@/lib/basePath";
 import { useState } from "react";
 import { Loader2, AudioLines } from "lucide-react";
 import { AudioInputPanel } from "@/components/audio/AudioInputPanel";
@@ -22,7 +23,7 @@ export function SpeechToTextClient() {
       const form = new FormData();
       form.append("audio", audio.blob, audio.filename);
 
-      const res = await fetch("/api/stt", { method: "POST", body: form });
+      const res = await fetch(apiPath("/api/stt"), { method: "POST", body: form });
       const data = await res.json();
 
       if (!res.ok) {
@@ -33,7 +34,7 @@ export function SpeechToTextClient() {
       setResult(data);
 
       // Best-effort save to history; failures here shouldn't block the UI.
-      fetch("/api/history", {
+      fetch(apiPath("/api/history"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

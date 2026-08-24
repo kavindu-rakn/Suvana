@@ -1,5 +1,6 @@
 "use client";
 
+import { apiPath } from "@/lib/basePath";
 import { useRef, useState } from "react";
 import { Loader2, Box, Play, Square, RotateCcw } from "lucide-react";
 import { AudioInputPanel } from "@/components/audio/AudioInputPanel";
@@ -82,7 +83,7 @@ export function SignModelClient() {
       const form = new FormData();
       form.append("audio", audio.blob, audio.filename);
 
-      const sttRes = await fetch("/api/stt", { method: "POST", body: form });
+      const sttRes = await fetch(apiPath("/api/stt"), { method: "POST", body: form });
       const sttData: SttResult = await sttRes.json();
 
       if (!sttRes.ok) {
@@ -102,7 +103,7 @@ export function SignModelClient() {
       const hasTokens = sttData.tokens && sttData.tokens.length > 0;
       const hasGlosses = sttData.glosses && sttData.glosses.length > 0;
 
-      const glossRes = await fetch("/api/gloss/predict", {
+      const glossRes = await fetch(apiPath("/api/gloss/predict"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

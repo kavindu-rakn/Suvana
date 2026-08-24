@@ -3,6 +3,16 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/communicate",
+      "destination": "https://REPLACE-WITH-COMMUNICATE-DEPLOYMENT.vercel.app/communicate"
+    },
+    {
+      "source": "/communicate/:path*",
+      "destination": "https://REPLACE-WITH-COMMUNICATE-DEPLOYMENT.vercel.app/communicate/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/(models|references|wasm)/(.*)",

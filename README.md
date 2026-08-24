@@ -11,7 +11,7 @@ One platform for real-time two-way Deaf–hearing communication in Sri Lankan Si
 | `apps/mobile` | **Alerts** — sound awareness / SOS companion app | Expo / React Native, TF.js |
 | `services/recognition` | Sign → speech recognition API | FastAPI + TensorFlow |
 | `services/sound-awareness` | Sound-classification backend utilities for the mobile app | Python |
-| `services/speech` | *(planned)* Whisper ASR + emotion service, to be extracted from `apps/communicate/notebook-integration` | FastAPI |
+| `services/speech` | Sinhala Whisper ASR + audio emotion service (extracted from the Colab notebook; deploys as a Docker container, e.g. a Hugging Face Space) | FastAPI + PyTorch |
 | `tools/reference-converter` | Dataset video → landmark reference pipeline feeding `apps/web` | Python + MediaPipe |
 | `packages/branding` | Suvana palette tokens and logos | — |
 
@@ -28,10 +28,18 @@ Fresh-history monorepo bootstrapped **24 Aug 2026** from working-tree snapshots.
 
 Deliberately excluded from every snapshot: git histories, `node_modules`, Python venvs, build outputs, datasets, and ~293 MB of Mixamo test FBX files (`lib/models` in Sign-Detector — nothing in code references them). The team repo's `SSL-Transformer/` folder was a stale placeholder and was not copied; the PP1 Python demo stays in the team repo as historical reference.
 
+## One-domain topology
+
+One domain serves the whole web product. The shell (`apps/web`) owns the root; `apps/communicate` runs with Next `basePath` `/communicate` (set via `NEXT_PUBLIC_BASE_PATH`), which namespaces its pages, assets and API routes under that prefix, and the shell proxies it:
+
+- **Production**: the two `rewrites` in `apps/web/vercel.json` forward `/communicate/*` to the communicate deployment. **Deploy order matters**: deploy `apps/communicate` first (its own Vercel project, env vars from `.env.local.example` set in the dashboard), paste its production URL over the `REPLACE-WITH-COMMUNICATE-DEPLOYMENT` placeholder, then deploy `apps/web`.
+- **Dev**: Vite proxies `/communicate` → `localhost:3000`, so `localhost:5173/communicate` mirrors production. Start both dev servers.
+- Client code must never call `fetch("/api/...")` with a bare absolute path — route it through `apiPath()` from `lib/basePath.ts` (basePath does not rewrite raw fetches). Unset `NEXT_PUBLIC_BASE_PATH` and everything collapses to standalone behaviour, matching Lithira's original deployment.
+
 ## Running
 
 - **`apps/web`** — `npm install`, then `npm run dev`. The `predev` hook regenerates `public/reference-index.json`; running `npx vite` directly skips it and the app loads with no references.
-- **`apps/communicate`** — `npm install`, then `npm run dev`. Needs `.env.local` (MongoDB Atlas, Auth.js secret, Cloudinary keys, ngrok shared secret) — see its own README. All avatar models and gloss animations live in Cloudinary, not in this repo; the speech backend URL is read from MongoDB at runtime.
+- **`apps/communicate`** — `npm install`, copy `.env.local.example` → `.env.local` and fill it, then `npm run dev`. Needs MongoDB Atlas, an Auth.js secret, Cloudinary keys and the ngrok shared secret — all avatar models and gloss animations live in Cloudinary, not in this repo; the speech backend URL is read from MongoDB at runtime.
 - **`apps/mobile`** — `npm install`, then `npx expo start`.
 - **`services/recognition`** — `pip install -r requirements.txt`, then see its README. Before wiring into the web shell, verify the webcam is captured browser-side (frames/landmarks sent to the API), not server-side.
 

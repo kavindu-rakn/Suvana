@@ -1,5 +1,6 @@
 "use client";
 
+import { apiPath } from "@/lib/basePath";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Mic, Check, RotateCcw, ChevronRight, Loader2, AlertTriangle } from "lucide-react";
 import {
@@ -130,7 +131,7 @@ export function ContributeClient() {
       // lands in one render rather than flashing an empty session first.
       let progress: { speakerNo?: string; done?: { sentenceId: string; emotion: string }[] } | null = null;
       try {
-        const res = await fetch(`/api/contribute?speakerKey=${stored}`);
+        const res = await fetch(apiPath(`/api/contribute?speakerKey=${stored}`));
         if (res.ok) progress = await res.json();
       } catch {
         // Offline or the API is down — start fresh rather than blocking.
@@ -200,7 +201,7 @@ export function ContributeClient() {
       form.append("ageBand", ageBand);
       form.append("consent", "true");
 
-      const res = await fetch("/api/contribute", { method: "POST", body: form });
+      const res = await fetch(apiPath("/api/contribute"), { method: "POST", body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Upload failed.");
 

@@ -19,5 +19,14 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
+    // Dev mirror of the production topology: vercel.json rewrites
+    // /communicate/* to the communicate deployment; here the same paths
+    // proxy to its dev server (which runs with basePath /communicate).
+    proxy: {
+      '/communicate': {
+        target: 'http://localhost:3000',
+        changeOrigin: false,
+      },
+    },
   },
 })

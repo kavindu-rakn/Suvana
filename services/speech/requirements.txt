@@ -1,0 +1,15 @@
+# Mirrors the Colab notebook's pip cell (build_notebook.py), minus the
+# Colab-only pieces (pyngrok, nest-asyncio) and torchao (pinned there but
+# never imported). scipy arrives with librosa.
+fastapi
+uvicorn[standard]
+python-multipart
+torch
+transformers
+peft
+librosa
+soundfile
+sinling
+scikit-learn
+joblib
+requests

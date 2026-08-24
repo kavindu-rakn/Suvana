@@ -1,5 +1,6 @@
 "use client";
 
+import { apiPath } from "@/lib/basePath";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, ContactShadows } from "@react-three/drei";
@@ -406,7 +407,7 @@ export function SignDictionaryWorkbench() {
     let cancelled = false;
     void (async () => {
       try {
-        const res = await fetch("/api/animations");
+        const res = await fetch(apiPath("/api/animations"));
         const data = await res.json().catch(() => ({}));
         if (cancelled) return;
         if (res.status === 401) {
@@ -558,7 +559,7 @@ export function SignDictionaryWorkbench() {
         `${glossName.trim().toLowerCase().replace(/\s+/g, "-")}.json`
       );
 
-      const res = await fetch("/api/animations/upload", { method: "POST", body: form });
+      const res = await fetch(apiPath("/api/animations/upload"), { method: "POST", body: form });
       const data = await res.json().catch(() => ({}));
       if (res.status === 401) throw new Error("Sign in to save to the dictionary.");
       if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`);
@@ -580,7 +581,7 @@ export function SignDictionaryWorkbench() {
       }
       setBusyId(entry._id);
       try {
-        const res = await fetch(`/api/animations/${entry._id}`, { method: "DELETE" });
+        const res = await fetch(apiPath(`/api/animations/${entry._id}`), { method: "DELETE" });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`);
         setToast({

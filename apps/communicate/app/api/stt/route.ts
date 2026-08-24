@@ -46,8 +46,14 @@ export async function POST(req: NextRequest) {
     upstream = await fetch(`${ngrokUrl}${endpointPath}`, {
       method: "POST",
       body: forwardForm,
-      // Skips ngrok's free-tier browser interstitial page for non-browser requests.
-      headers: { "ngrok-skip-browser-warning": "true" },
+      headers: {
+        // Skips ngrok's free-tier browser interstitial page for non-browser requests.
+        "ngrok-skip-browser-warning": "true",
+        // Shared secret for services/speech when it runs with
+        // TRANSLATE_API_KEY set (a persistent host, unlike ngrok, has a
+        // guessable URL). Unset = old open-notebook behaviour.
+        ...(process.env.STT_API_KEY ? { "x-api-key": process.env.STT_API_KEY } : {}),
+      },
     });
   } catch {
     return NextResponse.json(
