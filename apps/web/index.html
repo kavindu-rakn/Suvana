@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#FDFDFD" />
     <meta
@@ -93,6 +93,14 @@
         height: 26px;
         width: auto;
         display: block;
+      }
+      .nav .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .nav .mark {
+        height: 34px;
       }
       .nav .meta {
         font-family: var(--mono);
@@ -260,7 +268,8 @@
   <body>
     <header>
       <div class="nav">
-        <a href="/" aria-label="Suvana home">
+        <a href="/" aria-label="Suvana home" class="brand">
+          <img class="mark" src="/branding/suvana-mark.png" alt="" />
           <img src="/branding/suvana-wordmark-en.png" alt="SUVANA" />
         </a>
         <span class="meta">R26-SE-019 · SLIIT</span>
