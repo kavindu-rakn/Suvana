@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --background: #08070a;
+  --background-elevated: #121017;
+  --foreground: #f5f5f7;
+  --foreground-muted: #a1a0a8;
+  --accent: #c4b5fd;
+  --accent-strong: #a78bfa;
+  --accent-soft: #ede9fe;
+  --border: #232130;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-elevated: var(--background-elevated);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-border: var(--border);
+  --font-sans: var(--font-geist-mono);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+* {
+  border-color: var(--border);
+}
+
+::selection {
+  background: var(--accent);
+  color: #0a0a0a;
+}
+
+/* thin, theme-matched scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-strong);
+}

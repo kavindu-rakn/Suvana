@@ -1,0 +1,44 @@
+{
+  "name": "ssl-signdetecter",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
+    "fastest-levenshtein": "^1.0.16",
+    "geist": "^1.7.2",
+    "gsap": "^3.15.0",
+    "lucide-react": "^1.31.0",
+    "mongoose": "^9.9.1",
+    "next": "16.3.0",
+    "next-auth": "^5.0.0-beta.32",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "three": "^0.185.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/three": "^0.185.4",
+    "dotenv": "^17.4.2",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.12",
+    "typescript": "^5"
+  },
+  "//jose": "Do not re-add an `overrides` pin for jose. @auth/core needs ^6.0.6; an exact pin on an older major left npm installing no copy at all, which crashed /api/auth/[...nextauth] at module load and made every session request return an empty body."
+}

@@ -1,0 +1,46 @@
+# Dataset Configuration
+dataset:
+  path: "data/raw"
+  processed_path: "data/processed"
+  annotations_path: "data/annotations"
+  num_classes: 171  # Actual gesture count from data/raw after preparation
+
+# Video Processing
+video:
+  frame_height: 224
+  frame_width: 224
+  frames_per_sequence: 30
+  fps: 30
+
+# Model Configuration
+model:
+  type: "lstm"  # Options: cnn, lstm, transformer
+  input_shape: [224, 224, 3]
+  sequence_length: 30
+  num_features: 1629
+  lstm_units: 128
+  dense_units: 256
+  dropout_rate: 0.5
+  learning_rate: 0.001
+  model_path: "models/saved_models/best_model.h5"
+
+# Training Configuration
+training:
+  batch_size: 32
+  epochs: 50
+  validation_split: 0.2
+  early_stopping_patience: 10
+  learning_rate: 0.001
+  model_save_path: "models/saved_models/"
+
+# Recognition Configuration
+recognition:
+  confidence_threshold: 0.7
+  smoothing_window: 5
+  display_fps: true
+
+# Speech Configuration
+speech:
+  language: "si"  # Sinhala
+  speed: 1.0
+  output_format: "mp3"

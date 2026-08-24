@@ -1,0 +1,673 @@
+/* ============================================================================
+   සවන AI ASSISTANT — premium chat widget
+   ----------------------------------------------------------------------------
+   Every selector is namespaced under .svn-ai* so this stylesheet cannot collide
+   with, override, or inherit into any existing rule in styles.css / index.html.
+   It reuses the app's own CSS custom properties (--accent, --accent-2, --panel…)
+   with local fallbacks, so it stays in sync if the theme is ever retuned.
+   ========================================================================== */
+
+.svn-ai-root {
+  --svn-accent: var(--accent, #f49867);
+  --svn-accent-2: var(--accent-2, #ae67fa);
+  --svn-grad: linear-gradient(103.22deg, #ae67fa -13.86%, #f49867 99.55%);
+  --svn-text: var(--text, #f4f7ff);
+  --svn-dim: var(--text-dim, #9bc0e6);
+  --svn-faint: var(--text-faint, #5f7fa8);
+  --svn-panel: rgba(8, 24, 47, 0.82);
+  --svn-border: rgba(129, 175, 221, 0.22);
+  --svn-bubble-bot: rgba(15, 36, 66, 0.72);
+
+  position: fixed;
+  inset: auto 0 0 auto;
+  z-index: 9000;
+  font-family: "Manrope", "Noto Sans Sinhala", "Iskoola Pota", ui-sans-serif,
+    system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  pointer-events: none;
+}
+
+.svn-ai-root * { box-sizing: border-box; }
+.svn-ai-root button { font-family: inherit; }
+
+/* ---------------------------------------------------------------- LAUNCHER */
+
+.svn-ai-launcher {
+  pointer-events: auto;
+  position: fixed;
+  right: clamp(16px, 3vw, 34px);
+  bottom: clamp(16px, 3vw, 34px);
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  background: var(--svn-grad);
+  box-shadow: 0 14px 44px rgba(174, 103, 250, 0.42),
+    0 4px 14px rgba(2, 10, 24, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+  animation: svn-ai-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+
+@keyframes svn-ai-rise {
+  from { opacity: 0; transform: translateY(28px) scale(0.7); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.svn-ai-launcher:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 20px 56px rgba(174, 103, 250, 0.55), 0 6px 18px rgba(2, 10, 24, 0.65); }
+.svn-ai-launcher:active { transform: scale(0.95); }
+.svn-ai-launcher:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+
+/* breathing halo */
+.svn-ai-launcher::before,
+.svn-ai-launcher::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(244, 152, 103, 0.55);
+  animation: svn-ai-ping 3.4s ease-out infinite;
+  pointer-events: none;
+}
+.svn-ai-launcher::after { animation-delay: 1.7s; }
+
+@keyframes svn-ai-ping {
+  0%   { transform: scale(0.9); opacity: 0.7; }
+  70%  { transform: scale(1.55); opacity: 0; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+
+.svn-ai-launcher svg { position: relative; z-index: 1; }
+
+.svn-ai-launcher .svn-ai-spark {
+  position: absolute;
+  top: -2px; right: -2px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #33e0a2;
+  border: 2px solid #061225;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 800;
+  color: #04220f;
+  z-index: 2;
+}
+
+.svn-ai-root.is-open .svn-ai-launcher { transform: scale(0.001); opacity: 0; pointer-events: none; }
+
+/* tooltip */
+.svn-ai-tip {
+  pointer-events: none;
+  position: fixed;
+  right: calc(clamp(16px, 3vw, 34px) + 74px);
+  bottom: calc(clamp(16px, 3vw, 34px) + 18px);
+  padding: 9px 14px;
+  border-radius: 12px;
+  background: var(--svn-panel);
+  border: 1px solid var(--svn-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--svn-text);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  box-shadow: 0 12px 32px rgba(2, 10, 24, 0.55);
+}
+.svn-ai-launcher:hover ~ .svn-ai-tip { opacity: 1; transform: translateX(0); }
+.svn-ai-root.is-open .svn-ai-tip { opacity: 0 !important; }
+@media (max-width: 560px) { .svn-ai-tip { display: none; } }
+
+/* ------------------------------------------------------------------- PANEL */
+
+.svn-ai-panel {
+  pointer-events: auto;
+  position: fixed;
+  right: clamp(12px, 3vw, 34px);
+  bottom: clamp(12px, 3vw, 34px);
+  width: min(408px, calc(100vw - 24px));
+  height: min(640px, calc(100vh - 48px));
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--svn-panel);
+  border: 1px solid var(--svn-border);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  box-shadow: 0 32px 90px rgba(2, 8, 22, 0.78), 0 0 0 1px rgba(129, 175, 221, 0.06);
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  transform-origin: bottom right;
+  visibility: hidden;
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.32s;
+}
+
+.svn-ai-root.is-open .svn-ai-panel {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+}
+
+/* top sheen */
+.svn-ai-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  z-index: 3;
+}
+
+/* ------------------------------------------------------------------ HEADER */
+
+.svn-ai-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 16px 14px;
+  border-bottom: 1px solid var(--svn-border);
+  background: linear-gradient(180deg, rgba(174, 103, 250, 0.13), transparent);
+  flex-shrink: 0;
+}
+
+.svn-ai-avatar {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--svn-grad);
+  box-shadow: 0 6px 20px rgba(174, 103, 250, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+}
+
+.svn-ai-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.svn-ai-title strong {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  background: var(--svn-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.svn-ai-title span {
+  font-size: 11.5px;
+  color: var(--svn-dim);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.svn-ai-title span i {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #33e0a2;
+  box-shadow: 0 0 10px rgba(51, 224, 162, 0.7);
+  flex-shrink: 0;
+}
+
+.svn-ai-headbtn {
+  width: 32px; height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  border: 1px solid var(--svn-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--svn-dim);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+.svn-ai-headbtn:hover { background: rgba(255, 255, 255, 0.14); color: var(--svn-text); }
+.svn-ai-headbtn:active { transform: scale(0.92); }
+.svn-ai-headbtn.is-active { color: var(--svn-accent); border-color: rgba(244, 152, 103, 0.5); }
+
+/* -------------------------------------------------------------- MESSAGES */
+
+.svn-ai-body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 18px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 152, 103, 0.5) transparent;
+}
+.svn-ai-body::-webkit-scrollbar { width: 6px; }
+.svn-ai-body::-webkit-scrollbar-thumb { background: rgba(244, 152, 103, 0.45); border-radius: 99px; }
+.svn-ai-body::-webkit-scrollbar-track { background: transparent; }
+
+.svn-ai-msg {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 100%;
+  animation: svn-ai-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes svn-ai-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.svn-ai-bubble {
+  padding: 11px 14px;
+  border-radius: 16px;
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--svn-text);
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.svn-ai-msg.bot .svn-ai-bubble {
+  align-self: flex-start;
+  background: var(--svn-bubble-bot);
+  border: 1px solid var(--svn-border);
+  border-bottom-left-radius: 5px;
+  max-width: 94%;
+}
+.svn-ai-msg.user { align-items: flex-end; }
+.svn-ai-msg.user .svn-ai-bubble {
+  background: var(--svn-grad);
+  border-bottom-right-radius: 5px;
+  color: #fff;
+  font-weight: 600;
+  max-width: 86%;
+  box-shadow: 0 8px 24px rgba(174, 103, 250, 0.3);
+}
+
+.svn-ai-bubble strong { font-weight: 800; }
+.svn-ai-bubble em { color: var(--svn-dim); font-style: italic; }
+.svn-ai-bubble code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 11.5px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--svn-accent);
+}
+.svn-ai-bubble p { margin: 0 0 8px; }
+.svn-ai-bubble p:last-child { margin-bottom: 0; }
+.svn-ai-bubble .svn-ai-li { display: flex; gap: 8px; margin: 3px 0; }
+.svn-ai-bubble .svn-ai-li::before { content: "•"; color: var(--svn-accent); flex-shrink: 0; }
+
+.svn-ai-notice {
+  align-self: flex-start;
+  font-size: 11.5px;
+  color: #ffcf9a;
+  background: rgba(244, 152, 103, 0.12);
+  border: 1px solid rgba(244, 152, 103, 0.3);
+  padding: 7px 11px;
+  border-radius: 10px;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------- SIGN CARD */
+
+.svn-ai-cards { display: flex; flex-direction: column; gap: 9px; align-self: flex-start; width: 94%; }
+
+.svn-ai-card {
+  border-radius: 15px;
+  border: 1px solid var(--svn-border);
+  background: linear-gradient(160deg, rgba(174, 103, 250, 0.11), rgba(9, 27, 52, 0.5));
+  padding: 12px 13px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+.svn-ai-card:hover { border-color: rgba(244, 152, 103, 0.45); transform: translateY(-1px); }
+
+.svn-ai-card::after {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--svn-grad);
+  opacity: 0.85;
+}
+
+.svn-ai-card-top { display: flex; align-items: flex-start; gap: 10px; }
+.svn-ai-card-main { flex: 1; min-width: 0; }
+
+.svn-ai-card-si {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--svn-text);
+  line-height: 1.35;
+  word-break: break-word;
+}
+.svn-ai-card-en { font-size: 12.5px; color: var(--svn-dim); margin-top: 2px; line-height: 1.45; }
+.svn-ai-card-label {
+  font-size: 10.5px;
+  color: var(--svn-faint);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  margin-top: 5px;
+  word-break: break-all;
+}
+
+.svn-ai-chip-cat {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 99px;
+  border: 1px solid rgba(244, 152, 103, 0.35);
+  color: var(--svn-accent);
+  background: rgba(244, 152, 103, 0.1);
+  margin-top: 7px;
+}
+
+.svn-ai-speak {
+  width: 34px; height: 34px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid var(--svn-border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--svn-accent);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.svn-ai-speak:hover { background: rgba(244, 152, 103, 0.2); }
+.svn-ai-speak:active { transform: scale(0.9); }
+.svn-ai-speak.is-playing { background: var(--svn-grad); color: #fff; border-color: transparent; }
+
+.svn-ai-tipbtn {
+  margin-top: 9px;
+  width: 100%;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--svn-dim);
+  background: none;
+  border: none;
+  border-top: 1px dashed var(--svn-border);
+  padding: 8px 0 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.18s ease;
+}
+.svn-ai-tipbtn:hover { color: var(--svn-accent); }
+.svn-ai-tipbtn svg { transition: transform 0.25s ease; }
+.svn-ai-tipbtn.is-open svg { transform: rotate(180deg); }
+
+.svn-ai-tips {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--svn-dim);
+}
+.svn-ai-tips.is-open { display: flex; animation: svn-ai-in 0.3s ease both; }
+.svn-ai-tips div { display: flex; gap: 7px; }
+.svn-ai-tips div::before { content: "→"; color: var(--svn-accent); flex-shrink: 0; }
+
+/* ------------------------------------------------------------------- CHIPS */
+
+.svn-ai-chips { display: flex; flex-wrap: wrap; gap: 7px; align-self: flex-start; }
+.svn-ai-chips button {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--svn-dim);
+  padding: 7px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--svn-border);
+  background: rgba(255, 255, 255, 0.045);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.svn-ai-chips button:hover {
+  color: var(--svn-text);
+  border-color: rgba(244, 152, 103, 0.5);
+  background: rgba(244, 152, 103, 0.12);
+  transform: translateY(-1px);
+}
+
+/* ------------------------------------------------------------------ TYPING */
+
+.svn-ai-typing {
+  align-self: flex-start;
+  display: flex;
+  gap: 5px;
+  padding: 13px 15px;
+  border-radius: 16px;
+  border-bottom-left-radius: 5px;
+  background: var(--svn-bubble-bot);
+  border: 1px solid var(--svn-border);
+}
+.svn-ai-typing i {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--svn-accent);
+  animation: svn-ai-bounce 1.3s ease-in-out infinite;
+}
+.svn-ai-typing i:nth-child(2) { animation-delay: 0.18s; background: #d47fc0; }
+.svn-ai-typing i:nth-child(3) { animation-delay: 0.36s; background: var(--svn-accent-2); }
+@keyframes svn-ai-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ----------------------------------------------------------------- COMPOSER */
+
+.svn-ai-foot {
+  flex-shrink: 0;
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--svn-border);
+  background: linear-gradient(0deg, rgba(174, 103, 250, 0.08), transparent);
+}
+
+.svn-ai-inputrow {
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+  padding: 6px 6px 6px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--svn-border);
+  background: rgba(4, 14, 30, 0.65);
+  transition: border-color 0.22s ease, box-shadow 0.22s ease;
+}
+.svn-ai-inputrow:focus-within {
+  border-color: rgba(244, 152, 103, 0.55);
+  box-shadow: 0 0 0 3px rgba(244, 152, 103, 0.1);
+}
+
+.svn-ai-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  color: var(--svn-text);
+  font-size: 13.5px;
+  line-height: 1.5;
+  resize: none;
+  max-height: 104px;
+  padding: 8px 0;
+  font-family: inherit;
+}
+.svn-ai-input::placeholder { color: var(--svn-faint); }
+
+.svn-ai-send {
+  width: 36px; height: 36px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  border: none;
+  background: var(--svn-grad);
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+  box-shadow: 0 6px 18px rgba(174, 103, 250, 0.35);
+}
+.svn-ai-send:hover:not(:disabled) { transform: scale(1.07); }
+.svn-ai-send:active:not(:disabled) { transform: scale(0.92); }
+.svn-ai-send:disabled { opacity: 0.35; cursor: default; box-shadow: none; }
+
+.svn-ai-foot-note {
+  margin-top: 8px;
+  font-size: 10.5px;
+  color: var(--svn-faint);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* --------------------------------------------------------------- SETTINGS */
+
+.svn-ai-settings {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: rgba(5, 16, 34, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.28s ease, transform 0.28s ease, visibility 0.28s;
+  overflow-y: auto;
+}
+.svn-ai-settings.is-open { opacity: 1; visibility: visible; transform: translateY(0); }
+
+.svn-ai-set-body { padding: 18px 18px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.svn-ai-set-intro {
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--svn-dim);
+  padding: 12px 13px;
+  border-radius: 13px;
+  border: 1px solid var(--svn-border);
+  background: rgba(174, 103, 250, 0.09);
+}
+.svn-ai-set-intro strong { color: var(--svn-text); }
+
+.svn-ai-field { display: flex; flex-direction: column; gap: 7px; }
+.svn-ai-field label {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--svn-faint);
+}
+.svn-ai-field input,
+.svn-ai-field select {
+  width: 100%;
+  padding: 11px 13px;
+  border-radius: 12px;
+  border: 1px solid var(--svn-border);
+  background: rgba(4, 14, 30, 0.7);
+  color: var(--svn-text);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.svn-ai-field input:focus,
+.svn-ai-field select:focus { border-color: rgba(244, 152, 103, 0.6); }
+.svn-ai-field select option { background: #071a33; color: #f4f7ff; }
+.svn-ai-field small { font-size: 11px; color: var(--svn-faint); line-height: 1.5; }
+.svn-ai-field small a { color: var(--svn-accent); text-decoration: none; font-weight: 700; }
+.svn-ai-field small a:hover { text-decoration: underline; }
+
+.svn-ai-modelrow { display: flex; gap: 8px; align-items: stretch; }
+.svn-ai-modelrow input { flex: 1; min-width: 0; }
+
+.svn-ai-modelpick {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(244, 152, 103, 0.35);
+  background: rgba(4, 14, 30, 0.85);
+  color: var(--svn-text);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  max-width: 100%;
+}
+.svn-ai-modelpick:focus { border-color: rgba(244, 152, 103, 0.65); }
+.svn-ai-modelpick option { background: #071a33; color: #f4f7ff; }
+
+.svn-ai-set-actions { display: flex; gap: 9px; }
+
+.svn-ai-btn.compact {
+  flex: 0 0 auto;
+  padding: 0 14px;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.svn-ai-btn {
+  flex: 1;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--svn-border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--svn-text);
+  transition: all 0.2s ease;
+}
+.svn-ai-btn:hover { background: rgba(255, 255, 255, 0.13); }
+.svn-ai-btn.primary { background: var(--svn-grad); border-color: transparent; box-shadow: 0 8px 22px rgba(174, 103, 250, 0.32); }
+.svn-ai-btn.primary:hover { filter: brightness(1.08); }
+.svn-ai-btn:disabled { opacity: 0.5; cursor: default; }
+
+.svn-ai-set-status {
+  font-size: 12px;
+  line-height: 1.55;
+  padding: 10px 12px;
+  border-radius: 11px;
+  display: none;
+}
+.svn-ai-set-status.show { display: block; animation: svn-ai-in 0.3s ease both; }
+.svn-ai-set-status.ok { color: #7df5c8; background: rgba(51, 224, 162, 0.12); border: 1px solid rgba(51, 224, 162, 0.32); }
+.svn-ai-set-status.err { color: #ffa8a8; background: rgba(255, 107, 107, 0.11); border: 1px solid rgba(255, 107, 107, 0.32); }
+.svn-ai-set-status.busy { color: var(--svn-dim); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--svn-border); }
+
+/* ------------------------------------------------------------------ MOBILE */
+
+@media (max-width: 560px) {
+  .svn-ai-panel {
+    right: 0; bottom: 0; left: 0;
+    width: 100vw;
+    height: 88vh;
+    height: 88dvh;
+    border-radius: 22px 22px 0 0;
+    transform-origin: bottom center;
+  }
+  .svn-ai-cards { width: 100%; }
+  .svn-ai-launcher { width: 56px; height: 56px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svn-ai-root *,
+  .svn-ai-root *::before,
+  .svn-ai-root *::after {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.06s !important;
+  }
+}

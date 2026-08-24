@@ -1,0 +1,564 @@
+/* ============================================================================
+   SOUNDGUARD COMPONENT INTEGRATION — STYLES
+   ----------------------------------------------------------------------------
+   Namespaced under .sg-* to guarantee 100% style isolation from core app.
+   ============================================================================ */
+
+/* ------------------------------------------------------------------
+   1. HEADER LAUNCHER BUTTON
+   ------------------------------------------------------------------ */
+.sg-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(51, 224, 162, 0.12), rgba(174, 103, 250, 0.14));
+  border: 1px solid rgba(51, 224, 162, 0.35);
+  color: #5efcc4;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--dur-2, 0.3s) var(--ease, ease);
+  box-shadow: 0 4px 16px rgba(51, 224, 162, 0.1);
+  white-space: nowrap;
+}
+
+.sg-header-btn:hover {
+  background: linear-gradient(135deg, rgba(51, 224, 162, 0.22), rgba(174, 103, 250, 0.25));
+  border-color: rgba(51, 224, 162, 0.65);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(51, 224, 162, 0.25);
+}
+
+.sg-header-btn svg {
+  flex-shrink: 0;
+}
+
+.sg-header-btn .sg-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #33e0a2;
+  box-shadow: 0 0 8px #33e0a2;
+  animation: sgPulse 1.8s infinite;
+}
+
+@keyframes sgPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.75); }
+}
+
+@media (max-width: 900px) {
+  .sg-header-btn span.sg-btn-text {
+    display: none;
+  }
+  .sg-header-btn {
+    padding: 8px 10px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   2. SOUNDGUARD SHOWCASE SECTION (Landing Page)
+   ------------------------------------------------------------------ */
+.soundguard-section {
+  position: relative;
+  max-width: 1320px;
+  margin: 4.5rem auto 3rem;
+  padding: 0 clamp(20px, 5vw, 4rem);
+}
+
+.sg-showcase-card {
+  position: relative;
+  border-radius: var(--radius-xl, 28px);
+  padding: clamp(2.2rem, 5vw, 3.8rem);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01) 40%),
+    linear-gradient(135deg, rgba(14, 28, 54, 0.85), rgba(7, 14, 28, 0.95));
+  border: 1px solid rgba(146, 182, 224, 0.18);
+  box-shadow: 0 24px 60px rgba(2, 6, 16, 0.65), 0 0 0 1px rgba(220, 187, 144, 0.15);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.sg-showcase-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(51, 224, 162, 0.6) 30%, rgba(220, 187, 144, 0.7) 50%, rgba(174, 103, 250, 0.6) 70%, transparent);
+}
+
+.sg-card-glow {
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(51, 224, 162, 0.15), rgba(174, 103, 250, 0.08) 50%, transparent 70%);
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.sg-header-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.sg-header-text {
+  max-width: 680px;
+}
+
+.sg-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #33e0a2;
+  margin-bottom: 0.9rem;
+}
+
+.sg-eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 2px;
+  background: #33e0a2;
+}
+
+.sg-header-text h2 {
+  font-family: var(--display, "Playfair Display", serif);
+  font-weight: 600;
+  font-size: clamp(28px, 3.4vw, 42px);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--text, #f3f6fc);
+  margin: 0 0 1rem;
+}
+
+.sg-header-text h2 .sg-accent-text {
+  background: linear-gradient(135deg, #33e0a2, #f49867);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sg-header-text p {
+  color: var(--text-dim, #a3b8d4);
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.sg-hero-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.sg-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #33e0a2, #05b87f);
+  color: #040e1c;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all var(--dur-2, 0.3s) var(--ease, ease);
+  box-shadow: 0 10px 30px rgba(51, 224, 162, 0.35);
+}
+
+.sg-btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(51, 224, 162, 0.45);
+  background: linear-gradient(135deg, #4efcc0, #05b87f);
+}
+
+.sg-badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-faint, #6d84a3);
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Feature grid inside showcase card */
+.sg-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 960px) {
+  .sg-feature-grid {
+    grid-template-columns: 1fr;
+  }
+  .sg-hero-action {
+    align-items: flex-start;
+    width: 100%;
+  }
+}
+
+.sg-feature-pill {
+  padding: 1.6rem;
+  border-radius: var(--radius-lg, 20px);
+  background: rgba(8, 16, 32, 0.65);
+  border: 1px solid rgba(146, 182, 224, 0.12);
+  transition: transform var(--dur-2, 0.3s) var(--ease, ease), border-color var(--dur-2, 0.3s) var(--ease, ease);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sg-feature-pill:hover {
+  transform: translateY(-3px);
+  border-color: rgba(51, 224, 162, 0.4);
+  background: rgba(12, 24, 46, 0.75);
+}
+
+.sg-feat-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(51, 224, 162, 0.2), rgba(174, 103, 250, 0.2));
+  border: 1px solid rgba(51, 224, 162, 0.3);
+  display: grid;
+  place-items: center;
+  color: #33e0a2;
+}
+
+.sg-feature-pill h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text, #f3f6fc);
+  letter-spacing: -0.01em;
+}
+
+.sg-feature-pill p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text-dim, #a3b8d4);
+}
+
+/* ------------------------------------------------------------------
+   3. SOUNDGUARD QR MODAL DIALOG
+   ------------------------------------------------------------------ */
+.sg-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(3, 7, 16, 0.78);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.3s ease;
+}
+
+.sg-modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sg-modal {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(16, 30, 56, 0.96), rgba(8, 16, 32, 0.98));
+  border: 1px solid rgba(220, 187, 144, 0.25);
+  border-radius: var(--radius-xl, 28px);
+  padding: clamp(24px, 4vw, 36px);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transform: scale(0.95) translateY(12px);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sg-modal-overlay.is-open .sg-modal {
+  transform: scale(1) translateY(0);
+}
+
+.sg-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-dim, #a3b8d4);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sg-modal-close:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+.sg-modal-head {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.sg-modal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(51, 224, 162, 0.12);
+  border: 1px solid rgba(51, 224, 162, 0.3);
+  color: #33e0a2;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.sg-modal-head h3 {
+  font-family: var(--display, "Playfair Display", serif);
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #ffffff;
+}
+
+.sg-modal-head p {
+  color: var(--text-dim, #a3b8d4);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* QR Presentation Box */
+.sg-qr-presentation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 22px;
+}
+
+.sg-qr-frame {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  padding: 16px;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(51, 224, 162, 0.4);
+  display: grid;
+  place-items: center;
+}
+
+.sg-qr-frame canvas,
+.sg-qr-frame svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.sg-qr-corners {
+  position: absolute;
+  inset: -8px;
+  pointer-events: none;
+}
+
+.sg-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #33e0a2;
+}
+
+.sg-corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; border-top-left-radius: 8px; }
+.sg-corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; border-top-right-radius: 8px; }
+.sg-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; border-bottom-left-radius: 8px; }
+.sg-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; border-bottom-right-radius: 8px; }
+
+.sg-scan-bar {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #33e0a2, transparent);
+  box-shadow: 0 0 10px #33e0a2;
+  animation: sgScanSweep 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes sgScanSweep {
+  0% { top: 12px; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 220px; opacity: 0; }
+}
+
+/* Connection URL Strip */
+.sg-url-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: rgba(5, 10, 22, 0.7);
+  border: 1px solid rgba(146, 182, 224, 0.2);
+  border-radius: 12px;
+  padding: 6px 8px 6px 14px;
+  margin-bottom: 18px;
+}
+
+.sg-url-strip input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #33e0a2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13.5px;
+  outline: none;
+}
+
+.sg-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sg-copy-btn:hover {
+  background: rgba(51, 224, 162, 0.2);
+  border-color: rgba(51, 224, 162, 0.4);
+  color: #33e0a2;
+}
+
+.sg-copy-btn.copied {
+  background: #33e0a2;
+  color: #040e1c;
+}
+
+/* Steps list */
+.sg-steps-box {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.sg-steps-box h4 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold, #dcbb90);
+}
+
+.sg-steps-box ol {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-dim, #a3b8d4);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.sg-steps-box ol li {
+  margin-bottom: 4px;
+}
+
+.sg-steps-box ol li strong {
+  color: #ffffff;
+}
+
+/* Terminal launch helper */
+.sg-terminal-box {
+  background: #04070e;
+  border: 1px solid rgba(146, 182, 224, 0.15);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: #a3b8d4;
+}
+
+.sg-terminal-box code {
+  color: #f49867;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.sg-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.sg-btn-secondary {
+  flex: 1;
+  padding: 11px 16px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sg-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+}

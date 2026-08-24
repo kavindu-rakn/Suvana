@@ -1,0 +1,44 @@
+{
+  "id": "restaurant",
+  "title": "Restaurant",
+  "subtitle": "Ordering a meal and settling the bill",
+  "description": "You have sat down at a small restaurant. Work through ordering, asking the price, and paying — one sign at a time.",
+  "_draftNote": "DRAFT conversational order — pending validation by an SSL teacher (School for the Deaf, Ratmalana). The turn order is authored by the development team, not by a signer. The English meanings used here (KANAWA=eat, BONAWA=drink, BILPATHA=bill, MILADII GANNAWA=buy) were confirmed by a native Sinhala speaker in Aug 2026. Each turn asks for exactly ONE gloss; the surrounding text is English context describing intent, never a claim about SSL word order.",
+  "turns": [
+    {
+      "id": "order-food",
+      "partnerLine": "A server comes over with a menu and waits for your order.",
+      "prompt": "Tell them you would like something to eat.",
+      "gloss": "KANAWA",
+      "hint": "Keep the movement towards your mouth clear and unhurried."
+    },
+    {
+      "id": "order-drink",
+      "partnerLine": "They note it down, then look up again — anything else?",
+      "prompt": "Now ask for something to drink.",
+      "gloss": "BONAWA",
+      "hint": "This one is close to the previous sign — make the difference obvious."
+    },
+    {
+      "id": "price",
+      "partnerLine": "They tell you what it costs and check that you have understood.",
+      "prompt": "Confirm the amount back to them.",
+      "gloss": "500",
+      "hint": "Number signs are held briefly — do not rush out of the shape."
+    },
+    {
+      "id": "buy",
+      "partnerLine": "That sounds right to you.",
+      "prompt": "Tell them you will take it.",
+      "gloss": "MILADII GANNAWA",
+      "hint": "Finish the full movement before dropping your hands."
+    },
+    {
+      "id": "bill",
+      "partnerLine": "You have finished your meal and are ready to leave.",
+      "prompt": "Ask for the bill.",
+      "gloss": "BILPATHA",
+      "hint": "Keep both hands inside the camera frame throughout."
+    }
+  ]
+}

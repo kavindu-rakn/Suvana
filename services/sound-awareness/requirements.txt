@@ -1,0 +1,34 @@
+# ──────────────────────────────────────────────────────────────────
+# SoundGuard — Edge-AI Backend Dependencies
+# ──────────────────────────────────────────────────────────────────
+# These packages power the ML pipeline for environmental sound
+# classification. The trained model will ultimately be quantized
+# to TensorFlow Lite (.tflite) for on-device inference on Android/iOS.
+# ──────────────────────────────────────────────────────────────────
+
+# Core ML framework — training, export, TFLite conversion
+tensorflow>=2.16.0,<2.18.0
+
+# Audio feature extraction (Mel-spectrograms, MFCCs, chroma)
+librosa>=0.10.2
+
+# Numerical computing
+numpy>=1.26.0
+
+# Data manipulation & CSV/label handling
+pandas>=2.2.0
+
+# Visualization — spectrograms, training curves, confusion matrices
+matplotlib>=3.9.0
+
+# Classical ML utilities — train/test split, metrics, label encoding
+scikit-learn>=1.5.0
+
+# Interactive notebook environment for experimentation
+jupyter>=1.0.0
+
+# Audio file I/O (librosa backend)
+soundfile>=0.12.1
+
+# Progress bars for long preprocessing runs
+tqdm>=4.66.0

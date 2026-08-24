@@ -1,0 +1,61 @@
+# ──────────────────────────────────────────────────────────────────
+# Python / ML Backend — .gitignore
+# ──────────────────────────────────────────────────────────────────
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large data files — do NOT commit raw audio or processed data
+raw_audio/
+processed_data/
+*.wav
+*.mp3
+*.flac
+*.npy
+*.npz
+
+# Model artifacts
+models/
+*.h5
+*.hdf5
+*.tflite
+*.pb
+saved_model/
+
+# Logs & outputs
+logs/
+*.log
+tensorboard_logs/
+
+# Environment variables
+.env
+.env.local

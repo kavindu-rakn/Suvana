@@ -1,0 +1,85 @@
+{
+  "expo": {
+    "name": "SoundGuard",
+    "slug": "soundguard",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "soundguard",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0A0F"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "SoundGuard listens to your surroundings to recognise important sounds, and captions speech in real time. Audio is processed on this device and never uploaded by the app.",
+        "NSSpeechRecognitionUsageDescription": "SoundGuard uses speech recognition to turn what people say into large, high-contrast captions you can read and show to the person you are talking to.",
+        "NSLocationWhenInUseUsageDescription": "Your location is attached to an SOS message so the people in your Safety Circle know where to find you. It is used only when an SOS is sent.",
+        "UIBackgroundModes": ["audio"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#0A0A0F"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.karindragimhan69.soundguard",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.INTERNET",
+        "android.permission.VIBRATE",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.WAKE_LOCK",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MICROPHONE"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "onnxruntime-react-native",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "SoundGuard listens to your surroundings to recognise important sounds, and captions speech in real time. Audio is processed on this device and never uploaded by the app.",
+          "speechRecognitionPermission": "SoundGuard uses speech recognition to turn what people say into large, high-contrast captions you can read and show to the person you are talking to.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox",
+            "com.google.android.tts",
+            "com.google.android.as"
+          ]
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#F0475C"
+        }
+      ],
+      "./plugins/withSoundGuardBackground"
+    ],
+    "assetBundlePatterns": [
+      "assets/**/*"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "80d799af-0e87-41d7-8a12-60fb02e661d1"
+      }
+    }
+  }
+}

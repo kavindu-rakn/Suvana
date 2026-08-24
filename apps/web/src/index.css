@@ -1,0 +1,547 @@
+/* ============================================================================
+   Design tokens — three tiers.
+
+   1. PALETTE (--p-*)  raw colour values. Never referenced by a component rule.
+   2. SEMANTIC          what a colour MEANS here. The only tier components use.
+   3. COMPONENT         declared on the component itself, so a variant is a
+                        one-line override rather than a new selector.
+
+   The point of the split is that --accent used to do six unrelated jobs — brand
+   kicker, button fill, focus ring, mastery-bar fill, sparkline stroke and the
+   "improving" level chip — so it could not be retuned without silently changing
+   the meaning of a data visualisation. Semantic names make those separable.
+   ========================================================================== */
+
+:root {
+  /* ---- tier 1: palette ---------------------------------------------------- */
+  --p-navy-900: #0b1020;
+  --p-navy-800: #131a2e;
+  --p-navy-700: #1b2440;
+  --p-navy-600: #26304f;
+  --p-slate-500: #5b6ea8;
+  --p-slate-300: #8ea0c0;
+  --p-slate-050: #e2e8f0;
+  --p-cyan-400: #22d3ee;
+  --p-cyan-300: #67e8f9;
+  --p-lime-400: #a3e635;
+  --p-amber-400: #fbbf24;
+  --p-red-400: #f87171;
+  --p-red-500: #ef4444;
+  --p-red-600: #dc2626;
+  --p-void: #05070f;
+  --p-ink: #04141a;
+  --p-white: #fff;
+
+  /* ---- tier 2: semantic --------------------------------------------------- */
+  --bg: var(--p-navy-900);
+  --surface: var(--p-navy-800); /* cards */
+  --surface-2: var(--p-navy-700); /* inset rows, fields */
+  --stage: var(--p-void); /* camera + canvas letterbox */
+
+  --text: var(--p-slate-050);
+  --text-dim: var(--p-slate-300);
+  --on-accent: var(--p-ink); /* text on an accent fill */
+  --on-overlay: var(--p-white); /* text over the camera image */
+
+  /* Two border roles, because they answer to different rules. A card edge is
+     decorative and may be quiet; the boundary of a control is information, and
+     WCAG 2.1 SC 1.4.11 wants 3:1 against its background. The old single
+     --border measured 1.33:1 on --surface, which failed for every input,
+     chip and ghost button. --border-interactive measures 3.49:1. */
+  --border-subtle: var(--p-navy-600); /* card edges, dividers, tracks */
+  --border-interactive: var(--p-slate-500); /* inputs, chips, ghost buttons */
+
+  --accent: var(--p-cyan-400);
+  --accent-soft: var(--p-cyan-300);
+  --success: var(--p-lime-400);
+  --caution: var(--p-amber-400);
+  --danger: var(--p-red-400);
+  --recording: var(--p-red-500);
+  --recording-strong: var(--p-red-600);
+
+  /* Reserved for research-integrity disclosures — the "provisional" badge, the
+     DRAFT scenario-order note. Deliberately its own token even though it shares
+     a value with --caution: restyling a warning must never quietly restyle a
+     statement about what is and is not validated SSL. */
+  --integrity: var(--p-amber-400);
+
+  /* Hand overlay. These MUST match HAND_COLORS in src/vision/drawing.ts, which
+     stays the source of truth because canvas cannot read a CSS variable per
+     frame. Declared here so UI chrome that labels a hand agrees with it. */
+  --hand-left: var(--p-cyan-400);
+  --hand-right: var(--p-lime-400);
+
+  /* Decorative washes and overlays. Alpha values belong in the palette tier
+     rather than sprinkled through component rules as raw rgba(). */
+  --glow-accent: rgb(34 211 238 / 0.08);
+  --glow-success: rgb(163 230 53 / 0.05);
+  --glow-stage: rgb(34 211 238 / 0.06);
+  --scrim: rgb(5 7 15 / 0.35); /* dims the camera behind the countdown */
+  --track-on-overlay: rgb(255 255 255 / 0.12); /* progress track over video */
+  --recording-badge: rgb(220 38 38 / 0.85);
+  --shadow-text: 0 4px 30px rgb(0 0 0 / 0.6);
+
+  /* ---- spacing ------------------------------------------------------------
+     Replaces a spread of 16 ad-hoc padding/gap values. Rules already sitting on
+     a step use the token; the off-scale leftovers (6, 18, 22, 30, 36) are
+     normalised in Phase 2, when those layouts are rebuilt anyway — converting
+     them here would be a visual change with no layout work to justify it. */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+
+  /* ---- radius -------------------------------------------------------------
+     Nesting rule: inner radius = outer radius − padding. */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 12px;
+  --r-lg: 14px;
+  --r-full: 999px;
+
+  /* ---- type ---------------------------------------------------------------
+     The page title is fluid rather than stepped at one breakpoint: 26px at a
+     360px viewport rising to 34px at 1000px, so there is no jump mid-resize. */
+  --fs-2xs: 11px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-base: 16px;
+  --fs-lg: 20px;
+  --fs-display: 28px;
+  --fs-title: clamp(1.625rem, 1.164rem + 1.54vw, 2.125rem);
+
+  /* system-ui resolves to Segoe UI on Windows, San Francisco on Apple and
+     Roboto on Android. The old stack hardcoded 'Segoe UI' first, so every
+     non-Windows device fell through to a generic sans. */
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* Left as it was on purpose: inserting another family ahead of Consolas
+     changes the glyph metrics, and the live readouts (fps, inference ms,
+     elapsed seconds) are sized against these. ui-monospace already picks
+     SF Mono on Apple and Cascadia on modern Windows. */
+  --mono: ui-monospace, Consolas, monospace;
+
+  /* ---- elevation ----------------------------------------------------------
+     A dark UI cannot signal depth with shadow alone — there is not enough
+     contrast beneath it — so each level pairs a shadow with a lighter top edge
+     that reads as a lit surface. Applied in Phase 2; defined here so the
+     vocabulary exists in one place. */
+  --elev-1: 0 1px 2px rgb(0 0 0 / 0.28);
+  --elev-2: 0 6px 20px rgb(0 0 0 / 0.35);
+  --elev-3: 0 16px 40px rgb(0 0 0 / 0.45);
+  --edge-lit: inset 0 1px 0 rgb(255 255 255 / 0.04);
+
+  /* ---- motion -------------------------------------------------------------
+     Reduced motion is enforced by collapsing these tokens (below), so an
+     animation written against them cannot forget to honour the preference. */
+  /* How much of the viewport bottom the fixed nav occupies. 0 while the nav is
+     a top strip; set in the mobile block below. Anything that sticks to the
+     bottom of the viewport offsets by this so it never hides under the bar. */
+  --nav-offset: 0px;
+
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.15, 1);
+  /* Slight overshoot, for a moment that should feel like an arrival. */
+  --ease-emphasis: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 1ms;
+    --dur-base: 1ms;
+    --dur-slow: 1ms;
+    --ease-emphasis: var(--ease-out);
+  }
+
+  /* The tokens cover anything written against them; this covers everything
+     else, including any hand-written duration that slips through. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Available to assistive technology, invisible on screen. Used for the live
+   regions that announce the countdown, the recording state and the score —
+   none of which had any non-visual representation at all. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* One visible keyboard-focus indicator for everything interactive. Several
+   controls set `outline: none` and signal focus with a border colour alone,
+   which is easy to miss and disappears entirely on the plain buttons. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+body {
+  margin: 0;
+  /* dvh, not vh: on mobile Safari 100vh counts the retracting toolbar, so the
+     page height jumps as it hides. */
+  min-height: 100dvh;
+  font: var(--fs-base) / 1.5 var(--sans);
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* The ambient glow used to be `background-attachment: fixed` on body, which
+   makes the browser repaint the whole viewport on every scroll frame. As a
+   fixed pseudo-element it is painted once and then only composited, so
+   scrolling costs nothing. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(1000px 500px at 70% -10%, rgb(34 211 238 / 0.08), transparent),
+    radial-gradient(800px 400px at 10% 110%, rgb(163 230 53 / 0.05), transparent);
+}
+
+#root {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--s-8) var(--s-5) var(--s-12);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+.app-header h1 {
+  margin: 2px 0 6px;
+  font-size: var(--fs-title);
+  letter-spacing: -0.5px;
+}
+
+.app-kicker {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+}
+
+.app-sub {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+.app-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.app-footer p {
+  margin: 0;
+}
+
+/* ---- author mode ----
+   --caution, not --integrity: that token is reserved for claims about what is
+   and is not validated SSL. This is a statement about which build you are
+   looking at, which is a different kind of warning. */
+.mode-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--caution);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+.mode-banner strong {
+  color: var(--text);
+}
+
+.mode-banner .btn {
+  margin-left: auto;
+}
+
+/* ---- tabs ---- */
+
+/* Wraps rather than scrolls: five tabs overflow a phone viewport, and a
+   horizontally scrolling strip hides whole tabs behind an affordance people
+   miss. Wrapping keeps every tab reachable at any width. */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 18px;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font: 600 var(--fs-md) var(--sans);
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  padding: var(--s-2) 18px;
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+/* Desktop keeps the text pills it had; the glyph is a mobile-bar affordance. */
+.tab-icon {
+  display: none;
+  width: 22px;
+  height: 22px;
+  flex: none;
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+.tab.active {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--border-subtle);
+}
+
+@media (max-width: 480px) {
+  #root {
+    padding: var(--s-5) 14px 36px;
+  }
+}
+
+/* ---- mobile: navigation moves into the thumb arc -------------------------
+   Five wrapping text pills at the top of a phone screen are both hard to hit
+   and far from where the thumb rests. Below 760px the same nav becomes a fixed
+   bottom bar. It is the same markup and the same DOM order, so the landmark
+   and focus order are unchanged.
+
+   Solid background rather than a blurred one on purpose: a backdrop-filter
+   composites the whole strip every frame, and on the Practice tab it would sit
+   directly over a live camera feed on exactly the devices least able to afford
+   it. */
+@media (max-width: 760px) {
+  :root {
+    --nav-offset: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .tabs {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 30;
+    display: grid;
+    /* Adapts to whichever tab set is active — three in learner mode, six in
+       author mode — without hardcoding a count. */
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 0;
+    margin: 0;
+    padding: 6px var(--s-1) calc(6px + env(safe-area-inset-bottom, 0px));
+    background: var(--surface);
+    border-top: 1px solid var(--border-subtle);
+    box-shadow: var(--elev-3);
+  }
+
+  .tab {
+    flex-direction: column;
+    gap: 3px;
+    min-height: 50px;
+    padding: 6px 2px;
+    border: none;
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+  }
+
+  .tab-icon {
+    display: block;
+  }
+
+  /* In a bar, the active item reads by colour and weight rather than by a
+     pill — a filled pill in a five-up grid looks like a stuck button. */
+  .tab.active {
+    background: transparent;
+    color: var(--accent);
+  }
+
+  /* Clear the fixed bar so the footer and the last control stay reachable. */
+  #root {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ---- touch ---------------------------------------------------------------
+   Keyed to the pointer, not the viewport, so a touchscreen laptop is handled
+   and a phone-sized desktop window is not.
+
+   Sized against the 44px comfort guideline (Apple HIG, WCAG 2.1 AAA 2.5.5).
+   Note the AA floor is the much lower 24x24 of WCAG 2.2 SC 2.5.8, which the
+   old 24px chips met with nothing to spare — this is a comfort fix, not a
+   conformance one, and the chips are the deliberate exception: 351 of them at
+   44px would turn the picker into a scroll marathon, so they get a smaller
+   bump plus more separation instead. */
+@media (pointer: coarse) {
+  .btn,
+  .field input,
+  .picker-search {
+    min-height: 44px;
+  }
+
+  .chip {
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .gloss-chips,
+  .category-chips {
+    gap: var(--s-2);
+  }
+
+  /* Inline links keep their text flow; the tap area grows around them. */
+  .link-button {
+    position: relative;
+  }
+
+  .link-button::after {
+    content: '';
+    position: absolute;
+    /* 18px of text + 13px either side = a 44px tap target. */
+    inset: -13px -8px;
+  }
+}
+
+/* ---- buttons ---- */
+
+.btn {
+  font: 600 15px var(--sans);
+  color: var(--on-accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  border: none;
+  border-radius: var(--r-sm);
+  /* 10px is off-scale; Phase 2 sweeps every control to a 44px touch target, so
+     it is normalised there rather than nudged now. */
+  padding: 10px 22px;
+  cursor: pointer;
+  transition:
+    filter var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-ghost {
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border-interactive);
+}
+
+.btn-danger {
+  color: var(--danger);
+}
+
+/* ---- form fields & chips ---- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+.field input {
+  font: 15px var(--sans);
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--r-sm);
+  padding: 10px var(--s-3); /* off-scale; normalised in Phase 2 with touch targets */
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.field input:focus {
+  border-color: var(--accent);
+}
+
+.chip {
+  font: 600 var(--fs-sm) var(--mono);
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--r-full);
+  padding: 6px var(--s-3);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.chip:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.chip.active {
+  color: var(--on-accent);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.chip:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

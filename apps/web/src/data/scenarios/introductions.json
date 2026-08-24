@@ -1,0 +1,60 @@
+{
+  "id": "introductions",
+  "title": "Social Gathering (Introductions)",
+  "subtitle": "Meeting someone for the first time",
+  "description": "You are at a gathering and someone new comes over to say hello. Work through the exchange one sign at a time.",
+  "_draftNote": "DRAFT conversational order — pending validation by an SSL teacher (School for the Deaf, Ratmalana). Each turn asks for exactly ONE gloss from the seed vocabulary; the surrounding text is English context describing intent, NOT a claim about SSL sentence structure or word order. The optional partnerGloss fields are hooks for the 3D avatar and are equally unvalidated.",
+  "turns": [
+    {
+      "id": "greet-back",
+      "partnerLine": "Someone new catches your eye across the room, smiles, and waves at you.",
+      "partnerGloss": "YOU",
+      "prompt": "Greet them back — sign the one that singles out the person you are addressing.",
+      "gloss": "YOU",
+      "hint": "Point clearly towards the person you are greeting, at a natural pace."
+    },
+    {
+      "id": "topic-name",
+      "partnerLine": "They gesture between the two of you — it is time to exchange names.",
+      "prompt": "Bring up the subject of names.",
+      "gloss": "NAME",
+      "hint": "Keep the handshape steady and let the movement do the work."
+    },
+    {
+      "id": "introduce-self",
+      "partnerLine": "They look at you, waiting for you to go first.",
+      "prompt": "Indicate yourself, so it is clear you are the one being introduced.",
+      "gloss": "ME",
+      "hint": "Bring the sign in towards your own body rather than out to the side."
+    },
+    {
+      "id": "turn-to-them",
+      "partnerLine": "You have introduced yourself. Now it is their turn.",
+      "prompt": "Turn the exchange towards them — the sign that marks something as belonging to the person you are talking to.",
+      "gloss": "YOUR",
+      "hint": "Direct the sign towards them, not towards yourself."
+    },
+    {
+      "id": "ask-what",
+      "partnerLine": "They are waiting for your question.",
+      "prompt": "Ask them the question word.",
+      "gloss": "WHAT",
+      "hint": "Question signs are usually held a little longer — do not rush it."
+    },
+    {
+      "id": "ask-where",
+      "partnerLine": "They answer, and you would like to know where they are from.",
+      "partnerGloss": "WHERE",
+      "prompt": "Ask about place.",
+      "gloss": "WHERE",
+      "hint": "Keep your hand within the camera frame through the whole movement."
+    },
+    {
+      "id": "ask-can",
+      "partnerLine": "The conversation is going well and you want to keep it going.",
+      "prompt": "Ask about ability — whether something is possible.",
+      "gloss": "CAN",
+      "hint": "Finish the movement fully before dropping your hand."
+    }
+  ]
+}

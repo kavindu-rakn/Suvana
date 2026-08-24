@@ -1,0 +1,1388 @@
+/* ---- camera stage & bar (shared by Practice and Record) ---- */
+
+.camera-card {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.camera-stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--stage);
+}
+
+/* The live self-view and its landmark overlay, as one unit. Scoped to
+   .stage-live rather than written as a descendant selector on .camera-stage:
+   the stage now also contains the reference picture-in-picture, whose canvas
+   must NOT be stretched full-bleed. */
+.stage-live {
+  position: absolute;
+  inset: 0;
+}
+
+.stage-live > video,
+.stage-live > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Mirror both layers together so the overlay stays aligned with the video. */
+  transform: scaleX(-1);
+}
+
+/* Detection paused (see useHandTracking.pause): the last skeleton is left on
+   the canvas rather than cleared, dimmed so it reads as held rather than
+   broken. The self-view underneath keeps moving, which is the cue that the
+   camera is still alive. */
+.stage-live > canvas {
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.stage-live > canvas.tracking-held {
+  opacity: 0.35;
+}
+
+.camera-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 24px;
+  text-align: center;
+  background: radial-gradient(ellipse at center, var(--glow-stage), transparent 70%);
+}
+
+/* ---- reference picture-in-picture ---- */
+
+.stage-pip {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  width: 38%;
+  max-width: 180px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--stage);
+  box-shadow: var(--elev-2);
+}
+
+/* The PiP loops continuously, and a scrub bar inside a 180px thumbnail is not
+   a control anyone can operate — the transport belongs to the full-size player. */
+.stage-pip .player-controls {
+  display: none;
+}
+
+.stage-pip .skeleton-player canvas {
+  display: block;
+  border: none;
+  border-radius: 0;
+}
+
+/* Above both layers, in either swap state. */
+.stage-swap {
+  position: absolute;
+  top: var(--s-2);
+  right: var(--s-2);
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--on-overlay);
+  background: var(--scrim);
+  border: none;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.stage-swap:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.stage-swap svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Swapped: the reference takes the stage and the self-view drops to the corner,
+   for when the learner wants a proper look at the sign before copying it. */
+.camera-stage--swapped .stage-pip {
+  inset: 0;
+  z-index: 1;
+  width: auto;
+  max-width: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.camera-stage--swapped .stage-live {
+  inset: auto 10px 10px auto;
+  z-index: 2;
+  width: 38%;
+  max-width: 180px;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--elev-2);
+}
+
+@media (pointer: coarse) {
+  .stage-swap {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+.camera-hint {
+  max-width: 420px;
+  margin: 0;
+  color: var(--text-dim);
+}
+
+.camera-error {
+  max-width: 420px;
+  margin: 0;
+  color: var(--danger);
+}
+
+.camera-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-subtle);
+  min-height: 58px;
+}
+
+.hand-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hand-chip {
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+
+.hand-chip-empty {
+  color: var(--text-dim);
+  border-style: dashed;
+}
+
+.camera-stats {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* ---- record view ---- */
+
+.record-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ---- capture focus mode ----------------------------------------------------
+   Driven off one data-phase attribute on the layout root rather than a handful
+   of conditional classes, so the whole idle → countdown → recording → result
+   machine is described in one place.
+
+   During a take the picker is already disabled; quieting it puts the attention
+   on the frame, where it belongs. Nothing here hides information the learner
+   needs mid-take — the reference, the prompt and the stop control all stay at
+   full strength. */
+.sign-header,
+.gloss-chips {
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+.record-layout[data-phase='countdown'] .sign-header,
+.record-layout[data-phase='recording'] .sign-header,
+.record-layout[data-phase='countdown'] .gloss-chips,
+.record-layout[data-phase='recording'] .gloss-chips {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* A second, non-colour cue that recording is live, reinforcing the REC badge —
+   box-shadow composites and never reflows the camera. */
+.camera-card {
+  transition: box-shadow var(--dur-base) var(--ease-out);
+}
+
+.record-layout[data-phase='recording'] .camera-card {
+  box-shadow: 0 0 0 2px var(--recording);
+}
+
+/* ---- mobile: the camera stays put, the panel scrolls under it --------------
+   Stacked, the camera used to scroll away and leave the learner signing at a
+   control they could see but a frame they could not. Pinning it means "am I in
+   frame" and "what am I copying" are both always on screen, and the primary
+   action rides at the bottom in the thumb arc instead of 700-900px down. */
+@media (max-width: 900px) {
+  .record-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .camera-card {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  /* A 16/9 band on a 9/16 screen makes the learner tiny in their own frame, so
+     the stage goes squarer: it crops the sides, which a signer does not need,
+     and buys height.
+
+     Height is set directly rather than via `aspect-ratio` plus `max-height`.
+     Those two together are a trap: when the max-height binds, the browser
+     shrinks the WIDTH as well to preserve the ratio, which left the stage as a
+     square island with dead space beside it on any viewport wide enough for the
+     cap to bite. Driving height alone keeps the stage full-bleed at every width. */
+  .camera-stage {
+    aspect-ratio: auto;
+    height: min(95vw, 44dvh);
+  }
+
+  .panel-actions {
+    position: sticky;
+    bottom: calc(var(--nav-offset) + var(--s-2));
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+    margin: 0 calc(var(--s-5) * -1) calc(var(--s-5) * -1);
+    padding: var(--s-3) var(--s-5) var(--s-4);
+    background: var(--surface);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .panel-actions .btn {
+    width: 100%;
+  }
+}
+
+.record-panel {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.record-panel h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.gloss-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hint-text {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* ---- the chosen sign, and the way back to the picker ---- */
+
+.sign-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+
+.sign-name {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font: 700 var(--fs-lg) var(--mono);
+  color: var(--text);
+}
+
+/* ---- sign picker ----------------------------------------------------------
+   Opens over the panel instead of living above the reference permanently. The
+   old arrangement put 358 chips in a 168px nested scroll inside the page
+   scroll, with the record button below all of it. */
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.picker-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.picker-head h2 {
+  flex: 1;
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+
+/* One scrolling row, not six wrapping ones. */
+.category-rail {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding-bottom: var(--s-1);
+}
+
+.category-rail .chip {
+  flex: none;
+  scroll-snap-align: start;
+}
+
+.sign-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  max-height: min(46vh, 380px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.sign-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  width: 100%;
+  padding: var(--s-3) var(--s-3);
+  text-align: left;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.sign-row:hover {
+  background: var(--surface);
+}
+
+.sign-row.active {
+  border-color: var(--accent);
+}
+
+.sign-row-name {
+  flex: 1;
+  min-width: 0;
+  font: 700 var(--fs-md) var(--mono);
+}
+
+.sign-row-meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  flex: none;
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+}
+
+@media (pointer: coarse) {
+  .sign-row {
+    min-height: 48px;
+    align-items: center;
+  }
+}
+
+/* Shared by the practice picker and the library filter. */
+.picker-search {
+  font: var(--fs-md) var(--sans);
+  color: var(--text);
+  background: var(--surface-2);
+  /* A control boundary, not a card edge — see the border tokens in index.css. */
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--r-sm);
+  padding: 9px var(--s-3);
+  outline: none;
+  width: 100%;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.picker-search:focus {
+  border-color: var(--accent);
+}
+
+.picker-search:disabled {
+  opacity: 0.5;
+}
+
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.category-chips .chip {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.link-button {
+  font: 600 13px var(--sans);
+  color: var(--accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.link-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.saved-flash {
+  color: var(--success);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.row-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rec-facts {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--scrim);
+}
+
+.countdown-overlay span {
+  font: 800 120px var(--sans);
+  color: var(--on-overlay);
+  text-shadow: var(--shadow-text);
+  /* Each number is keyed in React, so it remounts and replays this. Starting
+     at 0.55 rather than 0 keeps the digit readable for its whole life — the
+     learner is timing themselves against it. */
+  animation: countdown-pop var(--dur-slow) var(--ease-out) both;
+}
+
+@keyframes countdown-pop {
+  from {
+    transform: scale(1.55);
+    opacity: 0.55;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.rec-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  font: 700 13px var(--mono);
+  color: var(--on-overlay);
+  background: var(--recording-badge);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.rec-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px;
+  background: var(--track-on-overlay);
+}
+
+/* Scaled, not widened. This bar updates on every captured frame — the busiest
+   the main thread ever is — and animating `width` forces layout each time.
+   transform runs on the compositor and touches nothing else on the page. */
+.rec-progress > div {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: var(--recording);
+}
+
+/* ---- library ---- */
+
+.library-card {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.library-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.library-head h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.library-count {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+/* Push the action buttons as a group to the right edge of the header. */
+.library-head .btn:first-of-type {
+  margin-left: auto;
+}
+
+.rec-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 362 rows in the author's library. content-visibility lets the browser skip
+   layout and paint for rows that are off screen; the intrinsic size keeps the
+   scrollbar honest so it does not jump as rows are realised. */
+.rec-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 64px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.rec-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+}
+
+.rec-gloss {
+  font: 700 16px var(--mono);
+}
+
+.rec-meta {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.rec-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.rec-actions .btn {
+  padding: 7px 14px;
+  font-size: 13px;
+}
+
+.badge {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--accent);
+  border: 1px solid currentColor;
+  padding: 1px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: 2px;
+}
+
+/* Provisional = a team stand-in, not authoritative SSL. Deliberately styled to
+   catch the eye so it cannot be mistaken for a verified reference. */
+.badge-warn {
+  color: var(--integrity);
+}
+
+.provisional-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--integrity);
+}
+
+.rec-player {
+  flex-basis: 100%;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-dim);
+  padding: 30px 10px;
+  margin: 0;
+}
+
+/* ---- graded practice result ---- */
+
+.result-top {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.result-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  align-items: flex-start;
+  min-width: 0;
+}
+
+/* ---- practice session -----------------------------------------------------
+   A finite unit of work, so practice has an end. The segment bar is the same
+   .turn-progress the scenario uses — same meaning, same rendering. */
+.session-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+}
+
+.session-bar .turn-progress {
+  flex-basis: 100%;
+}
+
+.session-line {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+.session-line strong {
+  font-family: var(--mono);
+  color: var(--text);
+}
+
+/* The exit is always visible and never styled as a penalty. */
+.session-bar .link-button {
+  margin-left: auto;
+}
+
+.session-complete {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.session-complete h2 {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+
+/* ---- coach strip ----------------------------------------------------------
+   The last correction, held on screen through the countdown and the take.
+   Without it, "Try again" unmounted the score, the hints and the finger chips
+   at precisely the moment the learner needed them — the product claims specific
+   corrective feedback, and the retry path was deleting it.
+
+   Not sticky: the panel sits directly under the camera at every width, so this
+   is already on screen, and a second sticky element would fight the sticky
+   camera above it. */
+.coach-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2) var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--r-md);
+}
+
+.coach-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+
+.coach-score {
+  font: 600 var(--fs-sm) var(--mono);
+  color: var(--text-dim);
+}
+
+.coach-fix {
+  font: 600 var(--fs-sm) var(--sans);
+  color: var(--caution);
+  text-transform: capitalize;
+}
+
+.coach-hint {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+.score-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  /* Anchors the celebratory glow pseudo-element (see the reveal block below). */
+  position: relative;
+}
+
+.score-badge .ring-track {
+  fill: none;
+  stroke: var(--surface-2);
+  stroke-width: 10;
+}
+
+.score-badge .ring-value {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+
+/* ---- the score reveal ------------------------------------------------------
+   Two acts, and the rule between them is what keeps the latency figure honest.
+
+   ACT 1 — the measured commit. Everything below renders at its final value with
+   nothing animating. The score numeral, the hints and the finger chips are all
+   readable on the frame that useFeedbackLatency times.
+
+   ACT 2 — under [data-reveal='on'], released one frame after the paint mark,
+   once the sample has been taken.
+
+   THE RULE every animation here obeys: information-bearing elements animate
+   `transform` only. They start offset and settle to 0, always at full opacity,
+   always legible at frame one. An `opacity` fade from 0 would mean the feedback
+   is not actually on screen at the instant we claim it is — which would make
+   the ≤300 ms number untrue in substance even while staying true as arithmetic.
+
+   The ring is the one exception, and it earns it by being redundant: the same
+   score is already printed inside it as text. So the ring may sweep from empty. */
+
+[data-reveal='on'] .score-badge .ring-value {
+  animation: ring-sweep var(--dur-slow) var(--ease-out) both;
+}
+
+@keyframes ring-sweep {
+  from {
+    stroke-dashoffset: var(--ring-empty);
+  }
+  to {
+    stroke-dashoffset: var(--ring-offset);
+  }
+}
+
+/* Decorative, and marked aria-hidden nowhere because it is a pseudo-element —
+   it carries no text and no meaning beyond "that went well". */
+[data-reveal='on'] .score-badge.good::after {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border-radius: var(--r-full);
+  pointer-events: none;
+  background: radial-gradient(circle, var(--glow-success), transparent 65%);
+  animation: score-glow var(--dur-slow) var(--ease-out) both;
+}
+
+@keyframes score-glow {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Transform only — full opacity throughout, so every hint is readable on the
+   measured frame and merely settles into place afterwards. */
+[data-reveal='on'] .hint-list li {
+  animation: lift-in var(--dur-base) var(--ease-out) both;
+}
+
+[data-reveal='on'] .hint-list li:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+[data-reveal='on'] .hint-list li:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+[data-reveal='on'] .hint-list li:nth-child(n + 4) {
+  animation-delay: 180ms;
+}
+
+[data-reveal='on'] .finger-chips {
+  animation: lift-in var(--dur-base) var(--ease-out) 200ms both;
+}
+
+[data-reveal='on'] .rubric-list li {
+  animation: lift-in var(--dur-base) var(--ease-out) both;
+}
+
+[data-reveal='on'] .rubric-list li:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+[data-reveal='on'] .rubric-list li:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+@keyframes lift-in {
+  from {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.score-badge .ring-score {
+  font: 700 34px var(--sans);
+  fill: var(--text);
+}
+
+.score-badge.good .ring-value {
+  stroke: var(--success);
+}
+.score-badge.ok .ring-value {
+  stroke: var(--caution);
+}
+.score-badge.low .ring-value {
+  stroke: var(--danger);
+}
+
+.score-label {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.hint-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.finger-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.finger-chip {
+  font: 600 13px var(--sans);
+  color: var(--caution);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 4px 12px;
+  text-transform: capitalize;
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.compare-label {
+  margin: 0 0 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.reference-preview {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+/* ---- progress dashboard ---- */
+
+.pilot-export {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.pilot-export .field input {
+  max-width: 220px;
+}
+
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.stat-tile {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-value {
+  font: 700 28px var(--sans);
+  color: var(--text);
+}
+
+.stat-value em {
+  font-style: normal;
+  font-size: 16px;
+  color: var(--text-dim);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.mastery-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mastery-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 10px 16px;
+  flex-wrap: wrap;
+}
+
+.mastery-row .rec-gloss {
+  min-width: 70px;
+}
+
+.level-chip {
+  font: 600 11px var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 2px 10px;
+  min-width: 76px;
+  text-align: center;
+}
+
+.level-chip.new {
+  color: var(--text-dim);
+  border-style: dashed;
+}
+.level-chip.learning {
+  color: var(--caution);
+}
+.level-chip.improving {
+  color: var(--accent);
+}
+.level-chip.mastered {
+  color: var(--success);
+}
+
+.mastery-bar {
+  flex: 1;
+  min-width: 110px;
+  height: 8px;
+  background: var(--surface);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mastery-bar > div {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 500ms ease;
+}
+
+.mastery-pct {
+  font: 600 13px var(--mono);
+  color: var(--text);
+  min-width: 42px;
+  text-align: right;
+}
+
+.sparkline polyline {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mastery-meta {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ---- feedback latency panel ---- */
+
+/* A system metric rather than the learner's own progress, so it reads as a
+   separate section at the foot of the card instead of another tile group. No
+   background of its own — the tiles inside it need to stay the raised layer. */
+.latency-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.latency-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.latency-head h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.latency-target {
+  font: 13px var(--mono);
+  color: var(--text-dim);
+}
+
+/* The three stages of the feedback path, in the order they happen. */
+.latency-stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.latency-stages li {
+  flex: 1 1 150px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.latency-stage-name {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.latency-stage-value {
+  font: 600 14px var(--mono);
+  color: var(--text);
+}
+
+/* Reserved for a figure that meets its target — currently the share of
+   attempts inside the latency budget. */
+.stat-value.good {
+  color: var(--success);
+}
+
+/* ---- scenario ---- */
+
+.turn-preview {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.turn-preview li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.turn-preview li.pending {
+  opacity: 0.55;
+}
+
+.turn-prompt {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.draft-note {
+  margin: 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--integrity);
+  background: var(--surface-2);
+  border-radius: 0 8px 8px 0;
+  color: var(--text-dim);
+  font-size: 12.5px;
+}
+
+.partner-line {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-dim);
+}
+
+.turn-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* Reserve the tallest state's height so the row does not jog as it advances. */
+  min-height: 8px;
+}
+
+/* "Done" and "current" were --success and --accent, which sit about 1.16:1
+   apart in greyscale — indistinguishable to most colour-vision types and in a
+   greyscale printout of the report. Height now carries the distinction, and
+   colour merely reinforces it.
+
+   These bars are aria-hidden wherever they appear: the same position is stated
+   in text next to them ("Sign 3 of 5 — ME", "Turn 2 of 5"), which is the
+   authoritative version for assistive technology. */
+.turn-progress span {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-2);
+  transition: height var(--dur-fast) var(--ease-out);
+}
+
+.turn-progress span.done {
+  height: 4px;
+  background: var(--success);
+}
+
+.turn-progress span.active {
+  height: 8px;
+  background: var(--accent);
+}
+
+.rubric-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rubric-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.rubric-name {
+  min-width: 118px;
+  color: var(--text-dim);
+}
+
+.rubric-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rubric-bar > div {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 400ms ease;
+}
+
+/* An unmeasurable component reads as absent, never as a zero score. */
+.rubric-bar > div.na {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--border-subtle),
+    var(--border-subtle) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  width: 100% !important;
+}
+
+.rubric-value {
+  font: 600 13px var(--mono);
+  min-width: 34px;
+  text-align: right;
+}
+
+.rubric-note {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px 16px;
+  line-height: 1.55;
+}
+
+.rubric-note p {
+  margin: 0;
+}
+
+.rubric-note-head {
+  color: var(--text);
+  margin-bottom: 8px !important;
+}
+
+.rubric-defs {
+  margin: 0 0 10px;
+}
+
+.rubric-defs dt {
+  color: var(--text);
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.rubric-defs dd {
+  margin: 2px 0 0;
+}
+
+.rubric-note-foot {
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ---- skeleton player ---- */
+
+.skeleton-player {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-player canvas {
+  width: 100%;
+  border-radius: 10px;
+  background: var(--stage);
+  border: 1px solid var(--border-subtle);
+}
+
+.skeleton-player canvas.mirrored {
+  transform: scaleX(-1);
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.player-controls .btn {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.player-controls input[type='range'] {
+  flex: 1;
+  accent-color: var(--accent);
+  min-width: 60px;
+}
+
+@media (pointer: coarse) {
+  /* A 4px-tall track is unusable with a thumb; the control keeps its visual
+     weight but gains a full-height hit area. */
+  .player-controls input[type='range'] {
+    min-height: 44px;
+  }
+}
+
+.player-time {
+  font: 12px var(--mono);
+  color: var(--text-dim);
+  white-space: nowrap;
+}

@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+.expo/
+*.tsbuildinfo
+
+# Local env & tooling
+.env
+.env.*
+!.env.example
+!.env.local.example
+.vercel/
+.claude/
+
+# Datasets never enter this repo (see README provenance).
+# Root-anchored on purpose — a bare "dataset/" would swallow source folders
+# like apps/communicate/app/dashboard/dataset/.
+/datasets/
+/dataset/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+coverage/

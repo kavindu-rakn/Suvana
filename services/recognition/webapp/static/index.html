@@ -1,0 +1,3840 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sinhala Sign Language Translator</title>
+  <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       ROOT VARIABLES — lifted & polished from the target design
+       ============================================================ */
+    :root {
+      /* --- Surfaces -------------------------------------------------
+         Deeper and slightly less saturated than before: a near-neutral
+         base makes the purple/orange accent read as deliberate rather
+         than ambient, which is what separates "colourful" from "premium". */
+      --bg: #050a14;
+      --bg-deep: #03060d;
+      --panel: rgba(14, 27, 48, 0.52);
+      --panel-border: rgba(146, 182, 224, 0.16);
+      --panel-strong: rgba(10, 21, 39, 0.74);
+      --surface-raise: rgba(255, 255, 255, 0.035);
+      --hairline: rgba(255, 255, 255, 0.07);
+
+      /* --- Type ----------------------------------------------------- */
+      --text: #f3f6fc;
+      --text-dim: #a3b8d4;
+      --text-faint: #6d84a3;
+
+      /* --- Accent (identity preserved exactly) ----------------------- */
+      --accent: #f49867;
+      --accent-2: #ae67fa;
+      --accent-grad: linear-gradient(103.22deg, #ae67fa -13.86%, #f49867 99.55%);
+      --accent-soft: rgba(244, 152, 103, 0.14);
+      --accent-2-soft: rgba(174, 103, 250, 0.14);
+      --ring: rgba(244, 152, 103, 0.6);
+      --danger: #ff6b6b;
+      --success: #33e0a2;
+
+      /* --- Geometry -------------------------------------------------- */
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --maxw: 1240px;
+      /* One gutter for the whole page, so every section's content sits on
+         the same vertical grid line at every breakpoint. */
+      --gutter: clamp(18px, 4vw, 56px);
+      --content: min(calc(var(--maxw) - 2 * var(--gutter)), calc(100% - 2 * var(--gutter)));
+
+      /* --- Elevation: one coherent ramp instead of ad-hoc shadows ----- */
+      --e1: 0 1px 2px rgba(2, 6, 16, 0.4), 0 0 0 1px rgba(146, 182, 224, 0.06);
+      --e2: 0 8px 24px rgba(2, 6, 16, 0.45), 0 0 0 1px rgba(146, 182, 224, 0.07);
+      --e3: 0 22px 60px rgba(2, 6, 16, 0.62), 0 2px 8px rgba(2, 6, 16, 0.4), 0 0 0 1px rgba(146, 182, 224, 0.07);
+      --shadow-soft: var(--e3);
+
+      /* --- Motion: a single easing pair keeps everything feeling
+             like one product rather than several. ---------------------- */
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-1: 0.18s;
+      --dur-2: 0.32s;
+      --dur-3: 0.55s;
+    }
+
+    /* ============================================================
+       RESET & BASE
+       ============================================================ */
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Manrope", "Noto Sans Sinhala", "Iskoola Pota", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+      overflow-x: hidden;
+      /* Crisper glyph edges on dark backgrounds -- the single cheapest
+         thing that makes a dark UI look professionally rendered. */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      font-feature-settings: "kern" 1, "liga" 1;
+      scroll-behavior: smooth;
+    }
+
+    /* A hairline scrollbar reads as considered; a thick accent-coloured
+       one reads as a template. */
+    html { scrollbar-width: thin; scrollbar-color: rgba(146, 182, 224, 0.28) transparent; }
+    html::-webkit-scrollbar { width: 10px; }
+    html::-webkit-scrollbar-thumb {
+      background-color: rgba(146, 182, 224, 0.22);
+      border-radius: 999px;
+      border: 3px solid var(--bg);
+      background-clip: padding-box;
+    }
+    html::-webkit-scrollbar-thumb:hover { background-color: rgba(146, 182, 224, 0.4); }
+    html::-webkit-scrollbar-track { background: transparent; }
+
+    ::selection { background: rgba(174, 103, 250, 0.32); color: #fff; }
+
+    /* ============================================================
+       BACKGROUND LAYERS — depth, aurora, grain
+       ============================================================ */
+    .bg-radial {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: radial-gradient(circle at 6% 20%, #10275a 0%, #040c18 45%);
+    }
+
+    .bg-aurora {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      filter: blur(90px) saturate(140%);
+      opacity: 0.5;
+    }
+
+    .blob {
+      position: absolute;
+      width: 42vw;
+      height: 42vw;
+      border-radius: 50%;
+      animation: float 22s ease-in-out infinite;
+    }
+    .blob-a { background: #ae67fa; top: -10%; left: -8%; animation-delay: 0s; }
+    .blob-b { background: #f49867; top: 20%; right: -12%; animation-delay: -7s; }
+    .blob-c { background: #3d5aa8; bottom: -18%; left: 20%; animation-delay: -14s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(4%, 6%) scale(1.08); }
+      66% { transform: translate(-5%, -4%) scale(0.96); }
+    }
+
+    .bg-grain {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.035;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    }
+
+    /* ============================================================
+       PREMIUM HEADER / BRAND / STATUS
+       ============================================================ */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px clamp(16px, 4vw, 56px) 12px;
+      position: relative;
+    }
+
+    /* Subtle header bottom glow */
+    .app-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 5%;
+      right: 5%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(174, 103, 250, 0.3), rgba(244, 152, 103, 0.3), transparent);
+      opacity: 0.6;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .version-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--panel-border);
+      background: var(--panel);
+      display: none;
+    }
+    @media (min-width: 680px) {
+      .version-badge { display: inline-block; }
+    }
+
+    .icon-btn {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--panel-border);
+      background: var(--panel);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+    .icon-btn:hover { background: rgba(255, 255, 255, 0.12); color: var(--text); }
+    .icon-btn:active { transform: scale(0.94); }
+
+    /* ============================================================
+       PREMIUM BRAND SECTION - Classy & Premium
+       ============================================================ */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    /* Premium logo container with glow effect */
+    .brand-mark {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+      padding: 6px;
+      box-shadow: 
+        0 8px 32px rgba(174, 103, 250, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      flex-shrink: 0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    /* Animated glow ring around logo */
+    .brand-mark::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 17px;
+      padding: 3px;
+      background: var(--accent-grad);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .brand-mark:hover::before {
+      opacity: 1;
+    }
+
+    .brand-mark:hover {
+      transform: scale(1.05);
+      box-shadow: 
+        0 12px 40px rgba(174, 103, 250, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1.2;
+      text-shadow: 0 0 40px rgba(174, 103, 250, 0.15);
+    }
+
+    /* Sinhala text in brand title with premium styling */
+    .brand-text h1 .sinhala-brand {
+      background: linear-gradient(135deg, #ae67fa, #f49867);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+      position: relative;
+      display: inline-block;
+    }
+
+    .brand-text h1 .sinhala-brand::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-grad);
+      border-radius: 999px;
+      opacity: 0.3;
+      transform: scaleX(0.8);
+      transition: transform 0.3s ease;
+    }
+
+    .brand-text:hover .sinhala-brand::after {
+      transform: scaleX(1);
+      opacity: 0.6;
+    }
+
+    .brand-text p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-dim);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Decorative dot separator */
+    .brand-text p .sep-dot {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent-grad);
+      opacity: 0.6;
+    }
+
+    .brand-text p .highlight-text {
+      color: var(--text);
+      font-weight: 600;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* ============================================================
+       STATUS PILL - Premium version
+       ============================================================ */
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      font-size: 13px;
+      color: var(--text-dim);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle shimmer on status pill */
+    .status-pill::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+      transform: translateX(-100%);
+      animation: shimmer 4s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .status-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-faint);
+      transition: background 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .status-pill.connected .dot { 
+      background: var(--success); 
+      box-shadow: 0 0 16px rgba(51, 224, 162, 0.5);
+    }
+    .status-pill.error .dot { 
+      background: var(--danger); 
+      box-shadow: 0 0 16px rgba(255, 107, 107, 0.5);
+    }
+
+    .status-pill #connectionLabel {
+      position: relative;
+      z-index: 1;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ============================================================
+       LAYOUT — main tool area
+       ============================================================ */
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.9fr);
+      gap: 22px;
+      padding: 14px clamp(16px, 4vw, 56px) 40px;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 920px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+
+    /* subtle light sheen along top edge */
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    }
+
+    .stage { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* ============================================================
+       STATS BAR
+       ============================================================ */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      padding: 0 clamp(16px, 4vw, 56px) 20px;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+    @media (max-width: 680px) {
+      .stats-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .stat-tile {
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .stat-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-faint);
+      letter-spacing: 0.02em;
+    }
+
+    /* ============================================================
+       VIDEO / OVERLAY
+       ============================================================ */
+    .video-wrap {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #05060a;
+      aspect-ratio: 4 / 3;
+    }
+
+    #video, #overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #video { transform: scaleX(-1); }
+    #overlay { pointer-events: none; }
+
+    .video-empty {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--text-faint);
+    }
+    .video-empty p { margin: 0; font-size: 14px; font-weight: 600; color: var(--text-dim); }
+    .video-empty span { font-size: 12px; color: var(--text-faint); }
+
+    .rec-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(10, 12, 20, 0.55);
+      border: 1px solid rgba(255, 107, 107, 0.4);
+      color: #ffb3b3;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      backdrop-filter: blur(6px);
+    }
+    .rec-badge.on { display: flex; }
+    .rec-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--danger);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.8); }
+    }
+
+    /* scan corners & line */
+    .scan-corner {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      border: 2px solid rgba(174, 103, 250, 0.9);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      filter: drop-shadow(0 0 6px rgba(174, 103, 250, 0.5));
+      z-index: 2;
+    }
+    .video-wrap.scanning .scan-corner { opacity: 0.85; }
+    .scan-corner.tl { top: 14px; left: 14px; border-right: none; border-bottom: none; border-radius: 6px 0 0 0; }
+    .scan-corner.tr { top: 14px; right: 14px; border-left: none; border-bottom: none; border-radius: 0 6px 0 0; }
+    .scan-corner.bl { bottom: 14px; left: 14px; border-right: none; border-top: none; border-radius: 0 0 0 6px; }
+    .scan-corner.br { bottom: 14px; right: 14px; border-left: none; border-top: none; border-radius: 0 0 6px 0; }
+
+    .scan-line {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      height: 2px;
+      top: 0;
+      background: linear-gradient(90deg, transparent, rgba(174, 103, 250, 0.85), transparent);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .video-wrap.scanning .scan-line {
+      opacity: 0.7;
+      animation: scanSweep 3.2s ease-in-out infinite;
+    }
+    @keyframes scanSweep {
+      0% { top: 6%; opacity: 0; }
+      10% { opacity: 0.7; }
+      50% { top: 94%; opacity: 0.7; }
+      90% { opacity: 0; }
+      100% { top: 94%; opacity: 0; }
+    }
+
+    .buffer-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+    .buffer-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: var(--accent-grad);
+      transition: width 0.12s linear;
+    }
+
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 18px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--accent-grad);
+      color: #04070d;
+      box-shadow: 0 10px 26px rgba(244, 152, 103, 0.32);
+    }
+    .btn-primary:hover { box-shadow: 0 12px 30px rgba(244, 152, 103, 0.5); }
+    .btn-primary.stop {
+      background: linear-gradient(135deg, #ff6b6b, #f49867);
+      box-shadow: 0 10px 26px rgba(255, 107, 107, 0.3);
+    }
+
+    .btn-ghost {
+      background: var(--panel-strong);
+      border-color: var(--panel-border);
+      color: var(--text);
+    }
+    .btn-ghost:hover { background: rgba(255, 255, 255, 0.12); }
+    .btn-ghost[aria-pressed="true"] { color: var(--text-faint); }
+
+    /* ============================================================
+       SIDE PANELS
+       ============================================================ */
+    .side { display: flex; flex-direction: column; gap: 22px; }
+
+    .caption-card { padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    .caption-row { min-height: 64px; display: flex; align-items: center; }
+
+    .caption-text {
+      margin: 0;
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: captionIn 0.35s ease;
+    }
+
+    .caption-text.placeholder {
+      background: none;
+      -webkit-text-fill-color: initial;
+      color: var(--text-faint);
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .caption-gloss {
+      margin: -6px 0 0;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-faint);
+      text-transform: capitalize;
+      min-height: 16px;
+    }
+
+    @keyframes captionIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .confidence-row { display: flex; align-items: center; gap: 10px; }
+
+    .confidence-track {
+      flex: 1;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+    .confidence-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent));
+      transition: width 0.25s ease;
+    }
+    .confidence-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dim);
+      min-width: 38px;
+      text-align: right;
+    }
+
+    .history-card { padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .history-list::-webkit-scrollbar { width: 6px; }
+    .history-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 999px; }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--panel-strong);
+      border: 1px solid var(--panel-border);
+      animation: historyIn 0.25s ease;
+    }
+    @keyframes historyIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .history-item-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .history-item-sinhala {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .history-item-gloss {
+      font-size: 11px;
+      color: var(--text-faint);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .history-item-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .history-confidence-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(51, 224, 162, 0.14);
+      color: var(--success);
+    }
+    .history-time {
+      font-size: 11px;
+      color: var(--text-faint);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .empty-hint {
+      margin: 8px 0;
+      font-size: 13px;
+      color: var(--text-faint);
+      text-align: center;
+    }
+
+    .labels-card { padding: 20px; display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0; }
+
+    .labels-head { display: flex; align-items: center; justify-content: space-between; }
+    .labels-count { font-size: 12px; color: var(--text-faint); font-weight: 600; }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--panel-border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-faint); }
+
+    .labels-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .labels-list::-webkit-scrollbar { width: 6px; }
+    .labels-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 999px; }
+
+    .label-chip {
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--panel-border);
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .label-chip.active {
+      border-color: var(--accent);
+      color: var(--text);
+      background: rgba(244, 152, 103, 0.16);
+    }
+
+    /* ============================================================
+       PREMIUM FOOTER — enhanced with gloss, links, and polish
+       ============================================================ */
+    .premium-footer {
+      position: relative;
+      margin: 3rem clamp(16px, 4vw, 56px) 1.5rem;
+      padding: 2.5rem 2rem 1.8rem;
+      border-radius: var(--radius-lg);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      max-width: 1320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .premium-footer::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    }
+
+    /* subtle gradient glow at bottom */
+    .premium-footer::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 20%;
+      right: 20%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(174, 103, 250, 0.3), rgba(244, 152, 103, 0.3), transparent);
+      opacity: 0.6;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .footer-brand p {
+      margin: 0.5rem 0 0.8rem;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-dim);
+      max-width: 320px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+      margin-top: 0.4rem;
+    }
+
+    .footer-social a {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid var(--panel-border);
+      background: var(--panel-strong);
+      color: var(--text-dim);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .footer-social a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(174, 103, 250, 0.2);
+    }
+
+    .footer-col h4 {
+      margin: 0 0 0.8rem;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .footer-col ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-col ul li a {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .footer-col ul li a:hover {
+      color: var(--text);
+    }
+    .footer-col ul li a .arrow {
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: all 0.2s ease;
+    }
+    .footer-col ul li a:hover .arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .footer-bottom {
+      margin-top: 2rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--panel-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    .footer-bottom .legal-links {
+      display: flex;
+      gap: 1.2rem;
+    }
+    .footer-bottom .legal-links a {
+      color: var(--text-faint);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .footer-bottom .legal-links a:hover {
+      color: var(--text);
+    }
+
+    /* responsive footer */
+    @media (max-width: 860px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+      .footer-brand p {
+        max-width: 100%;
+      }
+    }
+    @media (max-width: 500px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .footer-bottom .legal-links {
+        flex-wrap: wrap;
+        gap: 0.8rem;
+      }
+    }
+
+    /* ============================================================
+       AUDIO HINT (permission overlay)
+       ============================================================ */
+    .audio-hint {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translate(-50%, 120%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 179, 71, 0.4);
+      background: rgba(20, 16, 8, 0.85);
+      color: #ffcf8a;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      opacity: 0;
+      z-index: 50;
+    }
+    .audio-hint.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    /* ============================================================
+       SETTINGS DRAWER
+       ============================================================ */
+    .settings-scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 5, 10, 0.55);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 60;
+    }
+    .settings-scrim.show { opacity: 1; pointer-events: auto; }
+
+    .settings-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(340px, 88vw);
+      background: rgba(14, 16, 26, 0.92);
+      border-left: 1px solid var(--panel-border);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 70;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      overflow-y: auto;
+    }
+    .settings-drawer.open { transform: translateX(0); }
+
+    .settings-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .settings-head h3 { margin: 0; font-size: 16px; font-weight: 700; }
+
+    .settings-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid var(--panel-border);
+    }
+    .settings-section:first-of-type { border-top: none; padding-top: 0; }
+
+    .settings-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text);
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .toggle-row input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+    .toggle-track {
+      position: relative;
+      width: 38px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid var(--panel-border);
+      flex-shrink: 0;
+      transition: background 0.2s ease;
+    }
+    .toggle-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .toggle-row input:checked + .toggle-track {
+      background: rgba(244, 152, 103, 0.35);
+      border-color: rgba(244, 152, 103, 0.6);
+    }
+    .toggle-row input:checked + .toggle-track .toggle-thumb {
+      transform: translateX(16px);
+      background: var(--accent);
+    }
+
+    .settings-info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-dim);
+      padding: 3px 0;
+    }
+    .settings-info-row strong { color: var(--text); font-weight: 700; }
+
+    /* ============================================================
+       LANDING SECTIONS (hero, features, etc.)
+       ============================================================ */
+    .gradient-text {
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .landing-section { padding: 5rem clamp(20px, 6vw, 6rem); max-width: 1320px; margin: 0 auto; }
+
+    .eyebrow.center { display: block; text-align: center; }
+
+    /* --- Hero --- */
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+      padding: 3.5rem clamp(20px, 6vw, 6rem) 5.5rem;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+    .hero-content { flex: 1.15 1 0; }
+    .hero-eyebrow {
+      display: inline-block;
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: var(--panel-strong);
+      border: 1px solid var(--panel-border);
+      color: var(--text-dim);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+    }
+    .hero-content h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 56px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .hero-content p {
+      margin: 1.5rem 0 0;
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--text-dim);
+      max-width: 560px;
+    }
+    .hero-actions { margin-top: 2.2rem; }
+
+    .hero-visual {
+      flex: 1 1 0;
+      position: relative;
+      display: grid;
+      place-items: center;
+      height: 320px;
+    }
+    .ping-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(129, 175, 221, 0.35);
+      width: 170px;
+      height: 170px;
+      animation: pingOut 3.6s ease-out infinite;
+    }
+    .ping-ring.r2 { animation-delay: 1.2s; }
+    .ping-ring.r3 { animation-delay: 2.4s; }
+    @keyframes pingOut {
+      0% { width: 170px; height: 170px; opacity: 0.7; }
+      100% { width: 320px; height: 320px; opacity: 0; }
+    }
+    .hero-medallion {
+      position: relative;
+      width: 168px;
+      height: 168px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--accent-grad);
+      box-shadow: 0 20px 60px rgba(174, 103, 250, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      z-index: 1;
+    }
+
+    /* ============================================================
+       PREMIUM FLOATING CHIPS - Enhanced Design
+       ============================================================ */
+    .floating-chip {
+      position: absolute;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--text);
+      z-index: 2;
+      animation: floatChip 5s ease-in-out infinite;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      letter-spacing: 0.02em;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+
+    /* Sinhala chip - Purple/Blue gradient */
+    .chip-a {
+      top: 6%;
+      right: 4%;
+      animation-delay: 0s;
+      background: linear-gradient(135deg, rgba(174, 103, 250, 0.35), rgba(99, 102, 241, 0.35));
+      border: 1px solid rgba(174, 103, 250, 0.5);
+      text-shadow: 0 0 30px rgba(174, 103, 250, 0.3);
+      font-family: "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+      font-size: 17px;
+      padding: 14px 24px;
+    }
+    .chip-a::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 999px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(174, 103, 250, 0.6), rgba(99, 102, 241, 0.2));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .chip-a:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 40px rgba(174, 103, 250, 0.3), 0 0 0 2px rgba(174, 103, 250, 0.3);
+    }
+
+    /* English chip - Orange/Gold gradient */
+    .chip-b {
+      bottom: 10%;
+      left: 2%;
+      animation-delay: -2.5s;
+      background: linear-gradient(135deg, rgba(244, 152, 103, 0.35), rgba(251, 191, 36, 0.25));
+      border: 1px solid rgba(244, 152, 103, 0.5);
+      text-shadow: 0 0 30px rgba(244, 152, 103, 0.3);
+      font-size: 16px;
+      padding: 14px 24px;
+    }
+    .chip-b::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 999px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(244, 152, 103, 0.6), rgba(251, 191, 36, 0.2));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .chip-b:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 40px rgba(244, 152, 103, 0.3), 0 0 0 2px rgba(244, 152, 103, 0.3);
+    }
+
+    @keyframes floatChip {
+      0%, 100% { 
+        transform: translateY(0) scale(1);
+      }
+      50% { 
+        transform: translateY(-12px) scale(1.02);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero { flex-direction: column; text-align: center; padding-top: 1rem; }
+      .hero-content p { margin-left: auto; margin-right: auto; }
+      .hero-visual { width: 100%; }
+      .chip-a { font-size: 15px; padding: 10px 18px; }
+      .chip-b { font-size: 14px; padding: 10px 18px; }
+    }
+
+    /* ============================================================
+       WHAT IS SIGN LANGUAGE SECTION WITH IMAGE
+       ============================================================ */
+    .what-is-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 2rem clamp(20px, 6vw, 6rem);
+    }
+
+    .what-is-image {
+      flex: 0 0 300px;
+      height: 300px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(174, 103, 250, 0.25), 0 0 0 1px rgba(129, 175, 221, 0.08);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .what-is-image:hover {
+      transform: scale(1.02);
+      box-shadow: 0 30px 80px rgba(174, 103, 250, 0.35), 0 0 0 1px rgba(129, 175, 221, 0.15);
+    }
+
+    .what-is-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Gradient overlay on image */
+    .what-is-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(174, 103, 250, 0.15), rgba(244, 152, 103, 0.05));
+      pointer-events: none;
+    }
+
+    .what-is-content {
+      flex: 1;
+      text-align: left;
+    }
+
+    .what-is-content .eyebrow {
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+
+    .what-is-content h2 {
+      margin: 0 0 1.2rem 0;
+      font-size: clamp(26px, 3.4vw, 36px);
+      font-weight: 800;
+    }
+
+    .what-is-content p {
+      margin: 0;
+      color: var(--text-dim);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 900px) {
+      .what-is-wrapper {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+        padding: 2rem clamp(20px, 6vw, 6rem);
+      }
+      .what-is-image {
+        flex: 0 0 200px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+      }
+      .what-is-content {
+        text-align: center;
+      }
+      .what-is-content .eyebrow {
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .what-is-image {
+        flex: 0 0 150px;
+        width: 150px;
+        height: 150px;
+      }
+    }
+
+    /* --- What is Sign Language (Original content, now inside wrapper) --- */
+    .steps-row { display: flex; gap: 1.5rem; margin-top: 3rem; flex-wrap: wrap; justify-content: center; }
+    .step { flex: 1 1 220px; padding: 1.8rem; display: flex; flex-direction: column; gap: 0.6rem; align-items: center; text-align: center; }
+    .step h3 { margin: 0.4rem 0 0; font-size: 17px; font-weight: 800; }
+    .step p { margin: 0; font-size: 14px; line-height: 1.65; color: var(--text-dim); }
+
+    .icon-medallion-sm {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--accent-grad);
+      box-shadow: 0 8px 20px rgba(174, 103, 250, 0.3);
+      flex-shrink: 0;
+    }
+
+    /* --- Features --- */
+    .features-section { display: flex; gap: 3rem; }
+    .features-heading { flex: 1 1 0; }
+    .features-heading .eyebrow { display: block; margin-bottom: 0.75rem; }
+    .features-heading h2 { margin: 0; font-size: clamp(24px, 3vw, 32px); font-weight: 800; line-height: 1.3; }
+    .features-list { flex: 1.4 1 0; display: flex; flex-direction: column; gap: 1.75rem; }
+    .feature-item-title { display: flex; align-items: center; gap: 12px; margin-bottom: 0.4rem; }
+    .feature-item-title h3 { margin: 0; font-size: 17px; font-weight: 800; }
+    .feature-divider { flex: 1; height: 2px; background: var(--accent-grad); opacity: 0.5; border-radius: 999px; }
+    .feature-item p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--text-dim); }
+
+    @media (max-width: 900px) {
+      .features-section { flex-direction: column; }
+    }
+
+    /* --- How it works --- */
+    .working-section {
+      display: flex;
+      align-items: center;
+      gap: 3.5rem;
+    }
+    .working-content { flex: 1 1 0; }
+    .working-content h2 { margin: 0.5rem 0 0; font-size: clamp(24px, 3vw, 32px); font-weight: 800; }
+    .working-content p { margin: 1.2rem 0 1.8rem; color: var(--text-dim); font-size: 15px; line-height: 1.75; }
+
+    .working-flow {
+      flex: 1 1 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      padding: 2rem;
+      border-radius: var(--radius-lg);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      box-shadow: var(--shadow-soft);
+    }
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 84px;
+      text-align: center;
+    }
+    .flow-step span { font-size: 11.5px; font-weight: 600; color: var(--text-dim); line-height: 1.3; }
+    .flow-arrow { color: var(--text-faint); font-size: 18px; }
+
+    @media (max-width: 900px) {
+      .working-section { flex-direction: column; text-align: center; }
+      .working-content p { margin-left: auto; margin-right: auto; }
+      .working-flow { width: 100%; }
+    }
+
+    /* --- CTA Bar --- */
+    .cta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      background: var(--accent-grad);
+      border-radius: var(--radius-lg);
+      margin: 2rem clamp(20px, 6vw, 6rem) 5rem;
+      padding: 2rem 2.5rem;
+      max-width: 1320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-content h3 { margin: 0; font-size: 22px; font-weight: 800; color: #04070d; line-height: 1.4; }
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: #04070d;
+      color: #fff;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 0.9rem 1.8rem;
+      white-space: nowrap;
+      transition: transform 0.15s ease;
+      text-decoration: none;
+    }
+    .cta-button:hover { transform: scale(1.04); }
+
+    @media (max-width: 700px) {
+      .cta-bar { flex-direction: column; text-align: center; }
+    }
+
+    /* ============================================================
+       WORKING IMAGE SECTION - Smaller Size
+       ============================================================ */
+    .working-image-section {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 clamp(20px, 6vw, 6rem);
+    }
+
+    .working-image-container {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(174, 103, 250, 0.2), 0 0 0 1px rgba(129, 175, 221, 0.08);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      background: var(--panel);
+      max-width: 100%;
+    }
+
+    .working-image-container:hover {
+      transform: scale(1.01);
+      box-shadow: 0 30px 80px rgba(174, 103, 250, 0.3), 0 0 0 1px rgba(129, 175, 221, 0.15);
+    }
+
+    .working-image-container img {
+      width: 100%;
+      max-height: 400px;
+      display: block;
+      object-fit: contain;
+      background: var(--bg);
+    }
+
+    /* Gradient overlay on working image */
+    .working-image-container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(174, 103, 250, 0.08), rgba(244, 152, 103, 0.03));
+      pointer-events: none;
+    }
+
+    /* Decorative badge on working image */
+    .working-image-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(10, 12, 20, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      z-index: 2;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .working-image-badge span {
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    @media (max-width: 900px) {
+      .working-image-badge {
+        top: 12px;
+        right: 12px;
+        padding: 5px 12px;
+        font-size: 10px;
+      }
+      .working-image-container img {
+        max-height: 300px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .working-image-container img {
+        max-height: 200px;
+      }
+      .working-image-badge {
+        top: 8px;
+        right: 8px;
+        padding: 4px 10px;
+        font-size: 9px;
+      }
+    }
+
+    /* --- Testimonials --- */
+    .testimonials-heading { text-align: center; margin-bottom: 2.5rem; }
+    .testimonials-heading h2 { margin: 0; font-size: clamp(24px, 3vw, 30px); font-weight: 800; max-width: 700px; margin: 0 auto; }
+
+    .testimonials-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    @media (max-width: 950px) {
+      .testimonials-list { grid-template-columns: 1fr; }
+    }
+
+    .testimonial-card { padding: 1.6rem; display: flex; flex-direction: column; gap: 1.2rem; position: relative; }
+    .testimonial-card blockquote { position: relative; padding-left: 4px; }
+    .testimonial-card blockquote::before {
+      content: "\201C";
+      display: block;
+      font-size: 42px;
+      font-style: normal;
+      line-height: 1;
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 4px;
+    }
+    .testimonial-header { display: flex; align-items: center; gap: 12px; }
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      background: var(--accent-grad);
+      color: #04070d;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .testimonial-header h4 { margin: 0; font-size: 15px; font-weight: 700; }
+    .testimonial-header p { margin: 2px 0 0; font-size: 12.5px; color: var(--text-faint); }
+    .testimonial-card blockquote { margin: 0; font-size: 14px; line-height: 1.7; color: var(--text-dim); font-style: italic; }
+
+    /* Responsive header adjustments */
+    @media (max-width: 680px) {
+      .brand-text h1 {
+        font-size: 16px;
+      }
+      .brand-text p {
+        font-size: 11px;
+        flex-wrap: wrap;
+      }
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+      }
+      .status-pill {
+        padding: 6px 12px;
+        font-size: 11px;
+      }
+      .status-pill #connectionLabel {
+        font-size: 10px;
+      }
+    }
+    /* ============================================================================
+       ============================================================================
+       PREMIUM REFINEMENT LAYER
+       ----------------------------------------------------------------------------
+       Appended last so it wins on equal specificity without needing !important.
+       This layer changes presentation only: it introduces no new selectors that
+       the app depends on, and every id, state class (.on/.open/.placeholder/
+       .scanning/.show/.stop) and JS-generated class (.history-item/.label-chip)
+       above is left intact.
+       ============================================================================
+       ============================================================================ */
+
+    /* ------------------------------------------------------------------
+       1. ATMOSPHERE
+       The old aurora sat at 50% opacity over a bright navy radial, which
+       washed the whole page toward mid-blue and flattened every surface.
+       Pulling it back and adding a vignette restores contrast, so the
+       glass panels actually read as glass.
+       ------------------------------------------------------------------ */
+    .bg-radial {
+      background:
+        radial-gradient(1200px 700px at 8% -5%, #14295c 0%, transparent 60%),
+        radial-gradient(900px 600px at 95% 8%, #2a1f56 0%, transparent 55%),
+        var(--bg-deep);
+    }
+
+    .bg-aurora { opacity: 0.44; filter: blur(120px) saturate(130%); }
+    .blob { width: 44vw; height: 44vw; }
+    .blob-a { background: #8b52d6; }
+    .blob-b { background: #d97f4f; }
+    .blob-c { background: #2f477f; }
+
+    .bg-grain { opacity: 0.028; }
+
+    /* Vignette: pins attention to the centre column and stops the aurora
+       bleeding off the edges of wide monitors. */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background: radial-gradient(130% 90% at 50% 0%, transparent 40%, rgba(3, 6, 13, 0.72) 100%);
+    }
+
+    /* ------------------------------------------------------------------
+       2. STICKY CONDENSING HEADER
+       z-index 40 keeps it under the settings scrim (60) and drawer (70),
+       so the existing drawer still covers the header exactly as before.
+       ------------------------------------------------------------------ */
+    /* `overflow-x: hidden` on <body> turns it into a scroll container, which
+       silently breaks `position: sticky` for its children. `clip` gives the
+       same horizontal-overflow protection without establishing one. */
+    html, body { overflow-x: clip; }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      padding: 22px clamp(18px, 4vw, 56px) 18px;
+      background: transparent;
+      transition: padding var(--dur-2) var(--ease), background var(--dur-2) var(--ease),
+        box-shadow var(--dur-2) var(--ease), backdrop-filter var(--dur-2) var(--ease);
+    }
+
+    .app-header.is-scrolled {
+      padding: 11px clamp(18px, 4vw, 56px);
+      background: rgba(5, 10, 20, 0.72);
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      box-shadow: 0 1px 0 var(--hairline), 0 14px 34px rgba(2, 6, 16, 0.45);
+    }
+
+    .app-header::after {
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, transparent, var(--hairline) 18%, var(--hairline) 82%, transparent);
+      opacity: 0;
+      transition: opacity var(--dur-2) var(--ease);
+    }
+    .app-header.is-scrolled::after { opacity: 1; }
+
+    .app-header.is-scrolled .brand-mark { width: 40px; height: 40px; border-radius: 11px; }
+    .app-header.is-scrolled .brand-text p { opacity: 0; max-height: 0; margin-top: -2px; }
+    .app-header.is-scrolled .brand-text h1 { font-size: 17px; }
+
+    .brand-text p {
+      overflow: hidden;
+      max-height: 22px;
+      transition: opacity var(--dur-2) var(--ease), max-height var(--dur-2) var(--ease);
+    }
+    .brand-text h1 { transition: font-size var(--dur-2) var(--ease); }
+
+    /* Anchor targets clear the pinned header instead of hiding under it. */
+    #tool, .landing-section, .hero { scroll-margin-top: 116px; }
+
+    /* ------------------------------------------------------------------
+       3. BRAND — restraint
+       Gradient-filling an entire product name is a common tell of a
+       template. Setting the wordmark in solid white and reserving the
+       gradient for the Sinhala mark alone reads far more considered.
+       ------------------------------------------------------------------ */
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 13px;
+      background: linear-gradient(160deg, #ffffff, #e8eef8);
+      box-shadow: 0 6px 22px rgba(174, 103, 250, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease),
+        width var(--dur-2) var(--ease), height var(--dur-2) var(--ease);
+    }
+    .brand-mark:hover { transform: translateY(-1px) scale(1.03); }
+
+    .brand-text h1 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.022em;
+      background: none;
+      -webkit-background-clip: border-box;
+      background-clip: border-box;
+      color: var(--text);
+      text-shadow: none;
+    }
+    .brand-text h1 .sinhala-brand {
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-right: 2px;
+    }
+    .brand-text h1 .sinhala-brand::after { display: none; }
+
+    .brand-text p {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-faint);
+      letter-spacing: 0.005em;
+    }
+    .brand-text p .highlight-text {
+      background: none;
+      -webkit-background-clip: border-box;
+      background-clip: border-box;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+    .brand-text p .sep-dot { background: var(--text-faint); opacity: 0.5; }
+
+    /* ------------------------------------------------------------------
+       4. HEADER CHROME
+       ------------------------------------------------------------------ */
+    .version-badge {
+      font-size: 10.5px;
+      letter-spacing: 0.1em;
+      color: var(--text-faint);
+      background: var(--surface-raise);
+      border-color: var(--hairline);
+      padding: 6px 11px;
+    }
+
+    .status-pill {
+      padding: 7px 14px;
+      background: var(--surface-raise);
+      border-color: var(--hairline);
+      box-shadow: var(--e1);
+    }
+    /* The shimmer sweep was drawing the eye to a status chip that rarely
+       changes. Removing it lets the live indicators lead instead. */
+    .status-pill::before { display: none; }
+    .status-pill #connectionLabel { font-size: 11.5px; letter-spacing: 0.04em; color: var(--text-dim); }
+    .status-pill.connected #connectionLabel { color: var(--text); }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: var(--surface-raise);
+      border-color: var(--hairline);
+      transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease),
+        transform var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+    }
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(146, 182, 224, 0.28);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    /* ------------------------------------------------------------------
+       5. TYPE SCALE
+       Tighter tracking as size grows, shorter line-height on display text,
+       and a measure cap on body copy -- the three levers that make text
+       look typeset rather than defaulted.
+       ------------------------------------------------------------------ */
+    .hero-content h1 {
+      font-size: clamp(36px, 5.1vw, 60px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+    }
+    .hero-content p {
+      margin-top: 1.6rem;
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.72;
+      color: var(--text-dim);
+      max-width: 54ch;
+    }
+    .hero-content p strong { font-weight: 600; color: var(--text); }
+
+    .what-is-content h2,
+    .features-heading h2,
+    .working-content h2,
+    .testimonials-heading h2 {
+      font-size: clamp(26px, 3.1vw, 38px);
+      font-weight: 800;
+      line-height: 1.18;
+      letter-spacing: -0.028em;
+    }
+
+    .what-is-content p,
+    .working-content p,
+    .feature-item p,
+    .step p {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.78;
+      color: var(--text-dim);
+      max-width: 62ch;
+    }
+
+    .eyebrow, .hero-eyebrow {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      color: var(--text-faint);
+    }
+
+    .hero-eyebrow {
+      background: var(--surface-raise);
+      border-color: var(--hairline);
+      color: var(--text-dim);
+      padding: 7px 15px;
+      margin-bottom: 1.6rem;
+      box-shadow: var(--e1);
+    }
+
+    /* ------------------------------------------------------------------
+       6. RHYTHM & MEASURE
+       A narrower column and a consistent vertical scale. Generous, even
+       whitespace is the most reliable signal of a premium layout.
+       ------------------------------------------------------------------ */
+    .layout, .stats-bar, .landing-section, .hero, .what-is-wrapper { max-width: var(--maxw); }
+
+    .landing-section { padding: clamp(3.5rem, 7vw, 6rem) var(--gutter); }
+    .hero { padding: clamp(2rem, 4vw, 3.5rem) var(--gutter) clamp(3.5rem, 6vw, 5.5rem); gap: 3.5rem; }
+    .what-is-wrapper { padding: 2rem var(--gutter); gap: 3.5rem; }
+    .layout { gap: 20px; padding: 14px var(--gutter) 44px; }
+    .stats-bar { padding: 0 var(--gutter) 20px; gap: 12px; }
+
+    /* Full-bleed blocks are sized to the content column instead of the outer
+       max-width, so their edges align with the cards above them. */
+    .cta-bar, .premium-footer, .working-image-section {
+      max-width: var(--content);
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 2.4rem;
+      padding-right: 2.4rem;
+    }
+    .working-image-section { max-width: min(900px, var(--content)); padding-left: 0; padding-right: 0; }
+    .cta-bar { margin-top: 2rem; margin-bottom: clamp(3.5rem, 6vw, 5rem); }
+
+    /* Headings break on meaning rather than on the raw line box. */
+    h1, h2, h3, .caption-text { text-wrap: balance; }
+    .hero-content p, .what-is-content p, .working-content p { text-wrap: pretty; }
+
+    /* The section heading holds position while its list scrolls past --
+       a small thing that makes a long marketing page feel authored. */
+    @media (min-width: 901px) {
+      .features-heading {
+        position: sticky;
+        top: 116px;
+        align-self: flex-start;
+        max-width: 22ch;
+      }
+    }
+
+    /* Hairline rules between landing sections give the page structure
+       without adding boxes. */
+    .what-is-section, .features-section, .working-section, .testimonials-section {
+      position: relative;
+    }
+    .features-section::before,
+    .working-section::before,
+    .testimonials-section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: clamp(20px, 5vw, 4rem);
+      right: clamp(20px, 5vw, 4rem);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--hairline) 20%, var(--hairline) 80%, transparent);
+    }
+
+    /* ------------------------------------------------------------------
+       7. SURFACES & ELEVATION
+       ------------------------------------------------------------------ */
+    .card {
+      border-radius: var(--radius-lg);
+      border-color: var(--panel-border);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0)), var(--panel);
+      box-shadow: var(--e2);
+      backdrop-filter: blur(26px) saturate(130%);
+      -webkit-backdrop-filter: blur(26px) saturate(130%);
+    }
+    .card::before {
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+    }
+
+    /* Only the marketing cards lift on hover; the live tool panels stay
+       still so nothing moves while the user is signing. */
+    .step, .testimonial-card {
+      transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease),
+        border-color var(--dur-2) var(--ease);
+    }
+    .step:hover, .testimonial-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--e3);
+      border-color: rgba(146, 182, 224, 0.26);
+    }
+
+    .stage { padding: 20px; gap: 18px; }
+    .caption-card { padding: 24px; }
+    .history-card { padding: 20px 20px 16px; }
+    .labels-card { padding: 20px; }
+    .side { gap: 20px; }
+
+    /* ------------------------------------------------------------------
+       8. BUTTONS
+       ------------------------------------------------------------------ */
+    .btn {
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.005em;
+      /* .btn is used on <a> as well as <button>; without this the hero CTA
+         renders with a browser-default underline. */
+      text-decoration: none;
+      justify-content: center;
+      transition: transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease),
+        background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease), filter var(--dur-1) var(--ease);
+    }
+    .btn:active { transform: translateY(0) scale(0.98); }
+
+    .btn-primary {
+      color: #180a04;
+      box-shadow: 0 8px 22px rgba(174, 103, 250, 0.26), 0 1px 0 rgba(255, 255, 255, 0.28) inset;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+      box-shadow: 0 14px 34px rgba(174, 103, 250, 0.38), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+    }
+
+    .btn-ghost {
+      background: var(--surface-raise);
+      border-color: var(--hairline);
+      color: var(--text-dim);
+    }
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.085);
+      border-color: rgba(146, 182, 224, 0.28);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .hero-actions .btn-primary { padding: 14px 30px; font-size: 15px; }
+
+    /* Keyboard focus is visible and on-brand; mouse users never see it. */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    .btn:focus-visible,
+    .icon-btn:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 3px;
+      border-radius: 10px;
+    }
+
+    /* ------------------------------------------------------------------
+       9. STATS BAR
+       Solid numerals with a quiet label. Gradient-filling data is hard to
+       read and cheapens the metric; the accent moves to a top hairline.
+       ------------------------------------------------------------------ */
+    .stat-tile {
+      position: relative;
+      padding: 15px 17px;
+      border-radius: var(--radius-md);
+      border-color: var(--panel-border);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)), var(--panel);
+      box-shadow: var(--e1);
+      overflow: hidden;
+      transition: border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
+    }
+    .stat-tile::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: var(--accent-grad);
+      opacity: 0.5;
+    }
+    .stat-tile:hover { border-color: rgba(146, 182, 224, 0.26); box-shadow: var(--e2); }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+      background: none;
+      -webkit-background-clip: border-box;
+      background-clip: border-box;
+      color: var(--text);
+    }
+    .stat-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    /* ------------------------------------------------------------------
+       10. VIDEO STAGE
+       ------------------------------------------------------------------ */
+    .video-wrap {
+      border-radius: var(--radius-md);
+      background: #04070d;
+      box-shadow: inset 0 0 0 1px rgba(146, 182, 224, 0.1), 0 10px 30px rgba(2, 6, 16, 0.45);
+    }
+    .video-empty p { font-size: 14.5px; color: var(--text-dim); font-weight: 600; }
+    .video-empty span { font-size: 12.5px; color: var(--text-faint); }
+
+    .rec-badge {
+      top: 16px;
+      left: 16px;
+      padding: 6px 12px;
+      font-size: 10.5px;
+      letter-spacing: 0.12em;
+      background: rgba(8, 10, 18, 0.62);
+      border-color: rgba(255, 107, 107, 0.34);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .scan-corner { border-color: rgba(174, 103, 250, 0.75); width: 24px; height: 24px; }
+
+    .buffer-track { height: 5px; background: rgba(255, 255, 255, 0.06); }
+    .buffer-fill { box-shadow: 0 0 14px rgba(244, 152, 103, 0.5); }
+
+    .controls { gap: 10px; padding-top: 2px; }
+
+    /* ------------------------------------------------------------------
+       11. LIVE CAPTION & CONFIDENCE
+       ------------------------------------------------------------------ */
+    .caption-text { font-size: clamp(26px, 4vw, 34px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.2; }
+    .caption-text.placeholder { font-size: 17px; font-weight: 500; color: var(--text-faint); letter-spacing: 0; }
+    .caption-gloss { font-size: 12.5px; font-weight: 500; letter-spacing: 0.03em; color: var(--text-faint); }
+
+    .confidence-track { height: 7px; background: rgba(255, 255, 255, 0.06); }
+    .confidence-fill { transition: width var(--dur-2) var(--ease); box-shadow: 0 0 12px rgba(174, 103, 250, 0.45); }
+    .confidence-value {
+      font-size: 12.5px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      min-width: 42px;
+    }
+
+    /* ------------------------------------------------------------------
+       12. HISTORY & LABEL CHIPS
+       ------------------------------------------------------------------ */
+    .history-item {
+      padding: 10px 13px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-raise);
+      border-color: var(--hairline);
+      transition: border-color var(--dur-1) var(--ease), background var(--dur-1) var(--ease);
+    }
+    .history-item:hover { border-color: rgba(146, 182, 224, 0.24); background: rgba(255, 255, 255, 0.06); }
+    .history-item-sinhala { font-size: 14px; font-weight: 700; letter-spacing: -0.005em; }
+    .history-item-gloss { font-size: 11px; color: var(--text-faint); }
+    .history-confidence-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      background: rgba(51, 224, 162, 0.12);
+      border: 1px solid rgba(51, 224, 162, 0.24);
+      padding: 3px 9px;
+    }
+    .history-time { font-size: 10.5px; color: var(--text-faint); }
+
+    .search-input {
+      padding: 11px 14px;
+      background: rgba(3, 8, 17, 0.55);
+      border-color: var(--hairline);
+      font-size: 13px;
+      transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease), background var(--dur-1) var(--ease);
+    }
+    .search-input:focus {
+      border-color: rgba(244, 152, 103, 0.55);
+      box-shadow: 0 0 0 3px rgba(244, 152, 103, 0.1);
+      background: rgba(3, 8, 17, 0.75);
+    }
+
+    .label-chip {
+      padding: 6px 11px;
+      border-radius: 9px;
+      background: var(--surface-raise);
+      border-color: var(--hairline);
+      font-size: 12px;
+      color: var(--text-dim);
+      transition: border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease),
+        background var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+    }
+    .label-chip:hover {
+      border-color: rgba(244, 152, 103, 0.4);
+      color: var(--text);
+      background: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    .labels-count { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+
+    .history-list::-webkit-scrollbar-thumb,
+    .labels-list::-webkit-scrollbar-thumb { background: rgba(146, 182, 224, 0.2); }
+
+    /* ------------------------------------------------------------------
+       13. HERO VISUAL
+       ------------------------------------------------------------------ */
+    .hero-medallion {
+      width: 156px;
+      height: 156px;
+      box-shadow: 0 24px 70px rgba(174, 103, 250, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 2px 0 rgba(255, 255, 255, 0.22);
+    }
+    .ping-ring { border-color: rgba(146, 182, 224, 0.22); }
+
+    .floating-chip {
+      font-weight: 700;
+      font-size: 14px;
+      padding: 11px 20px;
+      box-shadow: 0 10px 34px rgba(2, 6, 16, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
+    }
+    .chip-a {
+      font-size: 16px;
+      padding: 12px 22px;
+      background: linear-gradient(135deg, rgba(174, 103, 250, 0.26), rgba(99, 102, 241, 0.2));
+      border-color: rgba(174, 103, 250, 0.34);
+      text-shadow: none;
+    }
+
+    /* ------------------------------------------------------------------
+       14. LANDING CARDS & MEDIA
+       ------------------------------------------------------------------ */
+    .steps-row { gap: 1.25rem; margin-top: 3.25rem; }
+    .step { padding: 1.9rem 1.6rem; gap: 0.5rem; }
+    .step h3 { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+
+    .icon-medallion-sm {
+      box-shadow: 0 8px 24px rgba(174, 103, 250, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+
+    .what-is-image {
+      flex-basis: 320px;
+      height: 320px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--e3);
+      transition: transform var(--dur-3) var(--ease), box-shadow var(--dur-3) var(--ease);
+    }
+    .what-is-image:hover { transform: translateY(-4px); }
+
+    .working-image-container {
+      border-radius: var(--radius-lg);
+      box-shadow: var(--e3);
+      transition: transform var(--dur-3) var(--ease), box-shadow var(--dur-3) var(--ease);
+    }
+
+    .features-list { gap: 1.6rem; }
+    .feature-item-title h3 { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+    .feature-divider { height: 1px; opacity: 0.35; }
+
+    .flow-step {
+      background: var(--surface-raise);
+      border-color: var(--hairline);
+      transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+    }
+    .flow-step:hover { border-color: rgba(244, 152, 103, 0.35); transform: translateY(-2px); }
+    .flow-step span { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
+    .flow-arrow { color: rgba(146, 182, 224, 0.4); }
+
+    .testimonial-card { padding: 1.8rem; }
+    .testimonial-card blockquote { font-size: 14px; font-weight: 300; line-height: 1.78; font-style: normal; color: var(--text-dim); }
+    .testimonial-header h4 { font-size: 14.5px; font-weight: 700; letter-spacing: -0.01em; }
+    .testimonial-header p { font-size: 12px; color: var(--text-faint); }
+    .testimonial-avatar { box-shadow: 0 6px 18px rgba(174, 103, 250, 0.22); }
+
+    /* ------------------------------------------------------------------
+       15. CALL TO ACTION
+       ------------------------------------------------------------------ */
+    .cta-bar {
+      padding: 2.2rem 2.6rem;
+      border-radius: var(--radius-xl);
+      box-shadow: 0 26px 70px rgba(174, 103, 250, 0.24);
+    }
+    .cta-content h3 { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.35; }
+    .cta-button {
+      font-size: 15px;
+      padding: 0.95rem 1.9rem;
+      transition: transform var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease);
+      box-shadow: 0 8px 22px rgba(2, 6, 16, 0.35);
+    }
+    .cta-button:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 14px 32px rgba(2, 6, 16, 0.45); }
+
+    /* ------------------------------------------------------------------
+       16. FOOTER
+       ------------------------------------------------------------------ */
+    .premium-footer {
+      margin-top: 4rem;
+      margin-bottom: 1.75rem;
+      padding-top: 2.75rem;
+      padding-bottom: 1.75rem;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0)), var(--panel);
+      border-color: var(--panel-border);
+      box-shadow: var(--e2);
+    }
+    .footer-brand p { font-size: 13.5px; font-weight: 300; line-height: 1.75; color: var(--text-dim); max-width: 42ch; }
+    .footer-col h4 { font-size: 10.5px; letter-spacing: 0.14em; color: var(--text-faint); }
+    .footer-col ul li a {
+      font-size: 13.5px;
+      color: var(--text-dim);
+      transition: color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+    }
+    .footer-col ul li a:hover { color: var(--text); }
+    .footer-social a {
+      background: var(--surface-raise);
+      border-color: var(--hairline);
+      transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+    }
+    .footer-social a:hover { transform: translateY(-2px); border-color: rgba(244, 152, 103, 0.4); }
+    .footer-bottom { border-top: 1px solid var(--hairline); font-size: 12.5px; color: var(--text-faint); }
+
+    /* ------------------------------------------------------------------
+       17. SETTINGS DRAWER
+       ------------------------------------------------------------------ */
+    .settings-drawer {
+      background: rgba(7, 14, 26, 0.94);
+      border-left-color: var(--panel-border);
+      box-shadow: -26px 0 70px rgba(2, 6, 16, 0.6);
+      padding: 24px;
+    }
+    .settings-scrim { background: rgba(3, 6, 13, 0.62); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+    .settings-head h3 { font-size: 15px; font-weight: 800; letter-spacing: -0.015em; }
+    .settings-label { font-size: 10.5px; letter-spacing: 0.13em; color: var(--text-faint); }
+    .settings-section { border-top-color: var(--hairline); }
+    .settings-info-row { font-size: 13px; color: var(--text-dim); }
+    .settings-info-row strong { font-variant-numeric: tabular-nums; }
+    .toggle-row { font-size: 13.5px; }
+
+    .audio-hint {
+      border-radius: 999px;
+      box-shadow: 0 16px 40px rgba(2, 6, 16, 0.5);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    /* ------------------------------------------------------------------
+       18. MOTION PREFERENCES
+       ------------------------------------------------------------------ */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .blob, .ping-ring, .floating-chip, .rec-dot, .scan-line { animation: none !important; }
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.08s !important;
+      }
+    }
+
+    /* ------------------------------------------------------------------
+       19. SMALL SCREENS
+       ------------------------------------------------------------------ */
+    @media (max-width: 680px) {
+      .app-header { padding: 16px 18px 12px; }
+      .app-header.is-scrolled { padding: 9px 18px; }
+      .brand-mark { width: 40px; height: 40px; }
+      .brand-text h1 { font-size: 16px; }
+      .stat-value { font-size: 20px; }
+      .premium-footer { padding: 2rem 1.4rem 1.4rem; }
+      #tool, .landing-section, .hero { scroll-margin-top: 88px; }
+    }
+
+    /* ============================================================================
+       ============================================================================
+       LAYER 2 — EDITORIAL / COUTURE
+       ----------------------------------------------------------------------------
+       Layer 1 above fixed the system: grid, elevation, spacing, sticky header.
+       This layer gives the page a *voice*. Three moves do most of the work:
+
+         1. A high-contrast serif (Playfair Display) for display headings.
+            An all-sans page reads "dashboard"; a serif/sans pairing reads
+            "brand". This is the single largest lever on perceived class.
+         2. A champagne-gold hairline accent alongside the existing purple to
+            orange gradient. Metallic hairlines are the classic luxury cue,
+            and gold sits harmoniously between the two existing accents.
+         3. Editorial composition -- numbered indices, rules that align, and
+            far more air around the display type.
+
+       Presentation only. No selector here is referenced by app.js.
+       ============================================================================
+       ============================================================================ */
+
+    :root {
+      --display: "Playfair Display", "Noto Serif", "Iskoola Pota", Georgia, "Times New Roman", serif;
+      --gold: #dcbb90;
+      --gold-bright: #f0d7b6;
+      --gold-line: rgba(220, 187, 144, 0.32);
+      --gold-faint: rgba(220, 187, 144, 0.13);
+    }
+
+    /* A single foil line across the very top of the document. */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      z-index: 60;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent, var(--gold-line) 12%, rgba(240, 215, 182, 0.6) 50%, var(--gold-line) 88%, transparent);
+    }
+
+    /* ------------------------------------------------------------------
+       2.1 DISPLAY TYPOGRAPHY
+       Serif wants far less negative tracking than a geometric sans, and a
+       little more leading. Sizes go up because a serif at the same optical
+       size reads smaller.
+       ------------------------------------------------------------------ */
+    .hero-content h1 {
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: clamp(40px, 5.8vw, 68px);
+      line-height: 1.08;
+      letter-spacing: -0.012em;
+    }
+
+    .what-is-content h2,
+    .features-heading h2,
+    .working-content h2,
+    .testimonials-heading h2 {
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: clamp(30px, 3.6vw, 44px);
+      line-height: 1.16;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    /* The Sinhala mark keeps the brand gradient; the serif carries the rest. */
+    .hero-content h1 .gradient-text {
+      font-family: "Manrope", "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    /* ------------------------------------------------------------------
+       2.2 EYEBROWS — a foil rule and gold small caps
+       ------------------------------------------------------------------ */
+    .landing-section .eyebrow,
+    .what-is-content .eyebrow,
+    .working-content .eyebrow,
+    .features-heading .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.1rem;
+    }
+    .landing-section .eyebrow::before,
+    .what-is-content .eyebrow::before,
+    .working-content .eyebrow::before,
+    .features-heading .eyebrow::before {
+      content: "";
+      width: 30px;
+      height: 1px;
+      flex: none;
+      background: linear-gradient(90deg, transparent, var(--gold));
+    }
+    .eyebrow.center { justify-content: center; }
+
+    .hero-eyebrow {
+      background: var(--gold-faint);
+      border: 1px solid var(--gold-line);
+      color: var(--gold-bright);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      padding: 8px 18px;
+      box-shadow: none;
+      margin-bottom: 1.9rem;
+    }
+
+    /* ------------------------------------------------------------------
+       2.3 FEATURES — editorial two-column with a numbered register
+       The old version stacked an eyebrow above the left heading while the
+       right column began straight at a title, so nothing lined up. Now both
+       columns start on the same line and each feature is indexed, with a
+       hairline register down the list.
+       ------------------------------------------------------------------ */
+    .features-section {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      column-gap: clamp(2.5rem, 6vw, 6rem);
+      align-items: start;
+    }
+
+    /* Layer 1 capped this container at 22ch, which the grid column now
+       handles far better -- release it so the heading fills its column. */
+    .features-heading { max-width: none; }
+    .features-heading h2 { max-width: 16ch; text-wrap: pretty; }
+
+    .features-list { display: block; }
+
+    .feature-item {
+      display: grid;
+      grid-template-columns: 3rem minmax(0, 1fr);
+      column-gap: 1.25rem;
+      padding: 1.65rem 0;
+      border-top: 1px solid var(--hairline);
+      transition: border-color var(--dur-2) var(--ease);
+    }
+    .feature-item:first-child { border-top: none; padding-top: 0; }
+    .feature-item:last-child { padding-bottom: 0; }
+    .feature-item:hover { border-color: var(--gold-line); }
+
+    .feature-item::before {
+      counter-increment: feat;
+      content: counter(feat, decimal-leading-zero);
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 500;
+      font-size: 21px;
+      line-height: 1.1;
+      color: var(--gold);
+      opacity: 0.85;
+    }
+    .features-list { counter-reset: feat; }
+
+    .feature-item-title { grid-column: 2; grid-row: 1; margin-bottom: 0.45rem; }
+    .feature-item p { grid-column: 2; grid-row: 2; max-width: 54ch; }
+    .feature-item-title h3 {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.012em;
+      color: var(--text);
+    }
+    /* The gradient bar beside each title is redundant now that the list has
+       its own hairline register. */
+    .feature-divider { display: none; }
+
+    @media (max-width: 900px) {
+      .features-section { grid-template-columns: 1fr; row-gap: 2.5rem; }
+      .features-heading h2 { max-width: none; }
+    }
+
+    /* ------------------------------------------------------------------
+       2.4 SURFACES — crisper, warmer, less frosted
+       Heavy blur on every panel flattens a page. Reducing it and warming
+       the border makes the cards feel like material rather than fog.
+       ------------------------------------------------------------------ */
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.008)), rgba(10, 18, 33, 0.66);
+      border-color: rgba(190, 200, 220, 0.13);
+      backdrop-filter: blur(16px) saturate(120%);
+      -webkit-backdrop-filter: blur(16px) saturate(120%);
+      box-shadow: var(--e2);
+    }
+    .card::before {
+      background: linear-gradient(90deg, transparent, var(--gold-line) 30%, var(--gold-line) 70%, transparent);
+    }
+
+    .step, .testimonial-card { border-color: rgba(190, 200, 220, 0.12); }
+    .step:hover, .testimonial-card:hover { border-color: var(--gold-line); }
+
+    .step h3 {
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: 20px;
+      letter-spacing: 0;
+      margin-top: 0.6rem;
+    }
+
+    /* ------------------------------------------------------------------
+       2.5 TESTIMONIALS — set the quote, not the attribution
+       ------------------------------------------------------------------ */
+    .testimonial-card blockquote {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 17.5px;
+      line-height: 1.6;
+      color: rgba(238, 243, 252, 0.9);
+    }
+    /* The copy already carries typographic quotes; the decorative glyph on
+       top of them was doubling up. */
+    .testimonial-card blockquote::before { display: none; }
+    .testimonial-header h4 { font-size: 14px; font-weight: 700; letter-spacing: 0.01em; }
+    .testimonial-header p {
+      font-size: 10.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.75;
+    }
+    .testimonials-heading { margin-bottom: 3.25rem; }
+
+    /* ------------------------------------------------------------------
+       2.6 BUTTONS — less neon, more jewellery
+       ------------------------------------------------------------------ */
+    .btn-primary {
+      color: #1a0d05;
+      box-shadow: 0 6px 20px rgba(174, 103, 250, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(174, 103, 250, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .btn-ghost, .cta-button { border-radius: 999px; }
+
+    .hero-actions .btn-primary {
+      padding: 15px 34px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ------------------------------------------------------------------
+       2.7 THE TOOL — quieter chrome so the live output is the loudest thing
+       ------------------------------------------------------------------ */
+    .side .eyebrow, .labels-head .eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--text-faint);
+    }
+
+    .stat-tile::before { background: linear-gradient(90deg, transparent, var(--gold-line), transparent); opacity: 1; }
+    .stat-value { font-family: var(--display); font-weight: 600; font-size: 28px; letter-spacing: -0.01em; }
+    .stat-label { font-size: 9.5px; letter-spacing: 0.16em; color: var(--text-faint); }
+
+    .caption-text {
+      font-family: "Manrope", "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+      font-size: clamp(27px, 4vw, 36px);
+    }
+    .caption-text.placeholder {
+      font-family: var(--display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 21px;
+      color: rgba(163, 184, 212, 0.62);
+    }
+
+    .label-chip:hover { border-color: var(--gold-line); background: var(--gold-faint); }
+    .search-input:focus { border-color: var(--gold-line); box-shadow: 0 0 0 3px var(--gold-faint); }
+
+    /* ------------------------------------------------------------------
+       2.8 HOW IT WORKS
+       ------------------------------------------------------------------ */
+    .working-flow { padding: 2.4rem 2rem; gap: 0.75rem; }
+    .flow-step span { font-size: 10px; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase; color: var(--text-dim); }
+    .flow-arrow { color: var(--gold); opacity: 0.5; font-size: 16px; }
+    .working-image-badge span { letter-spacing: 0.16em; }
+
+    /* ------------------------------------------------------------------
+       2.9 CTA — foil, not fluorescence
+       ------------------------------------------------------------------ */
+    .cta-content h3 {
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: clamp(22px, 2.4vw, 30px);
+      letter-spacing: -0.005em;
+      line-height: 1.25;
+    }
+    .cta-button {
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 1.05rem 2.1rem;
+    }
+
+    /* ------------------------------------------------------------------
+       2.10 FOOTER
+       ------------------------------------------------------------------ */
+    .footer-col h4 { color: var(--gold); opacity: 0.85; letter-spacing: 0.18em; font-size: 10px; }
+    .footer-col ul li a { position: relative; }
+    .footer-col ul li a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      height: 1px;
+      width: 0;
+      background: var(--gold-line);
+      transition: width var(--dur-2) var(--ease);
+    }
+    .footer-col ul li a:hover::after { width: 100%; }
+    .footer-bottom { border-top-color: var(--gold-faint); }
+    .footer-bottom .legal-links a:hover { color: var(--gold-bright); }
+    .footer-social a:hover { border-color: var(--gold-line); color: var(--gold-bright); }
+
+    /* ------------------------------------------------------------------
+       2.11 BRAND — serif wordmark
+       ------------------------------------------------------------------ */
+    .brand-text h1 {
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+    .app-header.is-scrolled .brand-text h1 { font-size: 18px; }
+    .brand-text p { letter-spacing: 0.06em; font-size: 11px; text-transform: uppercase; font-weight: 600; }
+    .version-badge { color: var(--gold); border-color: var(--gold-faint); background: var(--gold-faint); }
+
+    /* ------------------------------------------------------------------
+       2.12 WHAT-IS SECTION — give the plate a foil edge
+       ------------------------------------------------------------------ */
+    .what-is-image { box-shadow: 0 24px 70px rgba(2, 6, 16, 0.6), 0 0 0 1px var(--gold-faint); }
+    .what-is-content p { margin-top: 1.25rem; }
+    .steps-row { margin-top: 3.75rem; gap: 1.5rem; }
+
+    @media (max-width: 680px) {
+      .hero-content h1 { font-size: clamp(32px, 9vw, 42px); }
+      .stat-value { font-size: 23px; }
+      .testimonial-card blockquote { font-size: 16px; }
+    }
+
+    /* ============================================================================
+       ============================================================================
+       LAYER 3 — THE FOOTER
+       ----------------------------------------------------------------------------
+       A footer is the last thing a visitor reads, so it is disproportionately
+       responsible for how finished a product feels. This one is built as a
+       colophon rather than a sitemap:
+
+         · an oversized Sinhala watermark, clipped by the panel edge
+         · a warm aura bleeding up from beneath the plate
+         · gold rules that separate the link columns into a register
+         · a capability strip stating what the system actually is
+         · a signature line to close the page
+
+       The footer contains no ids and no classes referenced by app.js, so the
+       markup here was free to be restructured.
+       ============================================================================
+       ============================================================================ */
+
+    .premium-footer {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      padding-top: 3.25rem;
+      padding-bottom: 1.5rem;
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(190, 200, 220, 0.12);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.004) 38%),
+        linear-gradient(180deg, rgba(12, 20, 36, 0.9), rgba(7, 12, 24, 0.94));
+      box-shadow: var(--e3);
+    }
+
+    /* Foil rule along the top edge of the plate. */
+    .premium-footer::before {
+      background: linear-gradient(90deg, transparent, var(--gold-line) 15%, rgba(240, 215, 182, 0.55) 50%, var(--gold-line) 85%, transparent);
+      height: 1px;
+      z-index: 2;
+    }
+    .premium-footer::after { display: none; }
+
+    /* Warm light bleeding up from below the plate. */
+    .footer-aura {
+      position: absolute;
+      z-index: -1;
+      left: 50%;
+      bottom: -55%;
+      width: 78%;
+      height: 115%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      background:
+        radial-gradient(closest-side, rgba(174, 103, 250, 0.2), transparent 72%),
+        radial-gradient(closest-side, rgba(244, 152, 103, 0.13), transparent 68%);
+      filter: blur(28px);
+    }
+
+    /* The watermark. Sits behind everything, bleeds off the bottom-right
+       corner, and is invisible to screen readers. */
+    .footer-watermark {
+      position: absolute;
+      z-index: -1;
+      right: -0.12em;
+      bottom: -0.34em;
+      font-family: "Noto Sans Sinhala", "Iskoola Pota", var(--display);
+      font-size: clamp(120px, 17vw, 230px);
+      font-weight: 800;
+      line-height: 0.8;
+      letter-spacing: -0.02em;
+      color: rgba(255, 255, 255, 0.032);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    /* ---------------------------------------------------------------- grid */
+    .footer-grid {
+      grid-template-columns: 1.75fr 1fr 1fr 1fr;
+      gap: clamp(1.75rem, 4vw, 3.5rem);
+      position: relative;
+    }
+
+    /* Hairline register between the three link columns. */
+    .footer-col { position: relative; }
+    .footer-col::before {
+      content: "";
+      position: absolute;
+      left: calc(clamp(1.75rem, 4vw, 3.5rem) / -2);
+      top: 2px;
+      bottom: 6px;
+      width: 1px;
+      background: linear-gradient(180deg, var(--gold-line), transparent 85%);
+    }
+
+    /* ------------------------------------------------------------- identity */
+    .footer-identity {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 1.15rem;
+    }
+    .footer-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      box-shadow: 0 8px 26px rgba(2, 6, 16, 0.5), 0 0 0 1px var(--gold-line),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+    .footer-mark img { border-radius: 8px; width: 100%; height: 100%; object-fit: contain; }
+
+    .footer-wordmark {
+      font-family: "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1;
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .footer-brand p {
+      margin: 0 0 1.4rem;
+      font-size: 13.5px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-dim);
+      max-width: 34ch;
+    }
+
+    /* --------------------------------------------------------------- social */
+    .footer-social { gap: 10px; margin-top: 0; }
+    .footer-social a {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.028);
+      border: 1px solid rgba(190, 200, 220, 0.13);
+      color: var(--text-faint);
+      transition: color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease),
+        background var(--dur-2) var(--ease), transform var(--dur-2) var(--ease),
+        box-shadow var(--dur-2) var(--ease);
+    }
+    .footer-social a:hover {
+      color: var(--gold-bright);
+      border-color: var(--gold-line);
+      background: var(--gold-faint);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 26px rgba(2, 6, 16, 0.5);
+    }
+
+    /* --------------------------------------------------------------- links */
+    .footer-col h4 {
+      margin: 0 0 1.1rem;
+      font-family: "Manrope", sans-serif;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.9;
+    }
+
+    .footer-col ul { gap: 0.72rem; }
+    .footer-col ul li a {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-dim);
+      gap: 8px;
+      transition: color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+    }
+    .footer-col ul li a:hover { color: var(--gold-bright); transform: translateX(3px); }
+    .footer-col ul li a::after { display: none; }
+    .footer-col ul li a .arrow { color: var(--gold); font-size: 12px; }
+
+    /* ---------------------------------------------------------- spec strip */
+    .footer-spec {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem 1.4rem;
+      margin-top: 2.75rem;
+      padding: 1.05rem 0 0;
+      border-top: 1px solid var(--gold-faint);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .spec-item { display: inline-flex; align-items: center; gap: 0.55em; white-space: nowrap; }
+    .spec-item + .spec-item::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      flex: none;
+      transform: rotate(45deg);
+      background: var(--gold);
+      opacity: 0.55;
+      margin-right: 0.85em;
+    }
+    .spec-item b {
+      font-family: var(--display);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0;
+      color: var(--gold-bright);
+      font-variant-numeric: tabular-nums;
+    }
+    .spec-item i { color: var(--gold); font-style: normal; opacity: 0.6; }
+
+    /* -------------------------------------------------------- bottom rule */
+    .footer-bottom {
+      margin-top: 1.5rem;
+      padding-top: 1.15rem;
+      border-top: 1px solid rgba(190, 200, 220, 0.09);
+      font-size: 11.5px;
+      letter-spacing: 0.02em;
+      color: var(--text-faint);
+      gap: 1rem 1.5rem;
+    }
+
+    .footer-origin {
+      font-family: var(--display);
+      font-style: italic;
+      font-size: 13px;
+      letter-spacing: 0;
+      color: var(--gold);
+      opacity: 0.8;
+      /* pushed to the middle only when there is room for three items */
+      margin-inline: auto;
+    }
+
+    .footer-bottom .legal-links { gap: 0; }
+    .footer-bottom .legal-links a {
+      padding: 0 0.85rem;
+      position: relative;
+      transition: color var(--dur-1) var(--ease);
+    }
+    .footer-bottom .legal-links a + a::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 10px;
+      background: rgba(190, 200, 220, 0.18);
+    }
+    .footer-bottom .legal-links a:last-child { padding-right: 0; }
+    .footer-bottom .legal-links a:hover { color: var(--gold-bright); }
+
+    /* ------------------------------------------------------------- narrow */
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .footer-brand { grid-column: 1 / -1; }
+      .footer-col::before { display: none; }
+    }
+    @media (max-width: 560px) {
+      .premium-footer { padding-top: 2.5rem; }
+      .footer-grid { grid-template-columns: 1fr; gap: 1.9rem; }
+      .footer-brand p { max-width: none; }
+      .footer-watermark { font-size: 130px; }
+      .footer-origin { margin-inline: 0; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+
+      /* nowrap keeps each credential on one line on wide screens, but must
+         be released here or the longest one runs past the panel edge */
+      .footer-spec { letter-spacing: 0.1em; font-size: 9.5px; gap: 0.75rem 1rem; }
+      .spec-item { white-space: normal; }
+      .spec-item + .spec-item::before { margin-right: 0.5em; }
+    }
+
+    /* The wordmark is long; at phone widths the subtitle goes and the title
+       is allowed a second line rather than a cramped third. */
+    @media (max-width: 560px) {
+      .brand-text h1 { font-size: 12.5px; line-height: 1.3; }
+      .brand-text h1 .sinhala-brand { font-size: 15px; }
+      .brand-text p { display: none; }
+      .app-header .brand { gap: 11px; }
+
+      /* Collapse the status pill to its indicator dot to hand the width back
+         to the wordmark. app.js still writes to #connectionLabel; only its
+         presentation changes. */
+      .status-pill { padding: 9px; }
+      .status-pill #connectionLabel { display: none; }
+      .icon-btn { width: 34px; height: 34px; }
+    }
+
+    /* ============================================================================
+       ============================================================================
+       LAYER 4 — THE MASTHEAD
+       ----------------------------------------------------------------------------
+       The header was app chrome: a title on the left, three controls on the right.
+       It is now a masthead — brand lockup, centred section navigation with an
+       active indicator, a status cluster, and a hairline reading-progress rule.
+
+       #connectionStatus, #connectionDot, #connectionLabel and #settingsBtn keep
+       their ids and their .connected / .error state classes untouched; only the
+       furniture around them is new.
+       ============================================================================
+       ============================================================================ */
+
+    .app-header {
+      display: grid;
+      grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);
+      align-items: center;
+      column-gap: clamp(1rem, 2.5vw, 2.25rem);
+      /* Wider than the content grid so the nav has room, but capped so it
+         doesn't sprawl on ultrawide displays. */
+      max-width: 1560px;
+      margin-inline: auto;
+    }
+
+    /* ------------------------------------------------------- brand lockup */
+    .brand { gap: 14px; }
+
+    /* The strapline duplicated the hero eyebrow and was the widest thing in
+       the lockup -- dropping it gives a clean single-line masthead. */
+    .brand-text p { display: none; }
+
+    .brand-text h1 {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .brand-text h1 .sinhala-brand {
+      font-family: "Noto Sans Sinhala", "Iskoola Pota", sans-serif;
+      font-size: 23px;
+      font-weight: 800;
+      line-height: 1;
+      transition: font-size var(--dur-2) var(--ease);
+    }
+
+    /* A hairline between the mark and the English name turns two pieces of
+       text into a single lockup. */
+    .brand-en {
+      position: relative;
+      padding-left: 12px;
+      font-family: "Manrope", sans-serif;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .brand-en::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 13px;
+      background: var(--gold-line);
+    }
+
+    .brand-text p .highlight-text { color: var(--gold); opacity: 0.85; }
+    .brand-text p .sep-dot { background: var(--gold); opacity: 0.5; }
+
+    /* --------------------------------------------------------- navigation */
+    .header-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(0.4rem, 1.3vw, 1.25rem);
+    }
+
+    .header-nav a {
+      position: relative;
+      padding: 8px 2px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color var(--dur-2) var(--ease);
+    }
+    .header-nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform var(--dur-2) var(--ease);
+    }
+    .header-nav a:hover { color: var(--text); }
+    .header-nav a:hover::after { transform: scaleX(1); }
+
+    /* Set by the observer below as each section reaches the viewport. */
+    .header-nav a.is-current { color: var(--gold-bright); }
+    .header-nav a.is-current::after { transform: scaleX(1); }
+
+    @media (max-width: 1180px) { .header-nav { display: none; } }
+
+    /* ---------------------------------------------------- action cluster */
+    .header-actions { gap: 12px; }
+
+    .header-sep {
+      width: 1px;
+      height: 22px;
+      background: linear-gradient(180deg, transparent, rgba(190, 200, 220, 0.24), transparent);
+    }
+
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--gold-line);
+      background: var(--gold-faint);
+      color: var(--gold-bright);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease),
+        transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), color var(--dur-2) var(--ease);
+    }
+    .header-cta:hover {
+      background: rgba(220, 187, 144, 0.2);
+      border-color: rgba(220, 187, 144, 0.55);
+      color: #fff5e6;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(2, 6, 16, 0.5);
+    }
+
+    .status-pill {
+      padding: 7px 13px;
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(190, 200, 220, 0.12);
+    }
+    .status-pill #connectionLabel {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .version-badge {
+      font-size: 9.5px;
+      letter-spacing: 0.16em;
+      padding: 6px 12px;
+    }
+    /* Reclaim width for the nav before the nav has to disappear. */
+    @media (max-width: 1500px) { .version-badge { display: none; } }
+
+    /* ------------------------------------------------ reading progress */
+    .header-progress {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1.5px;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity var(--dur-2) var(--ease);
+      pointer-events: none;
+    }
+    .app-header.is-scrolled .header-progress { opacity: 1; }
+    .header-progress i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-2), var(--gold) 55%, var(--accent));
+      box-shadow: 0 0 10px rgba(220, 187, 144, 0.5);
+      transition: width 0.1s linear;
+    }
+
+    /* -------------------------------------------------------- condensed */
+    .app-header.is-scrolled {
+      background: rgba(5, 10, 20, 0.8);
+      box-shadow: 0 1px 0 var(--gold-faint), 0 16px 40px rgba(2, 6, 16, 0.5);
+    }
+    .app-header.is-scrolled .brand-text h1 .sinhala-brand { font-size: 20px; }
+    .app-header.is-scrolled .brand-en { font-size: 10px; }
+
+    /* --------------------------------------------------------- narrow */
+    @media (max-width: 1400px) {
+      .header-cta span { display: none; }
+      .header-cta { padding: 9px 15px; }
+    }
+    @media (max-width: 900px) {
+      .app-header { grid-template-columns: auto auto; justify-content: space-between; }
+    }
+    @media (max-width: 560px) {
+      .brand-en { display: none; }
+      .brand-text h1 .sinhala-brand { font-size: 19px; }
+      .app-header.is-scrolled .brand-text h1 .sinhala-brand { font-size: 18px; }
+      .header-sep { display: none; }
+      .header-actions { gap: 9px; }
+    }
+  </style>
+  <!-- සවන AI assistant (additive; namespaced under .svn-ai*) -->
+  <link rel="stylesheet" href="/assistant.css" />
+  <!-- SoundGuard mobile companion (additive; namespaced under .sg-*) -->
+  <link rel="stylesheet" href="/soundguard.css" />
+</head>
+<body>
+  <!-- background layers -->
+  <div class="bg-radial" aria-hidden="true"></div>
+  <div class="bg-aurora" aria-hidden="true">
+    <span class="blob blob-a"></span>
+    <span class="blob blob-b"></span>
+    <span class="blob blob-c"></span>
+  </div>
+  <div class="bg-grain" aria-hidden="true"></div>
+
+  <!-- PREMIUM HEADER -->
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark"><img src="/logo.jpeg" alt="App logo" /></span>
+      <div class="brand-text">
+        <h1>
+          <span class="sinhala-brand">සවන</span>
+          <span class="brand-en">Sinhala Sign Language Translator</span>
+        </h1>
+        <p>
+          Real-time gesture recognition
+          <span class="sep-dot"></span>
+          <span class="highlight-text">on-device inference</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- section navigation -->
+    <nav class="header-nav" aria-label="Page sections">
+      <a href="#overview">Overview</a>
+      <a href="#features">Features</a>
+      <a href="#soundguard">SoundGuard</a>
+      <a href="#how">How it works</a>
+      <a href="#feedback">Feedback</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="sg-header-btn" type="button" data-action="soundguard-qr" title="Connect SoundGuard Mobile App (Expo QR)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <span class="sg-pulse-dot"></span>
+        <span class="sg-btn-text">SoundGuard QR</span>
+      </button>
+      <span class="version-badge">v1.0 &middot; Local</span>
+      <div class="status-pill" id="connectionStatus">
+        <span class="dot" id="connectionDot"></span>
+        <span id="connectionLabel">Idle</span>
+      </div>
+      <span class="header-sep" aria-hidden="true"></span>
+      <a class="header-cta" href="#tool">Launch<span>&nbsp;Translator</span></a>
+      <button class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H4a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 5.6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H10a1.65 1.65 0 0 0 1-1.51V2a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <span class="header-progress" aria-hidden="true"><i></i></span>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-eyebrow">AI-Powered &middot; On-Device &middot; Real-Time</span>
+      <h1>Increase your Cognitive Brain Power with <span class="gradient-text">සවන</span>.</h1>
+      <p>It has been proven in studies that learning sign language keeps you sharp as you age and increases your thinking power. Learning sign language also helps you communicate with over <strong>72 million</strong> speakers worldwide. So test out our tool, learn and practice sign language, and have fun.</p>
+      <div class="hero-actions">
+        <a href="#tool" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <span class="ping-ring r1"></span>
+      <span class="ping-ring r2"></span>
+      <span class="ping-ring r3"></span>
+      <div class="hero-medallion">
+        <svg width="72" height="72" viewBox="0 0 24 24" fill="none"><path d="M8 12.5V5.5a1.5 1.5 0 0 1 3 0v5M11 10.5v-7a1.5 1.5 0 0 1 3 0v7M14 10.8V5a1.5 1.5 0 0 1 3 0v9M17 11v-2a1.5 1.5 0 0 1 3 0v6a7 7 0 0 1-7 7h-1.6a6 6 0 0 1-5-2.7L3.6 14.8a1.6 1.6 0 0 1 2.5-2l1.9 2.3" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <!-- Premium Floating Chips -->
+      <span class="floating-chip chip-a">ආයුබෝවන්</span>
+      <!-- <span class="floating-chip chip-b">Hello</span> -->
+    </div>
+  </section>
+
+  <!-- WHAT IS SIGN LANGUAGE WITH IMAGE -->
+  <section class="landing-section what-is-section" id="overview">
+    <div class="what-is-wrapper">
+      <!-- Image Section -->
+      <div class="what-is-image">
+        <img src="/Sign.png" alt="Sign Language Illustration" />
+      </div>
+      <!-- Content Section -->
+      <div class="what-is-content">
+        <span class="eyebrow">Getting started</span>
+        <h2>What is Sign Language</h2>
+        <p>Sign Language is a visual language using hand gestures, facial expressions, and body movements to communicate. It is recognized as an official language in many countries and is primarily used by people who are deaf or hard of hearing.</p>
+      </div>
+    </div>
+    <!-- Steps Row -->
+    <div class="steps-row">
+      <div class="card step">
+        <div class="icon-medallion-sm">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Learn</h3>
+        <p>Start learning this interesting sign language by learning basic signs for alphabets and common words from our Supported Signs panel.</p>
+      </div>
+      <div class="card step">
+        <div class="icon-medallion-sm">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="1" fill="#fff"/></svg>
+        </div>
+        <h3>Practice</h3>
+        <p>Head to the detection tool below and practice each sign until the model detects and recognizes it completely.</p>
+      </div>
+      <div class="card step">
+        <div class="icon-medallion-sm">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 9.5 17 19 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Test</h3>
+        <p>Test yourself by thinking of a sign, performing it, and letting the model understand it &mdash; then try again without the guide.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="landing-section features-section" id="features">
+    <div class="features-heading">
+      <span class="eyebrow">Explore the features</span>
+      <h2>Revolutionizing Sign Language Communication with Cutting-Edge Technology</h2>
+    </div>
+    <div class="features-list">
+      <div class="feature-item">
+        <div class="feature-item-title">
+          <h3>Real-Time Recognition</h3>
+          <div class="feature-divider"></div>
+        </div>
+        <p>Our advanced machine learning algorithms enable real-time recognition of sign language gestures, making communication faster and more efficient.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">
+          <h3>Easy-to-Use Interface</h3>
+          <div class="feature-divider"></div>
+        </div>
+        <p>Our intuitive user interface is designed to be easy to use for people of all ages and skill levels, making it accessible to everyone.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">
+          <h3>Adaptive Learning</h3>
+          <div class="feature-divider"></div>
+        </div>
+        <p>Our system uses adaptive learning to improve recognition accuracy over time, allowing for continuous improvement and increased efficiency.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">
+          <h3>High Accuracy</h3>
+          <div class="feature-divider"></div>
+        </div>
+        <p>With a high accuracy rate, our system ensures that sign language communication is not only faster, but also more accurate.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOUNDGUARD COMPONENT SHOWCASE -->
+  <section class="landing-section soundguard-section" id="soundguard">
+    <div class="sg-showcase-card">
+      <span class="sg-card-glow" aria-hidden="true"></span>
+      <div class="sg-header-block">
+        <div class="sg-header-text">
+          <span class="sg-eyebrow">Companion Mobile Ecosystem</span>
+          <h2>SoundGuard: <span class="sg-accent-text">Sound Awareness &amp; Emergency SOS</span></h2>
+          <p>An intelligent on-device mobile companion for Android and iOS designed to keep Deaf and hard-of-hearing individuals safe by detecting critical ambient sounds in real time and transmitting instant SOS emergency alerts.</p>
+        </div>
+        <div class="sg-hero-action">
+          <button class="sg-btn-primary" type="button" data-action="soundguard-qr">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Generate QR to Connect
+          </button>
+          <span class="sg-badge-status">
+            <span class="sg-pulse-dot"></span> Expo Go &middot; Android &amp; iOS
+          </span>
+        </div>
+      </div>
+
+      <div class="sg-feature-grid">
+        <div class="sg-feature-pill">
+          <div class="sg-feat-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          </div>
+          <h3>Environmental Sound Detection</h3>
+          <p>Real-time CNN classifier detects emergency sirens, car horns, fire alarms, and doorbells at 95.4% accuracy with high-contrast visual and haptic alerts.</p>
+        </div>
+
+        <div class="sg-feature-pill">
+          <div class="sg-feat-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <h3>Instant SOS &amp; Location Sharing</h3>
+          <p>One-touch emergency beacon broadcasts precise GPS location coordinates via automated SMS to trusted emergency contacts in your Safety Circle.</p>
+        </div>
+
+        <div class="sg-feature-pill">
+          <div class="sg-feat-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3>Live Speech-to-Text Captions</h3>
+          <p>Instant speech transcription converts conversations into clear, readable captions so hearing and non-hearing individuals can communicate seamlessly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="landing-section working-section" id="how">
+    <div class="working-content">
+      <span class="eyebrow">How it works</span>
+      <h2>Get to know, How it Works!</h2>
+      <p>To use the sign language recognition system, you simply need to get your hand detected and make a sign. Once you make a sign, refer to the guide for the corresponding words. The system will then scan your hand and use its built-in model to predict the sign you have made. Finally, the predicted class will be displayed, allowing you to communicate effectively through sign language. With this system, you can bridge the communication gap between sign language users and non-sign language users, making it easier for everyone to connect and interact.</p>
+      <a href="#tool" class="btn btn-primary">Try the Model</a>
+    </div>
+    <div class="working-flow" aria-hidden="true">
+      <div class="flow-step">
+        <div class="icon-medallion-sm">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3.5l4 3.5v-11l-4 3.5Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <span>Capture</span>
+      </div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step">
+        <div class="icon-medallion-sm">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M8 12.5V5.5a1.5 1.5 0 0 1 3 0v5M11 10.5v-7a1.5 1.5 0 0 1 3 0v7M14 10.8V5a1.5 1.5 0 0 1 3 0v9M17 11v-2a1.5 1.5 0 0 1 3 0v6a7 7 0 0 1-7 7h-1.6a6 6 0 0 1-5-2.7L3.6 14.8a1.6 1.6 0 0 1 2.5-2l1.9 2.3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span>Track landmarks</span>
+      </div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step">
+        <div class="icon-medallion-sm">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="7" y="7" width="10" height="10" rx="2" stroke="#fff" stroke-width="1.5"/><path d="M9 3v2M15 3v2M9 19v2M15 19v2M3 9h2M3 15h2M19 9h2M19 15h2" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <span>Predict sign</span>
+      </div>
+      <span class="flow-arrow">&rarr;</span>
+      <div class="flow-step">
+        <div class="icon-medallion-sm">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M17 8.5a5 5 0 0 1 0 7" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <span>Speak &amp; display</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-bar">
+    <div class="cta-content"><h3>Get Started and Try the Model</h3></div>
+    <a href="#tool" class="cta-button">Try Now</a>
+  </div>
+
+  <!-- WORKING IMAGE SECTION - Smaller Size -->
+  <section class="working-image-section">
+    <div class="working-image-container">
+      <img src="/Working.png" alt="How Sign Language Recognition Works" />
+      <div class="working-image-badge">
+        <span>How It Works</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="landing-section testimonials-section" id="feedback">
+    <div class="testimonials-heading">
+      <h2>Here are the Feedback given by the users and domain experts</h2>
+    </div>
+    <div class="testimonials-list">
+      <div class="card testimonial-card">
+        <div class="testimonial-header">
+          <span class="testimonial-avatar" aria-hidden="true">NP</span>
+          <div>
+            <h4>Nadeesha Perera</h4>
+            <p>UX Designer</p>
+          </div>
+        </div>
+        <blockquote>&ldquo;The sign language AI web app is an innovative and user-friendly tool that accurately detects hand gestures and translates them into corresponding signs. It ensures reliable performance, making it an excellent resource for communication and education.&rdquo;</blockquote>
+      </div>
+      <div class="card testimonial-card">
+        <div class="testimonial-header">
+          <span class="testimonial-avatar" aria-hidden="true">CS</span>
+          <div>
+            <h4>Chamika Silva</h4>
+            <p>Front-End Developer</p>
+          </div>
+        </div>
+        <blockquote>&ldquo;The user experience of the application is very smooth and easy to understand. Used this application to try out different signs and detection was smooth and prompt.&rdquo;</blockquote>
+      </div>
+      <div class="card testimonial-card">
+        <div class="testimonial-header">
+          <span class="testimonial-avatar" aria-hidden="true">RD</span>
+          <div>
+            <h4>Ruwan Dissanayake</h4>
+            <p>Accessibility Advocate</p>
+          </div>
+        </div>
+        <blockquote>&ldquo;The advancement in the field of sign language is really helpful for the deaf and hard of hearing community &mdash; it eliminates the need of a middle person by just using the website. The UI is super smooth and user-friendly.&rdquo;</blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR (anchor for #tool) -->
+  <div class="stats-bar" id="tool">
+    <div class="stat-tile">
+      <span class="stat-value" id="statCount">0</span>
+      <span class="stat-label">Signs recognized</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-value" id="statAvgConfidence">&mdash;</span>
+      <span class="stat-label">Avg. confidence</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-value" id="statRate">&mdash;</span>
+      <span class="stat-label">Signs / min</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-value" id="statDuration">00:00</span>
+      <span class="stat-label">Session time</span>
+    </div>
+  </div>
+
+  <!-- MAIN TOOL LAYOUT -->
+  <main class="layout">
+    <section class="stage card">
+      <div class="video-wrap" id="videoWrap">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="overlay"></canvas>
+        <div class="video-empty" id="videoEmpty">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none"><path d="M15 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3.5l4 3.5v-11l-4 3.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <p>Camera is off</p>
+          <span>Click Start Camera to begin a live session</span>
+        </div>
+        <span class="scan-corner tl"></span>
+        <span class="scan-corner tr"></span>
+        <span class="scan-corner bl"></span>
+        <span class="scan-corner br"></span>
+        <div class="scan-line"></div>
+        <div class="rec-badge" id="recBadge"><span class="rec-dot"></span>LIVE</div>
+      </div>
+
+      <div class="buffer-track" title="Gesture window fill">
+        <div class="buffer-fill" id="bufferFill"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-primary" id="startBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3.5l4 3.5v-11l-4 3.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          Start Camera
+        </button>
+        <button class="btn btn-ghost" id="muteBtn" aria-pressed="false">
+          <svg id="muteIcon" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M17 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span id="muteLabel">Sound on</span>
+        </button>
+        <button class="btn btn-ghost" id="resetBtn">Reset</button>
+      </div>
+    </section>
+
+    <section class="side">
+      <div class="card caption-card">
+        <span class="eyebrow">Recognized gesture</span>
+        <div class="caption-row">
+          <h2 id="captionText" class="caption-text placeholder">Show a sign to begin</h2>
+        </div>
+        <p id="captionGloss" class="caption-gloss"></p>
+        <div class="confidence-row">
+          <div class="confidence-track">
+            <div class="confidence-fill" id="confidenceFill"></div>
+          </div>
+          <span class="confidence-value" id="confidenceValue">0%</span>
+        </div>
+      </div>
+
+      <div class="card history-card">
+        <div class="labels-head">
+          <span class="eyebrow">Recent recognitions</span>
+          <span class="labels-count" id="historyCount">0</span>
+        </div>
+        <div class="history-list" id="historyList">
+          <p class="empty-hint">Recognized signs will appear here as you sign.</p>
+        </div>
+      </div>
+
+      <div class="card labels-card">
+        <div class="labels-head">
+          <span class="eyebrow">Supported signs</span>
+          <span class="labels-count" id="labelsCount">&mdash;</span>
+        </div>
+        <input id="labelSearch" class="search-input" type="text" placeholder="Search signs&hellip;" />
+        <div class="labels-list" id="labelsList"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       PREMIUM FOOTER – added with polish & links 
+       ============================================================ -->
+  <footer class="premium-footer">
+    <!-- oversized brand watermark, clipped by the footer's own overflow -->
+    <span class="footer-watermark" aria-hidden="true">සවන</span>
+    <span class="footer-aura" aria-hidden="true"></span>
+
+    <div class="footer-grid">
+      <!-- brand column -->
+      <div class="footer-brand">
+        <div class="footer-identity">
+          <span class="brand-mark footer-mark">
+            <img src="/logo.jpeg" alt="සවන logo" />
+          </span>
+          <span class="footer-wordmark">සවන</span>
+        </div>
+        <p>Bridging communication gaps through AI-powered sign language recognition. Learn, practice, and connect.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+          <a href="#" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
+        </div>
+      </div>
+
+      <!-- columns -->
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#tool">Translator <span class="arrow">&rarr;</span></a></li>
+          <li><a href="#">Pricing <span class="arrow">&rarr;</span></a></li>
+          <li><a href="#">Roadmap <span class="arrow">&rarr;</span></a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">Documentation <span class="arrow">&rarr;</span></a></li>
+          <li><a href="#">API <span class="arrow">&rarr;</span></a></li>
+          <li><a href="#">Support <span class="arrow">&rarr;</span></a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About <span class="arrow">&rarr;</span></a></li>
+          <li><a href="#">Blog <span class="arrow">&rarr;</span></a></li>
+          <li><a href="#">Contact <span class="arrow">&rarr;</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- capability register: the system's actual credentials, set as a spec strip -->
+    <div class="footer-spec">
+      <span class="spec-item"><b data-footer-signs>&mdash;</b> signs recognised</span>
+      <span class="spec-item">MediaPipe Holistic <i>&middot;</i> LSTM sequence model</span>
+      <span class="spec-item">On-device inference</span>
+      <span class="spec-item">Sinhala speech synthesis</span>
+    </div>
+
+    <!-- bottom bar -->
+    <div class="footer-bottom">
+      <span>&copy; 2026 සවන — Sinhala Sign Language Translator</span>
+      <span class="footer-origin">Designed &amp; built in Sri Lanka</span>
+      <div class="legal-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AUDIO HINT / SETTINGS (unchanged) -->
+  <audio id="speechAudio"></audio>
+  <button id="audioHint" class="audio-hint" type="button">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    Sound is blocked by the browser &mdash; click here to enable it
+  </button>
+
+  <aside class="settings-drawer" id="settingsDrawer">
+    <div class="settings-head">
+      <h3>Settings</h3>
+      <button class="icon-btn" id="settingsClose" aria-label="Close settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="settings-section">
+      <span class="settings-label">Overlay</span>
+      <label class="toggle-row">
+        <span>Pose &amp; hand skeleton</span>
+        <input type="checkbox" id="toggleSkeleton" checked />
+        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+      </label>
+      <label class="toggle-row">
+        <span>Face mesh</span>
+        <input type="checkbox" id="toggleFace" checked />
+        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+      </label>
+    </div>
+    <div class="settings-section">
+      <span class="settings-label">Model</span>
+      <div class="settings-info-row"><span>Sequence length</span><strong id="infoSeqLen">&mdash;</strong></div>
+      <div class="settings-info-row"><span>Confidence threshold</span><strong id="infoThreshold">&mdash;</strong></div>
+      <div class="settings-info-row"><span>Gesture classes</span><strong id="infoClasses">&mdash;</strong></div>
+    </div>
+  </aside>
+  <div class="settings-scrim" id="settingsScrim"></div>
+
+  <script src="/app.js"></script>
+
+  <!-- Condensing header: toggles a single presentational class on scroll.
+       Self-contained IIFE, passive listener, reads no app state. -->
+  <script>
+    (() => {
+      const header = document.querySelector(".app-header");
+      if (!header) return;
+      const bar = header.querySelector(".header-progress i");
+      let ticking = false;
+      const sync = () => {
+        header.classList.toggle("is-scrolled", window.scrollY > 24);
+        if (bar) {
+          const max = document.documentElement.scrollHeight - window.innerHeight;
+          bar.style.width = (max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0) + "%";
+        }
+        ticking = false;
+      };
+      sync();
+      window.addEventListener("scroll", () => {
+        if (!ticking) { ticking = true; requestAnimationFrame(sync); }
+      }, { passive: true });
+    })();
+
+    // Masthead: mark the nav link whose section is currently in view. The
+    // narrow rootMargin means only the band across the middle of the viewport
+    // counts, so exactly one section is "current" at a time.
+    (() => {
+      const links = Array.from(document.querySelectorAll(".header-nav a"));
+      if (!links.length || !("IntersectionObserver" in window)) return;
+      const map = new Map();
+      links.forEach((a) => {
+        const target = document.querySelector(a.getAttribute("href"));
+        if (target) map.set(target, a);
+      });
+      if (!map.size) return;
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const link = map.get(entry.target);
+            if (!link) return;
+            links.forEach((l) => l.classList.remove("is-current"));
+            link.classList.add("is-current");
+          });
+        },
+        // A band across the upper third of the viewport, which matches where
+        // a reader perceives "the section I'm in" better than dead centre.
+        { rootMargin: "-15% 0px -75% 0px", threshold: 0 }
+      );
+      map.forEach((_link, target) => io.observe(target));
+    })();
+
+    // Footer spec strip: report the real class count rather than a number
+    // that goes stale when the dataset is retrained. Fails silently to the
+    // em dash already in the markup.
+    (() => {
+      const slot = document.querySelector("[data-footer-signs]");
+      if (!slot) return;
+      fetch("/api/labels")
+        .then((r) => r.json())
+        .then((d) => { if (d && d.count) slot.textContent = d.count; })
+        .catch(() => {});
+    })();
+  </script>
+
+  <!-- සවන AI assistant — self-injecting widget, loads after the main app -->
+  <script src="/assistant.js" defer></script>
+  <!-- SoundGuard mobile companion module -->
+  <script src="/soundguard.js" defer></script>
+</body>
+</html>
