@@ -6,8 +6,11 @@ import type { HandLandmarker } from '@mediapipe/tasks-vision'
 // Both the WASM runtime and the model are served from our own origin
 // (scripts/copy-wasm.mjs fills public/wasm on install; the model lives in
 // public/models/), so practice sessions never depend on CDN availability.
-const WASM_DIR = '/wasm'
-const MODEL_PATH = '/models/hand_landmarker.task'
+// BASE_URL-relative, not root-absolute: this module is served under /learn/ on
+// the Suvana domain, and Vite's `base` does not rewrite string literals.
+// BASE_URL always ends in a slash.
+const WASM_DIR = `${import.meta.env.BASE_URL}wasm`
+const MODEL_PATH = `${import.meta.env.BASE_URL}models/hand_landmarker.task`
 
 let cached: Promise<HandLandmarker> | null = null
 

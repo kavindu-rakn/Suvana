@@ -5,18 +5,20 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/learn",
+      "destination": "https://REPLACE-WITH-LEARN-DEPLOYMENT.vercel.app/learn"
+    },
+    {
+      "source": "/learn/:path*",
+      "destination": "https://REPLACE-WITH-LEARN-DEPLOYMENT.vercel.app/learn/:path*"
+    },
+    {
       "source": "/communicate",
       "destination": "https://REPLACE-WITH-COMMUNICATE-DEPLOYMENT.vercel.app/communicate"
     },
     {
       "source": "/communicate/:path*",
       "destination": "https://REPLACE-WITH-COMMUNICATE-DEPLOYMENT.vercel.app/communicate/:path*"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(models|references|wasm)/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
     }
   ]
 }

@@ -1,0 +1,15 @@
+{
+  "name": "@suvana/shell",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Suvana landing shell — owns the domain root and proxies the modules.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.1.7"
+  }
+}

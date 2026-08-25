@@ -56,8 +56,7 @@
       /* The brand PNGs have baked white backgrounds; multiply blending makes
          white read as transparent against our light surfaces, so no boxes. */
       .nav img,
-      .hero .logo,
-      .hero .wordmark-si {
+      .hero .lockup {
         mix-blend-mode: multiply;
       }
       a:focus-visible,
@@ -104,6 +103,16 @@
       .nav .mark {
         height: 34px;
       }
+      /* Set as text rather than an image: there is no standalone wordmark
+         asset — the brand files are the mark and two stacked lockups, and a
+         1024px square lockup is illegible at header size. */
+      .nav .wordmark {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--slate);
+      }
       .nav .meta {
         font-family: var(--mono);
         font-size: 12px;
@@ -116,14 +125,23 @@
         text-align: center;
         padding: 56px 24px 40px;
       }
-      .hero .logo {
-        width: min(280px, 70vw);
+      .hero .lockup {
+        width: min(320px, 78vw);
         height: auto;
       }
-      .hero .wordmark-si {
-        width: min(220px, 55vw);
-        height: auto;
-        margin-top: 4px;
+      /* The Sinhala name in the brand's own Sinhala face, tinted with the
+         mark's teal-to-gold gradient so the bilingual lockup reads as one
+         piece. Background-clip needs a transparent fill to show through. */
+      .hero .name-si {
+        margin: -8px 0 0;
+        font-family: var(--sinhala);
+        font-weight: 700;
+        font-size: clamp(2rem, 6vw, 2.9rem);
+        line-height: 1.25;
+        background: linear-gradient(100deg, var(--teal), var(--gold));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
       }
       .tagline {
         font-size: clamp(1.15rem, 2.6vw, 1.5rem);
@@ -272,7 +290,7 @@
       <div class="nav">
         <a href="/" aria-label="Suvana home" class="brand">
           <img class="mark" src="/branding/suvana-mark.png" alt="" />
-          <img src="/branding/suvana-wordmark-en.png" alt="SUVANA" />
+          <span class="wordmark">Suvana</span>
         </a>
         <span class="meta">R26-SE-019 · SLIIT</span>
       </div>
@@ -282,26 +300,20 @@
       <section class="hero">
         <h1 class="sr-only">Suvana</h1>
         <img
-          class="logo"
-          src="/branding/suvana-logo.png"
-          alt="Suvana logo — a signing hand cradled inside the outline of an ear"
+          class="lockup"
+          src="/branding/suvana-lockup-en.jpg"
+          alt="Suvana — a signing hand cradled inside the outline of an ear"
         />
-        <div>
-          <img
-            class="wordmark-si"
-            src="/branding/suvana-wordmark-si.png"
-            alt="සුවණ (Suvana in Sinhala)"
-          />
-        </div>
+        <p class="name-si" lang="si">සුවණ</p>
         <p class="tagline">
           One platform for two-way communication between Deaf and hearing
           people, in Sri Lankan Sign Language.
         </p>
         <p class="subline">
-          Learn to sign · Speak to a signing avatar · Turn signs into speech ·
+          Turn signs into speech · Speak to a signing avatar · Learn to sign ·
           Stay aware of every sound
         </p>
-        <a class="btn" href="/learn/">Start learning SSL</a>
+        <a class="btn" href="#modules-title">Explore the modules</a>
       </section>
 
       <section class="modules" aria-labelledby="modules-title">
@@ -309,34 +321,10 @@
           <p class="kicker">Modules</p>
           <h2 id="modules-title">One platform, four bridges</h2>
         </div>
+        <!-- Card order is deliberate and the four are peers: no module is the
+             product's headline. Recognition and Communicate come first because
+             they are the two-way conversation the project is named for. -->
         <div class="grid">
-          <article class="card">
-            <p class="kicker">For hearing learners</p>
-            <h3>Learn</h3>
-            <p class="desc">
-              Practice Sri Lankan Sign Language with your camera. Every attempt
-              is scored against real-signer references, with corrective
-              feedback down to individual fingers.
-            </p>
-            <div class="card-foot">
-              <a class="btn" href="/learn/">Open Learn</a>
-              <span class="badge live">Live</span>
-            </div>
-          </article>
-
-          <article class="card">
-            <p class="kicker">Speech → Sign</p>
-            <h3>Communicate</h3>
-            <p class="desc">
-              Speak Sinhala and watch a 3D avatar sign it, with the emotion in
-              your voice detected along the way.
-            </p>
-            <div class="card-foot">
-              <a class="btn ghost" href="/communicate">Open app</a>
-              <span class="badge live">Live</span>
-            </div>
-          </article>
-
           <article class="card">
             <p class="kicker">Sign → Speech</p>
             <h3>Recognize</h3>
@@ -350,6 +338,33 @@
                    its own subdomain because Vercel cannot proxy its WebSocket)
                    and swap this badge for <span class="badge live">Live</span>. -->
               <span class="badge soon">Ready to deploy</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <p class="kicker">Speech → Sign</p>
+            <h3>Communicate</h3>
+            <p class="desc">
+              Speak Sinhala and watch a 3D avatar sign it, with the emotion in
+              your voice detected along the way.
+            </p>
+            <div class="card-foot">
+              <a class="btn ghost" href="/communicate">Open Communicate</a>
+              <span class="badge live">Live</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <p class="kicker">For hearing learners</p>
+            <h3>Learn</h3>
+            <p class="desc">
+              Practice Sri Lankan Sign Language with your camera. Every attempt
+              is scored against real-signer references, with corrective
+              feedback down to individual fingers.
+            </p>
+            <div class="card-foot">
+              <a class="btn ghost" href="/learn/">Open Learn</a>
+              <span class="badge live">Live</span>
             </div>
           </article>
 

@@ -44,6 +44,6 @@ wget==3.2
 opencv-contrib-python==4.8.0.74
 
 # Web app
-fastapi==0.141.1
-uvicorn[standard]==0.52.1
-websockets==16.1.1
+fastapi==0.103.2
+uvicorn[standard]==0.23.2
+websockets==11.0.3
