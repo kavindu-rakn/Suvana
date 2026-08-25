@@ -5,30 +5,72 @@ import { initWebGLBackground } from './webgl';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// 1. Initialize Lenis for Smooth Scrolling
+// 1. Lenis Smooth Scroll
 const lenis = new Lenis({
   lerp: 0.1,
-  wheelMultiplier: 1,
+  smoothWheel: true,
 });
 
-lenis.on('scroll', ScrollTrigger.update);
+function raf(time: number) {
+  lenis.raf(time);
+  requestAnimationFrame(raf);
+}
+requestAnimationFrame(raf);
 
+// Sync GSAP with Lenis
 gsap.ticker.add((time) => {
   lenis.raf(time * 1000);
 });
-gsap.ticker.lagSmoothing(0);
+gsap.ticker.lagSmoothing(0, 0);
 
-// Header Hide/Show on Scroll
-const header = document.getElementById('header');
+// Preloader Logic
+const preloader = document.getElementById('preloader');
+const loaderCount = document.getElementById('loader-count');
+
+// Create hero timeline but pause it initially
+const heroTl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+
+if (preloader && loaderCount) {
+  document.body.style.overflow = 'hidden'; // lock scroll
+  lenis.stop(); // lock lenis
+  
+  const progress = { value: 0 };
+  
+  const loaderTl = gsap.timeline({
+    onComplete: () => {
+      document.body.style.overflow = '';
+      lenis.start();
+      preloader.style.display = 'none';
+    }
+  });
+
+  loaderTl.to(progress, {
+    value: 100,
+    duration: 1.5,
+    ease: 'power3.inOut',
+    onUpdate: () => {
+      loaderCount.innerText = Math.round(progress.value).toString();
+    }
+  })
+  .to(preloader, {
+    yPercent: -100,
+    duration: 0.8,
+    ease: 'power4.inOut',
+  })
+  .add(() => heroTl.play(), "-=0.4"); // start hero entrance before preloader fully leaves
+} else {
+  heroTl.play();
+}
+
+// Hide Header on Scroll Down
 let lastScroll = 0;
+const header = document.querySelector('.nav') as HTMLElement;
 lenis.on('scroll', (e: any) => {
   const currentScroll = e.animatedScroll;
-  if (header) {
-    if (currentScroll > 100 && currentScroll > lastScroll) {
-      header.classList.add('nav-hidden');
-    } else {
-      header.classList.remove('nav-hidden');
-    }
+  if (currentScroll > lastScroll && currentScroll > 100) {
+    header.classList.add('nav-hidden');
+  } else {
+    header.classList.remove('nav-hidden');
   }
   lastScroll = currentScroll;
 });
@@ -69,8 +111,7 @@ if (canvas) {
 }
 
 // 4. Hero GSAP Animations
-const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
+// Hero animation continues...
 heroTl.to('.hero-mark', {
   opacity: 1,
   scale: 1,

@@ -43,6 +43,31 @@ body.is-transitioning #custom-cursor {
   opacity: 0 !important;
 }
 
+/* Preloader */
+#preloader {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: var(--paper);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.preloader-content {
+  font-family: var(--mono);
+  font-size: clamp(4rem, 15vw, 12rem);
+  font-weight: 300;
+  color: var(--teal);
+  letter-spacing: -0.05em;
+}
+
+:root[data-theme='dark'] .preloader-content {
+  color: var(--gold);
+}
+
 /* View Transitions API (Theme Toggle) */
 ::view-transition-old(root),
 ::view-transition-new(root) {
