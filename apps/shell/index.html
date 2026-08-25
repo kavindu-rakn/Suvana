@@ -119,6 +119,43 @@
         letter-spacing: 1px;
         color: var(--slate);
       }
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .auth-slot {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+      }
+      .auth-slot a {
+        color: var(--slate);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .auth-slot a:hover {
+        color: var(--teal-ink);
+      }
+      .auth-slot .auth-cta {
+        padding: 7px 14px;
+        border-radius: 8px;
+        background: var(--slate);
+        color: var(--paper);
+      }
+      .auth-slot .auth-cta:hover {
+        background: var(--teal-ink);
+        color: var(--paper);
+      }
+      .auth-who strong {
+        color: var(--teal-ink);
+      }
+      @media (max-width: 620px) {
+        .nav-right .meta {
+          display: none;
+        }
+      }
 
       /* ---- hero ---- */
       .hero {
@@ -292,7 +329,13 @@
           <img class="mark" src="/branding/suvana-mark.png" alt="" />
           <span class="wordmark">Suvana</span>
         </a>
-        <span class="meta">R26-SE-019 · SLIIT</span>
+        <div class="nav-right">
+          <span class="meta">R26-SE-019 · SLIIT</span>
+          <!-- Filled in by the session script at the end of the body. Starts
+               empty rather than showing "Sign in", so a signed-in visitor
+               never sees a flash of the wrong state. -->
+          <div id="auth-slot" class="auth-slot"></div>
+        </div>
       </div>
     </header>
 
@@ -394,5 +437,49 @@
         School for the Deaf, Ratmalana
       </p>
     </footer>
+
+    <script>
+      /* One Suvana account, shown wherever you are.
+       *
+       * Identity lives in the Communicate module, which already has the
+       * database, Auth.js and the sign-in pages. Everything the shell rewrites
+       * (/learn/*, /communicate/*) is served from THIS origin, so that
+       * module's session cookie is simply visible here — no SSO protocol, no
+       * token exchange, one fetch.
+       *
+       * Deliberately non-blocking: if Communicate is not deployed or is
+       * asleep, the slot falls back to a plain sign-in link rather than
+       * leaving the landing page broken. */
+      (async () => {
+        const slot = document.getElementById('auth-slot');
+        if (!slot) return;
+        const signedOut = `
+          <a href="/communicate/login?callbackUrl=%2F">Sign in</a>
+          <a class="auth-cta" href="/communicate/register?callbackUrl=%2F">Create account</a>`;
+        try {
+          const res = await fetch('/communicate/api/auth/session', {
+            headers: { accept: 'application/json' },
+          });
+          const session = res.ok ? await res.json() : null;
+          const user = session && session.user;
+          if (!user) {
+            slot.innerHTML = signedOut;
+            return;
+          }
+          const who = user.name || user.email || 'Signed in';
+          const admin =
+            user.role === 'admin' ? '<a href="/communicate/admin">Admin</a>' : '';
+          slot.innerHTML = `
+            <span class="auth-who">Hi, <strong></strong></span>
+            ${admin}
+            <a href="/communicate/dashboard">Account</a>
+            <a class="auth-cta" href="/communicate/api/auth/signout">Sign out</a>`;
+          // textContent, not interpolation: the name is user-supplied.
+          slot.querySelector('strong').textContent = who;
+        } catch {
+          slot.innerHTML = signedOut;
+        }
+      })();
+    </script>
   </body>
 </html>

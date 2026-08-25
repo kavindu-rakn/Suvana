@@ -856,3 +856,52 @@ body::before {
     flex: 1 1 100%;
   }
 }
+
+/* ---- account, in the app bar ----
+   Identity is platform-wide (it lives in the Communicate module) but Learn
+   never gates on it — see src/app/session.ts for why. */
+.app-account {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-sm);
+}
+
+.app-account-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 22ch;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--text-dim);
+  text-decoration: none;
+}
+
+.app-account-link:hover {
+  color: var(--text);
+}
+
+.app-account-role {
+  padding: 1px 7px;
+  border-radius: var(--r-full);
+  background: rgb(45 212 191 / 0.14);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* The bar is brand + tabs + account; below 760px the tabs leave for the
+   bottom bar, so the account sits opposite the brand. */
+@media (max-width: 760px) {
+  .app-bar-inner {
+    justify-content: space-between;
+  }
+
+  .app-account-link {
+    max-width: 14ch;
+  }
+}

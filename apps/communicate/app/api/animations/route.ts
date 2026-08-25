@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/requireAdmin";
 import { connectDB } from "@/lib/db";
 import GlossModel from "@/models/Gloss";
 import { uploadGlossJson } from "@/lib/cloudinary";
 import { extractBoneNamesFromAnimationJson, validateMixamoSkeleton } from "@/lib/animation/mixamoBones";
 
-// NOTE: gated behind "logged in" only for now. Add a real `role: "admin"`
-// check on the User model before exposing this beyond trusted users.
+// Reads stay open to any signed-in account; writes are admin-only (see
+// lib/requireAdmin.ts). Registration is open, so "logged in" was not a
+// meaningful gate on content every learner sees.
 
 export async function GET() {
   const session = await auth();
@@ -29,10 +31,8 @@ const CreateSchema = z.object({
 
 /** Registers a new gloss from an inline JSON payload (no file upload). */
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const denied = await requireAdmin();
+  if (denied) return denied;
 
   const body = await req.json().catch(() => null);
   const parsed = CreateSchema.safeParse(body);

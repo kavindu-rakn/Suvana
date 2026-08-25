@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/requireAdmin";
 import { connectDB } from "@/lib/db";
 import ModelDoc from "@/models/Model";
 import { uploadModelFile } from "@/lib/cloudinary";
@@ -26,10 +27,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const denied = await requireAdmin();
+  if (denied) return denied;
 
   const form = await req.formData().catch(() => null);
   const name = form?.get("name");

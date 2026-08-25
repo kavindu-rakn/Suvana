@@ -3,6 +3,8 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/db";
 import UserModel from "@/models/User";
+import type { Role } from "@/models/User";
+import { effectiveRole } from "@/lib/roles";
 import { authConfig } from "@/lib/auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -27,7 +29,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) return null;
 
-        return { id: user._id.toString(), name: user.name, email: user.email };
+        // The env admin list wins over the stored role, and the document is
+        // corrected to match so the two can never silently disagree. This is
+        // also how the very first admin comes to exist — see lib/roles.ts.
+        const role = effectiveRole(user.role as Role | undefined, user.email);
+        if (role !== user.role) {
+          user.role = role;
+          await user.save();
+        }
+
+        return { id: user._id.toString(), name: user.name, email: user.email, role };
       },
     }),
   ],
