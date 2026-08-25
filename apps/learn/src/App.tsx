@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useState } from 'react'
 import { PracticeView } from './components/PracticeView'
 import { ProgressView } from './components/ProgressView'
 import { ScenarioView } from './components/ScenarioView'
+import { Hero } from './components/Hero'
 
 // Author-only surfaces, split out of the learner's bundle. A participant never
 // opens Record, Library or Study, so there is no reason for them to download
@@ -11,50 +12,33 @@ const LibraryView = lazy(() => import('./components/LibraryView').then((m) => ({
 const StudyView = lazy(() => import('./components/StudyView').then((m) => ({ default: m.StudyView })))
 import { persistMode, readMode } from './app/mode'
 import type { AppMode } from './app/mode'
+import { ALL_TABS, AUTHOR_TABS, ICONS, LEARNER_TABS } from './app/tabs'
+import type { Tab } from './app/tabs'
 import './components/views.css'
 
-type Tab = 'practice' | 'scenario' | 'record' | 'library' | 'progress' | 'study'
-
 /**
- * Tab glyphs. Inline paths rather than an icon package — five icons is not
- * worth a dependency, and these inherit currentColor so they follow the tab's
- * active/inactive state for free. They are decorative: every tab keeps its
- * text label, so the icon is never the only cue. Shown only in the mobile
- * bottom bar, where a label alone reads as a row of links rather than a nav.
+ * Whether the learner has passed the hero and is inside the tool.
+ *
+ * sessionStorage, not localStorage, and not component state alone: arriving at
+ * /learn/ should show the front door, but reloading mid-practice — or the tab
+ * being restored — must not throw the learner back out to it. One tab session
+ * is exactly the right lifetime.
  */
-const ICONS: Record<Tab, string> = {
-  // a hand, mid-sign
-  practice:
-    'M8 11V6.5a1.5 1.5 0 0 1 3 0V11m0 0V4.5a1.5 1.5 0 0 1 3 0V11m0 0V6.5a1.5 1.5 0 0 1 3 0V13a6 6 0 0 1-6 6a5 5 0 0 1-4.3-2.4L6 14.6a1.5 1.5 0 0 1 2.5-1.6',
-  // a speech bubble
-  scenario: 'M20 12a7 7 0 0 1-7 7H8l-4 3v-10a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7Z',
-  // a record dot
-  record: 'M12 4a8 8 0 1 0 0 16a8 8 0 0 0 0-16Zm0 4.5a3.5 3.5 0 1 1 0 7a3.5 3.5 0 0 1 0-7Z',
-  // stacked cards
-  library: 'M4 7h16M4 12h16M4 17h10',
-  // a rising bar chart
-  progress: 'M4 20V12m5 8V5m5 15v-6m5 6V9',
-  // a clipboard
-  study: 'M9 4h6v3H9zM9 5.5H6v14h12v-14h-3M9 12h6M9 16h4',
-}
+const ENTERED_KEY = 'suvana.learn.entered'
 
-const ALL_TABS: Record<Tab, string> = {
-  practice: 'Practice',
-  scenario: 'Scenario',
-  progress: 'Progress',
-  record: 'Record',
-  library: 'Library',
-  study: 'Study',
+function readEntered(): boolean {
+  try {
+    return sessionStorage.getItem(ENTERED_KEY) === '1'
+  } catch {
+    // Private-mode Safari throws on access; the hero is a safe default.
+    return false
+  }
 }
-
-/** What a learner sees. Record and Library author reference data; Study is the
- *  researcher's pilot tooling. None of the three is the learner's job. */
-const LEARNER_TABS: Tab[] = ['practice', 'scenario', 'progress']
-const AUTHOR_TABS: Tab[] = [...LEARNER_TABS, 'record', 'library', 'study']
 
 function App() {
   const [tab, setTab] = useState<Tab>('practice')
   const [mode, setModeState] = useState<AppMode>(readMode)
+  const [entered, setEntered] = useState<boolean>(readEntered)
 
   const tabs = mode === 'author' ? AUTHOR_TABS : LEARNER_TABS
 
@@ -67,9 +51,29 @@ function App() {
     setTab((cur) => (allowed.includes(cur) ? cur : 'practice'))
   }
 
+  function enter(next: Tab) {
+    setTab(next)
+    setEntered(true)
+    try {
+      sessionStorage.setItem(ENTERED_KEY, '1')
+    } catch {
+      /* Non-fatal: the hero simply reappears on reload. */
+    }
+  }
+
+  function leaveToHero() {
+    setEntered(false)
+    try {
+      sessionStorage.removeItem(ENTERED_KEY)
+    } catch {
+      /* Non-fatal. */
+    }
+  }
+
   // The tracking engine is a lazy chunk (see vision/handTracker.ts), which
   // keeps it off the critical path. Warm it once the page is idle so that
   // "Start camera" is still a cache hit rather than a cold 135 KB fetch.
+  // Warming from the hero too is deliberate: that is free reading time.
   useEffect(() => {
     const warm = () => void import('@mediapipe/tasks-vision')
     if (typeof requestIdleCallback === 'function') {
@@ -81,62 +85,76 @@ function App() {
     return () => window.clearTimeout(id)
   }, [])
 
+  if (!entered) {
+    return (
+      <div className="app app-hero-mode">
+        <Hero onEnter={enter} />
+      </div>
+    )
+  }
+
   return (
     <div className="app">
       {mode === 'author' && (
         // Deliberately loud: a screenshot taken in this mode has to be
         // unambiguous about which build it shows.
-        <div className="mode-banner">
-          <span>
-            <strong>Author &amp; researcher tools.</strong> This is not what a learner sees.
-          </span>
-          <button className="btn btn-ghost" onClick={() => setMode('learner')}>
-            Exit to learner view
-          </button>
+        <div className="mode-banner-wrap">
+          <div className="mode-banner">
+            <span>
+              <strong>Author &amp; researcher tools.</strong> This is not what a learner sees.
+            </span>
+            <button className="btn btn-ghost" onClick={() => setMode('learner')}>
+              Exit to learner view
+            </button>
+          </div>
         </div>
       )}
 
-      <header className="app-header">
-        <p className="app-kicker">
-          <a href="/">
-            <span className="si" lang="si">
-              සුවණ
-            </span>{' '}
-            Suvana
-          </a>{' '}
-          · R26-SE-019 · Learning &amp; Practice Module
-        </p>
-        <h1>Learn</h1>
-        <p className="app-sub">
-          Learn and practise Sri Lankan Sign Language — record a sign, get it scored against a
-          reference, and see what to fix.
-        </p>
-        <nav className="tabs" aria-label="Sections" data-count={tabs.length}>
-          {tabs.map((id) => (
-            <button
-              key={id}
-              className={tab === id ? 'tab active' : 'tab'}
-              // The active tab is otherwise signalled by colour alone, which a
-              // screen reader cannot convey.
-              aria-current={tab === id ? 'page' : undefined}
-              onClick={() => setTab(id)}
-            >
-              <svg
-                className="tab-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
+      <header className="app-bar">
+        <div className="app-bar-inner">
+          <button className="app-brand" onClick={leaveToHero} aria-label="Learn overview">
+            <img
+              className="app-brand-mark"
+              src={`${import.meta.env.BASE_URL}branding/suvana-mark.png`}
+              alt=""
+            />
+            <span className="app-brand-text">
+              <span className="si" lang="si">
+                සුවණ
+              </span>{' '}
+              Suvana
+            </span>
+            <span className="app-brand-sep" aria-hidden="true" />
+            <span className="app-brand-module">Learn</span>
+          </button>
+
+          <nav className="tabs" aria-label="Sections" data-count={tabs.length}>
+            {tabs.map((id) => (
+              <button
+                key={id}
+                className={tab === id ? 'tab active' : 'tab'}
+                // The active tab is otherwise signalled by colour alone, which a
+                // screen reader cannot convey.
+                aria-current={tab === id ? 'page' : undefined}
+                onClick={() => setTab(id)}
               >
-                <path d={ICONS[id]} />
-              </svg>
-              <span className="tab-label">{ALL_TABS[id]}</span>
-            </button>
-          ))}
-        </nav>
+                <svg
+                  className="tab-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d={ICONS[id]} />
+                </svg>
+                <span className="tab-label">{ALL_TABS[id]}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
       </header>
 
       <main>

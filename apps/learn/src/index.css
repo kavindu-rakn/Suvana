@@ -241,16 +241,107 @@ body::before {
     radial-gradient(800px 400px at 10% 110%, var(--glow-success), transparent);
 }
 
+/* Full-bleed page container so the app bar and hero can span the viewport;
+   the 1000px measure moved onto the content blocks themselves. */
 #root {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--s-8) var(--s-5) var(--s-12);
+  width: 100%;
 }
 
 .app {
   display: flex;
   flex-direction: column;
+  min-height: 100dvh;
+}
+
+.app > main,
+.app-footer,
+.mode-banner-wrap {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-inline: var(--s-5);
+}
+
+.app > main {
+  display: flex;
+  flex-direction: column;
   gap: var(--s-6);
+  /* --nav-offset clears the fixed mobile tab bar; it is 0 on desktop. */
+  padding-block: var(--s-8) calc(var(--s-12) + var(--nav-offset));
+}
+
+.mode-banner-wrap {
+  padding-top: var(--s-5);
+}
+
+.app-footer {
+  padding-bottom: calc(var(--s-12) + var(--nav-offset));
+}
+
+/* ---- app bar -------------------------------------------------------------
+   A persistent identity strip: which product this is, which module, and where
+   else you can go. It replaces the page-title block that repeated above every
+   tab and pushed the actual tool down the page. */
+.app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.app-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--s-3) var(--s-5);
+}
+
+.app-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) var(--s-2);
+  margin-left: calc(var(--s-2) * -1);
+  background: none;
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.app-brand:hover {
+  background: var(--surface-2);
+}
+
+.app-brand-mark {
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+
+.app-brand-text {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.app-brand-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--border-interactive);
+}
+
+.app-brand-module {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--accent);
 }
 
 .app-header h1 {
@@ -338,7 +429,6 @@ body::before {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 18px;
 }
 
 .tab {
@@ -377,8 +467,15 @@ body::before {
 }
 
 @media (max-width: 480px) {
-  #root {
-    padding: var(--s-5) 14px 36px;
+  .app > main,
+  .app-footer,
+  .mode-banner-wrap,
+  .app-bar-inner {
+    padding-inline: 14px;
+  }
+
+  .app > main {
+    padding-block: var(--s-5) calc(36px + var(--nav-offset));
   }
 }
 
@@ -435,9 +532,9 @@ body::before {
     color: var(--accent);
   }
 
-  /* Clear the fixed bar so the footer and the last control stay reachable. */
-  #root {
-    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  /* The bar leaves the header, so the brand keeps the row to itself. */
+  .app-bar-inner {
+    justify-content: flex-start;
   }
 }
 
@@ -570,4 +667,192 @@ body::before {
 .chip:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+/* ---- Learn hero ----------------------------------------------------------
+   The module's front door. Sized against the viewport rather than a fixed
+   height so a laptop sees the whole first screen and a phone still scrolls
+   naturally. Light on motion by design: this page sits in front of a camera
+   tool, and an animated entrance is the wrong first impression for a research
+   instrument that people will open dozens of times during a study. */
+.app-hero-mode {
+  justify-content: center;
+}
+
+.lhero {
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5) var(--s-12);
+}
+
+.lhero-back {
+  display: inline-block;
+  margin-bottom: var(--s-8);
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+  text-decoration: none;
+}
+
+.lhero-back:hover {
+  color: var(--accent);
+}
+
+.lhero-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-10);
+}
+
+.lhero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-4);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.lhero-mark {
+  width: 30px;
+  height: 30px;
+}
+
+.lhero-title {
+  margin: 0 0 var(--s-4);
+  font-size: clamp(2.1rem, 1.2rem + 3.4vw, 3.4rem);
+  line-height: 1.12;
+  letter-spacing: -0.8px;
+  text-wrap: balance;
+}
+
+/* The one moment of brand colour in the headline — the verb the product is
+   about. Background-clip needs a transparent fill to show the gradient. */
+.lhero-title em {
+  font-style: normal;
+  background: linear-gradient(100deg, var(--accent), var(--caution));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lhero-sub {
+  margin: 0 0 var(--s-6);
+  max-width: 52ch;
+  font-size: var(--fs-lg);
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.lhero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-bottom: var(--s-8);
+}
+
+.lhero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-6);
+  margin: 0;
+  padding: var(--s-4) 0 0;
+  list-style: none;
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+.lhero-stats strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.lhero-art {
+  display: grid;
+  place-items: center;
+}
+
+.lhero-art svg {
+  width: min(100%, 260px);
+  height: auto;
+  filter: drop-shadow(0 18px 46px rgb(0 0 0 / 0.45));
+}
+
+/* ---- how it works ---- */
+.lsteps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--s-4);
+  margin-top: var(--s-12);
+}
+
+.lstep {
+  padding: var(--s-5);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-1), var(--edge-lit);
+}
+
+.lstep-n {
+  margin: 0 0 var(--s-2);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 1.5px;
+  color: var(--accent);
+}
+
+.lstep h2 {
+  margin: 0 0 6px;
+  font-size: var(--fs-lg);
+}
+
+.lstep p {
+  margin: 0;
+  font-size: var(--fs-md);
+  color: var(--text-dim);
+}
+
+.lhero-foot {
+  margin: var(--s-8) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted, var(--text-dim));
+  text-align: center;
+}
+
+@media (max-width: 820px) {
+  .lhero-top {
+    grid-template-columns: 1fr;
+    gap: var(--s-6);
+  }
+
+  /* The art leads on a phone: it is the only thing above the fold that shows
+     what the tool does. */
+  .lhero-art {
+    order: -1;
+  }
+
+  .lhero-art svg {
+    width: min(58%, 190px);
+  }
+}
+
+@media (max-width: 480px) {
+  .lhero {
+    padding: var(--s-5) 14px var(--s-10);
+  }
+
+  .lhero-back {
+    margin-bottom: var(--s-5);
+  }
+
+  .lhero-cta .btn {
+    flex: 1 1 100%;
+  }
 }
