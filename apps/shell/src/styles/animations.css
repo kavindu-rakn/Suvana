@@ -11,31 +11,36 @@ a, button, .theme-toggle {
   position: fixed;
   top: 0; left: 0;
   width: 12px; height: 12px;
-  background: var(--teal-ink);
+  /* Mathematically inverse of Teal (0, 166, 147) against Light Paper (253, 253, 253) */
+  background: rgb(253, 87, 106); 
   border-radius: 50%;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 99999;
   transform: translate(-50%, -50%);
-  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
-              height 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
-              background-color 0.3s, border 0.3s;
+  transition: width 0.2s cubic-bezier(0.25, 1, 0.5, 1), 
+              height 0.2s cubic-bezier(0.25, 1, 0.5, 1), 
+              opacity 0.2s;
   box-sizing: border-box;
-  mix-blend-mode: normal;
+  mix-blend-mode: difference; 
 }
 
 :root[data-theme='dark'] #custom-cursor {
-  background: var(--gold);
+  /* Mathematically inverse of Gold (218, 165, 32) against Dark Paper (10, 20, 20) */
+  background: rgb(228, 185, 52);
 }
 
+/* Elegant precise dot on hover to prevent clashing with button borders */
 body.is-hovering #custom-cursor {
-  width: 44px; height: 44px;
-  background: rgba(0, 166, 147, 0.1);
-  border: 1px solid var(--teal-ink);
+  width: 6px; height: 6px;
 }
 
-:root[data-theme='dark'] body.is-hovering #custom-cursor {
-  background: rgba(218, 165, 32, 0.1);
-  border: 1px solid var(--gold);
+/* Hide cursor during view transitions to prevent freezing */
+body.is-transitioning,
+body.is-transitioning * {
+  cursor: auto !important;
+}
+body.is-transitioning #custom-cursor {
+  opacity: 0 !important;
 }
 
 /* View Transitions API (Theme Toggle) */

@@ -33,32 +33,34 @@ lenis.on('scroll', (e: any) => {
   lastScroll = currentScroll;
 });
 
-// 2. Custom Cursor (Open Hand)
+// 2. Custom Cursor Logic
 const cursor = document.getElementById('custom-cursor');
-let cursorX = window.innerWidth / 2;
-let cursorY = window.innerHeight / 2;
+if (cursor) {
+  document.addEventListener('mousemove', (e) => {
+    // Instant responsive follow, no lerp delay
+    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+  });
 
-document.addEventListener('mousemove', (e) => {
-  cursorX = e.clientX;
-  cursorY = e.clientY;
+  // Hide cursor when leaving the window to prevent it getting stuck at the border
+  document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+  document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
+
+  // Event delegation for hover states (works for dynamically injected buttons like Sign In)
+  const isInteractable = (target: HTMLElement | null) => 
+    target?.closest('a, button, input, [role="button"], .theme-toggle');
+
+  document.body.addEventListener('mouseover', (e) => {
+    if (isInteractable(e.target as HTMLElement)) {
+      document.body.classList.add('is-hovering');
+    }
+  });
   
-  gsap.to(cursor, {
-    x: cursorX,
-    y: cursorY,
-    duration: 0.15,
-    ease: 'power2.out'
+  document.body.addEventListener('mouseout', (e) => {
+    if (isInteractable(e.target as HTMLElement)) {
+      document.body.classList.remove('is-hovering');
+    }
   });
-});
-
-const interactiveElements = document.querySelectorAll('a, button, .theme-toggle');
-interactiveElements.forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    document.body.classList.add('is-hovering');
-  });
-  el.addEventListener('mouseleave', () => {
-    document.body.classList.remove('is-hovering');
-  });
-});
+}
 
 // 3. WebGL Background
 const canvas = document.getElementById('webgl-canvas') as HTMLCanvasElement;
@@ -183,6 +185,12 @@ if (themeBtn) {
     );
 
     const transition = (document as any).startViewTransition(switchTheme);
+
+    // Prevent frozen custom cursor during transition
+    document.body.classList.add('is-transitioning');
+    transition.finished.then(() => {
+      document.body.classList.remove('is-transitioning');
+    });
 
     transition.ready.then(() => {
       document.documentElement.animate(
