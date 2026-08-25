@@ -3,6 +3,7 @@ import { PracticeView } from './components/PracticeView'
 import { ProgressView } from './components/ProgressView'
 import { ScenarioView } from './components/ScenarioView'
 import { Hero } from './components/Hero'
+import { ThemeToggle } from './components/ThemeToggle'
 
 // Author-only surfaces, split out of the learner's bundle. A participant never
 // opens Record, Library or Study, so there is no reason for them to download
@@ -172,6 +173,7 @@ function App() {
               lives in this browser, so gating practice would promise a
               portability that does not exist yet. */}
           <div className="app-account">
+            <ThemeToggle />
             {user === undefined ? null : user ? (
               <a className="app-account-link" href={ACCOUNT_URL} title={user.email ?? undefined}>
                 {user.name ?? user.email}

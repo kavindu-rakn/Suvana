@@ -30,7 +30,26 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${notoSerif.variable} ${notoSerifSinhala.variable} h-full antialiased`}
+      // data-theme is written by the inline script below, before paint;
+      // the server cannot know it, so hydration must not warn about it.
+      suppressHydrationWarning
     >
+      <head>
+        {/*
+          Theme, before first paint — the same block the shell and Learn run.
+          One shared `suvana.theme` key across every same-origin Suvana
+          surface, falling back to the operating system's preference.
+
+          This must be inline and synchronous: a server-rendered page that
+          waits for hydration to choose a theme paints the wrong one first,
+          which is precisely the flash worth avoiding.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('suvana.theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Providers>
           <Navbar />

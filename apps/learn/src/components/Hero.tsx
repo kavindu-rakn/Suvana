@@ -1,4 +1,5 @@
 import type { Tab } from '../app/tabs'
+import { ThemeToggle } from './ThemeToggle'
 
 /**
  * The Learn module's front door.
@@ -35,9 +36,12 @@ const STEPS = [
 export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
   return (
     <div className="lhero">
-      <a className="lhero-back" href="/">
-        ← All Suvana modules
-      </a>
+      <div className="lhero-topbar">
+        <a className="lhero-back" href="/">
+          ← All Suvana modules
+        </a>
+        <ThemeToggle />
+      </div>
 
       <section className="lhero-top">
         <div className="lhero-copy">

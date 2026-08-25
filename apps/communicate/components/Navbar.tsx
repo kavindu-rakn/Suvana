@@ -3,6 +3,7 @@ import { Sparkles } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { buttonVariants } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/LogoutButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export async function Navbar() {
   const session = await auth();
@@ -30,6 +31,12 @@ export async function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
+          {session?.user?.role === "admin" && (
+            <Link href="/admin" className="text-sm text-foreground-muted hover:text-foreground">
+              Admin
+            </Link>
+          )}
           {session?.user ? (
             <>
               <span className="hidden text-sm text-foreground-muted sm:inline">

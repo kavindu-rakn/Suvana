@@ -165,6 +165,65 @@
   color-scheme: dark;
 }
 
+/* ============================================================================
+   LIGHT THEME
+   Only the semantic tier is redefined — component rules never see the change.
+   Values are the Suvana light palette (paper #FDFDFD, graphite #333) with the
+   accent darkened to the AA-safe brand ink, because pure #2DD4BF on white is
+   1.7:1 and unreadable as text or a small control.
+
+   Three things deliberately do NOT flip:
+     --stage      the camera letterbox stays near-black in both themes; video
+                  belongs on black, and a white void around a webcam feed is
+                  glare in a room the learner is already lighting for tracking.
+     --on-overlay text drawn over the video, which is dark whatever the page is.
+     --hand-*     the landmark overlay, drawn on the video by drawing.ts.
+   ========================================================================== */
+:root[data-theme='light'] {
+  --bg: #fdfdfd;
+  --surface: #ffffff;
+  --surface-2: #f0f5f4;
+
+  --text: #333333;
+  --text-dim: #5a6b68;
+  /* Accent is dark in this theme, so its foreground is paper, not ink. */
+  --on-accent: #ffffff;
+
+  /* Measured, as in the dark block above. The hairline is 1.25:1 on white,
+     which is decorative and allowed; the interactive border is 3.68:1 on
+     --surface and 3.34:1 on --surface-2, both clearing the 3:1 WCAG 2.1
+     SC 1.4.11 asks of a control boundary. */
+  --border-subtle: #dfe8e6;
+  --border-interactive: #6f8b86;
+
+  /* 5.46:1 on --surface, and the same in reverse for --on-accent on a filled
+     accent button. */
+  --accent: #00776a;
+  --accent-soft: #00a693;
+  /* Lime and amber are invisible on white; these are the same hues taken
+     dark enough to read as text (4.99:1 and 5.37:1 on --surface). */
+  --success: #4d7c0f;
+  --caution: #8a6410;
+  --integrity: #8a6410;
+  --danger: #b91c1c;
+  --recording: #dc2626;
+  --recording-strong: #b91c1c;
+
+  /* Washes: a dark page tints with light, a light page tints with colour. */
+  --glow-accent: rgb(0 166 147 / 0.07);
+  --glow-success: rgb(77 124 15 / 0.05);
+  --glow-stage: rgb(0 166 147 / 0.06);
+
+  /* Elevation on white comes from shadow alone — there is no lit top edge to
+     simulate, and the dark-theme inset highlight reads as a scratch. */
+  --elev-1: 0 1px 2px rgb(15 31 28 / 0.08);
+  --elev-2: 0 6px 20px rgb(15 31 28 / 0.1);
+  --elev-3: 0 16px 40px rgb(15 31 28 / 0.14);
+  --edge-lit: none;
+
+  color-scheme: light;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     --dur-fast: 1ms;
@@ -903,5 +962,52 @@ body::before {
 
   .app-account-link {
     max-width: 14ch;
+  }
+}
+
+/* ---- theme toggle ---- */
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  padding: 0;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-full);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--border-interactive);
+}
+
+.theme-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.lhero-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  margin-bottom: var(--s-8);
+}
+
+.lhero-topbar .lhero-back {
+  margin-bottom: 0;
+}
+
+@media (pointer: coarse) {
+  .theme-toggle {
+    width: 44px;
+    height: 44px;
   }
 }

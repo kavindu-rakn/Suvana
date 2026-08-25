@@ -14,6 +14,24 @@
   --border: #26403e;
 }
 
+/* Light theme. Only these eight roles change; every component rule reads them
+   through the @theme mapping below and is untouched.
+
+   The accent darkens to the AA-safe brand ink: pure #5EEAD4 on white is
+   1.4:1, which is decoration, not text. The avatar canvas keeps its own dark
+   backdrop in both themes — a 3D model lit for a dark stage does not read on
+   white. */
+:root[data-theme="light"] {
+  --background: #fdfdfd;
+  --background-elevated: #ffffff;
+  --foreground: #333333;
+  --foreground-muted: #5a6b68;
+  --accent: #00776a;
+  --accent-strong: #00a693;
+  --accent-soft: #e6f4f1;
+  --border: #dfe8e6;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-background-elevated: var(--background-elevated);
@@ -43,6 +61,12 @@ body {
 ::selection {
   background: var(--accent);
   color: #0a0a0a;
+}
+
+/* The light accent is dark, so selected text needs the opposite foreground. */
+:root[data-theme="light"] ::selection {
+  background: var(--accent);
+  color: #ffffff;
 }
 
 /* thin, theme-matched scrollbar */

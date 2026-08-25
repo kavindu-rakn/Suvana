@@ -18,6 +18,23 @@
       rel="stylesheet"
     />
     <title>Learn — සුවණ Suvana</title>
+    <script>
+      /* Theme, before first paint — the same block the shell runs. One shared
+         localStorage key across every same-origin Suvana surface, falling
+         back to the operating system's preference. Inline and synchronous:
+         deferring it by a frame is the flash of the wrong theme. */
+      (function () {
+        try {
+          var t = localStorage.getItem('suvana.theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          }
+          document.documentElement.dataset.theme = t;
+        } catch (e) {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
