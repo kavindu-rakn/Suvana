@@ -141,9 +141,8 @@ modules.forEach((mod: any, i) => {
   );
 });
 
-// 6. Theme Toggle Mask Transition
+// 6. Theme Toggle with View Transitions API
 const themeBtn = document.getElementById('theme-toggle');
-const themeMask = document.getElementById('theme-mask');
 
 const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>';
 const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>';
@@ -158,13 +157,23 @@ function paintBtn(theme: string) {
 
 paintBtn(document.documentElement.dataset.theme || 'light');
 
-if (themeBtn && themeMask) {
+if (themeBtn) {
   themeBtn.addEventListener('click', () => {
     const currentTheme = document.documentElement.dataset.theme;
     const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    const nextBgColor = nextTheme === 'dark' ? '#0a1414' : '#fdfdfd';
-    themeMask.style.background = nextBgColor;
     
+    const switchTheme = () => {
+      document.documentElement.dataset.theme = nextTheme;
+      paintBtn(nextTheme);
+      try { localStorage.setItem('suvana.theme', nextTheme); } catch (e) {}
+      window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: nextTheme } }));
+    };
+
+    if (!(document as any).startViewTransition) {
+      switchTheme();
+      return;
+    }
+
     const rect = themeBtn.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
@@ -172,22 +181,24 @@ if (themeBtn && themeMask) {
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y)
     );
-    
-    gsap.fromTo(themeMask, 
-      { clipPath: `circle(0px at ${x}px ${y}px)` },
-      { 
-        clipPath: `circle(${maxRadius}px at ${x}px ${y}px)`, 
-        duration: 0.8,
-        ease: 'power3.inOut',
-        onComplete: () => {
-          document.documentElement.dataset.theme = nextTheme;
-          paintBtn(nextTheme);
-          try { localStorage.setItem('suvana.theme', nextTheme); } catch (e) {}
-          window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: nextTheme } }));
-          gsap.set(themeMask, { clipPath: 'circle(0% at center)' });
+
+    const transition = (document as any).startViewTransition(switchTheme);
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${maxRadius}px at ${x}px ${y}px)`
+          ],
+        },
+        {
+          duration: 800,
+          easing: 'ease-in-out',
+          pseudoElement: '::view-transition-new(root)',
         }
-      }
-    );
+      );
+    });
   });
 }
 

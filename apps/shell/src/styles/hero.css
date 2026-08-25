@@ -27,8 +27,6 @@
 }
 
 .hero-content {
-  position: relative;
-  z-index: 1;
   text-align: center;
   width: 100%;
   max-width: 1200px;
@@ -41,7 +39,6 @@
 
 /* Intertwined Logo & Typography */
 .logo-cluster {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,6 +51,7 @@
   margin-bottom: 20px;
   opacity: 0;
   transform: scale(0.8);
+  /* mix-blend-mode is applied in base.css */
 }
 
 .hero-titles {
@@ -73,22 +71,25 @@
   text-transform: uppercase;
   opacity: 0;
   transform: translateY(40px);
+  position: relative;
+  z-index: 1;
 }
 
 .hero-suvana-si {
   font-family: var(--sinhala);
-  font-size: clamp(4rem, 12vw, 9rem);
+  font-size: clamp(4rem, 12vw, 9.5rem);
   font-weight: 700;
   line-height: 1.4;
-  padding-bottom: 20px; /* Give room for descenders */
-  margin-top: -40px;
+  padding-bottom: 20px;
+  margin-top: -65px; /* Deeper overlap */
   background: linear-gradient(100deg, var(--teal), var(--gold));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   opacity: 0;
   transform: translateY(40px);
-  z-index: 2;
+  position: relative;
+  z-index: 2; /* Ensure it overlaps English title */
 }
 
 .hero-taglines {

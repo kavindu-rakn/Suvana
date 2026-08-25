@@ -38,15 +38,15 @@ body.is-hovering #custom-cursor {
   border: 1px solid var(--gold);
 }
 
-/* Theme Transition Mask */
-.theme-transition-layer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9998;
-  pointer-events: none;
-  background: var(--paper); /* Will be updated dynamically via JS */
-  clip-path: circle(0% at center);
+/* View Transitions API (Theme Toggle) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
 }
