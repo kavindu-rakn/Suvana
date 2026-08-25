@@ -438,14 +438,46 @@ export function PracticeView() {
 
   return (
     <div className="record-layout" data-phase={phase}>
+      {/* The sign being practised is the subject of this screen, so it gets a
+          full-width headline rather than a line inside a 340px sidebar. It
+          stays put through countdown, recording and result: "which sign am I
+          on" is the one thing that must never move. */}
+      {references.length > 0 && !sessionDone && (
+        <header className="practice-head">
+          <div className="practice-subject">
+            <p className="pane-label">Now practising</p>
+            <p className="practice-sign">
+              {selected ? glossLabel(selected.gloss) : 'No sign chosen yet'}
+              {selected && selected.gloss === suggested && (
+                <span className="practice-star" title="Suggested next">
+                  {' '}
+                  ★
+                </span>
+              )}
+            </p>
+          </div>
+          <button
+            className="btn btn-ghost"
+            onClick={() => setPickerOpen(true)}
+            disabled={inputsLocked}
+          >
+            {selected ? 'Change sign' : 'Choose a sign'}
+          </button>
+        </header>
+      )}
+
       <section className="camera-card">
+        <div className="pane-head">
+          <span className="pane-label">Your camera</span>
+          {tracking.status === 'running' && <span className="pane-live">live</span>}
+        </div>
         <CameraStage
           videoRef={tracking.videoRef}
           canvasRef={tracking.canvasRef}
           status={tracking.status}
           error={tracking.error}
           onStart={() => void tracking.start()}
-          idleHint="Start the camera, choose a sign, and record your attempt."
+          idleHint="Turn on your camera to start. Nothing is recorded or uploaded until you press Record."
           inferring={tracking.inferring}
           pip={
             stacked && reference && phase !== 'result' ? (
@@ -503,7 +535,9 @@ export function PracticeView() {
 
         {phase === 'result' && result ? (
           <>
-            <h2>{selected?.gloss}</h2>
+            {/* No gloss heading here any more — the full-width practice header
+                above already names the sign, and repeating it pushed the score
+                down the panel. */}
             <div className="result-top">
               <ScoreBadge score={result.score} />
               <div className="result-detail">
@@ -800,21 +834,7 @@ export function PracticeView() {
                   </div>
                 ) : (
                   <>
-                    <h2>Practice a sign</h2>
-
-                    <div className="sign-header">
-                      <p className="sign-name">
-                        {selected ? glossLabel(selected.gloss) : 'No sign chosen yet'}
-                        {selected && selected.gloss === suggested && ' ★'}
-                      </p>
-                      <button
-                        className="btn btn-ghost"
-                        onClick={() => setPickerOpen(true)}
-                        disabled={inputsLocked}
-                      >
-                        {selected ? 'Change sign' : 'Choose a sign'}
-                      </button>
-                    </div>
+                    <h2>Reference</h2>
 
                     {selected?.provisional && (
                       <p className="provisional-note">
@@ -843,11 +863,16 @@ export function PracticeView() {
                       (reference ? (
                         // Stacked, the player itself is in the camera stage.
                         !stacked && (
-                          <SkeletonPlayer
-                            frames={reference.frames}
-                            videoWidth={reference.videoWidth}
-                            videoHeight={reference.videoHeight}
-                          />
+                          // Framed like the camera pane so the two read as a
+                          // pair — copy this, do that — rather than as a video
+                          // and some sidebar furniture.
+                          <div className="reference-card">
+                            <SkeletonPlayer
+                              frames={reference.frames}
+                              videoWidth={reference.videoWidth}
+                              videoHeight={reference.videoHeight}
+                            />
+                          </div>
                         )
                       ) : refFailed ? (
                         <p className="camera-error">

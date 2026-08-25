@@ -198,9 +198,107 @@
 
 .record-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-columns: minmax(0, 1fr) 360px;
   gap: 20px;
   align-items: start;
+}
+
+/* ---- practice header -------------------------------------------------------
+   The sign under practice, given the width of the screen instead of a line in
+   the sidebar. Spans both columns so the camera and the reference read as two
+   panes *of* it rather than two unrelated cards. */
+.practice-head {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-5);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-1), var(--edge-lit);
+}
+
+.practice-subject {
+  min-width: 0;
+}
+
+.practice-sign {
+  margin: 2px 0 0;
+  font-size: var(--fs-display);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.4px;
+  overflow-wrap: anywhere;
+}
+
+.practice-star {
+  color: var(--caution);
+}
+
+/* Never let the control wrap to two lines beside a two-line sign name. */
+.practice-head .btn {
+  white-space: nowrap;
+  flex: none;
+}
+
+@media (max-width: 480px) {
+  .practice-head {
+    padding: var(--s-3);
+  }
+
+  .practice-sign {
+    font-size: var(--fs-lg);
+  }
+}
+
+/* ---- pane labels ----
+   The camera and the reference are peers: one says what to copy, the other
+   shows what you are doing. Labelling both makes that relationship explicit
+   instead of leaving it to be inferred from position. */
+.pane-label {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--text-dim);
+}
+
+.pane-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.pane-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--accent);
+}
+
+.pane-live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--accent);
+}
+
+.reference-card {
+  padding: var(--s-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
 }
 
 /* ---- capture focus mode ----------------------------------------------------
@@ -213,6 +311,7 @@
    needs mid-take — the reference, the prompt and the stop control all stay at
    full strength. */
 .sign-header,
+.practice-head,
 .gloss-chips {
   transition: opacity var(--dur-base) var(--ease-out);
 }
@@ -221,6 +320,14 @@
 .record-layout[data-phase='recording'] .sign-header,
 .record-layout[data-phase='countdown'] .gloss-chips,
 .record-layout[data-phase='recording'] .gloss-chips {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* The header dims its control but never its subject: mid-take, "which sign am
+   I doing" is the one thing the learner may still need to read. */
+.record-layout[data-phase='countdown'] .practice-head .btn,
+.record-layout[data-phase='recording'] .practice-head .btn {
   opacity: 0.4;
   pointer-events: none;
 }
@@ -245,10 +352,24 @@
     grid-template-columns: 1fr;
   }
 
+  /* The app bar is sticky at top:0 with a higher z-index, so a camera pinned
+     to 0 would slide underneath it. On a phone the bar is also 50-odd pixels
+     the camera needs more than the brand does, so it scrolls away instead and
+     the bottom tab bar carries orientation. */
+  .app-bar {
+    position: static;
+  }
+
   .camera-card {
     position: sticky;
     top: 0;
     z-index: 10;
+  }
+
+  /* Two stacked labels above a pinned camera is chrome the phone cannot
+     afford; the header already names the sign. */
+  .camera-card .pane-head {
+    display: none;
   }
 
   /* A 16/9 band on a 9/16 screen makes the learner tiny in their own frame, so
