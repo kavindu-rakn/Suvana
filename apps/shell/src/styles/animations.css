@@ -9,30 +9,33 @@ a, button, .theme-toggle {
 
 #custom-cursor {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 32px;
-  height: 32px;
+  top: 0; left: 0;
+  width: 12px; height: 12px;
+  background: var(--teal-ink);
+  border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  mix-blend-mode: difference; /* Ensure visibility over both themes */
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+              height 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+              background-color 0.3s, border 0.3s;
+  box-sizing: border-box;
+  mix-blend-mode: normal;
 }
 
-#custom-cursor svg {
-  width: 24px;
-  height: 24px;
-  fill: #fff;
-  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), fill 0.2s;
+:root[data-theme='dark'] #custom-cursor {
+  background: var(--gold);
 }
 
-/* Hover state for interactive elements */
-body.is-hovering #custom-cursor svg {
-  transform: scale(1.5);
-  /* Optional: change the SVG path via JS when hovering over specific elements */
+body.is-hovering #custom-cursor {
+  width: 44px; height: 44px;
+  background: rgba(0, 166, 147, 0.1);
+  border: 1px solid var(--teal-ink);
+}
+
+:root[data-theme='dark'] body.is-hovering #custom-cursor {
+  background: rgba(218, 165, 32, 0.1);
+  border: 1px solid var(--gold);
 }
 
 /* Theme Transition Mask */

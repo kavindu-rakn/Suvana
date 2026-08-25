@@ -1,14 +1,13 @@
 /* ---- hero ---- */
 .hero {
   position: relative;
-  text-align: center;
-  padding: 120px 24px 80px;
-  min-height: 80vh;
+  width: 100%;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  padding-top: 80px; /* Offset header */
 }
 
 #webgl-canvas {
@@ -17,65 +16,102 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
-  opacity: 0.8; /* adjust based on theme */
+  opacity: 0.6; 
   transition: opacity 1s;
 }
 
 :root[data-theme='dark'] #webgl-canvas {
-  opacity: 0.4;
+  opacity: 0.3;
 }
 
-.hero .content {
+.hero-content {
   position: relative;
   z-index: 1;
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
 }
 
-.hero .lockup {
-  width: min(320px, 78vw);
-  height: auto;
-  opacity: 0; /* GSAP will animate */
-  transform: translateY(20px);
+/* Intertwined Logo & Typography */
+.logo-cluster {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-/* The Sinhala name in the brand's own Sinhala face, tinted with the
-   mark's teal-to-gold gradient so the bilingual lockup reads as one
-   piece. Background-clip needs a transparent fill to show through. */
-.hero .name-si {
-  margin: -8px 0 0;
-  font-family: var(--sinhala);
+
+.hero-mark {
+  height: 120px;
+  width: auto;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.hero-titles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.hero-suvana-en {
+  font-family: var(--sans);
+  font-size: clamp(3.5rem, 10vw, 8rem);
   font-weight: 700;
-  font-size: clamp(3rem, 8vw, 4.5rem);
-  line-height: 1.25;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--slate);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.hero-suvana-si {
+  font-family: var(--sinhala);
+  font-size: clamp(4rem, 12vw, 9rem);
+  font-weight: 700;
+  line-height: 1.4;
+  padding-bottom: 20px; /* Give room for descenders */
+  margin-top: -40px;
   background: linear-gradient(100deg, var(--teal), var(--gold));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(40px);
+  z-index: 2;
 }
+
+.hero-taglines {
+  max-width: 900px;
+}
+
 .hero .tagline {
-  font-size: clamp(1.25rem, 3vw, 2rem);
-  font-weight: 650;
+  font-size: clamp(1.25rem, 2.5vw, 1.8rem);
+  font-weight: 400;
   color: var(--slate);
-  max-width: 800px;
-  margin: 22px auto 10px;
+  margin: 0 0 20px;
   text-wrap: balance;
   opacity: 0;
   transform: translateY(20px);
 }
+
 .hero .subline {
   font-family: var(--mono);
-  font-size: 13.5px;
-  letter-spacing: 1.5px;
+  font-size: 13px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--teal-ink);
-  margin: 0 auto 40px;
-  max-width: 700px;
+  color: var(--gold-ink);
   opacity: 0;
   transform: translateY(20px);
-}
-.hero .btn {
-  opacity: 0;
-  transform: translateY(20px);
+  max-width: 100%;
 }

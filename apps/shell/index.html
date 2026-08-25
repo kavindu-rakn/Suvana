@@ -11,7 +11,6 @@
     />
     <title>සුවණ Suvana</title>
     <script>
-      /* Theme, before first paint. */
       (function () {
         try {
           var t = localStorage.getItem('suvana.theme');
@@ -30,30 +29,25 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&family=Noto+Serif+Sinhala:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    
-    <!-- Link to the main style entry point -->
     <link rel="stylesheet" href="/src/styles/main.css" />
   </head>
   <body>
-    <!-- Theme transition mask layer -->
+    <!-- Custom Theme Transition Layer -->
     <div class="theme-transition-layer" id="theme-mask"></div>
 
     <!-- Custom Cursor -->
     <div id="custom-cursor">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <!-- Minimalist hand pointer -->
-        <path d="M10 2a2 2 0 0 1 2 2v4h1a2 2 0 0 1 2 2v2h1a2 2 0 0 1 2 2v7a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V10.5a2.5 2.5 0 0 1 5 0V8a2 2 0 0 1 2-2V4a2 2 0 0 1 2-2z"/>
-      </svg>
+      <div class="cursor-dot"></div>
     </div>
 
-    <header>
+    <!-- Fixed Header -->
+    <header id="header">
       <div class="nav">
         <a href="/" aria-label="Suvana home" class="brand">
           <img class="mark" src="/branding/suvana-mark.png" alt="" />
           <span class="wordmark">Suvana</span>
         </a>
         <div class="nav-right">
-          <span class="meta">R26-SE-019 · SLIIT</span>
           <button id="theme-toggle" class="theme-toggle" type="button"></button>
           <div id="auth-slot" class="auth-slot"></div>
         </div>
@@ -61,38 +55,48 @@
     </header>
 
     <main>
-      <section class="hero">
+      <section class="hero" id="hero">
         <canvas id="webgl-canvas"></canvas>
-        <div class="content">
+        <div class="hero-content">
           <h1 class="sr-only">Suvana</h1>
-          <img
-            class="lockup"
-            src="/branding/suvana-lockup-en.jpg"
-            alt="Suvana — a signing hand cradled inside the outline of an ear"
-          />
-          <p class="name-si" lang="si">සුවණ</p>
-          <p class="tagline">
-            One platform for two-way communication between Deaf and hearing
-            people, in Sri Lankan Sign Language.
-          </p>
-          <p class="subline">
-            Turn signs into speech · Speak to a signing avatar · Learn to sign ·
-            Stay aware of every sound
-          </p>
-          <a class="btn" href="#modules-title">Explore the modules</a>
+          
+          <div class="hero-typography">
+            <!-- Intertwined Logo and Text -->
+            <div class="logo-cluster" data-speed="0.8">
+              <img class="hero-mark" src="/branding/suvana-mark.png" alt="Suvana Logo" />
+              <div class="hero-titles">
+                <span class="hero-suvana-en">SUVANA</span>
+                <span class="hero-suvana-si" lang="si">සුවණ</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-taglines">
+            <p class="tagline" data-speed="1.2">
+              One platform for two-way communication between Deaf and hearing
+              people, in Sri Lankan Sign Language.
+            </p>
+            <p class="subline" data-speed="1.5">
+              Turn signs into speech · Speak to a signing avatar · Learn to sign · Stay aware of your surroundings
+            </p>
+          </div>
         </div>
       </section>
 
-      <section class="modules" aria-labelledby="modules-title">
-        <div class="modules-head">
-          <p class="kicker">Modules</p>
-          <h2 id="modules-title">One platform, four bridges</h2>
-        </div>
-        
-        <div class="editorial-stack">
+      <!-- Modules Section (Vertical Editorial) -->
+      <section class="modules-vertical-wrapper" id="modules-wrapper">
+        <div class="modules-vertical-container">
+          
+          <div class="module-intro">
+            <div class="intro-content">
+              <p class="kicker">Modules</p>
+              <h2>One platform,<br/>four bridges.</h2>
+            </div>
+          </div>
+
           <!-- Recognize -->
-          <article class="module-section">
-            <div class="module-content">
+          <article class="module-row">
+            <div class="mr-content">
               <p class="kicker">Sign → Speech</p>
               <h3>Recognize</h3>
               <p class="desc">
@@ -103,14 +107,16 @@
                 <span class="badge soon">Ready to deploy</span>
               </div>
             </div>
-            <div class="module-visual">
-              <!-- Abstract visual container -->
+            <div class="mr-visual">
+              <div class="css-art art-recognize">
+                <div class="art-glass">SIGN &rarr; SPEECH</div>
+              </div>
             </div>
           </article>
 
           <!-- Communicate -->
-          <article class="module-section">
-            <div class="module-content">
+          <article class="module-row reverse">
+            <div class="mr-content">
               <p class="kicker">Speech → Sign</p>
               <h3>Communicate</h3>
               <p class="desc">
@@ -122,14 +128,18 @@
                 <span class="badge live">Live</span>
               </div>
             </div>
-            <div class="module-visual" style="background: linear-gradient(135deg, var(--gold) 0%, var(--teal) 100%);">
-              <!-- Abstract visual container -->
+            <div class="mr-visual">
+              <div class="css-art art-communicate">
+                <div class="soundwave">
+                  <span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
             </div>
           </article>
 
           <!-- Learn -->
-          <article class="module-section">
-            <div class="module-content">
+          <article class="module-row">
+            <div class="mr-content">
               <p class="kicker">For hearing learners</p>
               <h3>Learn</h3>
               <p class="desc">
@@ -142,14 +152,18 @@
                 <span class="badge live">Live</span>
               </div>
             </div>
-            <div class="module-visual" style="background: linear-gradient(135deg, var(--slate) 0%, var(--teal) 100%);">
-              <!-- Abstract visual container -->
+            <div class="mr-visual">
+              <div class="css-art art-learn">
+                <div class="art-grid">
+                  <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                </div>
+              </div>
             </div>
           </article>
 
           <!-- Alerts -->
-          <article class="module-section">
-            <div class="module-content">
+          <article class="module-row reverse">
+            <div class="mr-content">
               <p class="kicker">Sound awareness</p>
               <h3>Alerts</h3>
               <p class="desc">
@@ -160,10 +174,13 @@
                 <span class="badge soon">Mobile app · In integration</span>
               </div>
             </div>
-            <div class="module-visual" style="background: linear-gradient(135deg, var(--slate) 0%, var(--gold) 100%);">
-              <!-- Abstract visual container -->
+            <div class="mr-visual">
+              <div class="css-art art-alerts">
+                <div class="ripple-circle"></div>
+              </div>
             </div>
           </article>
+
         </div>
       </section>
     </main>
@@ -175,12 +192,10 @@
         Lankan Sign Language.
       </p>
       <p>
-        Final-year research project R26-SE-019 · SLIIT · External partner: The
-        School for the Deaf, Ratmalana
+        Final-year research project · External partner: The School for the Deaf, Ratmalana
       </p>
     </footer>
 
-    <!-- Entry point for JS -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
