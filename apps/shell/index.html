@@ -11,15 +11,7 @@
     />
     <title>සුවණ Suvana</title>
     <script>
-      /* Theme, before first paint.
-       *
-       * One choice for the whole platform: every web surface is served from
-       * this origin (the shell rewrites /learn/* and /communicate/*), so a
-       * single localStorage key is shared between them the same way the
-       * session cookie is. No preference means follow the operating system.
-       *
-       * Inline and synchronous on purpose — deferring this by even one frame
-       * is the flash of the wrong theme. */
+      /* Theme, before first paint. */
       (function () {
         try {
           var t = localStorage.getItem('suvana.theme');
@@ -38,360 +30,22 @@
       href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&family=Noto+Serif+Sinhala:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <style>
-      /* Landing shell for Suvana. Colour tokens mirror
-         packages/branding/palette.css — keep in sync. Light is the designed
-         default (the brand assets have baked white backgrounds); the dark
-         block below adapts rather than inverts. */
-      :root {
-        --teal: #00a693;
-        --slate: #2f4f4f;
-        --gold: #daa520;
-        --paper: #fdfdfd;
-        --ink: #333333;
-        /* Darkened for WCAG AA text contrast on white; pure brand colours
-           are reserved for large/decorative use. */
-        --teal-ink: #00776a;
-        --gold-ink: #8a6410;
-        --line: #e0e8e6;
-        --mono: ui-monospace, Consolas, monospace; /* matches the Learn app */
-        --sinhala: "Noto Serif Sinhala", "Nirmala UI", "Iskoola Pota", serif;
-        /* Brand typeface: Noto Serif pairs with Noto Serif Sinhala by design,
-           so English and Sinhala share one voice. */
-        --sans: "Noto Serif", Georgia, "Times New Roman", serif;
-      }
-      /* Dark. Only the semantic roles change; --teal/--gold stay the brand
-         colours. --slate carries both headings and the primary button fill,
-         so lightening it inverts the button correctly for free: the fill goes
-         pale and .btn's `color: var(--paper)` becomes the dark ink on it. */
-      :root[data-theme='dark'] {
-        --slate: #cfe3df;
-        --paper: #0a1414;
-        --ink: #ecf4f2;
-        --teal-ink: #2dd4bf;
-        --gold-ink: #e0b445;
-        --line: #26403e;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html {
-        color-scheme: light;
-      }
-      html[data-theme='dark'] {
-        color-scheme: dark;
-      }
-      body {
-        margin: 0;
-        background: var(--paper);
-        color: var(--ink);
-        font-family: var(--sans);
-        line-height: 1.55;
-      }
-      img {
-        max-width: 100%;
-      }
-      /* The brand PNGs have baked white backgrounds; multiply blending makes
-         white read as transparent against our light surfaces, so no boxes. */
-      .nav img,
-      .hero .lockup {
-        mix-blend-mode: multiply;
-      }
-      a:focus-visible,
-      .btn:focus-visible {
-        outline: 2px solid var(--teal-ink);
-        outline-offset: 2px;
-      }
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        clip: rect(0 0 0 0);
-        white-space: nowrap;
-      }
-      .wrap {
-        max-width: 1060px;
-        margin: 0 auto;
-        padding: 0 24px;
-      }
-
-      /* ---- header ---- */
-      header {
-        border-bottom: 1px solid var(--line);
-      }
-      .nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 24px;
-        max-width: 1060px;
-        margin: 0 auto;
-      }
-      .nav img {
-        height: 26px;
-        width: auto;
-        display: block;
-      }
-      .nav .brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .nav .mark {
-        height: 34px;
-      }
-      /* Set as text rather than an image: there is no standalone wordmark
-         asset — the brand files are the mark and two stacked lockups, and a
-         1024px square lockup is illegible at header size. */
-      .nav .wordmark {
-        font-size: 20px;
-        font-weight: 600;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: var(--slate);
-      }
-      .nav .meta {
-        font-family: var(--mono);
-        font-size: 12px;
-        letter-spacing: 1px;
-        color: var(--slate);
-      }
-      .nav-right {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-      }
-      .theme-toggle {
-        display: grid;
-        place-items: center;
-        width: 34px;
-        height: 34px;
-        padding: 0;
-        color: var(--slate);
-        background: transparent;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        cursor: pointer;
-      }
-      .theme-toggle:hover {
-        color: var(--teal-ink);
-        border-color: var(--teal-ink);
-      }
-      .theme-toggle svg {
-        width: 17px;
-        height: 17px;
-      }
-      /* The brand files are colour on baked white, so `multiply` (which turns
-         that white transparent) only works on a light page. On dark it would
-         crush the mark to nothing, so the white becomes a deliberate chip
-         instead — the same treatment the Recognition header already uses. */
-      :root[data-theme='dark'] .nav .mark,
-      :root[data-theme='dark'] .hero .lockup {
-        mix-blend-mode: normal;
-        background: #fff;
-        border-radius: 12px;
-        padding: 6px;
-      }
-      .auth-slot {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 14px;
-      }
-      .auth-slot a {
-        color: var(--slate);
-        text-decoration: none;
-        font-weight: 600;
-      }
-      .auth-slot a:hover {
-        color: var(--teal-ink);
-      }
-      .auth-slot .auth-cta {
-        padding: 7px 14px;
-        border-radius: 8px;
-        background: var(--slate);
-        color: var(--paper);
-      }
-      .auth-slot .auth-cta:hover {
-        background: var(--teal-ink);
-        color: var(--paper);
-      }
-      .auth-who strong {
-        color: var(--teal-ink);
-      }
-      @media (max-width: 620px) {
-        .nav-right .meta {
-          display: none;
-        }
-      }
-
-      /* ---- hero ---- */
-      .hero {
-        text-align: center;
-        padding: 56px 24px 40px;
-      }
-      .hero .lockup {
-        width: min(320px, 78vw);
-        height: auto;
-      }
-      /* The Sinhala name in the brand's own Sinhala face, tinted with the
-         mark's teal-to-gold gradient so the bilingual lockup reads as one
-         piece. Background-clip needs a transparent fill to show through. */
-      .hero .name-si {
-        margin: -8px 0 0;
-        font-family: var(--sinhala);
-        font-weight: 700;
-        font-size: clamp(2rem, 6vw, 2.9rem);
-        line-height: 1.25;
-        background: linear-gradient(100deg, var(--teal), var(--gold));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-      }
-      .tagline {
-        font-size: clamp(1.15rem, 2.6vw, 1.5rem);
-        font-weight: 650;
-        color: var(--slate);
-        max-width: 620px;
-        margin: 22px auto 10px;
-        text-wrap: balance;
-      }
-      .subline {
-        font-family: var(--mono);
-        font-size: 12.5px;
-        letter-spacing: 1.2px;
-        text-transform: uppercase;
-        color: var(--teal-ink);
-        margin: 0 auto 28px;
-        max-width: 700px;
-      }
-      .btn {
-        display: inline-block;
-        background: var(--slate);
-        color: var(--paper);
-        text-decoration: none;
-        font-weight: 650;
-        font-size: 15px;
-        padding: 12px 26px;
-        border-radius: 10px;
-        transition: background 0.15s;
-      }
-      .btn:hover {
-        background: var(--teal-ink);
-      }
-      .btn.ghost {
-        background: transparent;
-        color: var(--slate);
-        border: 1.5px solid var(--slate);
-        padding: 10.5px 24px;
-      }
-      .btn.ghost:hover {
-        color: var(--teal-ink);
-        border-color: var(--teal-ink);
-        background: transparent;
-      }
-
-      /* ---- modules ---- */
-      .modules {
-        padding: 24px 24px 64px;
-      }
-      .modules-head {
-        text-align: center;
-        margin-bottom: 28px;
-      }
-      .kicker {
-        font-family: var(--mono);
-        font-size: 12px;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        color: var(--teal-ink);
-        margin: 0 0 6px;
-      }
-      .modules-head h2 {
-        font-size: clamp(1.35rem, 2.4vw, 1.7rem);
-        color: var(--slate);
-        margin: 0;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
-        gap: 18px;
-        max-width: 1060px;
-        margin: 0 auto;
-      }
-      .card {
-        background: #ffffff;
-        border: 1px solid var(--line);
-        border-top: 3px solid var(--teal);
-        border-radius: 14px;
-        padding: 20px 20px 18px;
-        display: flex;
-        flex-direction: column;
-      }
-      .card h3 {
-        margin: 2px 0 8px;
-        font-size: 1.2rem;
-        color: var(--slate);
-      }
-      .card .desc {
-        margin: 0 0 18px;
-        font-size: 0.92rem;
-        flex: 1;
-      }
-      .card-foot {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-      .card .btn {
-        font-size: 13.5px;
-        padding: 8px 16px;
-        border-radius: 8px;
-      }
-      .badge {
-        font-family: var(--mono);
-        font-size: 10.5px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        padding: 4px 9px;
-        border-radius: 999px;
-        white-space: nowrap;
-      }
-      .badge.live {
-        background: rgba(0, 166, 147, 0.12);
-        color: var(--teal-ink);
-      }
-      .badge.soon {
-        background: rgba(218, 165, 32, 0.16);
-        color: var(--gold-ink);
-      }
-
-      /* ---- footer ---- */
-      footer {
-        border-top: 1px solid var(--line);
-        padding: 30px 24px 44px;
-        text-align: center;
-        font-size: 13px;
-        color: #5c5c5c;
-      }
-      footer .brandline {
-        font-size: 15px;
-        color: var(--slate);
-        margin: 0 0 8px;
-      }
-      footer .si {
-        font-family: var(--sinhala);
-        font-weight: 700;
-      }
-      footer p {
-        margin: 4px 0;
-      }
-    </style>
+    
+    <!-- Link to the main style entry point -->
+    <link rel="stylesheet" href="/src/styles/main.css" />
   </head>
   <body>
+    <!-- Theme transition mask layer -->
+    <div class="theme-transition-layer" id="theme-mask"></div>
+
+    <!-- Custom Cursor -->
+    <div id="custom-cursor">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <!-- Minimalist hand pointer -->
+        <path d="M10 2a2 2 0 0 1 2 2v4h1a2 2 0 0 1 2 2v2h1a2 2 0 0 1 2 2v7a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V10.5a2.5 2.5 0 0 1 5 0V8a2 2 0 0 1 2-2V4a2 2 0 0 1 2-2z"/>
+      </svg>
+    </div>
+
     <header>
       <div class="nav">
         <a href="/" aria-label="Suvana home" class="brand">
@@ -401,9 +55,6 @@
         <div class="nav-right">
           <span class="meta">R26-SE-019 · SLIIT</span>
           <button id="theme-toggle" class="theme-toggle" type="button"></button>
-          <!-- Filled in by the session script at the end of the body. Starts
-               empty rather than showing "Sign in", so a signed-in visitor
-               never sees a flash of the wrong state. -->
           <div id="auth-slot" class="auth-slot"></div>
         </div>
       </div>
@@ -411,22 +62,25 @@
 
     <main>
       <section class="hero">
-        <h1 class="sr-only">Suvana</h1>
-        <img
-          class="lockup"
-          src="/branding/suvana-lockup-en.jpg"
-          alt="Suvana — a signing hand cradled inside the outline of an ear"
-        />
-        <p class="name-si" lang="si">සුවණ</p>
-        <p class="tagline">
-          One platform for two-way communication between Deaf and hearing
-          people, in Sri Lankan Sign Language.
-        </p>
-        <p class="subline">
-          Turn signs into speech · Speak to a signing avatar · Learn to sign ·
-          Stay aware of every sound
-        </p>
-        <a class="btn" href="#modules-title">Explore the modules</a>
+        <canvas id="webgl-canvas"></canvas>
+        <div class="content">
+          <h1 class="sr-only">Suvana</h1>
+          <img
+            class="lockup"
+            src="/branding/suvana-lockup-en.jpg"
+            alt="Suvana — a signing hand cradled inside the outline of an ear"
+          />
+          <p class="name-si" lang="si">සුවණ</p>
+          <p class="tagline">
+            One platform for two-way communication between Deaf and hearing
+            people, in Sri Lankan Sign Language.
+          </p>
+          <p class="subline">
+            Turn signs into speech · Speak to a signing avatar · Learn to sign ·
+            Stay aware of every sound
+          </p>
+          <a class="btn" href="#modules-title">Explore the modules</a>
+        </div>
       </section>
 
       <section class="modules" aria-labelledby="modules-title">
@@ -434,62 +88,80 @@
           <p class="kicker">Modules</p>
           <h2 id="modules-title">One platform, four bridges</h2>
         </div>
-        <!-- Card order is deliberate and the four are peers: no module is the
-             product's headline. Recognition and Communicate come first because
-             they are the two-way conversation the project is named for. -->
-        <div class="grid">
-          <article class="card">
-            <p class="kicker">Sign → Speech</p>
-            <h3>Recognize</h3>
-            <p class="desc">
-              Sign to the camera and have it recognised and spoken aloud, built
-              on a transformer recognition model.
-            </p>
-            <div class="card-foot">
-              <!-- At deploy: replace href with the recognition service's own
-                   origin (see services/recognition/DEPLOY-SUVANA.md — it needs
-                   its own subdomain because Vercel cannot proxy its WebSocket)
-                   and swap this badge for <span class="badge live">Live</span>. -->
-              <span class="badge soon">Ready to deploy</span>
+        
+        <div class="editorial-stack">
+          <!-- Recognize -->
+          <article class="module-section">
+            <div class="module-content">
+              <p class="kicker">Sign → Speech</p>
+              <h3>Recognize</h3>
+              <p class="desc">
+                Sign to the camera and have it recognised and spoken aloud, built
+                on a transformer recognition model.
+              </p>
+              <div class="module-foot">
+                <span class="badge soon">Ready to deploy</span>
+              </div>
+            </div>
+            <div class="module-visual">
+              <!-- Abstract visual container -->
             </div>
           </article>
 
-          <article class="card">
-            <p class="kicker">Speech → Sign</p>
-            <h3>Communicate</h3>
-            <p class="desc">
-              Speak Sinhala and watch a 3D avatar sign it, with the emotion in
-              your voice detected along the way.
-            </p>
-            <div class="card-foot">
-              <a class="btn ghost" href="/communicate">Open Communicate</a>
-              <span class="badge live">Live</span>
+          <!-- Communicate -->
+          <article class="module-section">
+            <div class="module-content">
+              <p class="kicker">Speech → Sign</p>
+              <h3>Communicate</h3>
+              <p class="desc">
+                Speak Sinhala and watch a 3D avatar sign it, with the emotion in
+                your voice detected along the way.
+              </p>
+              <div class="module-foot">
+                <a class="btn ghost" href="/communicate">Open Communicate</a>
+                <span class="badge live">Live</span>
+              </div>
+            </div>
+            <div class="module-visual" style="background: linear-gradient(135deg, var(--gold) 0%, var(--teal) 100%);">
+              <!-- Abstract visual container -->
             </div>
           </article>
 
-          <article class="card">
-            <p class="kicker">For hearing learners</p>
-            <h3>Learn</h3>
-            <p class="desc">
-              Practice Sri Lankan Sign Language with your camera. Every attempt
-              is scored against real-signer references, with corrective
-              feedback down to individual fingers.
-            </p>
-            <div class="card-foot">
-              <a class="btn ghost" href="/learn/">Open Learn</a>
-              <span class="badge live">Live</span>
+          <!-- Learn -->
+          <article class="module-section">
+            <div class="module-content">
+              <p class="kicker">For hearing learners</p>
+              <h3>Learn</h3>
+              <p class="desc">
+                Practice Sri Lankan Sign Language with your camera. Every attempt
+                is scored against real-signer references, with corrective
+                feedback down to individual fingers.
+              </p>
+              <div class="module-foot">
+                <a class="btn ghost" href="/learn/">Open Learn</a>
+                <span class="badge live">Live</span>
+              </div>
+            </div>
+            <div class="module-visual" style="background: linear-gradient(135deg, var(--slate) 0%, var(--teal) 100%);">
+              <!-- Abstract visual container -->
             </div>
           </article>
 
-          <article class="card">
-            <p class="kicker">Sound awareness</p>
-            <h3>Alerts</h3>
-            <p class="desc">
-              A companion phone app that keeps Deaf users aware of important
-              sounds around them and can send SOS alerts.
-            </p>
-            <div class="card-foot">
-              <span class="badge soon">Mobile app · In integration</span>
+          <!-- Alerts -->
+          <article class="module-section">
+            <div class="module-content">
+              <p class="kicker">Sound awareness</p>
+              <h3>Alerts</h3>
+              <p class="desc">
+                A companion phone app that keeps Deaf users aware of important
+                sounds around them and can send SOS alerts.
+              </p>
+              <div class="module-foot">
+                <span class="badge soon">Mobile app · In integration</span>
+              </div>
+            </div>
+            <div class="module-visual" style="background: linear-gradient(135deg, var(--slate) 0%, var(--gold) 100%);">
+              <!-- Abstract visual container -->
             </div>
           </article>
         </div>
@@ -508,88 +180,7 @@
       </p>
     </footer>
 
-    <script>
-      /* Theme toggle. The choice is written to the shared localStorage key the
-       * head script reads, so it follows you into Learn and Communicate — same
-       * origin, same storage. `storage` events keep other open tabs in step. */
-      (function () {
-        var SUN =
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>';
-        var MOON =
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>';
-        var btn = document.getElementById('theme-toggle');
-        if (!btn) return;
-
-        function paint(theme) {
-          var next = theme === 'dark' ? 'light' : 'dark';
-          btn.innerHTML = theme === 'dark' ? SUN : MOON;
-          btn.setAttribute('aria-label', 'Switch to ' + next + ' theme');
-          btn.setAttribute('title', 'Switch to ' + next + ' theme');
-        }
-
-        paint(document.documentElement.dataset.theme);
-
-        btn.addEventListener('click', function () {
-          var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-          document.documentElement.dataset.theme = next;
-          paint(next);
-          try {
-            localStorage.setItem('suvana.theme', next);
-          } catch (e) {
-            /* Private mode: the choice simply does not persist. */
-          }
-        });
-
-        window.addEventListener('storage', function (e) {
-          if (e.key !== 'suvana.theme' || !e.newValue) return;
-          document.documentElement.dataset.theme = e.newValue;
-          paint(e.newValue);
-        });
-      })();
-    </script>
-
-    <script>
-      /* One Suvana account, shown wherever you are.
-       *
-       * Identity lives in the Communicate module, which already has the
-       * database, Auth.js and the sign-in pages. Everything the shell rewrites
-       * (/learn/*, /communicate/*) is served from THIS origin, so that
-       * module's session cookie is simply visible here — no SSO protocol, no
-       * token exchange, one fetch.
-       *
-       * Deliberately non-blocking: if Communicate is not deployed or is
-       * asleep, the slot falls back to a plain sign-in link rather than
-       * leaving the landing page broken. */
-      (async () => {
-        const slot = document.getElementById('auth-slot');
-        if (!slot) return;
-        const signedOut = `
-          <a href="/communicate/login?callbackUrl=%2F">Sign in</a>
-          <a class="auth-cta" href="/communicate/register?callbackUrl=%2F">Create account</a>`;
-        try {
-          const res = await fetch('/communicate/api/auth/session', {
-            headers: { accept: 'application/json' },
-          });
-          const session = res.ok ? await res.json() : null;
-          const user = session && session.user;
-          if (!user) {
-            slot.innerHTML = signedOut;
-            return;
-          }
-          const who = user.name || user.email || 'Signed in';
-          const admin =
-            user.role === 'admin' ? '<a href="/communicate/admin">Admin</a>' : '';
-          slot.innerHTML = `
-            <span class="auth-who">Hi, <strong></strong></span>
-            ${admin}
-            <a href="/communicate/dashboard">Account</a>
-            <a class="auth-cta" href="/communicate/api/auth/signout">Sign out</a>`;
-          // textContent, not interpolation: the name is user-supplied.
-          slot.querySelector('strong').textContent = who;
-        } catch {
-          slot.innerHTML = signedOut;
-        }
-      })();
-    </script>
+    <!-- Entry point for JS -->
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -1,0 +1,246 @@
+/* Landing shell for Suvana. Colour tokens mirror
+   packages/branding/palette.css — keep in sync. Light is the designed
+   default (the brand assets have baked white backgrounds); the dark
+   block below adapts rather than inverts. */
+:root {
+  --teal: #00a693;
+  --slate: #2f4f4f;
+  --gold: #daa520;
+  --paper: #fdfdfd;
+  --ink: #333333;
+  /* Darkened for WCAG AA text contrast on white; pure brand colours
+     are reserved for large/decorative use. */
+  --teal-ink: #00776a;
+  --gold-ink: #8a6410;
+  --line: #e0e8e6;
+  --mono: ui-monospace, Consolas, monospace; /* matches the Learn app */
+  --sinhala: "Noto Serif Sinhala", "Nirmala UI", "Iskoola Pota", serif;
+  /* Brand typeface: Noto Serif pairs with Noto Serif Sinhala by design,
+     so English and Sinhala share one voice. */
+  --sans: "Noto Serif", Georgia, "Times New Roman", serif;
+}
+/* Dark. Only the semantic roles change; --teal/--gold stay the brand
+   colours. --slate carries both headings and the primary button fill,
+   so lightening it inverts the button correctly for free: the fill goes
+   pale and .btn's `color: var(--paper)` becomes the dark ink on it. */
+:root[data-theme='dark'] {
+  --slate: #cfe3df;
+  --paper: #0a1414;
+  --ink: #ecf4f2;
+  --teal-ink: #2dd4bf;
+  --gold-ink: #e0b445;
+  --line: #26403e;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  color-scheme: light;
+}
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.55;
+  overflow-x: hidden; /* Prevent horizontal scroll due to animations */
+}
+img {
+  max-width: 100%;
+}
+/* The brand PNGs have baked white backgrounds; multiply blending makes
+   white read as transparent against our light surfaces, so no boxes. */
+.nav img,
+.hero .lockup {
+  mix-blend-mode: multiply;
+}
+a:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--teal-ink);
+  outline-offset: 2px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.wrap {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---- header ---- */
+header {
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  z-index: 100;
+  background: var(--paper);
+}
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+.nav img {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+.nav .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.nav .mark {
+  height: 34px;
+}
+/* Set as text rather than an image: there is no standalone wordmark
+   asset — the brand files are the mark and two stacked lockups, and a
+   1024px square lockup is illegible at header size. */
+.nav .wordmark {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+.nav .meta {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--slate);
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--slate);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--teal-ink);
+  border-color: var(--teal-ink);
+}
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+/* The brand files are colour on baked white, so `multiply` (which turns
+   that white transparent) only works on a light page. On dark it would
+   crush the mark to nothing, so the white becomes a deliberate chip
+   instead — the same treatment the Recognition header already uses. */
+:root[data-theme='dark'] .nav .mark,
+:root[data-theme='dark'] .hero .lockup {
+  mix-blend-mode: normal;
+  background: #fff;
+  border-radius: 12px;
+  padding: 6px;
+}
+.auth-slot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.auth-slot a {
+  color: var(--slate);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.auth-slot a:hover {
+  color: var(--teal-ink);
+}
+.auth-slot .auth-cta {
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--slate);
+  color: var(--paper);
+  transition: background 0.2s, color 0.2s;
+}
+.auth-slot .auth-cta:hover {
+  background: var(--teal-ink);
+  color: var(--paper);
+}
+.auth-who strong {
+  color: var(--teal-ink);
+}
+@media (max-width: 620px) {
+  .nav-right .meta {
+    display: none;
+  }
+}
+
+/* ---- footer ---- */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 30px 24px 44px;
+  text-align: center;
+  font-size: 13px;
+  color: #5c5c5c;
+  background: var(--paper);
+  position: relative;
+  z-index: 10;
+}
+footer .brandline {
+  font-size: 15px;
+  color: var(--slate);
+  margin: 0 0 8px;
+}
+footer .si {
+  font-family: var(--sinhala);
+  font-weight: 700;
+}
+footer p {
+  margin: 4px 0;
+}
+
+/* Button */
+.btn {
+  display: inline-block;
+  background: var(--slate);
+  color: var(--paper);
+  text-decoration: none;
+  font-weight: 650;
+  font-size: 15px;
+  padding: 12px 26px;
+  border-radius: 10px;
+  transition: background 0.15s, transform 0.2s;
+}
+.btn:hover {
+  background: var(--teal-ink);
+  transform: translateY(-2px);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--slate);
+  border: 1.5px solid var(--slate);
+  padding: 10.5px 24px;
+}
+.btn.ghost:hover {
+  color: var(--teal-ink);
+  border-color: var(--teal-ink);
+  background: transparent;
+}

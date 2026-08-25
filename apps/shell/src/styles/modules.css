@@ -1,0 +1,137 @@
+/* ---- modules ---- */
+.modules {
+  padding: 64px 24px 120px;
+  position: relative;
+  background: var(--paper);
+  z-index: 2;
+}
+
+.modules-head {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal-ink);
+  margin: 0 0 12px;
+}
+
+.modules-head h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--slate);
+  margin: 0;
+}
+
+/* Editorial Layout */
+.editorial-stack {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 120px;
+}
+
+.module-section {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  min-height: 60vh;
+}
+
+/* Alternate flex direction for every other section */
+.module-section:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.module-content {
+  flex: 1;
+  padding: 40px;
+}
+
+.module-visual {
+  flex: 1;
+  aspect-ratio: 4/3;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--gold) 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* subtle parallax effect */
+}
+
+/* Abstract shapes inside visual since we have no assets */
+.module-visual::before {
+  content: "";
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 60%);
+  top: -25%;
+  left: -25%;
+  mix-blend-mode: overlay;
+  animation: rotate slowly infinite linear;
+}
+
+.module-section h3 {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  color: var(--slate);
+  margin: 0 0 20px;
+  line-height: 1.1;
+}
+
+.module-section .desc {
+  font-size: 1.1rem;
+  margin: 0 0 40px;
+  color: var(--ink);
+  max-width: 500px;
+}
+
+.module-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.badge.live {
+  background: rgba(0, 166, 147, 0.12);
+  color: var(--teal-ink);
+}
+.badge.soon {
+  background: rgba(218, 165, 32, 0.16);
+  color: var(--gold-ink);
+}
+
+@media (max-width: 900px) {
+  .module-section, .module-section:nth-child(even) {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .module-visual {
+    width: 100%;
+    aspect-ratio: 16/9;
+  }
+  .module-content {
+    padding: 0;
+  }
+}
+
+@keyframes slowly {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

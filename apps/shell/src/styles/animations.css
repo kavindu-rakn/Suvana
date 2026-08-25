@@ -1,0 +1,49 @@
+/* Custom Cursor */
+body {
+  cursor: none; /* Hide default cursor */
+}
+
+a, button, .theme-toggle {
+  cursor: none; /* Override pointer for interactive elements */
+}
+
+#custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  mix-blend-mode: difference; /* Ensure visibility over both themes */
+}
+
+#custom-cursor svg {
+  width: 24px;
+  height: 24px;
+  fill: #fff;
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), fill 0.2s;
+}
+
+/* Hover state for interactive elements */
+body.is-hovering #custom-cursor svg {
+  transform: scale(1.5);
+  /* Optional: change the SVG path via JS when hovering over specific elements */
+}
+
+/* Theme Transition Mask */
+.theme-transition-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9998;
+  pointer-events: none;
+  background: var(--paper); /* Will be updated dynamically via JS */
+  clip-path: circle(0% at center);
+}
