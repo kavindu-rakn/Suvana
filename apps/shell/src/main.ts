@@ -280,3 +280,29 @@ if (themeBtn) {
     slot.innerHTML = signedOut;
   }
 })();
+
+// 8. Footer Marquee
+const marqueeContent = document.querySelector('.marquee-content');
+if (marqueeContent) {
+  let xPos = 0;
+  const baseSpeed = 0.05;
+
+  const animateMarquee = () => {
+    // Determine scroll speed influence (lenis.velocity is available globally since lenis is declared at top)
+    const scrollSpeed = Math.abs((lenis.velocity || 0) * 0.005);
+    
+    // Always move left base speed, but skew heavily by scroll velocity (absolute value to always move in same dir but faster)
+    xPos -= (baseSpeed + scrollSpeed);
+
+    // Loop
+    if (xPos <= -50) {
+      xPos += 50;
+    } else if (xPos > 0) {
+      xPos -= 50;
+    }
+
+    gsap.set(marqueeContent, { xPercent: xPos });
+    requestAnimationFrame(animateMarquee);
+  };
+  requestAnimationFrame(animateMarquee);
+}
