@@ -1,5 +1,12 @@
 interface ScoreBadgeProps {
   score: number
+  /**
+   * Change against the learner's previous attempt at this same sign, or null
+   * when this is the first one. Zero is meaningful and distinct from null.
+   */
+  delta?: number | null
+  /** True when this attempt beats every earlier attempt at this sign. */
+  best?: boolean
 }
 
 function band(score: number): { klass: string; label: string } {
@@ -17,8 +24,12 @@ function band(score: number): { klass: string; label: string } {
  * the same number, so it is the part allowed to animate; it sweeps once the
  * reveal is armed (see useFeedbackLatency's onSampled), and simply renders full
  * when it is not, which is also what happens under reduced motion.
+ *
+ * The same rule governs the delta line below it: it is information, so it is
+ * printed final and unanimated. A drop is styled neutrally rather than as an
+ * error — a worse attempt is ordinary practice, not a failure state.
  */
-export function ScoreBadge({ score }: ScoreBadgeProps) {
+export function ScoreBadge({ score, delta = null, best = false }: ScoreBadgeProps) {
   const r = 52
   const c = 2 * Math.PI * r
   const offset = c * (1 - Math.max(0, Math.min(100, score)) / 100)
@@ -26,7 +37,7 @@ export function ScoreBadge({ score }: ScoreBadgeProps) {
 
   return (
     <div className={`score-badge ${klass}`}>
-      <svg viewBox="0 0 120 120" width="120" height="120">
+      <svg viewBox="0 0 120 120" width="132" height="132">
         <circle cx="60" cy="60" r={r} className="ring-track" />
         <circle
           cx="60"
@@ -49,7 +60,20 @@ export function ScoreBadge({ score }: ScoreBadgeProps) {
           {score}
         </text>
       </svg>
+
       <span className="score-label">{label}</span>
+
+      {best && <span className="score-best">Best yet</span>}
+
+      <span className="score-delta">
+        {delta === null
+          ? 'First attempt at this sign'
+          : delta === 0
+            ? 'Same as your last try'
+            : delta > 0
+              ? `+${delta} since your last try`
+              : `${delta} since your last try`}
+      </span>
     </div>
   )
 }

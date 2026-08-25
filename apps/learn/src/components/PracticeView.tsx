@@ -422,6 +422,30 @@ export function PracticeView() {
   const noAttemptHands = result != null && result.hands.every((h) => h.missing)
   const inputsLocked = phase === 'countdown' || phase === 'recording'
 
+  /**
+   * How this attempt compares with the learner's own history for this sign.
+   *
+   * A bare score answers "how did I do" but not "am I getting better", which is
+   * the question that keeps someone practising. The newest entry in the log is
+   * this attempt — finishRecording appends it synchronously — so the one before
+   * it is the comparison, and everything before that decides whether this is a
+   * personal best.
+   *
+   * A linear scan of an in-memory array, and it runs on the frame
+   * useFeedbackLatency measures: at pilot scale (tens to hundreds of attempts)
+   * that is far below a frame budget, but it is the reason this is a plain
+   * filter and not something that touches IndexedDB.
+   */
+  const progress = useMemo(() => {
+    if (!result || !selected) return { delta: null as number | null, best: false }
+    const forGloss = entries.filter((e) => e.gloss === selected.gloss)
+    const earlier = forGloss.slice(0, -1)
+    if (earlier.length === 0) return { delta: null as number | null, best: false }
+    const previous = earlier[earlier.length - 1].score
+    const bestBefore = Math.max(...earlier.map((e) => e.score))
+    return { delta: result.score - previous, best: result.score > bestBefore }
+  }, [entries, result, selected])
+
   // The picker holds every reference (80+ once more of the dataset is
   // converted), so it is searchable and grouped rather than one flat list.
   const categories = useMemo(() => categoriesIn(references), [references])
@@ -539,7 +563,7 @@ export function PracticeView() {
                 above already names the sign, and repeating it pushed the score
                 down the panel. */}
             <div className="result-top">
-              <ScoreBadge score={result.score} />
+              <ScoreBadge score={result.score} delta={progress.delta} best={progress.best} />
               <div className="result-detail">
                 <ul className="hint-list">
                   {result.hints.map((h, i) => (
@@ -596,12 +620,17 @@ export function PracticeView() {
               </p>
             ) : (
               topFingers(result).length > 0 && (
-                <div className="finger-chips">
-                  {topFingers(result).map((f) => (
-                    <span key={f} className="finger-chip">
-                      {FINGER_LABEL[f]}
-                    </span>
-                  ))}
+                // A bare row of finger names is a readout, not advice. The
+                // heading turns the same data into an instruction.
+                <div className="focus-block">
+                  <p className="pane-label">Focus on next time</p>
+                  <div className="finger-chips">
+                    {topFingers(result).map((f) => (
+                      <span key={f} className="finger-chip">
+                        {FINGER_LABEL[f]}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )
             )}

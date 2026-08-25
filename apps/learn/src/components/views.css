@@ -791,10 +791,50 @@
 
 /* ---- graded practice result ---- */
 
+/* Stacked by default, because the two places this panel actually lives are
+   both narrow: a fixed 360px sidebar on desktop, and a phone. Either way a
+   ring beside a text block leaves the corrections about 170px wide — three or
+   four words to a line. Stacking gives the score the centre of the panel and
+   the corrections the full measure. */
 .result-top {
   display: flex;
-  gap: 16px;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--s-4);
+}
+
+.result-top .score-badge {
+  align-self: center;
+}
+
+.result-detail {
+  width: 100%;
+}
+
+.result-detail .row-buttons {
+  width: 100%;
+}
+
+.result-detail .row-buttons .btn {
+  flex: 1;
+}
+
+/* The one width where side by side wins: a tablet, where the panel is full
+   width and genuinely wide enough for both. */
+@media (min-width: 601px) and (max-width: 900px) {
+  .result-top {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .result-top .score-badge {
+    align-self: auto;
+  }
+
+  .result-detail {
+    width: auto;
+  }
 }
 
 .result-detail {
@@ -1017,6 +1057,47 @@
 .score-badge .ring-score {
   font: 700 34px var(--sans);
   fill: var(--text);
+}
+
+/* ---- score context ---------------------------------------------------------
+   Both lines are information, so both are printed final on the measured frame
+   and neither animates in Act 1. The delta answers "am I getting better",
+   which a bare score cannot. */
+.score-delta {
+  margin-top: 2px;
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* Deliberately not --danger when the score drops: a worse attempt is ordinary
+   practice, and colouring it as an error would punish the exact moment a
+   learner most needs to keep going. Only an improvement earns colour. */
+.score-badge:has(.score-delta) .score-delta {
+  font-variant-numeric: tabular-nums;
+}
+
+.score-best {
+  margin-top: 6px;
+  padding: 2px 10px;
+  border-radius: var(--r-full);
+  background: rgb(218 165 32 / 0.16);
+  color: var(--caution);
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+/* Act 2 only: the pill is legible from frame one and merely settles. */
+[data-reveal='on'] .score-best {
+  animation: lift-in var(--dur-base) var(--ease-out) 120ms both;
+}
+
+.focus-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .score-badge.good .ring-value {
