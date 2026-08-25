@@ -131,11 +131,13 @@ header.nav-hidden {
 }
 .nav .mark, .hero-mark {
   mix-blend-mode: multiply;
+  /* Push any off-white to pure white so multiply makes it 100% transparent */
+  filter: contrast(1.2);
 }
 :root[data-theme='dark'] .nav .mark,
 :root[data-theme='dark'] .hero-mark {
-  /* Invert black/teal/gold to white/red/blue, hue rotate to bring back teal/gold approx, then screen to drop the now-black background */
-  filter: invert(1) hue-rotate(180deg) saturate(1.5) brightness(1.2); 
+  /* Invert white to black, hue rotate for colors, and use contrast to force the background to pure black so screen makes it 100% transparent */
+  filter: invert(1) hue-rotate(180deg) contrast(1.5); 
   mix-blend-mode: screen;
 }
 
