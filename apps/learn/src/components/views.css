@@ -1588,3 +1588,71 @@
   color: var(--text-dim);
   white-space: nowrap;
 }
+
+/* ---- practice activity -----------------------------------------------------
+   Fourteen days of "did I turn up", next to the mastery list's "how well am I
+   doing". Bars are scaled against the busiest day in the window, so a quiet
+   fortnight still has a readable shape rather than fourteen slivers.
+
+   The whole strip is one role="img" with a summary label: fourteen separately
+   announced bars would be noise to a screen reader, and the same facts are in
+   the tiles above. */
+.activity-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.activity-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.activity-total {
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.activity-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 56px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.activity-day {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  background: var(--surface-2);
+  border-radius: var(--r-xs);
+  overflow: hidden;
+}
+
+/* The fill is a child rather than a background-size trick so the bar can grow
+   from the baseline without repainting the track. */
+.activity-day > span {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: block;
+  height: var(--fill, 0%);
+  background: var(--surface-2);
+}
+
+.activity-day.on > span {
+  background: linear-gradient(180deg, var(--accent), var(--accent-soft));
+}
+
+/* A day with no practice keeps its track visible — the gaps are the point. */
+.activity-day:not(.on) {
+  background: var(--surface-2);
+  opacity: 0.55;
+}

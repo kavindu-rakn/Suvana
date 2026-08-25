@@ -1,9 +1,16 @@
 import { useEffect, useState } from 'react'
 import { listAttempts } from '../learner/attemptLog'
+import { currentStreak, dailyActivity } from '../learner/activity'
+import type { DayBucket } from '../learner/activity'
 import { practiceNeed, summarizeAll } from '../learner/mastery'
 import type { GlossMastery, MasteryLevel } from '../learner/mastery'
+import { glossLabel } from '../data/translations'
 import { listRecordings } from '../storage/recordingStore'
 import { loadReferenceIndex } from '../storage/bundledReferences'
+
+/** Days of history in the activity strip. Two weeks fits a phone without
+ *  scrolling and is long enough for a habit to be visible in it. */
+const ACTIVITY_DAYS = 14
 
 const LEVEL_LABEL: Record<MasteryLevel, string> = {
   new: 'New',
@@ -60,6 +67,8 @@ export function ProgressView() {
   const [summaries, setSummaries] = useState<GlossMastery[]>([])
   const [attemptCount, setAttemptCount] = useState(0)
   const [avgRecent, setAvgRecent] = useState<number | null>(null)
+  const [activity, setActivity] = useState<DayBucket[]>([])
+  const [streak, setStreak] = useState(0)
   const [loading, setLoading] = useState(true)
   const [showAll, setShowAll] = useState(false)
 
@@ -77,6 +86,8 @@ export function ProgressView() {
         summarizeAll(glosses, log).sort((a, b) => practiceNeed(b, now) - practiceNeed(a, now)),
       )
       setAttemptCount(log.length)
+      setActivity(dailyActivity(log, ACTIVITY_DAYS, now))
+      setStreak(currentStreak(log, now))
       const recent = log.slice(-10)
       setAvgRecent(
         recent.length > 0
@@ -132,7 +143,55 @@ export function ProgressView() {
               <span className="stat-value">{mastered}</span>
               <span className="stat-label">signs mastered</span>
             </div>
+            <div className="stat-tile">
+              <span className="stat-value">{streak}</span>
+              <span className="stat-label">
+                {streak === 1 ? 'day streak' : 'day practice streak'}
+              </span>
+            </div>
           </div>
+
+          {attemptCount > 0 && (
+            /* Mastery says how well; this says how often. For a module whose
+               research question is a gain measured across sessions, showing up
+               is half the story — and it is the half a learner controls. */
+            <div className="activity-block">
+              <div className="activity-head">
+                <p className="pane-label">Last {ACTIVITY_DAYS} days</p>
+                <span className="activity-total">
+                  {activity.reduce((n, d) => n + d.attempts, 0)} attempts
+                </span>
+              </div>
+              <ol
+                className="activity-chart"
+                role="img"
+                aria-label={`Practice over the last ${ACTIVITY_DAYS} days: ${
+                  activity.filter((d) => d.attempts > 0).length
+                } days practised, ${activity.reduce((n, d) => n + d.attempts, 0)} attempts in total.`}
+              >
+                {activity.map((d) => {
+                  const peak = Math.max(...activity.map((x) => x.attempts), 1)
+                  return (
+                    <li
+                      key={d.date}
+                      className={d.attempts > 0 ? 'activity-day on' : 'activity-day'}
+                      // Bars are scaled against the busiest day rather than a
+                      // fixed ceiling, so the shape of a light week is still
+                      // readable instead of a row of slivers.
+                      style={{ '--fill': `${(d.attempts / peak) * 100}%` } as React.CSSProperties}
+                      title={
+                        d.attempts === 0
+                          ? `${d.date}: no practice`
+                          : `${d.date}: ${d.attempts} attempt${d.attempts === 1 ? '' : 's'}, average ${d.avgScore}`
+                      }
+                    >
+                      <span />
+                    </li>
+                  )
+                })}
+              </ol>
+            </div>
+          )}
 
           {attemptCount === 0 ? (
             <p className="empty-state">
@@ -143,7 +202,9 @@ export function ProgressView() {
             <ul className="mastery-list">
               {shown.map((s) => (
                 <li className="mastery-row" key={s.gloss}>
-                  <span className="rec-gloss">{s.gloss}</span>
+                  {/* The meaning alongside the gloss, as everywhere else —
+                      a bare label is not something a learner can act on. */}
+                  <span className="rec-gloss">{glossLabel(s.gloss)}</span>
                   <span className={`level-chip ${s.level}`}>{LEVEL_LABEL[s.level]}</span>
                   <div className="mastery-bar" title={`Mastery ${(s.mastery * 100).toFixed(0)}%`}>
                     <div style={{ width: `${Math.round(s.mastery * 100)}%` }} />
