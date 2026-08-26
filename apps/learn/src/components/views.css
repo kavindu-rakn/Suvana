@@ -1708,6 +1708,12 @@
   z-index: 10;
 }
 
+.aww-hero-mark {
+  height: 100px;
+  width: auto;
+  margin-bottom: 30px;
+}
+
 .aww-suvana-en {
   font-family: 'Noto Serif', serif;
   font-size: clamp(4rem, 15vw, 12rem);
@@ -1716,9 +1722,11 @@
   letter-spacing: -0.02em;
   color: var(--p-teal-700);
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 :root[data-theme='dark'] .aww-suvana-en {
-  color: var(--p-teal-300);
+  color: var(--p-sage-050); /* Match shell's off-white */
 }
 
 .aww-suvana-si {
@@ -1732,7 +1740,8 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  z-index: 2;
+  position: relative;
+  z-index: 2; /* Needs position relative to work */
 }
 
 .aww-hero-art {
@@ -1800,6 +1809,14 @@
   color: var(--text);
 }
 .btn.ghost.massive:hover {
+  background: var(--surface-2);
+}
+:root[data-theme='dark'] .btn.ghost.massive {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border-interactive);
+}
+:root[data-theme='dark'] .btn.ghost.massive:hover {
   background: var(--surface-2);
 }
 

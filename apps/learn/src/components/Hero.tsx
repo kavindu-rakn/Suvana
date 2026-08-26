@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react'
 import type { Tab } from '../app/tabs'
 import { ThemeToggle } from './ThemeToggle'
 import gsap from 'gsap'
-import { lenis } from '../main'
 
 const STEPS = [
   {
@@ -31,6 +30,7 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
   useEffect(() => {
     let ctx = gsap.context(() => {
       // 1. Entrance Animations
+      gsap.fromTo('.aww-hero-mark', { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 1, ease: 'power4.out', delay: 0.1 })
       gsap.fromTo('.aww-suvana-en', { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power4.out', delay: 0.2 })
       gsap.fromTo('.aww-suvana-si', { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power4.out', delay: 0.4 })
       gsap.fromTo('.aww-subline', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.6 })
@@ -77,7 +77,7 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
     let rafId: number
     const animateMarquee = () => {
       if (marqueeRef.current) {
-        const scrollSpeed = Math.abs((lenis?.velocity || 0) * 0.001)
+        const scrollSpeed = Math.abs(((window as any).lenis?.velocity || 0) * 0.001)
         xPos -= (0.02 + scrollSpeed)
         
         if (xPos <= -50) xPos += 50
@@ -106,6 +106,11 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
 
       <section className="aww-hero-main">
         <div className="aww-titles">
+          <img
+            className="aww-hero-mark"
+            src={`${import.meta.env.BASE_URL}branding/suvana-mark.png`}
+            alt=""
+          />
           <h1 className="aww-suvana-en">LEARN</h1>
           <h2 className="aww-suvana-si" lang="si">ඉගෙන ගන්න</h2>
         </div>

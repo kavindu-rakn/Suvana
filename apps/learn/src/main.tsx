@@ -31,8 +31,8 @@ lenis.on('scroll', (e: any) => {
   }
 });
 
-// Export lenis so other components (like Hero) can tap into its velocity
-export { lenis };
+// Set lenis on window so other components (like Hero) can tap into its velocity
+(window as any).lenis = lenis;
 
 // 3. Custom Cursor Logic
 const cursor = document.getElementById('custom-cursor');
