@@ -1022,7 +1022,6 @@ body::before {
 }
 * {
   scrollbar-width: none;
-  cursor: none !important;
 }
 
 /* Horizontal Scroll Progress Bar */
@@ -1039,39 +1038,6 @@ body::before {
 }
 :root[data-theme='dark'] #scroll-progress {
   background: var(--p-gold-400);
-}
-
-/* Custom Cursor */
-#custom-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 999999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* Mix-blend-mode: difference creates dynamic contrast against everything */
-  mix-blend-mode: difference;
-}
-.cursor-dot {
-  width: 20px;
-  height: 20px;
-  /* Mathematical inverse of Teal on Paper for light mode */
-  background: rgb(253, 87, 106); 
-  border-radius: 50%;
-  transition: width 0.2s ease, height 0.2s ease, background 0.3s ease;
-}
-:root[data-theme='dark'] .cursor-dot {
-  /* Mathematical inverse of Gold on Ink for dark mode */
-  background: rgb(228, 185, 52); 
-}
-#custom-cursor.hovering .cursor-dot {
-  width: 6px;
-  height: 6px;
-}
-body.is-transitioning #custom-cursor {
-  opacity: 0 !important;
 }
 
 /* View Transitions API (Theme Toggle) */

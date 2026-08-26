@@ -84,55 +84,6 @@ lenis.on('scroll', (e: any) => {
   }
 });
 
-// 2. Custom Cursor Logic
-const cursor = document.getElementById('custom-cursor');
-if (cursor) {
-  let mouseX = window.innerWidth / 2;
-  let mouseY = window.innerHeight / 2;
-  let isMoving = false;
-
-  document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    if (!isMoving) {
-      cursor.style.display = 'block';
-      isMoving = true;
-    }
-  });
-
-  // Decouple DOM updates from the high-frequency mouse event using rAF
-  const renderCursor = () => {
-    if (isMoving) {
-      cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-    }
-    requestAnimationFrame(renderCursor);
-  };
-  requestAnimationFrame(renderCursor);
-
-  // Hide cursor when leaving the window
-  document.addEventListener('mouseleave', () => {
-    cursor.style.opacity = '0';
-    isMoving = false;
-  });
-  document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
-
-  // Event delegation for hover states (works for dynamically injected buttons like Sign In)
-  const isInteractable = (target: HTMLElement | null) => 
-    target?.closest('a, button, input, [role="button"], .theme-toggle');
-
-  document.body.addEventListener('mouseover', (e) => {
-    if (isInteractable(e.target as HTMLElement)) {
-      document.body.classList.add('is-hovering');
-    }
-  });
-  
-  document.body.addEventListener('mouseout', (e) => {
-    if (isInteractable(e.target as HTMLElement)) {
-      document.body.classList.remove('is-hovering');
-    }
-  });
-}
-
 // 3. WebGL Background
 const canvas = document.getElementById('webgl-canvas') as HTMLCanvasElement;
 if (canvas) {
