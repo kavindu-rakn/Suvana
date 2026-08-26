@@ -134,11 +134,16 @@ perfect 100 against itself and strictly less against any other sign.
 
 ### Team workflow: recording your own
 
-Only needed for glosses neither corpus covers — currently six of the seven the
-Introductions scenario needs: **ME, NAME, WHAT, WHERE, CAN, YOUR**. (YOU is
-covered by the Yohan corpus.) Neither converter run can close these: the clips
-are absent from both datasets, confirmed against the conversion logs — see
-`../../tools/reference-converter/README.md`.
+Only needed for glosses neither corpus covers. Of the seven the Introductions
+scenario needs, YOU ships today, and **CAN and WHERE exist in the Yohan corpus
+but were never converted** — their takes are `.mov` and the converter globs
+`*.mp4` only, a bug that silently dropped 156 of the corpus's 383 signs (see
+`../../tools/reference-converter/README.md`). Fixing the glob is cheaper than
+recording them, but it changes what `practiceNeed` ranks, so it is a
+before-the-pilot decision.
+
+That leaves **ME, NAME, WHAT and YOUR** genuinely uncovered — no such clips
+exist in either corpus, so these are the ones that need recording.
 
 For a usable reference: fill the frame from roughly the waist up, keep both
 hands inside it for the whole sign, use even front lighting and a plain
@@ -215,6 +220,34 @@ rendition, so a genuinely correct attempt scored zero.**
 > captures natural variation of a *correct* rendition, not a learner's wider
 > spread. Re-fit against real learner attempts graded by an SSL teacher before
 > quoting the proposal's ≥90%-accuracy figure.
+
+#### Where the calibration takes live
+
+`calibration/` (557 takes, 15 MB) is **gitignored** — it is derived data, not
+source. Both `calibration.test.ts` and `weights.fit.test.ts` read it, and both
+use `describe.skip` when it is absent, so on a machine without it they go
+**silently green rather than red**. A missing corpus therefore looks like a
+passing suite; check the count in `calibration-report.md` if a figure looks off.
+
+Archived outside git so it survives this laptop:
+
+```
+OneDrive/Documents/S L I I T/Y4S1/RP/Dataset/learn-calibration-takes.zip
+```
+
+3.4 MB zipped, 557 entries. Unzip into `apps/learn/calibration/` to restore.
+
+Regenerating it from scratch instead needs the source videos, which are in the
+same OneDrive folder (`YohanAbhishek - CC BY-NC-SA 4.0/Dataset - Original`):
+
+```bash
+python tools/reference-converter/convert_references.py --dataset "<...>/Dataset - Original" \
+  --all --all-takes-out apps/learn/calibration --only "$(cat tools/reference-converter/calibration_signs.txt)"
+```
+
+The committed `calibration-report.md` and `weight-fit-report.md` preserve the
+resulting numbers either way, so the published figures do not depend on any of
+this surviving — only the ability to re-derive them does.
 
 ### Fitted feature weights, and three rejected changes
 

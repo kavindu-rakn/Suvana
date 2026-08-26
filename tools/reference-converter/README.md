@@ -11,10 +11,11 @@ Two corpora are in use, under **different licences**. See
 
 | | |
 |---|---|
-| Contents | 2,623 clips, 16 grammatical categories. The dataset description says 383 signs; the conversion run resolved **221 distinct signs** (~12 takes each) — see the note below |
-| Labels | **English** (`Hello`, `Thank you`, `You`) — no translation needed |
+| Contents | **383 signs** in 16 grammatical categories. Only **221 are converted** — see the `.mov` bug below |
+| Labels | **English** (`Can`, `Where`, `Hello`) — no translation needed |
 | **Licence** | **CC BY-NC-SA 4.0** — attribution, **non-commercial**, share-alike |
-| Layout | Nested: `<Category>/<Sign>/<Sign>_001.mp4` |
+| Layout | Nested: `<Category>/<Sign>/<Sign>_001.mp4`. **Takes are `.mp4`, `.mov` *and* `.MOV`** — the mixture matters, see below |
+| Local copy | `OneDrive/Documents/S L I I T/Y4S1/RP/Dataset/YohanAbhishek - CC BY-NC-SA 4.0/Dataset - Original` |
 | Pre-extracted CSVs | **Pose only** (33 landmarks). Our app is hand-based, so we process the videos ourselves and ignore them. |
 
 ```bash
@@ -25,41 +26,67 @@ python convert_references.py --dataset "<...>/Dataset - Original" --all \
   --attribution "Yohan Abhishek, Sinhala Sign Language video dataset (CC BY-NC-SA 4.0)"
 ```
 
-### Coverage — corrected against the conversion log
+### Known bug: 156 of 383 signs are silently skipped
 
-An earlier version of this section claimed the corpus covers four of the seven
-avatar-aligned glosses (`I`→ME, `You`, `Can`, `Where`) and that its **Greetings**
-category supplies Ayubowan / Hello / How are you / Thank you. **Both claims were
-wrong**, and one of them reached the Introductions scenario as an assumption.
+**`convert_references.py` enumerates takes with `sign_dir.glob("*.mp4")`.** The
+corpus stores takes as `.mp4`, `.mov` *and* `.MOV`, and that glob matches only
+the first. A sign whose takes are all QuickTime is never enumerated at all — so
+it appears in the log neither as a conversion nor as a skip, and the run still
+reports a tidy `2405 ok + 218 skipped = 2623` and looks complete.
 
-`convert_yohan.log` accounts for every clip the run saw — **2,405 converted +
-218 skipped = 2,623**, the whole corpus. Anything absent from that log is absent
-from the dataset, not merely unconverted, so the log is the authority here:
+Measured against the corpus on disk:
 
-| Claimed | Actual |
+| | Signs |
 |---|---|
-| `Can`, `Where` present | **Absent.** Neither string appears in the log — not converted, not skipped |
-| `Name`, `What`, `Your` absent | Correct — also absent |
-| `I`, `You` present | Correct. `I` has 2 references (one per corpus), `You` has 1 |
-| Greetings: Ayubowan, Hello, How are you, Thank you | Only **Hello** and **Thank you** survive. `Ayubowan` and `How are you` appear nowhere in the log |
+| Total sign folders | **383** |
+| Have at least one `.mp4` take (reachable by the current glob) | 227 |
+| **`.mov`/`.MOV` only — silently dropped** | **156 (41%)** |
+| Actually converted and shipped | **221** |
 
-**Consequence for the Introductions scenario.** Six of its seven turns show
-*reference pending*, and no re-run of this converter can change that — the clips
-do not exist in this corpus. Only new recordings can close it, which is why the
-handoff routes that gloss set to the School for the Deaf, Ratmalana.
+The bug is one line. Globbing case-insensitively over all three extensions
+would make the missing 156 reachable.
+
+> **Two earlier versions of this section were wrong in opposite directions, so
+> read the table above rather than either of them.** The original claimed the
+> corpus "covers `I`→ME, `You`, `Can`, `Where`" — true of the *dataset*, but it
+> implied those had shipped, and `Can`/`Where` had not. The correction that
+> replaced it then asserted they were "absent from the dataset, not merely
+> unconverted", reasoning that the log accounted for every clip. That inference
+> was invalid: the glob never enumerated those clips, so the log could not
+> mention them. **Absence from the log means unreachable, not non-existent.**
+
+### What this means for the seed glosses
+
+Verified directly against the folders on disk, not inferred from the log:
+
+| Gloss | In dataset? | Shipped? | Why |
+|---|---|---|---|
+| `You` | Yes — 21 `.mp4` + 41 `.MOV` | **Yes** | Converted from its `.mp4` takes |
+| `I` | Yes — 19 `.mp4` + 20 `.mov` | **Yes** | Converted from its `.mp4` takes |
+| `Can` | Yes — 11 takes, **all `.mov`** | No | Never enumerated |
+| `Where` | Yes — 2 takes, **all `.mov`** | No | Never enumerated |
+| `Name`, `What`, `Your` | **No** — no such sign folder | No | Genuinely absent from this corpus |
+
+Same story in **Greetings**: `Hello` and `Thank you` shipped; `Ayubowan` (4
+takes), `How are you` (2) and `Alright` (21) are `.mov`-only and were dropped.
+
+**Consequence for the Introductions scenario.** It currently runs 1 of 7.
+Fixing the glob would make `CAN` and `WHERE` convertible, taking it to **3 of
+7** — and to 4 if the `I`/`ME` question below is resolved. `NAME`, `WHAT` and
+`YOUR` are not in this corpus under any extension and still need recordings
+from the School for the Deaf, Ratmalana.
+
+> ⚠️ **Do not re-run the converter without deciding about the pilot first.**
+> Adding references changes what `practiceNeed` ranks and therefore what a
+> learner is shown, which the handoff freezes from the first participant
+> onward. This is a before-the-pilot change or a not-at-all change.
 
 **One open question, deliberately not answered here.** The corpus holds `I`;
-the scenario asks for `ME`. The old text asserted `I`→ME as a done mapping, but
-nothing in the code implements it and no signer has confirmed that they are the
-same SSL sign. Treat it as a question for the School for the Deaf, not a rename
-to apply — mapping one gloss onto another is exactly the kind of invention the
-project guardrails forbid.
-
-**Why the sign count moved.** The dataset description says 383 signs; the run
-resolved 221 distinct ones across the same 2,623 clips (~12 takes each, not the
-~7 the description implies). The discrepancy is unexplained and the source
-videos are no longer on disk, so 221 is the figure to quote — it is what the
-shipped corpus actually contains, and it matches `public/reference-index.json`.
+the scenario asks for `ME`. The original text asserted `I`→ME as a done mapping,
+but nothing in the code implements it and no signer has confirmed the two are
+the same SSL sign. Treat it as a question for the School for the Deaf, not a
+rename to apply — mapping one gloss onto another is exactly the kind of
+invention the project guardrails forbid.
 
 ## Corpus 1 — D. C. Kahawearachchi (CC0)
 
