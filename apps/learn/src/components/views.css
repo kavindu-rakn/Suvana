@@ -1724,7 +1724,7 @@
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  background: linear-gradient(100deg, var(--p-teal-400), var(--p-gold-400));
+  background: linear-gradient(100deg, var(--accent), var(--p-gold-400));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1760,7 +1760,7 @@
   letter-spacing: 1px;
 }
 .aww-back:hover {
-  color: var(--p-teal-400);
+  color: var(--accent);
 }
 
 .aww-hero-main {
@@ -1816,7 +1816,7 @@
   line-height: 1.2;
   margin: 0;
   margin-top: -0.3em; /* Proportional overlap for english characters */
-  background: linear-gradient(100deg, var(--p-teal-400), var(--p-gold-400));
+  background: linear-gradient(100deg, var(--accent), var(--p-gold-400));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1935,7 +1935,7 @@
 .aww-step-n {
   font-family: var(--mono);
   font-size: 1rem;
-  color: var(--p-teal-400);
+  color: var(--accent);
   margin-bottom: 16px;
   letter-spacing: 2px;
 }
@@ -1974,7 +1974,7 @@
   width: 60%;
   height: 60%;
   border-radius: 20px;
-  background: linear-gradient(135deg, var(--p-teal-400), var(--p-gold-400));
+  background: linear-gradient(135deg, var(--accent), var(--p-gold-400));
   opacity: 0.5;
   filter: blur(40px);
 }
@@ -2329,7 +2329,7 @@
   outline: none;
 }
 .aww-picker-content .picker-search:focus {
-  border-color: var(--p-teal-400);
+  border-color: var(--accent);
 }
 
 .aww-picker-content .sign-list {
@@ -2356,7 +2356,7 @@
 }
 .aww-picker-content .sign-row:hover {
   background: var(--surface-hover);
-  border-color: var(--p-teal-400);
+  border-color: var(--accent);
   transform: translateY(-2px);
 }
 
@@ -2383,4 +2383,462 @@
 .aww-result-center .score-badge svg {
   background: var(--surface);
   border-radius: 50%;
+}
+
+/* ============================================================================
+   PROGRESS TAB (Awwwards-Level Redesign)
+   ========================================================================== */
+
+.aww-progress-view {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 24px 100px;
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+.aww-progress-header {
+  margin-bottom: 32px;
+}
+
+.aww-progress-title {
+  font-family: var(--serif);
+  font-size: 3rem;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+/* 1. Bento Box Grid */
+.aww-bento-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1.5fr;
+  grid-auto-rows: minmax(240px, auto);
+  gap: 20px;
+  margin-bottom: 48px;
+}
+
+@media (max-width: 900px) {
+  .aww-bento-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+}
+
+.aww-bento-card {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.aww-bento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.aww-bento-card h3 {
+  font-family: var(--sans);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+/* Mastery Ring */
+.aww-bento-mastery {
+  align-items: center;
+  text-align: center;
+}
+
+.aww-radial-progress {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 24px auto;
+}
+
+.aww-radial-progress svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.aww-radial-progress circle {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.aww-radial-progress circle.bg {
+  stroke: var(--surface-2);
+}
+
+.aww-radial-progress circle.fg {
+  stroke: var(--accent);
+  transition: stroke-dashoffset 1s ease-out;
+}
+
+.aww-radial-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.aww-radial-content .val {
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.aww-radial-content .lbl {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* Stats Column (Streak & Avg) */
+.aww-bento-stats-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.aww-bento-stats-col .aww-bento-card {
+  flex: 1;
+  padding: 24px 32px;
+}
+
+.aww-streak-display {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.streak-fire {
+  font-size: 2.5rem;
+}
+
+.streak-val {
+  font-size: 3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.streak-lbl {
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.aww-avg-display {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.avg-val {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--danger);
+}
+
+.avg-lbl {
+  font-size: 1.2rem;
+  color: var(--text-dim);
+}
+
+/* Activity Heatmap */
+.activity-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.activity-total {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--surface-2);
+  padding: 4px 12px;
+  border-radius: var(--r-full);
+}
+
+.aww-heatmap {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-top: auto;
+}
+
+.aww-heatmap-day {
+  background: var(--accent);
+  opacity: var(--intensity, 0);
+  border-radius: 8px;
+  aspect-ratio: 1;
+  transition: opacity 0.3s ease;
+}
+.aww-heatmap-day[style*="--intensity: 0"] {
+  background: var(--surface-2);
+  opacity: 1 !important;
+}
+
+/* 2. Command Center (Sign Library) */
+.aww-command-center {
+  margin-top: 64px;
+}
+
+.aww-command-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.aww-command-header h2 {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+.aww-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-full);
+  padding: 12px 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.aww-search-bar:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(0, 166, 147, 0.15);
+}
+
+.aww-search-bar input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 1.1rem;
+  color: var(--text);
+  width: 100%;
+}
+
+.aww-search-bar svg {
+  color: var(--text-dim);
+}
+
+/* Accordions */
+.aww-accordions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aww-accordion {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.aww-accordion.expanded {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+}
+
+.aww-accordion-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.aww-accordion-header:hover {
+  background: var(--surface-2);
+}
+
+.cat-info h3 {
+  font-family: var(--sans);
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.cat-count {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+}
+
+.cat-progress-bar {
+  flex: 1;
+  max-width: 300px;
+  height: 8px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  margin: 0 40px;
+  overflow: hidden;
+}
+
+.cat-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aww-accordion .chevron {
+  color: var(--text-dim);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aww-accordion.expanded .chevron {
+  transform: rotate(180deg);
+}
+
+/* Accordion Content & Grid */
+.aww-accordion-content {
+  padding: 0 32px 32px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-2);
+}
+
+.aww-sign-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+
+.aww-sign-card {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.aww-sign-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.sign-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.sign-card-header h4 {
+  font-family: var(--sans);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.sign-card-body {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.progress-ring-mini {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.progress-ring-mini svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.progress-ring-mini circle {
+  fill: none;
+  stroke-width: 4;
+}
+
+.progress-ring-mini circle.bg {
+  stroke: var(--surface-2);
+}
+
+.progress-ring-mini circle.fg {
+  stroke: var(--accent);
+}
+
+.progress-ring-mini span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.sign-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.attempts-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.last-practised {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.spark-wrap {
+  width: 60px;
+  height: 24px;
+  opacity: 0.6;
+}
+
+.aww-no-results {
+  text-align: center;
+  padding: 64px 0;
+  color: var(--text-dim);
+  font-size: 1.2rem;
 }
