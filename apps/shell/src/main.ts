@@ -285,11 +285,11 @@ if (themeBtn) {
 const marqueeContent = document.querySelector('.marquee-content');
 if (marqueeContent) {
   let xPos = 0;
-  const baseSpeed = 0.05;
+  const baseSpeed = 0.02;
 
   const animateMarquee = () => {
     // Determine scroll speed influence (lenis.velocity is available globally since lenis is declared at top)
-    const scrollSpeed = Math.abs((lenis.velocity || 0) * 0.005);
+    const scrollSpeed = Math.abs((lenis.velocity || 0) * 0.001);
     
     // Always move left base speed, but skew heavily by scroll velocity (absolute value to always move in same dir but faster)
     xPos -= (baseSpeed + scrollSpeed);
@@ -306,3 +306,42 @@ if (marqueeContent) {
   };
   requestAnimationFrame(animateMarquee);
 }
+
+// 9. Page Transitions (Outbound)
+document.body.addEventListener('click', (e) => {
+  const target = e.target as HTMLElement;
+  const link = target.closest('a');
+  
+  if (link) {
+    const href = link.getAttribute('href');
+    
+    // Intercept local navigation links
+    if (href && href.startsWith('/') && !href.startsWith('#')) {
+      e.preventDefault();
+      
+      const preloader = document.getElementById('preloader');
+      const loaderCount = document.getElementById('loader-count');
+      
+      if (preloader) {
+        // Hide the counter text for the exit animation
+        if (loaderCount) loaderCount.style.display = 'none'; 
+        
+        preloader.style.display = 'flex';
+        // Sweep up from the bottom
+        gsap.fromTo(preloader, 
+          { yPercent: 100 }, 
+          { 
+            yPercent: 0, 
+            duration: 0.8, 
+            ease: 'power4.inOut',
+            onComplete: () => {
+              window.location.href = href;
+            }
+          }
+        );
+      } else {
+        window.location.href = href;
+      }
+    }
+  }
+});

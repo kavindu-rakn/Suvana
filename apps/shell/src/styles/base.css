@@ -285,13 +285,22 @@ header.nav-hidden {
   font-size: 1.2rem;
   padding: 20px 40px;
   border-radius: 999px;
-  background: var(--gold);
-  color: var(--ink);
+  background: var(--teal);
+  color: #fff;
   border: none;
 }
 .btn.massive:hover {
   transform: scale(1.05);
-  background: #ffdb58;
+  background: var(--teal-ink);
+}
+
+:root[data-theme='dark'] .btn.massive {
+  background: var(--gold);
+  color: var(--ink) !important;
+}
+:root[data-theme='dark'] .btn.massive:hover {
+  background: var(--gold-ink);
+  color: var(--ink) !important;
 }
 
 /* Bottom Bar */
