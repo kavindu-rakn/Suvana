@@ -11,7 +11,7 @@ Two corpora are in use, under **different licences**. See
 
 | | |
 |---|---|
-| Contents | **383 signs** in 16 grammatical categories. Only **221 are converted** — see the `.mov` bug below |
+| Contents | **383 signs** in 16 grammatical categories. **360 converted** — see the `.mov` bug below for the rest |
 | Labels | **English** (`Can`, `Where`, `Hello`) — no translation needed |
 | **Licence** | **CC BY-NC-SA 4.0** — attribution, **non-commercial**, share-alike |
 | Layout | Nested: `<Category>/<Sign>/<Sign>_001.mp4`. **Takes are `.mp4`, `.mov` *and* `.MOV`** — the mixture matters, see below |
@@ -26,25 +26,54 @@ python convert_references.py --dataset "<...>/Dataset - Original" --all \
   --attribution "Yohan Abhishek, Sinhala Sign Language video dataset (CC BY-NC-SA 4.0)"
 ```
 
-### Known bug: 156 of 383 signs are silently skipped
+### Fixed: the `*.mp4` glob was dropping 156 of 383 signs
 
-**`convert_references.py` enumerates takes with `sign_dir.glob("*.mp4")`.** The
-corpus stores takes as `.mp4`, `.mov` *and* `.MOV`, and that glob matches only
-the first. A sign whose takes are all QuickTime is never enumerated at all — so
-it appears in the log neither as a conversion nor as a skip, and the run still
-reports a tidy `2405 ok + 218 skipped = 2623` and looks complete.
+**Fixed 26 Aug 2026.** `convert_references.py` enumerated takes with
+`sign_dir.glob("*.mp4")`. The corpus stores takes as `.mp4`, `.mov` *and*
+`.MOV`, and that glob matched only the first, so **156 of the 383 signs (41%)
+were never enumerated at all**.
 
-Measured against the corpus on disk:
+The failure mode is the part worth remembering. An unmatched sign is not
+reported as a skip — it is never a candidate in the first place — so it appears
+in the run log in no form whatsoever, while the totals still balance
+(`2405 ok + 218 skipped = 2623` announced) and the run looks complete. **Absence
+from the log meant "unreachable", not "not in the dataset"**, and reading it the
+other way round is what put a wrong coverage claim in this file twice.
+
+The fix is `video_files()`, which matches on the lowercased suffix rather than a
+glob pattern. That also fixes a latent portability bug: `Path.glob` is
+case-sensitive on Linux and macOS, so `*.mp4` would have missed `.MP4` there too.
+
+Result of the re-run (`convert_yohan_mov.log`):
 
 | | Signs |
 |---|---|
 | Total sign folders | **383** |
-| Have at least one `.mp4` take (reachable by the current glob) | 227 |
-| **`.mov`/`.MOV` only — silently dropped** | **156 (41%)** |
-| Actually converted and shipped | **221** |
+| Converted before the fix | 221 |
+| Converted by the fix | **+139** |
+| Rejected on hand-tracking coverage | 2 — `AIRPORT` (69%, 67%) and `BOIL` (67%, 59%), both under the 70% floor |
+| Held back: `Numbers` category | 21 — see below |
+| **Total yohan references now** | **360** |
 
-The bug is one line. Globbing case-insensitively over all three extensions
-would make the missing 156 reachable.
+Corpus overall: **501 references / 490 distinct glosses**, up from 362 / 351.
+
+> **The `Numbers` category was deliberately excluded from the re-run.** Its
+> folders are now named `1. one`, `2. two`, …, but the four number references
+> already shipped have glosses `1`, `2`, `4`, `5` and no folders of those names
+> exist any more. Converting it would have produced `1. ONE` alongside the
+> existing `1` — two references for one sign under different labels. The rest of
+> the corpus did not drift: **217 of the 221 previously shipped glosses still
+> match a folder name exactly**, the four exceptions being precisely those
+> numbers. Reconciling that category needs a decision about which labels are
+> right, so it is left alone.
+
+> **Re-running with `--all` and no `--only` would rewrite all 221 existing
+> references.** Adding `.mov` takes to the candidate pool changes which take
+> wins per gloss — verified on `HELLO`, where the fixed converter picks
+> `Hello_005` rather than the shipped `Hello_018`. Every affected sign would
+> score differently afterwards. The re-run above was therefore scoped with
+> `--only` to glosses that had no reference at all, so nothing already shipped
+> was touched.
 
 > **Two earlier versions of this section were wrong in opposite directions, so
 > read the table above rather than either of them.** The original claimed the
@@ -63,23 +92,23 @@ Verified directly against the folders on disk, not inferred from the log:
 |---|---|---|---|
 | `You` | Yes — 21 `.mp4` + 41 `.MOV` | **Yes** | Converted from its `.mp4` takes |
 | `I` | Yes — 19 `.mp4` + 20 `.mov` | **Yes** | Converted from its `.mp4` takes |
-| `Can` | Yes — 11 takes, **all `.mov`** | No | Never enumerated |
-| `Where` | Yes — 2 takes, **all `.mov`** | No | Never enumerated |
+| `Can` | Yes — 11 takes, **all `.mov`** | **Yes, since the fix** | Was never enumerated |
+| `Where` | Yes — 2 takes, **all `.mov`** | **Yes, since the fix** | Was never enumerated |
 | `Name`, `What`, `Your` | **No** — no such sign folder | No | Genuinely absent from this corpus |
 
-Same story in **Greetings**: `Hello` and `Thank you` shipped; `Ayubowan` (4
-takes), `How are you` (2) and `Alright` (21) are `.mov`-only and were dropped.
+Same story in **Greetings**: `Hello` and `Thank you` always shipped; `Ayubowan`
+(4 takes), `How are you` (2) and `Alright` (21) were `.mov`-only and now ship too.
 
-**Consequence for the Introductions scenario.** It currently runs 1 of 7.
-Fixing the glob would make `CAN` and `WHERE` convertible, taking it to **3 of
-7** — and to 4 if the `I`/`ME` question below is resolved. `NAME`, `WHAT` and
-`YOUR` are not in this corpus under any extension and still need recordings
-from the School for the Deaf, Ratmalana.
+**Consequence for the Introductions scenario: 1 of 7 → 3 of 7.** `YOU`, `WHERE`
+and `CAN` all resolve. `NAME`, `WHAT` and `YOUR` are not in this corpus under
+any extension and still need recordings from the School for the Deaf,
+Ratmalana; `ME` depends on the `I`/`ME` question below.
 
-> ⚠️ **Do not re-run the converter without deciding about the pilot first.**
-> Adding references changes what `practiceNeed` ranks and therefore what a
-> learner is shown, which the handoff freezes from the first participant
-> onward. This is a before-the-pilot change or a not-at-all change.
+> ⚠️ **This re-run changed what a learner is shown, so it is a pilot-relevant
+> change.** 139 new signs alter what `practiceNeed` ranks and what the picker
+> lists, which the handoff freezes from the first participant onward. It landed
+> with zero participants recruited, so the freeze cost is nil — but the freeze
+> now starts from this corpus. Re-measure nothing against figures taken before it.
 
 **One open question, deliberately not answered here.** The corpus holds `I`;
 the scenario asks for `ME`. The original text asserted `I`→ME as a done mapping,

@@ -19,7 +19,7 @@ const STEPS = [
   {
     n: '01',
     title: 'Choose a sign',
-    body: 'Pick from 351 signs, or let a session choose the ones you most need to practise.',
+    body: 'Pick from 490 signs, or let a session choose the ones you most need to practise.',
   },
   {
     n: '02',
@@ -77,12 +77,18 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
             </button>
           </div>
 
+          {/* Hardcoded, and therefore drift-prone: these went stale the moment
+              the corpus grew from 351/362 to 490/501. Deriving them would mean
+              fetching the 300 KB index on the hero, before the learner has
+              asked for anything — too much to pay for two numerals. Re-check
+              them against `public/reference-index.json` whenever the corpus
+              changes; `referenceIndex.test.ts` is where a guard would go. */}
           <ul className="lhero-stats">
             <li>
-              <strong>351</strong> signs
+              <strong>490</strong> signs
             </li>
             <li>
-              <strong>362</strong> reference recordings
+              <strong>501</strong> reference recordings
             </li>
             <li>
               <strong>Private</strong> — nothing leaves your device

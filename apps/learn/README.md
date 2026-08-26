@@ -69,12 +69,26 @@ What a participant actually downloads:
 
 | When | What |
 |---|---|
-| First paint | ~80 kB gzip JS + CSS, plus a 23 kB gzip reference index |
+| First paint | ~90 kB gzip JS + CSS, plus a **32 kB gzip reference index** (see the budget note below) |
 | Choosing a sign | that one recording's frames (tens of kB), cached after |
 | First **Start camera** | ~11 MB WASM runtime + 7.8 MB hand model, cached immutably |
 
 The heavy tracking assets are deferred until the camera is actually started, and
 are a one-off per participant.
+
+> **The reference index is over its budget.** `UIUX-PLAN.md` §5 sets ≤20 kB
+> gzip as a falsifiable acceptance criterion. It was already over at 23 kB with
+> 362 references, and the 26 Aug corpus growth to 501 took it to **32 kB gzip /
+> 303 kB raw**. It is fetched on first paint by every learner, so this is a real
+> cost, not a bookkeeping detail.
+>
+> Roughly half the raw size is six fields — `attribution`, `note`,
+> `sourceDataset`, `licence`, `signer`, `source` — repeated across all 501
+> entries while carrying **two distinct values each**, one per corpus. Hoisting
+> them into a per-source lookup keyed off `source` would cut the raw size by
+> about 45% and should bring the gzip figure back under budget. That is a change
+> to the index format and its consumers, so it is deliberately **not** bundled
+> with the corpus growth — it wants its own change and its own verification.
 
 ### Running a pilot session
 
@@ -135,15 +149,15 @@ perfect 100 against itself and strictly less against any other sign.
 ### Team workflow: recording your own
 
 Only needed for glosses neither corpus covers. Of the seven the Introductions
-scenario needs, YOU ships today, and **CAN and WHERE exist in the Yohan corpus
-but were never converted** — their takes are `.mov` and the converter globs
-`*.mp4` only, a bug that silently dropped 156 of the corpus's 383 signs (see
-`../../tools/reference-converter/README.md`). Fixing the glob is cheaper than
-recording them, but it changes what `practiceNeed` ranks, so it is a
-before-the-pilot decision.
+scenario needs, **YOU, WHERE and CAN now ship** — WHERE and CAN arrived on
+26 Aug 2026 when a converter bug was fixed (it globbed `*.mp4` and so never saw
+the 41% of the Yohan corpus stored as `.mov`; see
+`../../tools/reference-converter/README.md`).
 
 That leaves **ME, NAME, WHAT and YOUR** genuinely uncovered — no such clips
-exist in either corpus, so these are the ones that need recording.
+exist in either corpus under any extension, so these are the ones that need
+recording. `ME` is a special case: the corpus holds `I`, and whether that is the
+same SSL sign is a question for the School for the Deaf, not a rename to apply.
 
 For a usable reference: fill the frame from roughly the waist up, keep both
 hands inside it for the whole sign, use even front lighting and a plain
@@ -213,7 +227,7 @@ rendition, so a genuinely correct attempt scored zero.**
 > 0.134 (`30` vs `40`) — some distinct signs are closer together than two takes
 > of one sign typically are. A high score means *this target sign was performed
 > well*, not *this was the right sign*. Appropriateness (`rubric.ts`) therefore
-> compares only within a scenario's small vocabulary, never all 351 references.
+> compares only within a scenario's small vocabulary, never all 490 references.
 > `src/scoring/anchors.probe.test.ts` reports the closest confusable pairs.
 
 > **Still provisional:** every calibration take is by one fluent signer, so this
@@ -300,7 +314,7 @@ five proposal-approved scenarios ship:
 
 | Scenario | Turns | Reference source |
 |---|---|---|
-| **Social Gathering (Introductions)** | 7 (ME, YOU, NAME, WHAT, WHERE, CAN, YOUR) | **1 of 7 runnable.** Only YOU has a reference (Yohan corpus); the other six show *reference pending*. Aligned with Malkith's avatar glosses, so this is the integration demo — but not the one to demo for reference quality. |
+| **Social Gathering (Introductions)** | 7 (ME, YOU, NAME, WHAT, WHERE, CAN, YOUR) | **3 of 7 runnable** (YOU, WHERE, CAN — all Yohan corpus, real signers). ME, NAME, WHAT and YOUR show *reference pending*. Aligned with Malkith's avatar glosses, so this is the integration demo. |
 | **Restaurant** | 5 (KANAWA, BONAWA, 500, MILADII GANNAWA, BILPATHA) | Kaggle corpus — **real signers**. Demo this when reference quality matters. |
 
 Verified end to end: with the Restaurant vocabulary loaded, a correct

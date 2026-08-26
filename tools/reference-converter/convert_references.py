@@ -69,12 +69,39 @@ COORD_DECIMALS = 5
 # recordings exported from the browser, which must not be overwritten.
 OUTPUT_PREFIX = "kaggle_"
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_MODEL = REPO_ROOT / "web" / "public" / "models" / "hand_landmarker.task"
-DEFAULT_OUT = REPO_ROOT / "web" / "public" / "references"
+# tools/reference-converter/ -> tools/ -> repo root. The defaults pointed at
+# the pre-monorepo layout (<root>/web/public/...) and silently resolved to
+# paths that do not exist, so every invocation needed explicit --model/--out.
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_MODEL = REPO_ROOT / "apps" / "learn" / "public" / "models" / "hand_landmarker.task"
+DEFAULT_OUT = REPO_ROOT / "apps" / "learn" / "public" / "references"
 
 # Trailing notes in filenames, e.g. "B(first way)" or "hadanawa(ex- lii walin)".
 PAREN_NOTE = re.compile(r"\s*\(([^)]*)\)\s*")
+
+# Container formats the corpora actually use. The Yohan dataset mixes .mp4,
+# .mov and .MOV inside the same category — several signs are QuickTime only.
+#
+# This list exists because the original glob was `*.mp4`, which silently
+# dropped **156 of that corpus's 383 signs**, including CAN and WHERE, which
+# the Introductions scenario needs. The failure was invisible in the worst way:
+# an unmatched sign is never enumerated, so it appears in the run log neither
+# as a conversion nor as a skip, and the totals still balance
+# (2405 ok + 218 skipped = 2623 announced) so the run looks complete. Absence
+# from the log meant "unreachable", not "not in the dataset" — and that
+# inference was drawn the wrong way round in the README for some time.
+VIDEO_SUFFIXES = {".mp4", ".mov", ".m4v", ".avi", ".mkv"}
+
+
+def video_files(folder: Path) -> list[Path]:
+    """Every video directly inside `folder`, matched case-insensitively.
+
+    `Path.glob` is case-sensitive on Linux and macOS, so a `*.mp4` pattern
+    misses `.MOV` and `.MP4` there. Filtering on the lowercased suffix behaves
+    the same on every platform, which matters because the conversion is meant
+    to be reproducible off one documented command.
+    """
+    return [p for p in folder.iterdir() if p.is_file() and p.suffix.lower() in VIDEO_SUFFIXES]
 
 
 def parse_label(path: Path) -> tuple[str, str | None]:
@@ -418,9 +445,9 @@ def main() -> int:
 
         candidates: list[tuple[Path, Path]] = []  # (video, label source)
         for sign_dir in sorted(p for p in category.iterdir() if p.is_dir()):
-            for take in sorted(sign_dir.glob("*.mp4")):
+            for take in sorted(video_files(sign_dir)):
                 candidates.append((take, sign_dir))
-        for flat in sorted(category.glob("*.mp4")):
+        for flat in sorted(video_files(category)):
             candidates.append((flat, flat))
 
         for path, label_source in candidates:
