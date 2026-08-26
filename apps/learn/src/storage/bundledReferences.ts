@@ -22,12 +22,41 @@ const INDEX_URL = `${import.meta.env.BASE_URL}reference-index.json`
 // concurrently or how often the learner switches tabs.
 let indexPromise: Promise<RecordingMeta[]> | null = null
 
+/**
+ * The on-disk index shape. Provenance fields that are constant within a corpus
+ * live once in `sources` rather than on all 501 recordings — see
+ * scripts/build-reference-index.mjs. Version 1 was a bare array.
+ */
+interface PackedIndex {
+  version: number
+  sources: Record<string, Partial<RecordingMeta>>
+  recordings: RecordingMeta[]
+}
+
+/**
+ * Put the hoisted provenance fields back on each recording.
+ *
+ * The entry is spread last so an inline value always beats the source default.
+ * That is what makes the build script's hoist safe: it only lifts a field when
+ * every entry agrees, and anything that disagrees stays inline and wins here.
+ */
+function unpack(raw: PackedIndex | RecordingMeta[]): RecordingMeta[] {
+  // Version 1 shipped a bare array. Tolerated so a stale cached index — or a
+  // hand-built one — does not blank the corpus.
+  if (Array.isArray(raw)) return raw
+  const sources = raw.sources ?? {}
+  return (raw.recordings ?? []).map((rec) => {
+    const shared = rec.source ? sources[rec.source] : undefined
+    return shared ? { ...shared, ...rec } : rec
+  })
+}
+
 /** Metadata for every bundled reference. Fetched once per page load. */
 export function loadReferenceIndex(): Promise<RecordingMeta[]> {
   indexPromise ??= fetch(INDEX_URL)
     .then((r) => {
       if (!r.ok) throw new Error(`${r.status} ${r.statusText}`)
-      return r.json() as Promise<RecordingMeta[]>
+      return r.json().then(unpack) as Promise<RecordingMeta[]>
     })
     .catch((e: unknown) => {
       // Allow a retry: a transient failure should not leave the app with an

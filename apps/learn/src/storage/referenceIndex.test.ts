@@ -14,10 +14,42 @@ const indexPath = join(process.cwd(), 'public', 'reference-index.json')
 const indexExists = existsSync(indexPath)
 
 describe.skipIf(!indexExists)('reference index', () => {
-  const index = JSON.parse(readFileSync(indexPath, 'utf8')) as RecordingMeta[]
+  const raw = JSON.parse(readFileSync(indexPath, 'utf8')) as {
+    version: number
+    sources: Record<string, Partial<RecordingMeta>>
+    recordings: RecordingMeta[]
+  }
+  // Mirrors unpack() in bundledReferences.ts: provenance fields constant within
+  // a corpus live once under `sources`. Every assertion below is about what the
+  // app actually sees, so it runs against the merged view.
+  const index: RecordingMeta[] = raw.recordings.map((rec) => {
+    const shared = rec.source ? raw.sources[rec.source] : undefined
+    return shared ? { ...shared, ...rec } : rec
+  })
   const manifest = JSON.parse(readFileSync(join(refDir, 'manifest.json'), 'utf8')) as {
     files: string[]
   }
+
+  it('hoists provenance into a source table instead of repeating it per entry', () => {
+    // The index is fetched on first paint by every learner, and UIUX-PLAN.md §5
+    // budgets it at 20 kB gzip. Repeating attribution/licence/dataset/note on
+    // all 501 entries cost ~44% of the raw file to carry two distinct values.
+    expect(raw.version).toBe(2)
+    expect(Object.keys(raw.sources).length).toBeGreaterThan(0)
+
+    // Nothing may be lost by the hoist: every entry still resolves a licence
+    // and attribution through the merge, whatever it carries inline.
+    for (const entry of index) {
+      if (entry.source !== 'kaggle-dataset' && !entry.file?.startsWith('yohan_')) continue
+      expect(entry.licence, `licence for ${entry.file}`).toBeTruthy()
+      expect(entry.attribution, `attribution for ${entry.file}`).toBeTruthy()
+    }
+
+    // And the hoisted fields really are absent from the raw entries — otherwise
+    // the merge works but the saving never materialised.
+    const stillInline = raw.recordings.filter((r) => 'attribution' in r || 'licence' in r)
+    expect(stillInline.map((r) => r.file)).toEqual([])
+  })
 
   it('describes every recording listed in the manifest, exactly once', () => {
     const indexed = index.map((e) => e.file).sort()

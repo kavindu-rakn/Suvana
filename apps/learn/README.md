@@ -69,26 +69,50 @@ What a participant actually downloads:
 
 | When | What |
 |---|---|
-| First paint | ~90 kB gzip JS + CSS, plus a **32 kB gzip reference index** (see the budget note below) |
+| First paint | ~90 kB gzip JS + CSS, plus a **22 kB gzip reference index** (see the budget note below) |
 | Choosing a sign | that one recording's frames (tens of kB), cached after |
 | First **Start camera** | ~11 MB WASM runtime + 7.8 MB hand model, cached immutably |
 
 The heavy tracking assets are deferred until the camera is actually started, and
 are a one-off per participant.
 
-> **The reference index is over its budget.** `UIUX-PLAN.md` §5 sets ≤20 kB
-> gzip as a falsifiable acceptance criterion. It was already over at 23 kB with
-> 362 references, and the 26 Aug corpus growth to 501 took it to **32 kB gzip /
-> 303 kB raw**. It is fetched on first paint by every learner, so this is a real
-> cost, not a bookkeeping detail.
->
-> Roughly half the raw size is six fields — `attribution`, `note`,
-> `sourceDataset`, `licence`, `signer`, `source` — repeated across all 501
-> entries while carrying **two distinct values each**, one per corpus. Hoisting
-> them into a per-source lookup keyed off `source` would cut the raw size by
-> about 45% and should bring the gzip figure back under budget. That is a change
-> to the index format and its consumers, so it is deliberately **not** bundled
-> with the corpus growth — it wants its own change and its own verification.
+#### The reference index, and the one budget still missed
+
+`UIUX-PLAN.md` §5 sets **≤20 kB gzip** for the index, which every learner
+fetches on first paint. History:
+
+| | raw | gzip | per reference |
+|---|---|---|---|
+| 362 references, before | 219 kB | ~23 kB | 63.5 B |
+| 501 references, unchanged format | 303 kB | 32.3 kB | 64.6 B |
+| 501 references, **now** | **133 kB** | **22.3 kB** | **44.5 B** |
+
+Two changes got it there. Provenance fields that are constant within a corpus
+(`attribution`, `licence`, `sourceDataset`, `note`, `signer`) moved into a
+`sources` table carried once instead of on all 501 entries; and `sourceFile`,
+`sourceLabel` and `variant` were dropped from the projection entirely, having no
+consumer anywhere in `src/`. They remain in the reference files on disk — the
+index is a projection, not an archive. `createdAt` also lost its microseconds,
+which nothing reads.
+
+**It is still 2.4 kB over, and that residue is irreducible without changing
+what an id means.** `id` alone accounts for 12.7 kB of the 22.3 kB. These are
+UUIDs: 501 × 128 bits ≈ 8 kB of pure entropy before any encoding overhead, so
+no compression scheme will help — the only lever is carrying fewer bits.
+
+Deriving the index's ids from the filename would save it, and was rejected:
+`referenceId` is written into the attempt log from the *loaded reference file*
+and **exported in the pilot CSV**, so it is the key joining an attempt to the
+reference it was scored against. Letting the index disagree with the file would
+break that join silently, inside exported research data. Not a trade worth 2.4 kB.
+
+> The more useful reading is per-reference cost, which fell **63.5 → 44.5 bytes,
+> a 30% improvement, while the corpus grew 39%**. A fixed byte budget cannot
+> distinguish "the index got fatter" from "there are more signs", and those want
+> different responses. Re-expressing the criterion as ≤50 B gzip per reference
+> would measure the thing actually under control — but changing a stated
+> acceptance criterion is a call for kvn, so the ≤20 kB figure stands as written
+> and this is recorded as missed.
 
 ### Running a pilot session
 
