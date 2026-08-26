@@ -11,15 +11,12 @@ import { addAttempt, listAttempts } from '../learner/attemptLog'
 import type { AttemptLogEntry } from '../learner/attemptLog'
 import { summarizeAll } from '../learner/mastery'
 import {
-  SESSION_SIZE,
   buildSession,
   clearSession,
-  currentGloss,
   isComplete,
   loadSession,
   markAttempted,
   saveSession,
-  startSession,
 } from '../learner/session'
 import type { PracticeSession } from '../learner/session'
 import { scoreAttempt, topFingers } from '../scoring/score'
@@ -29,38 +26,12 @@ import { useFeedbackLatency } from '../metrics/useFeedbackLatency'
 import { CameraStage } from './CameraStage'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
-import { STACKED_LAYOUT, useMediaQuery } from './useMediaQuery'
 
 const COUNTDOWN_S = 3
 
-/** How many results the picker renders at once. 358 buttons is a lot of DOM to
- *  scroll past; searching is faster than scrolling once a list is this long. */
-const PICKER_LIMIT = 60
-
 type Phase = 'idle' | 'countdown' | 'recording' | 'result'
 
-/**
- * The correction from the last scored attempt, kept alive across a retry.
- *
- * Corrective feedback only teaches anything if it is available *during* the
- * corrected performance. The result panel unmounts the moment a retry starts,
- * so without this the score, the hints and the finger chips vanish at exactly
- * the moment the learner is trying to act on them.
- */
-interface Coaching {
-  gloss: string
-  score: number
-  hint: string | null
-  worstFingers: ReturnType<typeof topFingers>
-}
-
-/**
- * Graded practice: choose a sign, watch the reference, record an attempt, and
- * get a DTW match score with corrective hints and a side-by-side replay.
- */
 export function PracticeView() {
-  // The picker runs entirely on metadata — 220 KB for all 362 signs. Only the
-  // selected sign's frames are fetched, because only it is replayed and scored.
   const [references, setReferences] = useState<RecordingMeta[]>([])
   const [localRecs, setLocalRecs] = useState<SignRecording[]>([])
   const [selected, setSelected] = useState<RecordingMeta | null>(null)
@@ -70,18 +41,12 @@ export function PracticeView() {
   const [count, setCount] = useState(COUNTDOWN_S)
   const [elapsedMs, setElapsedMs] = useState(0)
   const [result, setResult] = useState<ScoreResult | null>(null)
-  // Deliberately NOT cleared by beginCountdown — only a newer score replaces it.
-  const [lastResult, setLastResult] = useState<Coaching | null>(null)
   const [attempt, setAttempt] = useState<SignRecording | null>(null)
   const [entries, setEntries] = useState<AttemptLogEntry[]>([])
   const [suggested, setSuggested] = useState<string | null>(null)
-  const [logFailed, setLogFailed] = useState(false)
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState<string | null>(null)
-  // The picker is a disclosure, not permanent panel furniture.
   const [pickerOpen, setPickerOpen] = useState(false)
-  // A finite set of signs with an end, so practice has a unit of work. Survives
-  // a reload; the attempt log stays the source of truth for progress.
   const [session, setSession] = useState<PracticeSession | null>(() => loadSession())
 
   const phaseRef = useRef<Phase>('idle')
@@ -91,8 +56,6 @@ export function PracticeView() {
   }
   const selectedRef = useRef<RecordingMeta | null>(null)
   selectedRef.current = selected
-  // Scoring needs the frames, not just the metadata, and finishRecording runs
-  // outside React's render so it reads them through a ref.
   const referenceRef = useRef<SignRecording | null>(null)
   referenceRef.current = reference
   const framesRef = useRef<HandFrame[]>([])
@@ -101,23 +64,11 @@ export function PracticeView() {
   const didPreselectRef = useRef(false)
   const retryRef = useRef<HTMLButtonElement>(null)
   const completeRef = useRef<HTMLHeadingElement>(null)
-  // Absolute capture time of the newest frame, kept before the buffer rewrites
-  // timestamps to be take-relative. It is where the feedback-latency clock
-  // starts — see metrics/latency.ts.
   const lastFrameAtRef = useRef<number | null>(null)
 
-  // Act 1 is the commit that gets measured: final score, final hints, nothing
-  // moving. Act 2 is everything expressive, released one frame later by
-  // useFeedbackLatency once the sample has been taken. See its doc comment.
   const [revealArmed, setRevealArmed] = useState(false)
   const latency = useFeedbackLatency('practice', () => setRevealArmed(true))
 
-  // Where the reference replay lives. Stacked (phone) it goes inside the camera
-  // stage, so the learner can watch it and stay in frame at once; side by side
-  // it stays in the panel, which already has room for it and its transport.
-  const stacked = useMediaQuery(STACKED_LAYOUT)
-
-  // Capture a bit longer than the reference so a slightly slower attempt fits.
   const captureMs = selected ? Math.max(selected.durationMs + 1500, 2500) : 3500
 
   const tracking = useHandTracking((frame) => {
@@ -150,7 +101,6 @@ export function PracticeView() {
     setReference(null)
     setRefFailed(false)
     // A correction belongs to the sign it was given for.
-    setLastResult(null)
     if (!selected) return
     let cancelled = false
     void (async () => {
@@ -220,34 +170,6 @@ export function PracticeView() {
     else clearSession()
   }, [session])
 
-  function selectGloss(gloss: string | null) {
-    if (!gloss) return
-    const next = references.find((r) => r.gloss === gloss)
-    if (next) setSelected(next)
-  }
-
-  function beginSession(glosses?: string[]) {
-    const summaries = summarizeAll(
-      references.map((r) => r.gloss),
-      entries,
-    )
-    // "Practise these again" keeps the same set; a fresh session re-ranks.
-    const next = glosses
-      ? {
-          // Same signs, but a new sitting — so a new session id.
-          id: crypto.randomUUID(),
-          glosses,
-          done: [],
-          startedAt: new Date().toISOString(),
-          startMastery: Object.fromEntries(
-            summaries.filter((s) => glosses.includes(s.gloss)).map((s) => [s.gloss, s.mastery]),
-          ),
-        }
-      : startSession(summaries, SESSION_SIZE, new Date(), categoryFor)
-    setSession(next)
-    selectGloss(next.glosses[0] ?? null)
-  }
-
   /** Leave the result view without touching the session. */
   function leaveResult() {
     setResult(null)
@@ -258,18 +180,6 @@ export function PracticeView() {
 
   // Per-sign change over the session, from the log rather than anything the
   // session stores about how well it went.
-  const sessionDeltas = useMemo(() => {
-    if (!session) return []
-    return summarizeAll(session.glosses, entries).map((s) => {
-      const before = session.startMastery[s.gloss] ?? 0
-      return { gloss: s.gloss, before, after: s.mastery, delta: s.mastery - before }
-    })
-  }, [session, entries])
-
-  const bestGain = sessionDeltas.reduce<(typeof sessionDeltas)[number] | null>(
-    (best, d) => (d.delta > 0 && (!best || d.delta > best.delta) ? d : best),
-    null,
-  )
 
   const sessionDone = session !== null && isComplete(session)
 
@@ -368,12 +278,6 @@ export function PracticeView() {
     setAttempt(att)
     setResult(scored)
     // Survives the next retry, so the learner signs while reading the fix.
-    setLastResult({
-      gloss: reference.gloss,
-      score: scored.score,
-      hint: scored.hints[0] ?? null,
-      worstFingers: topFingers(scored),
-    })
     setRevealArmed(false)
     setPhase('result')
     // One scored attempt completes a session sign, whatever the score.
@@ -409,18 +313,15 @@ export function PracticeView() {
       sessionId: session?.id,
       createdAt: att.createdAt,
     }
-    setLogFailed(false)
     addAttempt(entry).catch((e: unknown) => {
       // Never fail silently: a lost attempt means wrong mastery and progress.
       console.error('Failed to save attempt to the log', e)
-      setLogFailed(true)
     })
     // The suggestion effect re-ranks off the new log.
     setEntries((prev) => [...prev, entry])
   }
 
   const noAttemptHands = result != null && result.hands.every((h) => h.missing)
-  const inputsLocked = phase === 'countdown' || phase === 'recording'
 
   /**
    * How this attempt compares with the learner's own history for this sign.
@@ -461,503 +362,191 @@ export function PracticeView() {
   }, [references, query, category])
 
   return (
-    <div className="record-layout" data-phase={phase}>
-      {/* The sign being practised is the subject of this screen, so it gets a
-          full-width headline rather than a line inside a 340px sidebar. It
-          stays put through countdown, recording and result: "which sign am I
-          on" is the one thing that must never move. */}
-      {references.length > 0 && !sessionDone && (
-        <header className="practice-head">
-          <div className="practice-subject">
-            <p className="pane-label">Now practising</p>
-            <p className="practice-sign">
-              {selected ? glossLabel(selected.gloss) : 'No sign chosen yet'}
-              {selected && selected.gloss === suggested && (
-                <span className="practice-star" title="Suggested next">
-                  {' '}
-                  ★
-                </span>
-              )}
-            </p>
-          </div>
-          <button
-            className="btn btn-ghost"
-            onClick={() => setPickerOpen(true)}
-            disabled={inputsLocked}
-          >
-            {selected ? 'Change sign' : 'Choose a sign'}
-          </button>
-        </header>
+    <div className="aww-practice-env" data-phase={phase} data-picker-open={pickerOpen}>
+      {/* HUD (Heads-Up Display) Bottom Center */}
+      {phase !== 'result' && (
+      <div className="aww-hud">
+          {tracking.status !== 'running' ? (
+              <div className="aww-hud-idle">
+                  <button className="btn massive ghost" onClick={() => void tracking.start()}>Turn on Camera</button>
+                  <p>Tracking runs entirely in your browser.</p>
+              </div>
+          ) : phase === 'idle' ? (
+              <button className="btn massive" onClick={beginCountdown} disabled={!reference}>
+                {reference ? 'Record Attempt' : 'Loading reference...'}
+              </button>
+          ) : phase === 'countdown' ? (
+              <div className="aww-hud-countdown">
+                  <span>{count}</span>
+                  <button className="btn ghost massive" onClick={cancelCountdown}>Cancel</button>
+              </div>
+          ) : phase === 'recording' ? (
+              <div className="aww-hud-recording">
+                 <div className="rec-badge">● REC {(elapsedMs / 1000).toFixed(1)} s</div>
+                 <button className="btn massive" style={{background: 'var(--p-coral-500)'}} onClick={finishRecording}>Stop & Score</button>
+              </div>
+          ) : null}
+      </div>
       )}
 
-      <section className="camera-card">
-        <div className="pane-head">
-          <span className="pane-label">Your camera</span>
-          {tracking.status === 'running' && <span className="pane-live">live</span>}
-        </div>
-        <CameraStage
-          videoRef={tracking.videoRef}
-          canvasRef={tracking.canvasRef}
-          status={tracking.status}
-          error={tracking.error}
-          onStart={() => void tracking.start()}
-          idleHint="Turn on your camera to start. Nothing is recorded or uploaded until you press Record."
-          inferring={tracking.inferring}
-          pip={
-            stacked && reference && phase !== 'result' ? (
-              <SkeletonPlayer
-                frames={reference.frames}
-                videoWidth={reference.videoWidth}
-                videoHeight={reference.videoHeight}
-              />
-            ) : undefined
-          }
-        >
-          {phase === 'countdown' && (
-            <div className="countdown-overlay">
-              <span key={count}>{count}</span>
-            </div>
-          )}
-          {phase === 'recording' && (
-            <>
-              <div className="rec-badge">● REC {(elapsedMs / 1000).toFixed(1)} s</div>
-              <div className="rec-progress">
-                <div style={{ transform: `scaleX(${Math.min(elapsedMs / captureMs, 1)})` }} />
-              </div>
-            </>
-          )}
-        </CameraStage>
-
-        <div className="camera-bar">
-          {tracking.status === 'running' ? (
-            <>
-              <button
-                className="btn btn-ghost"
-                onClick={tracking.stop}
-                disabled={phase === 'countdown' || phase === 'recording'}
-              >
-                Stop camera
-              </button>
-              {tracking.stats && (
-                <span className="camera-stats">
-                  {tracking.stats.fps.toFixed(0)} fps · {tracking.stats.inferenceMs.toFixed(1)} ms
-                </span>
+      {/* The Split Screen */}
+      <div className="aww-split-screen">
+        
+        {/* Left Pane: Target Reference */}
+        <div className="aww-pane aww-pane-left">
+           <div className="aww-pane-header">
+              <p className="aww-pane-label">Reference</p>
+              <h2 className="aww-pane-title">
+                {selected ? glossLabel(selected.gloss) : 'Choose a sign'}
+                {selected && selected.gloss === suggested && (
+                  <span className="practice-star" title="Suggested next"> ★</span>
+                )}
+              </h2>
+              {phase !== 'result' && (
+                <button className="btn ghost" onClick={() => setPickerOpen(true)}>Change sign</button>
               )}
-            </>
+           </div>
+           
+           <div className="aww-pane-content">
+             {selected && reference ? (
+                <SkeletonPlayer
+                  frames={reference.frames}
+                  videoWidth={reference.videoWidth}
+                  videoHeight={reference.videoHeight}
+                />
+             ) : selected && refFailed ? (
+                <p className="camera-error">Could not load reference.</p>
+             ) : !selected ? (
+                <p className="hint-text">Pick a sign to practice.</p>
+             ) : (
+                <p className="hint-text">Loading...</p>
+             )}
+           </div>
+        </div>
+
+        {/* Right Pane: User Camera / Replay */}
+        <div className="aww-pane aww-pane-right">
+           <div className="aww-pane-header">
+              <p className="aww-pane-label">You</p>
+           </div>
+           
+           {/* Live Camera (Hidden during replay) */}
+           <div className={`aww-camera-container ${phase === 'result' ? 'hidden' : ''}`}>
+               <CameraStage
+                 videoRef={tracking.videoRef}
+                 canvasRef={tracking.canvasRef}
+                 status={tracking.status}
+                 error={tracking.error}
+                 onStart={() => void tracking.start()}
+                 idleHint=""
+                 inferring={tracking.inferring}
+               />
+           </div>
+
+           {/* Replay Overlay */}
+           {phase === 'result' && attempt && (
+               <div className="aww-replay-container">
+                   <SkeletonPlayer frames={attempt.frames} videoWidth={attempt.videoWidth} videoHeight={attempt.videoHeight} />
+               </div>
+           )}
+        </div>
+
+        {/* The Central Score Overlay (Only visible in 'result' phase) */}
+        {phase === 'result' && result && (
+            <div className="aww-result-overlay" data-reveal={revealArmed ? 'on' : undefined}>
+                <div className="aww-result-center">
+                    <ScoreBadge score={result.score} delta={progress.delta} best={progress.best} />
+                    <div className="aww-result-feedback">
+                        {result.score === 100 ? <p className="perfect-hint">Flawless match! Perfect execution.</p> : result.hints.map((h, i) => <p key={i}>{h}</p>)}
+                        {result.score < 100 && topFingers(result).length > 0 && (
+                            <div className="focus-block">
+                                <p className="pane-label">Focus on</p>
+                                <div className="finger-chips">
+                                    {topFingers(result).map(f => <span key={f} className="finger-chip">{FINGER_LABEL[f]}</span>)}
+                                </div>
+                            </div>
+                        )}
+                        {noAttemptHands && (
+                            <p className="camera-error">No hands were tracked — check your framing.</p>
+
+                        )}
+                        <div className="aww-result-actions" style={{ marginTop: '24px', display: 'flex', gap: '16px', justifyContent: 'center' }}>
+                            <button className="btn massive" onClick={beginCountdown}>Try again</button>
+                            <button className="btn ghost massive" onClick={() => { leaveResult(); setPickerOpen(true); }}>Next sign</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )}
+
+      </div>
+
+      {/* Command Palette Modal for choosing a sign */}
+      <div className={`aww-picker-modal ${pickerOpen ? 'open' : ''}`}>
+        <div className="aww-picker-backdrop" onClick={() => setPickerOpen(false)} />
+        <div className="aww-picker-content">
+          <div className="picker-head">
+            <h2>Choose a sign</h2>
+            <button className="btn btn-ghost" onClick={() => setPickerOpen(false)}>Close</button>
+          </div>
+          
+          <input
+            type="search"
+            className="picker-search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={`Search ${references.length} signs...`}
+            autoFocus
+          />
+
+          {categories.length > 1 && (
+            <div className="category-rail">
+              <button
+                className={category === null ? 'chip active' : 'chip'}
+                onClick={() => setCategory(null)}
+              >
+                All {references.length}
+              </button>
+              {categories.map((name) => (
+                <button
+                  key={name}
+                  className={category === name ? 'chip active' : 'chip'}
+                  onClick={() => setCategory(name)}
+                >
+                  {name} {references.filter((r) => categoryOf(r) === name).length}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {visible.length === 0 ? (
+            <p className="hint-text">No signs match "{query}".</p>
           ) : (
-            <span className="camera-stats">Tracking runs entirely in your browser.</span>
+            <ul className="sign-list">
+              {visible.slice(0, 60).map((r) => (
+                <li key={r.id}>
+                  <button
+                    className={selected?.id === r.id ? 'sign-row active' : 'sign-row'}
+                    onClick={() => {
+                      setSelected(r)
+                      setPickerOpen(false)
+                    }}
+                  >
+                    <span className="sign-row-name">{glossLabel(r.gloss)}</span>
+                    <span className="sign-row-meta">
+                      {r.gloss === suggested && <em className="badge">suggested</em>}
+                      {categoryOf(r)}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
-      </section>
-
-      <aside className="record-panel" data-reveal={revealArmed ? 'on' : undefined}>
-        {/* Polite, so it never interrupts something the learner is already
-            being told; the score is not urgent enough to warrant assertive. */}
-        <p className="sr-only" role="status">
-          {liveMessage}
-        </p>
-
-        {phase === 'result' && result ? (
-          <>
-            {/* No gloss heading here any more — the full-width practice header
-                above already names the sign, and repeating it pushed the score
-                down the panel. */}
-            <div className="result-top">
-              <ScoreBadge score={result.score} delta={progress.delta} best={progress.best} />
-              <div className="result-detail">
-                <ul className="hint-list">
-                  {result.hints.map((h, i) => (
-                    <li key={i}>{h}</li>
-                  ))}
-                </ul>
-                {/* Beside the score rather than below two skeleton players:
-                    retrying is the whole loop, and it was previously the last
-                    control on a long panel. */}
-                <div className="row-buttons">
-                  <button
-                    ref={retryRef}
-                    className="btn"
-                    onClick={beginCountdown}
-                    disabled={tracking.status !== 'running'}
-                  >
-                    Try again
-                  </button>
-                  {session &&
-                    (isComplete(session) ? (
-                      <button className="btn btn-ghost" onClick={leaveResult}>
-                        See summary
-                      </button>
-                    ) : (
-                      <button
-                        className="btn btn-ghost"
-                        onClick={() => {
-                          leaveResult()
-                          selectGloss(currentGloss(session))
-                        }}
-                      >
-                        Next sign
-                      </button>
-                    ))}
-                </div>
-              </div>
-            </div>
-
-            {result.mirrored && (
-              <p className="hint-text">
-                Scored as a mirrored (left-dominant) rendition — that's a valid way to sign it.
-              </p>
-            )}
-            {logFailed && (
-              <p className="camera-error">
-                This attempt couldn't be saved, so it won't count towards your progress.
-              </p>
-            )}
-
-            {noAttemptHands ? (
-              <p className="camera-error">
-                No hands were tracked in your attempt — check your framing and lighting, then try
-                again.
-              </p>
-            ) : (
-              topFingers(result).length > 0 && (
-                // A bare row of finger names is a readout, not advice. The
-                // heading turns the same data into an instruction.
-                <div className="focus-block">
-                  <p className="pane-label">Focus on next time</p>
-                  <div className="finger-chips">
-                    {topFingers(result).map((f) => (
-                      <span key={f} className="finger-chip">
-                        {FINGER_LABEL[f]}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )
-            )}
-
-            <div className="compare-grid">
-              <div>
-                <p className="compare-label">Reference</p>
-                {reference && (
-                  <SkeletonPlayer
-                    frames={reference.frames}
-                    videoWidth={reference.videoWidth}
-                    videoHeight={reference.videoHeight}
-                  />
-                )}
-              </div>
-              <div>
-                <p className="compare-label">Your attempt</p>
-                {attempt && (
-                  <SkeletonPlayer
-                    frames={attempt.frames}
-                    videoWidth={attempt.videoWidth}
-                    videoHeight={attempt.videoHeight}
-                  />
-                )}
-              </div>
-            </div>
-
-            <div className="row-buttons">
-              <button
-                className="btn btn-ghost"
-                onClick={() => {
-                  setResult(null)
-                  setAttempt(null)
-                  setLastResult(null)
-                  setRevealArmed(false)
-                  setPhase('idle')
-                }}
-              >
-                Pick another sign
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            {/* Carries the last correction through the countdown and the take,
-                so the learner is reading the fix while performing it. */}
-            {lastResult && (
-              <div className="coach-strip">
-                <span className="coach-head">
-                  <span className="rec-gloss">{glossLabel(lastResult.gloss)}</span>
-                  <span className="coach-score">last {lastResult.score}</span>
-                </span>
-                {lastResult.worstFingers.length > 0 && (
-                  <span className="coach-fix">
-                    fix {lastResult.worstFingers.map((f) => FINGER_LABEL[f]).join(', ')}
-                  </span>
-                )}
-                {lastResult.hint && <p className="coach-hint">{lastResult.hint}</p>}
-              </div>
-            )}
-
-            {sessionDone && session ? (
-              <div className="session-complete">
-                <h2 ref={completeRef} tabIndex={-1}>
-                  Session complete
-                </h2>
-                <p className="hint-text">
-                  You practised {session.glosses.length} signs. Mastery is a recency-weighted
-                  estimate from your scores, so it moves with your latest attempts.
-                </p>
-                <ul className="mastery-list">
-                  {sessionDeltas.map((d) => (
-                    <li className="mastery-row" key={d.gloss}>
-                      <span className="rec-gloss">{glossLabel(d.gloss)}</span>
-                      <div className="mastery-bar">
-                        <div style={{ width: `${Math.round(d.after * 100)}%` }} />
-                      </div>
-                      <span className="mastery-pct">{Math.round(d.after * 100)}%</span>
-                      <span className="mastery-meta">
-                        {d.delta >= 0 ? '+' : ''}
-                        {Math.round(d.delta * 100)} pts
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                {bestGain && (
-                  <p className="hint-text">
-                    Biggest gain: <strong>{glossLabel(bestGain.gloss)}</strong>, up{' '}
-                    {Math.round(bestGain.delta * 100)} points.
-                  </p>
-                )}
-                <div className="row-buttons">
-                  <button className="btn" onClick={() => beginSession()}>
-                    Start a new session
-                  </button>
-                  <button className="btn btn-ghost" onClick={() => beginSession(session.glosses)}>
-                    Practise these again
-                  </button>
-                  <button className="btn btn-ghost" onClick={() => setSession(null)}>
-                    Free practice
-                  </button>
-                </div>
-              </div>
-            ) : session ? (
-              <div className="session-bar">
-                <div className="turn-progress" aria-hidden="true">
-                  {session.glosses.map((g) => (
-                    <span
-                      key={g}
-                      className={
-                        session.done.includes(g)
-                          ? 'done'
-                          : g === currentGloss(session)
-                            ? 'active'
-                            : ''
-                      }
-                    />
-                  ))}
-                </div>
-                <p className="session-line">
-                  Sign {Math.min(session.done.length + 1, session.glosses.length)} of{' '}
-                  {session.glosses.length} — <strong>{glossLabel(currentGloss(session) ?? '')}</strong>
-                </p>
-                {/* Never a trap: the way out is always one click away. */}
-                <button className="link-button" onClick={() => setSession(null)}>
-                  End session
-                </button>
-              </div>
-            ) : (
-              references.length > 0 && (
-                <div className="session-bar">
-                  <p className="session-line">
-                    Practise the {SESSION_SIZE} signs that need it most, then stop.
-                  </p>
-                  <button className="btn" onClick={() => beginSession()}>
-                    Start a session
-                  </button>
-                </div>
-              )
-            )}
-
-            {!sessionDone && (
-              <>
-                {references.length === 0 ? (
-                  <>
-                    <h2>Practice a sign</h2>
-                    <p className="hint-text">
-                      No reference signs yet. Record some in the <strong>Record</strong> tab first —
-                      start with ME, YOU, NAME.
-                    </p>
-                  </>
-                ) : pickerOpen ? (
-                  /* The picker takes the panel while it is open, rather than
-                     living permanently above the reference and the record
-                     button. Before, 358 chips sat in a 168px nested scroll
-                     inside the page scroll, and the primary action was below
-                     all of it. */
-                  <div className="picker">
-                    <div className="picker-head">
-                      <h2>Choose a sign</h2>
-                      <button className="btn btn-ghost" onClick={() => setPickerOpen(false)}>
-                        Cancel
-                      </button>
-                    </div>
-
-                    <input
-                      type="search"
-                      className="picker-search"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder={`Search ${references.length} signs…`}
-                      aria-label="Search signs"
-                      autoFocus
-                    />
-
-                    {categories.length > 1 && (
-                      /* One scrolling row rather than eighteen wrapping chips
-                         taking six lines of the panel. */
-                      <div className="category-rail">
-                        <button
-                          className={category === null ? 'chip active' : 'chip'}
-                          onClick={() => setCategory(null)}
-                        >
-                          All {references.length}
-                        </button>
-                        {categories.map((name) => (
-                          <button
-                            key={name}
-                            className={category === name ? 'chip active' : 'chip'}
-                            onClick={() => setCategory(name)}
-                          >
-                            {name} {references.filter((r) => categoryOf(r) === name).length}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {visible.length === 0 ? (
-                      <p className="hint-text">No signs match “{query}”.</p>
-                    ) : (
-                      <>
-                        <ul className="sign-list">
-                          {visible.slice(0, PICKER_LIMIT).map((r) => (
-                            <li key={r.id}>
-                              <button
-                                className={selected?.id === r.id ? 'sign-row active' : 'sign-row'}
-                                onClick={() => {
-                                  setSelected(r)
-                                  setPickerOpen(false)
-                                }}
-                              >
-                                {/* The meaning, not just the dataset label — a
-                                    learner cannot act on a bare gloss. */}
-                                <span className="sign-row-name">{glossLabel(r.gloss)}</span>
-                                <span className="sign-row-meta">
-                                  {r.gloss === suggested && <em className="badge">suggested</em>}
-                                  {categoryOf(r)}
-                                </span>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                        <p className="hint-text">
-                          {visible.length > PICKER_LIMIT
-                            ? `Showing ${PICKER_LIMIT} of ${visible.length} — search to narrow it down.`
-                            : `${visible.length} sign${visible.length === 1 ? '' : 's'}.`}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    <h2>Reference</h2>
-
-                    {selected?.provisional && (
-                      <p className="provisional-note">
-                        Provisional reference — recorded by the team to unblock development, not
-                        verified SSL.
-                      </p>
-                    )}
-
-                    {selected && suggested && selected.gloss !== suggested && (
-                      <p className="hint-text">
-                        Suggested next:{' '}
-                        <button
-                          className="link-button"
-                          onClick={() => {
-                            const next = references.find((r) => r.gloss === suggested)
-                            if (next) setSelected(next)
-                          }}
-                          disabled={inputsLocked}
-                        >
-                          {glossLabel(suggested)} ★
-                        </button>
-                      </p>
-                    )}
-
-                    {selected &&
-                      (reference ? (
-                        // Stacked, the player itself is in the camera stage.
-                        !stacked && (
-                          // Framed like the camera pane so the two read as a
-                          // pair — copy this, do that — rather than as a video
-                          // and some sidebar furniture.
-                          <div className="reference-card">
-                            <SkeletonPlayer
-                              frames={reference.frames}
-                              videoWidth={reference.videoWidth}
-                              videoHeight={reference.videoHeight}
-                            />
-                          </div>
-                        )
-                      ) : refFailed ? (
-                        <p className="camera-error">
-                          Could not load this reference recording. Pick another sign, or check your
-                          connection and select it again.
-                        </p>
-                      ) : (
-                        <p className="hint-text">Loading reference…</p>
-                      ))}
-
-                    <p className="hint-text">
-                      Watch the reference, then record yourself signing it. You'll get a match
-                      score and tips on what to fix.
-                    </p>
-                  </>
-                )}
-
-                {/* Last in the panel so it can stick to the bottom of the
-                    viewport on a phone, within thumb reach, instead of landing
-                    hundreds of pixels below the fold. Hidden while the picker
-                    is open, which owns the panel for as long as it is up. */}
-                <div className="panel-actions" hidden={pickerOpen}>
-                  {phase === 'countdown' ? (
-                    <button className="btn btn-ghost" onClick={cancelCountdown}>
-                      Cancel
-                    </button>
-                  ) : phase === 'recording' ? (
-                    <button className="btn" onClick={finishRecording}>
-                      Stop &amp; score
-                    </button>
-                  ) : (
-                    <button
-                      className="btn"
-                      onClick={beginCountdown}
-                      disabled={tracking.status !== 'running' || !reference}
-                      title={
-                        tracking.status !== 'running'
-                          ? 'Start the camera first'
-                          : !selected
-                            ? 'Choose a sign first'
-                            : refFailed
-                              ? 'This reference could not be loaded'
-                              : !reference
-                                ? 'Loading the reference recording…'
-                                : undefined
-                      }
-                    >
-                      Record attempt
-                    </button>
-                  )}
-                </div>
-              </>
-            )}
-          </>
-        )}
-      </aside>
+      </div>
+      
+      {/* Session Logic / Hidden items */}
+      <p className="sr-only" role="status">{liveMessage}</p>
     </div>
   )
 }

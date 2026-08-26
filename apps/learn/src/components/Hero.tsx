@@ -97,12 +97,18 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
 
   return (
     <div className="aww-hero-wrapper" ref={container}>
-      <div className="aww-topbar">
-        <a className="aww-back" href="/">
-          ← All Suvana modules
-        </a>
-        <ThemeToggle />
-      </div>
+      <header id="header" className="aww-topbar">
+        <div className="nav">
+          <a href="/" className="nav-left brand">
+            <img src={`${import.meta.env.BASE_URL}branding/suvana-mark.png`} alt="" className="mark" />
+            <span className="wordmark">SUVANA</span>
+          </a>
+          <div className="nav-right">
+            <ThemeToggle />
+            <a href="/" className="btn small">Back to Home</a>
+          </div>
+        </div>
+      </header>
 
       <section className="aww-hero-main">
         <div className="aww-titles">
@@ -112,7 +118,7 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
             alt=""
           />
           <h1 className="aww-suvana-en">LEARN</h1>
-          <h2 className="aww-suvana-si" lang="si">ඉගෙන ගන්න</h2>
+          <h2 className="aww-suvana-si">Sign Language</h2>
         </div>
         
         <div className="aww-hero-art" aria-hidden="true">
