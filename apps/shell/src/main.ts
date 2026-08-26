@@ -11,13 +11,13 @@ const lenis = new Lenis({
   smoothWheel: true,
 });
 
-function raf(time: number) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
-}
-requestAnimationFrame(raf);
-
-// Sync GSAP with Lenis
+// Sync GSAP with Lenis. The GSAP ticker is the ONLY driver: lenis.raf() derives
+// its deltaTime from the timestamp it is handed, so feeding it two clocks (a
+// bare rAF's performance.now() and the ticker's elapsed-since-load) alternates
+// a positive and a negative delta every frame. Lenis damps with
+// exp(-lambda * dt), so a negative dt explodes lenis.velocity — by the offset
+// between the two clocks, which is exactly the module-load time that a cold
+// dev-server start makes large. See the marquee below, which reads velocity.
 gsap.ticker.add((time) => {
   lenis.raf(time * 1000);
 });
@@ -296,19 +296,21 @@ if (marqueeContent) {
   let xPos = 0;
   const baseSpeed = 0.02;
 
-  const animateMarquee = () => {
-    // Determine scroll speed influence (lenis.velocity is available globally since lenis is declared at top)
-    const scrollSpeed = Math.abs((lenis.velocity || 0) * 0.001);
-    
-    // Always move left base speed, but skew heavily by scroll velocity (absolute value to always move in same dir but faster)
-    xPos -= (baseSpeed + scrollSpeed);
+  // The content is two identical halves, so any xPercent is equivalent to the
+  // same value modulo 50 — wrapping that way (rather than a single +50 nudge)
+  // means no velocity spike can push the marquee somewhere it takes thousands
+  // of frames to walk back from.
+  const wrap = (n: number) => ((n % 50) + 50) % 50 - 50;
 
-    // Loop
-    if (xPos <= -50) {
-      xPos += 50;
-    } else if (xPos > 0) {
-      xPos -= 50;
-    }
+  const animateMarquee = () => {
+    // Determine scroll speed influence (lenis.velocity is available globally since lenis is declared at top).
+    // Capped: velocity is a per-frame pixel delta, and a tab returning from the
+    // background hands Lenis one frame worth several seconds of scrolling.
+    const velocity = lenis.velocity;
+    const scrollSpeed = Number.isFinite(velocity) ? Math.min(Math.abs(velocity) * 0.001, 5) : 0;
+
+    // Always move left base speed, but skew heavily by scroll velocity (absolute value to always move in same dir but faster)
+    xPos = wrap(xPos - (baseSpeed + scrollSpeed));
 
     gsap.set(marqueeContent, { xPercent: xPos });
     requestAnimationFrame(animateMarquee);
