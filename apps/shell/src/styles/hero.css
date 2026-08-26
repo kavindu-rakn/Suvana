@@ -1,0 +1,118 @@
+/* ---- hero ---- */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: 80px; /* Offset header */
+}
+
+#webgl-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.6; 
+  transition: opacity 1s;
+}
+
+:root[data-theme='dark'] #webgl-canvas {
+  opacity: 0.3;
+}
+
+.hero-content {
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+/* Intertwined Logo & Typography */
+.logo-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-mark {
+  height: 120px;
+  width: auto;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: scale(0.8);
+  /* mix-blend-mode is applied in base.css */
+}
+
+.hero-titles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.hero-suvana-en {
+  font-family: var(--sans);
+  font-size: clamp(3.5rem, 10vw, 8rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--slate);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(40px);
+  position: relative;
+  z-index: 1;
+}
+
+.hero-suvana-si {
+  font-family: var(--sinhala);
+  font-size: clamp(4rem, 12vw, 9.5rem);
+  font-weight: 700;
+  line-height: 1.4;
+  padding-bottom: 20px;
+  margin-top: -0.42em; /* Proportional overlap to fix mobile crash */
+  background: linear-gradient(100deg, var(--teal), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  transform: translateY(40px);
+  position: relative;
+  z-index: 2; /* Ensure it overlaps English title */
+}
+
+.hero-taglines {
+  max-width: 900px;
+}
+
+.hero .tagline {
+  font-size: clamp(1.25rem, 2.5vw, 1.8rem);
+  font-weight: 400;
+  color: var(--slate);
+  margin: 0 0 20px;
+  text-wrap: balance;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.hero .subline {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-ink);
+  opacity: 0;
+  transform: translateY(20px);
+  max-width: 100%;
+}
