@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs'
+import { gzipSync } from 'node:zlib'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import type { RecordingMeta } from '../vision/types'
@@ -29,6 +30,31 @@ describe.skipIf(!indexExists)('reference index', () => {
   const manifest = JSON.parse(readFileSync(join(refDir, 'manifest.json'), 'utf8')) as {
     files: string[]
   }
+
+  it('stays within the per-reference size budget', () => {
+    // UIUX-PLAN.md §5. Every learner fetches this on first paint, so it is a
+    // real cost and the plan asks for budgets that can fail rather than be
+    // hoped at. This is the one budget in that table checked automatically.
+    //
+    // Per reference, not a flat total: a flat budget cannot tell "the index got
+    // fatter" from "there are more signs", and those want opposite responses.
+    // The flat 20 kB version failed the moment the corpus grew 362 -> 501, at a
+    // point when the per-reference cost had actually improved 63.5 -> 44.5 B.
+    //
+    // If this fails, find out which field grew before raising the number —
+    // `gzipSync` each field out in turn to attribute the cost. Raising the
+    // budget to match whatever it currently measures makes it decorative.
+    const BUDGET_BYTES_PER_REFERENCE = 50
+
+    const gzipped = gzipSync(readFileSync(indexPath)).length
+    const perReference = gzipped / index.length
+
+    expect(
+      perReference,
+      `index is ${(gzipped / 1024).toFixed(1)} kB gzip for ${index.length} references ` +
+        `= ${perReference.toFixed(1)} B each, over the ${BUDGET_BYTES_PER_REFERENCE} B budget`,
+    ).toBeLessThanOrEqual(BUDGET_BYTES_PER_REFERENCE)
+  })
 
   it('hoists provenance into a source table instead of repeating it per entry', () => {
     // The index is fetched on first paint by every learner, and UIUX-PLAN.md §5

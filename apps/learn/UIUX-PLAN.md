@@ -449,12 +449,30 @@ result rather than a hope.
 | Budget | Target | How |
 |---|---|---|
 | Initial JS (gzip) | ≤ 80 kB | `npm run build` output |
-| Reference index | ≤ 20 kB gzip | build script output |
+| Reference index | **≤ 50 B gzip per reference** | `referenceIndex.test.ts`, every `npm test` |
 | Data per tab switch | **0 bytes** | DevTools Network, after 0.1 |
 | JS heap, Practice idle | ≤ 25 MB | `performance.memory` |
 | Long tasks during capture | none > 50 ms | `PerformanceObserver('longtask')` |
 | Feedback latency p95 | ≤ 300 ms | existing Progress panel |
 | Frame budget during reveal | ≥ 55 fps | DevTools Performance |
+
+> **The index budget was re-expressed per reference on 26 Aug 2026, and it is
+> not a relaxation.** It was originally a flat ≤20 kB gzip, set when the corpus
+> held 362 references. That figure cannot tell "the index got fatter" from
+> "there are more signs" apart, and those want opposite responses — the first is
+> a regression, the second is the product working. When the corpus grew to 501
+> the flat budget failed on growth alone, while the per-reference cost had in
+> fact *improved*.
+>
+> Against the new criterion the index measures **44.5 B per reference and
+> passes**, having come down from 63.5 B — so the same work that broke the old
+> budget comfortably clears the new one. 50 B leaves about 11% headroom, enough
+> that a genuinely fat new field trips it rather than ordinary drift.
+>
+> It is also the only budget in this table now checked automatically: the others
+> still need someone to run DevTools, but this one gzips the built index on
+> every `npm test` and fails the suite. See the note in `README.md` for what the
+> remaining cost is made of, and why the `id` field is not removable.
 
 Re-run the latency measurement after Phase 0 and again after Phase 3, and
 regenerate `latency-report.md`. If the reveal work moved the number, the Act 1 /

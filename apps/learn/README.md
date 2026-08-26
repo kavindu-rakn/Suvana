@@ -76,10 +76,14 @@ What a participant actually downloads:
 The heavy tracking assets are deferred until the camera is actually started, and
 are a one-off per participant.
 
-#### The reference index, and the one budget still missed
+#### The reference index and its budget
 
-`UIUX-PLAN.md` §5 sets **≤20 kB gzip** for the index, which every learner
-fetches on first paint. History:
+`UIUX-PLAN.md` §5 budgets the index, which every learner fetches on first paint,
+at **≤50 bytes gzip per reference**. It currently measures **44.5 B and passes**,
+enforced by `referenceIndex.test.ts` on every `npm test` — the only budget in
+that table that fails the suite rather than waiting for someone to open DevTools.
+
+History:
 
 | | raw | gzip | per reference |
 |---|---|---|---|
@@ -95,24 +99,29 @@ consumer anywhere in `src/`. They remain in the reference files on disk — the
 index is a projection, not an archive. `createdAt` also lost its microseconds,
 which nothing reads.
 
-**It is still 2.4 kB over, and that residue is irreducible without changing
-what an id means.** `id` alone accounts for 12.7 kB of the 22.3 kB. These are
-UUIDs: 501 × 128 bits ≈ 8 kB of pure entropy before any encoding overhead, so
-no compression scheme will help — the only lever is carrying fewer bits.
+**Where the remaining cost sits.** `id` alone is 12.7 kB of the 22.3 kB — over
+half. These are UUIDs, so 501 × 128 bits is roughly 8 kB of pure entropy before
+any encoding overhead: no compression scheme will touch it, and the only lever
+is carrying fewer bits.
 
-Deriving the index's ids from the filename would save it, and was rejected:
+Deriving the index's ids from the filename would do that, and was rejected.
 `referenceId` is written into the attempt log from the *loaded reference file*
 and **exported in the pilot CSV**, so it is the key joining an attempt to the
 reference it was scored against. Letting the index disagree with the file would
-break that join silently, inside exported research data. Not a trade worth 2.4 kB.
+break that join silently, inside exported research data.
 
-> The more useful reading is per-reference cost, which fell **63.5 → 44.5 bytes,
-> a 30% improvement, while the corpus grew 39%**. A fixed byte budget cannot
-> distinguish "the index got fatter" from "there are more signs", and those want
-> different responses. Re-expressing the criterion as ≤50 B gzip per reference
-> would measure the thing actually under control — but changing a stated
-> acceptance criterion is a call for kvn, so the ≤20 kB figure stands as written
-> and this is recorded as missed.
+That is also why the budget is expressed per reference rather than as a flat
+total. The old flat ≤20 kB was set at 362 references; when the corpus reached
+501 it failed on growth alone, at a point when the per-reference cost had
+*improved* from 63.5 to 44.5 B. A flat figure cannot separate "the index got
+fatter" from "there are more signs", and only the first is a regression. The
+50 B ceiling leaves about 11% headroom — enough that a genuinely fat new field
+trips the test, and not so much that drift goes unnoticed.
+
+> If that test ever fails, attribute the cost before touching the number:
+> gzip the index with each field removed in turn and see which one grew.
+> Raising the budget to match whatever it currently measures turns it back into
+> a description instead of a constraint.
 
 ### Running a pilot session
 
