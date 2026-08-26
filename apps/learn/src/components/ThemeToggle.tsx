@@ -65,7 +65,7 @@ export function ThemeToggle() {
 
     // Prevent frozen custom cursor during transition
     document.body.classList.add('is-transitioning')
-    transition.finished.then(() => {
+    transition.finished.finally(() => {
       document.body.classList.remove('is-transitioning')
     })
 

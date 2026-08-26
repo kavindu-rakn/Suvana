@@ -87,13 +87,33 @@ lenis.on('scroll', (e: any) => {
 // 2. Custom Cursor Logic
 const cursor = document.getElementById('custom-cursor');
 if (cursor) {
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let isMoving = false;
+
   document.addEventListener('mousemove', (e) => {
-    // Instant responsive follow, no lerp delay
-    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (!isMoving) {
+      cursor.style.display = 'block';
+      isMoving = true;
+    }
   });
 
-  // Hide cursor when leaving the window to prevent it getting stuck at the border
-  document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+  // Decouple DOM updates from the high-frequency mouse event using rAF
+  const renderCursor = () => {
+    if (isMoving) {
+      cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+    }
+    requestAnimationFrame(renderCursor);
+  };
+  requestAnimationFrame(renderCursor);
+
+  // Hide cursor when leaving the window
+  document.addEventListener('mouseleave', () => {
+    cursor.style.opacity = '0';
+    isMoving = false;
+  });
   document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
 
   // Event delegation for hover states (works for dynamically injected buttons like Sign In)
@@ -238,7 +258,7 @@ if (themeBtn) {
 
     // Prevent frozen custom cursor during transition
     document.body.classList.add('is-transitioning');
-    transition.finished.then(() => {
+    transition.finished.finally(() => {
       document.body.classList.remove('is-transitioning');
     });
 

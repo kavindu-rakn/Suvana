@@ -1,10 +1,6 @@
 /* Custom Cursor */
-body {
-  cursor: none; /* Hide default cursor */
-}
-
-a, button, .theme-toggle {
-  cursor: none; /* Override pointer for interactive elements */
+* {
+  cursor: none !important; /* Globally hide default cursor so the custom pointer doesn't look like a trail */
 }
 
 #custom-cursor {

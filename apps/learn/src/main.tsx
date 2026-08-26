@@ -36,28 +36,39 @@ lenis.on('scroll', (e: any) => {
 
 // 3. Custom Cursor Logic
 const cursor = document.getElementById('custom-cursor');
-let isMouseMoving = false;
-let mouseTimeout: any;
+if (cursor) {
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let isMoving = false;
 
-document.addEventListener('mousemove', (e) => {
-  if (!cursor) return;
-  // Use transform for instant hardware-accelerated movement
-  cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-  
-  if (!isMouseMoving) {
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (!isMoving) {
+      cursor.style.display = 'flex';
+      isMoving = true;
+    }
+  });
+
+  const renderCursor = () => {
+    if (isMoving) {
+      // Use transform for instant hardware-accelerated movement, chained with -50% to perfectly center
+      cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+    }
+    requestAnimationFrame(renderCursor);
+  };
+  requestAnimationFrame(renderCursor);
+
+  document.addEventListener('mouseenter', () => {
     cursor.style.display = 'flex';
-    isMouseMoving = true;
-  }
-  
-  clearTimeout(mouseTimeout);
-  mouseTimeout = setTimeout(() => {
-    isMouseMoving = false;
-  }, 1000);
-});
+    isMoving = true;
+  });
 
-document.addEventListener('mouseleave', () => {
-  if (cursor) cursor.style.display = 'none';
-});
+  document.addEventListener('mouseleave', () => {
+    cursor.style.display = 'none';
+    isMoving = false;
+  });
+}
 
 // Use event delegation for hover states
 document.body.addEventListener('mouseover', (e) => {
