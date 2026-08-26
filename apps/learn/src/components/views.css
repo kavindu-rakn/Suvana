@@ -412,6 +412,20 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  /* Without this the whole page scrolls sideways on a phone whenever the sign
+     picker is open.
+
+     A grid item defaults to `min-width: auto`, which refuses to shrink below
+     its content — so `.category-rail` inside, a deliberately non-wrapping strip
+     ~2245px wide, stretched this panel to 1716px inside a 347px track. The rail
+     already sets `overflow-x: auto`, but a scroll container that is wider than
+     its content never scrolls: the overflow escaped to the document instead.
+
+     `.record-layout` guards its own first column with `minmax(0, 1fr)` for the
+     same reason. This is the matching guard on the item, which is what the
+     single-column mobile layout actually needs. Practice, Record and Scenario
+     all use this class, so all three were affected. */
+  min-width: 0;
 }
 
 .record-panel h2 {
