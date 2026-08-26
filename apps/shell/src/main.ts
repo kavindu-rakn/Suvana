@@ -62,17 +62,26 @@ if (preloader && loaderCount) {
   heroTl.play();
 }
 
-// Hide Header on Scroll Down
+// Hide Header on Scroll Down & Update Scroll Progress
 let lastScroll = 0;
 const header = document.querySelector('.nav') as HTMLElement;
+const scrollProgress = document.getElementById('scroll-progress');
+
 lenis.on('scroll', (e: any) => {
   const currentScroll = e.animatedScroll;
+  
+  // Header hide/show logic
   if (currentScroll > lastScroll && currentScroll > 100) {
     header.classList.add('nav-hidden');
   } else {
     header.classList.remove('nav-hidden');
   }
   lastScroll = currentScroll;
+
+  // Horizontal scroll progress bar logic
+  if (scrollProgress && e.limit > 0) {
+    scrollProgress.style.transform = `scaleX(${e.progress})`;
+  }
 });
 
 // 2. Custom Cursor Logic

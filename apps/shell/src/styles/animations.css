@@ -68,6 +68,22 @@ body.is-transitioning #custom-cursor {
   color: var(--gold);
 }
 
+/* Scroll Progress Bar */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--teal);
+  z-index: 99999;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+:root[data-theme='dark'] #scroll-progress {
+  background: var(--gold);
+}
+
 /* View Transitions API (Theme Toggle) */
 ::view-transition-old(root),
 ::view-transition-new(root) {

@@ -45,27 +45,12 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom Scrollbar */
+/* Hide Native Scrollbar (Replaced by horizontal progress bar) */
 ::-webkit-scrollbar {
-  width: 14px;
+  display: none;
 }
-::-webkit-scrollbar-track {
-  background: var(--paper);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--teal);
-  border-radius: 10px;
-  border: 3px solid var(--paper);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--teal-ink);
-}
-:root[data-theme='dark'] ::-webkit-scrollbar-thumb {
-  background: var(--gold);
-  border-color: var(--paper); /* Ensures padding border matches dark mode paper */
-}
-:root[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
-  background: #ffdb58; /* Brighter gold on hover */
+* {
+  scrollbar-width: none;
 }
 
 /* Custom Selection Highlight (Gold) */
