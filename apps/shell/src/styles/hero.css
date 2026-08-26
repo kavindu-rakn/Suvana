@@ -81,7 +81,7 @@
   font-weight: 700;
   line-height: 1.4;
   padding-bottom: 20px;
-  margin-top: -65px; /* Deeper overlap */
+  margin-top: -0.42em; /* Proportional overlap to fix mobile crash */
   background: linear-gradient(100deg, var(--teal), var(--gold));
   -webkit-background-clip: text;
   background-clip: text;
