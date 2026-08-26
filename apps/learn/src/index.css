@@ -1011,3 +1011,77 @@ body::before {
     height: 44px;
   }
 }
+
+/* ============================================================================
+   AWWWARDS LANDING PAGE OVERRIDES (Learn Module Overhaul)
+   ========================================================================== */
+
+/* Hide Native Scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  scrollbar-width: none;
+}
+
+/* Horizontal Scroll Progress Bar */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--p-teal-400);
+  z-index: 99999;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+:root[data-theme='dark'] #scroll-progress {
+  background: var(--p-gold-400);
+}
+
+/* Custom Cursor */
+#custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Mix-blend-mode: difference creates dynamic contrast against everything */
+  mix-blend-mode: difference;
+}
+.cursor-dot {
+  width: 20px;
+  height: 20px;
+  /* Mathematical inverse of Teal on Paper for light mode */
+  background: rgb(253, 87, 106); 
+  border-radius: 50%;
+  transition: width 0.2s ease, height 0.2s ease, background 0.3s ease;
+}
+:root[data-theme='dark'] .cursor-dot {
+  /* Mathematical inverse of Gold on Ink for dark mode */
+  background: rgb(228, 185, 52); 
+}
+#custom-cursor.hovering .cursor-dot {
+  width: 6px;
+  height: 6px;
+}
+body.is-transitioning #custom-cursor {
+  opacity: 0 !important;
+}
+
+/* View Transitions API (Theme Toggle) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}

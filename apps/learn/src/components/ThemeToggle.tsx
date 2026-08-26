@@ -34,15 +34,56 @@ export function ThemeToggle() {
     return () => window.removeEventListener('storage', onStorage)
   }, [])
 
-  function toggle() {
+  function toggle(e: React.MouseEvent<HTMLButtonElement>) {
     const next: Theme = theme === 'dark' ? 'light' : 'dark'
-    document.documentElement.dataset.theme = next
-    setTheme(next)
-    try {
-      localStorage.setItem(KEY, next)
-    } catch {
-      /* Private mode: the choice applies now but does not persist. */
+    
+    const switchTheme = () => {
+      document.documentElement.dataset.theme = next
+      setTheme(next)
+      try {
+        localStorage.setItem(KEY, next)
+      } catch {
+        /* Private mode: the choice applies now but does not persist. */
+      }
     }
+
+    if (!(document as any).startViewTransition) {
+      switchTheme()
+      return
+    }
+
+    // Get click coordinates for circular wipe center
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = rect.left + rect.width / 2
+    const y = rect.top + rect.height / 2
+    const maxRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    )
+
+    const transition = (document as any).startViewTransition(switchTheme)
+
+    // Prevent frozen custom cursor during transition
+    document.body.classList.add('is-transitioning')
+    transition.finished.then(() => {
+      document.body.classList.remove('is-transitioning')
+    })
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${maxRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 800,
+          easing: 'ease-in-out',
+          pseudoElement: '::view-transition-new(root)',
+        }
+      )
+    })
   }
 
   const label = `Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`
