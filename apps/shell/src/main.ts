@@ -84,35 +84,6 @@ lenis.on('scroll', (e: any) => {
   }
 });
 
-// 2. Custom Cursor Logic
-const cursor = document.getElementById('custom-cursor');
-if (cursor) {
-  document.addEventListener('mousemove', (e) => {
-    // Instant responsive follow, no lerp delay
-    cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
-  });
-
-  // Hide cursor when leaving the window to prevent it getting stuck at the border
-  document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
-  document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
-
-  // Event delegation for hover states (works for dynamically injected buttons like Sign In)
-  const isInteractable = (target: HTMLElement | null) => 
-    target?.closest('a, button, input, [role="button"], .theme-toggle');
-
-  document.body.addEventListener('mouseover', (e) => {
-    if (isInteractable(e.target as HTMLElement)) {
-      document.body.classList.add('is-hovering');
-    }
-  });
-  
-  document.body.addEventListener('mouseout', (e) => {
-    if (isInteractable(e.target as HTMLElement)) {
-      document.body.classList.remove('is-hovering');
-    }
-  });
-}
-
 // 3. WebGL Background
 const canvas = document.getElementById('webgl-canvas') as HTMLCanvasElement;
 if (canvas) {
@@ -238,7 +209,7 @@ if (themeBtn) {
 
     // Prevent frozen custom cursor during transition
     document.body.classList.add('is-transitioning');
-    transition.finished.then(() => {
+    transition.finished.finally(() => {
       document.body.classList.remove('is-transitioning');
     });
 
