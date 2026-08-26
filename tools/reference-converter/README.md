@@ -11,8 +11,8 @@ Two corpora are in use, under **different licences**. See
 
 | | |
 |---|---|
-| Contents | 383 signs, 2,623 clips (~7 takes each), 16 grammatical categories |
-| Labels | **English** (`Can`, `Where`, `Hello`) — no translation needed |
+| Contents | 2,623 clips, 16 grammatical categories. The dataset description says 383 signs; the conversion run resolved **221 distinct signs** (~12 takes each) — see the note below |
+| Labels | **English** (`Hello`, `Thank you`, `You`) — no translation needed |
 | **Licence** | **CC BY-NC-SA 4.0** — attribution, **non-commercial**, share-alike |
 | Layout | Nested: `<Category>/<Sign>/<Sign>_001.mp4` |
 | Pre-extracted CSVs | **Pose only** (33 landmarks). Our app is hand-based, so we process the videos ourselves and ignore them. |
@@ -25,10 +25,41 @@ python convert_references.py --dataset "<...>/Dataset - Original" --all \
   --attribution "Yohan Abhishek, Sinhala Sign Language video dataset (CC BY-NC-SA 4.0)"
 ```
 
-Covers 4 of the 7 avatar-aligned glosses (`I`→ME, `You`, `Can`, `Where`); NAME,
-WHAT and YOUR are absent. Its **Greetings** category (Ayubowan, Hello, How are
-you, Thank you) is a better basis for a first-meeting scenario than team
-recordings.
+### Coverage — corrected against the conversion log
+
+An earlier version of this section claimed the corpus covers four of the seven
+avatar-aligned glosses (`I`→ME, `You`, `Can`, `Where`) and that its **Greetings**
+category supplies Ayubowan / Hello / How are you / Thank you. **Both claims were
+wrong**, and one of them reached the Introductions scenario as an assumption.
+
+`convert_yohan.log` accounts for every clip the run saw — **2,405 converted +
+218 skipped = 2,623**, the whole corpus. Anything absent from that log is absent
+from the dataset, not merely unconverted, so the log is the authority here:
+
+| Claimed | Actual |
+|---|---|
+| `Can`, `Where` present | **Absent.** Neither string appears in the log — not converted, not skipped |
+| `Name`, `What`, `Your` absent | Correct — also absent |
+| `I`, `You` present | Correct. `I` has 2 references (one per corpus), `You` has 1 |
+| Greetings: Ayubowan, Hello, How are you, Thank you | Only **Hello** and **Thank you** survive. `Ayubowan` and `How are you` appear nowhere in the log |
+
+**Consequence for the Introductions scenario.** Six of its seven turns show
+*reference pending*, and no re-run of this converter can change that — the clips
+do not exist in this corpus. Only new recordings can close it, which is why the
+handoff routes that gloss set to the School for the Deaf, Ratmalana.
+
+**One open question, deliberately not answered here.** The corpus holds `I`;
+the scenario asks for `ME`. The old text asserted `I`→ME as a done mapping, but
+nothing in the code implements it and no signer has confirmed that they are the
+same SSL sign. Treat it as a question for the School for the Deaf, not a rename
+to apply — mapping one gloss onto another is exactly the kind of invention the
+project guardrails forbid.
+
+**Why the sign count moved.** The dataset description says 383 signs; the run
+resolved 221 distinct ones across the same 2,623 clips (~12 takes each, not the
+~7 the description implies). The discrepancy is unexplained and the source
+videos are no longer on disk, so 221 is the figure to quote — it is what the
+shipped corpus actually contains, and it matches `public/reference-index.json`.
 
 ## Corpus 1 — D. C. Kahawearachchi (CC0)
 

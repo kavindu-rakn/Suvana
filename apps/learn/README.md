@@ -134,8 +134,11 @@ perfect 100 against itself and strictly less against any other sign.
 
 ### Team workflow: recording your own
 
-Only needed for glosses the dataset does not cover — currently the seven the
-Introductions scenario needs: **ME, YOU, NAME, WHAT, WHERE, CAN, YOUR**.
+Only needed for glosses neither corpus covers — currently six of the seven the
+Introductions scenario needs: **ME, NAME, WHAT, WHERE, CAN, YOUR**. (YOU is
+covered by the Yohan corpus.) Neither converter run can close these: the clips
+are absent from both datasets, confirmed against the conversion logs — see
+`../../tools/reference-converter/README.md`.
 
 For a usable reference: fill the frame from roughly the waist up, keep both
 hands inside it for the whole sign, use even front lighting and a plain
@@ -264,7 +267,7 @@ five proposal-approved scenarios ship:
 
 | Scenario | Turns | Reference source |
 |---|---|---|
-| **Social Gathering (Introductions)** | 7 (ME, YOU, NAME, WHAT, WHERE, CAN, YOUR) | Team recordings — *provisional*. Aligned with Malkith's avatar glosses, so this is the integration demo. |
+| **Social Gathering (Introductions)** | 7 (ME, YOU, NAME, WHAT, WHERE, CAN, YOUR) | **1 of 7 runnable.** Only YOU has a reference (Yohan corpus); the other six show *reference pending*. Aligned with Malkith's avatar glosses, so this is the integration demo — but not the one to demo for reference quality. |
 | **Restaurant** | 5 (KANAWA, BONAWA, 500, MILADII GANNAWA, BILPATHA) | Kaggle corpus — **real signers**. Demo this when reference quality matters. |
 
 Verified end to end: with the Restaurant vocabulary loaded, a correct
