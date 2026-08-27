@@ -108,7 +108,7 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className="app" data-mode={mode}>
       {mode === 'author' && (
         // Deliberately loud: a screenshot taken in this mode has to be
         // unambiguous about which build it shows.
