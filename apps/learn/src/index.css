@@ -40,6 +40,7 @@
   /* ---- tier 2: semantic --------------------------------------------------- */
   --bg: var(--p-teal-900);
   --surface: var(--p-teal-800); /* cards */
+  --surface-rgb: 18, 33, 32;
   --surface-2: var(--p-teal-700); /* inset rows, fields */
   --stage: var(--p-void); /* camera + canvas letterbox */
 
@@ -182,6 +183,7 @@
 :root[data-theme='light'] {
   --bg: #fdfdfd;
   --surface: #ffffff;
+  --surface-rgb: 255, 255, 255;
   --surface-2: #f0f5f4;
 
   --text: #333333;

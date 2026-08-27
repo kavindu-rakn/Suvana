@@ -2051,6 +2051,14 @@
   z-index: 10;
 }
 
+/* In Author Mode, .mode-banner-wrap adds ~64px above header, so top offset is ~125px */
+.app[data-mode="author"] .aww-practice-env,
+.app[data-mode="author"] .aww-scenario-env,
+.app[data-mode="author"] .aww-studio-env,
+.aww-studio-env {
+  top: 155px; /* Cleanly clears author warning banner + app bar */
+}
+
 .aww-split-screen {
   display: flex;
   width: 100%;
@@ -2064,6 +2072,18 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.aww-pane::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+  z-index: 5;
 }
 
 .aww-pane-left {
@@ -2085,6 +2105,7 @@
   align-items: flex-start;
   justify-content: space-between;
   pointer-events: none; /* Let clicks pass through to video unless on buttons */
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 }
 .aww-pane-header * {
   pointer-events: auto;
@@ -2095,14 +2116,14 @@
   font-size: 13px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: rgba(255, 255, 255, 0.75);
   margin-bottom: 8px;
 }
 
 .aww-pane-title {
   font-family: 'Noto Serif', serif;
   font-size: 2.5rem;
-  color: var(--text);
+  color: #fff;
   margin: 0;
   line-height: 1.1;
 }
@@ -2150,7 +2171,7 @@
 
 .aww-hud {
   position: absolute;
-  bottom: 40px;
+  bottom: 36px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 50;
@@ -2158,13 +2179,14 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  background: rgba(var(--surface-rgb, 20, 20, 20), 0.7);
+  background: rgba(var(--surface-rgb), 0.85);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  padding: 24px 40px;
+  padding: 20px 36px;
   border-radius: 24px;
   border: 1px solid var(--border-subtle);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  color: var(--text);
 }
 
 .aww-hud-idle, .aww-hud-actions, .aww-hud-recording {
@@ -3445,4 +3467,257 @@
 .aww-scenario-env .skeleton-scrubber,
 .aww-scenario-env .skeleton-controls button {
   display: none !important;
+}
+
+/* ============================================================================
+   MOTION CAPTURE REFERENCE STUDIO (RECORD TAB)
+   ========================================================================== */
+
+.aww-studio-env .aww-pane-header {
+  top: 80px; /* Offset below studio toolbar */
+}
+
+/* Studio Toolbar at the Top of the Screen */
+.aww-studio-toolbar {
+  position: absolute;
+  top: 16px;
+  left: 32px;
+  right: 32px;
+  z-index: 40;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  pointer-events: none;
+}
+
+.aww-studio-toolbar * {
+  pointer-events: auto;
+}
+
+.studio-tool-left, .studio-tool-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.studio-badge {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--accent);
+  color: var(--p-ink);
+  padding: 6px 14px;
+  border-radius: 100px;
+}
+
+.studio-sign-btn {
+  background: rgba(var(--surface-rgb, 20, 20, 20), 0.75) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle) !important;
+  color: var(--text) !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px !important;
+  border-radius: 100px !important;
+  font-size: 0.95rem;
+}
+
+.studio-sign-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  letter-spacing: 0.05em;
+}
+
+.studio-sign-sub {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.studio-signer-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(var(--surface-rgb, 20, 20, 20), 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  padding: 4px 14px;
+  border-radius: 100px;
+}
+
+.signer-label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.studio-signer-input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  width: 130px;
+  padding: 4px 0;
+  outline: none;
+}
+
+.studio-saved-pill {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(0, 166, 147, 0.2);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 6px 14px;
+  border-radius: 100px;
+}
+
+/* Studio Reference Header Metadata */
+.studio-ref-meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.studio-ref-pill {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-dim);
+  padding: 3px 10px;
+  border-radius: 6px;
+}
+
+/* Studio Custom Input Form inside Left Pane */
+.studio-custom-prompt {
+  max-width: 480px;
+  padding: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.studio-prompt-title {
+  font-family: var(--serif);
+  font-size: 1.8rem;
+  color: var(--text);
+  margin: 0;
+}
+
+.studio-prompt-desc {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.studio-custom-input {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.studio-custom-input:focus {
+  border-color: var(--accent);
+}
+
+/* Live Telemetry Row */
+.studio-telemetry-row {
+  display: flex;
+  gap: 8px;
+}
+
+.telemetry-pill {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(var(--surface-rgb, 20, 20, 20), 0.6);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-dim);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* Review Bar Bottom Overlay */
+.aww-studio-review-bar {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  padding: 24px 36px;
+  border-radius: 24px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
+}
+
+.review-metrics {
+  display: flex;
+  gap: 20px;
+}
+
+.metric-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  padding: 10px 20px;
+  border-radius: 12px;
+  min-width: 80px;
+}
+
+.metric-val {
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.metric-lbl {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.review-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
