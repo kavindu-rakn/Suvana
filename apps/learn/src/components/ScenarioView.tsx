@@ -9,17 +9,16 @@ import { pickReferences } from '../storage/references'
 import { addAttempt } from '../learner/attemptLog'
 import { topFingers } from '../scoring/score'
 import { useFeedbackLatency } from '../metrics/useFeedbackLatency'
-import { RUBRIC_BASIS, RUBRIC_LABEL, scoreTurn } from '../scenario/rubric'
-import type { RubricComponent, TurnScore } from '../scenario/rubric'
+import { scoreTurn } from '../scenario/rubric'
+import type { TurnScore } from '../scenario/rubric'
 import type { Scenario, ScenarioTurn } from '../scenario/types'
 import { SCENARIOS } from '../data/scenarios'
 import { glossLabel, translationOf } from '../data/translations'
 import { CameraStage } from './CameraStage'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
-import { STACKED_LAYOUT, useMediaQuery } from './useMediaQuery'
 
-type Stage = 'intro' | 'playing' | 'summary'
+type Stage = 'hub' | 'intro' | 'playing' | 'summary'
 
 interface TurnOutcome {
   turn: ScenarioTurn
@@ -27,62 +26,34 @@ interface TurnOutcome {
   attempt: SignRecording
 }
 
-const RUBRIC_ORDER: RubricComponent[] = ['accuracy', 'appropriateness', 'fluency']
-
-function RubricBars({ score }: { score: TurnScore }) {
-  return (
-    <ul className="rubric-list">
-      {RUBRIC_ORDER.map((key) => {
-        const value = score.rubric[key]
-        return (
-          <li key={key} title={RUBRIC_BASIS[key]}>
-            <span className="rubric-name">{RUBRIC_LABEL[key]}</span>
-            <div className="rubric-bar">
-              <div style={{ width: `${value ?? 0}%` }} className={value === null ? 'na' : ''} />
-            </div>
-            <span className="rubric-value">{value === null ? 'n/a' : value}</span>
-          </li>
-        )
-      })}
-    </ul>
-  )
-}
-
 /**
  * Runs a scripted conversation scenario: each turn asks for one sign, scores it
  * through the existing DTW path, and reports against the proposal's rubric.
- * Turns whose gloss has no reference recording yet are skipped rather than
- * blocking the scenario.
  */
 export function ScenarioView() {
-  const [scenarioId, setScenarioId] = useState(SCENARIOS[0].id)
+  const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id)
   const scenario: Scenario = SCENARIOS.find((s) => s.id === scenarioId) ?? SCENARIOS[0]
 
-  // Metadata drives the intro list and decides which turns are playable.
   const [references, setReferences] = useState<Map<string, RecordingMeta>>(new Map())
   const [localRecs, setLocalRecs] = useState<SignRecording[]>([])
-  // Frames for this scenario's vocabulary, fetched once when it starts. The
-  // whole vocabulary is needed, not just the current turn: the rubric's
-  // appropriateness component scores the attempt against every competing sign.
   const [vocab, setVocab] = useState<Map<string, SignRecording>>(new Map())
   const [loadingVocab, setLoadingVocab] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [stage, setStage] = useState<Stage>('intro')
+  const [stage, setStage] = useState<Stage>('hub')
   const [index, setIndex] = useState(0)
   const [outcomes, setOutcomes] = useState<TurnOutcome[]>([])
   const [current, setCurrent] = useState<TurnScore | null>(null)
+  const [currentAttempt, setCurrentAttempt] = useState<SignRecording | null>(null)
 
   useEffect(() => {
     void (async () => {
-      const [local, index] = await Promise.all([listRecordings(), loadReferenceIndex()])
+      const [local, refIndex] = await Promise.all([listRecordings(), loadReferenceIndex()])
       setLocalRecs(local)
-      setReferences(pickReferences([...local.map(toMeta), ...index]))
+      setReferences(pickReferences([...local.map(toMeta), ...refIndex]))
       setLoading(false)
     })()
   }, [])
 
-  // Only turns we have a reference for can be scored; the rest stay visible as
-  // "reference pending" so the gap is obvious rather than silently dropped.
   const playable = useMemo(
     () => scenario.turns.filter((t) => references.has(t.gloss)),
     [scenario.turns, references],
@@ -93,22 +64,11 @@ export function ScenarioView() {
   const reference = turn ? vocab.get(turn.gloss) : undefined
   const captureMs = reference ? Math.max(reference.durationMs + 1500, 2500) : 3500
 
-  // Appropriateness is judged against this scenario's own vocabulary — the
-  // signs the learner could plausibly have confused this turn with — not the
-  // whole library. See scoreTurn for why.
   const scenarioVocabulary = useMemo(() => [...vocab.values()], [vocab])
 
-  // See PracticeView / useFeedbackLatency: the score commits in its final form
-  // on the measured frame, and only then is the reveal released.
   const [revealArmed, setRevealArmed] = useState(false)
   const latency = useFeedbackLatency('scenario', () => setRevealArmed(true))
 
-  // See PracticeView: the reference replay moves into the camera stage when the
-  // layout stacks, so a phone shows the sign and the signer together.
-  const stacked = useMediaQuery(STACKED_LAYOUT)
-
-  // A stage change swaps the whole panel, which drops keyboard focus to the
-  // document root. Move it to the new view's heading instead.
   const stageHeadingRef = useRef<HTMLHeadingElement>(null)
   useEffect(() => {
     stageHeadingRef.current?.focus({ preventScroll: true })
@@ -133,11 +93,9 @@ export function ScenarioView() {
       const scoreEndAt = performance.now()
       setRevealArmed(false)
       setCurrent(score)
+      setCurrentAttempt(attempt)
       setOutcomes((prev) => [...prev.filter((o) => o.turn.id !== turn.id), { turn, score, attempt }])
 
-      // Worth measuring separately from Practice: a scenario turn also runs the
-      // rubric's appropriateness pass, one extra DTW alignment per competing
-      // sign in the scenario vocabulary.
       if (take.lastFrameAt !== null) {
         latency.arm(
           { captureAt: take.lastFrameAt, scoreStartAt, scoreEndAt },
@@ -149,12 +107,9 @@ export function ScenarioView() {
           },
         )
       } else {
-        // Unmeasurable take — release the reveal anyway.
         requestAnimationFrame(() => setRevealArmed(true))
       }
 
-      // Log the DTW accuracy — not the rubric total — so "mastery" means the
-      // same thing whether a sign was practised here or in the Practice tab.
       addAttempt({
         id: attempt.id,
         gloss: turn.gloss,
@@ -169,8 +124,6 @@ export function ScenarioView() {
 
   const capture = useSignCapture(handleCaptured)
 
-  // Spoken counterpart to the capture badge and the score ring, neither of
-  // which exists for a screen reader. See PracticeView for the same pattern.
   const liveMessage = useMemo(() => {
     if (capture.phase === 'countdown') return 'Get ready. Recording starts in 3 seconds.'
     if (capture.phase === 'recording') return 'Recording. Sign now.'
@@ -183,16 +136,12 @@ export function ScenarioView() {
     }
     return ''
   }, [capture.phase, current, turn])
-  const stopTracking = capture.tracking.stop
 
-  // The camera stage only exists while playing, so leaving a turn would strand
-  // a live MediaStream (camera light on) and a frame loop that cannot restart
-  // when the video element remounts. Release it whenever we leave the turn view.
+  const stopTracking = capture.tracking.stop
   useEffect(() => {
     if (stage !== 'playing') stopTracking()
   }, [stage, stopTracking])
 
-  // Same as Practice: a turn's score is on screen, nothing is consuming frames.
   const { pause: pauseTracking, resume: resumeTracking } = capture.tracking
   useEffect(() => {
     if (current) pauseTracking()
@@ -203,9 +152,8 @@ export function ScenarioView() {
     setIndex(0)
     setOutcomes([])
     setCurrent(null)
+    setCurrentAttempt(null)
     setStage('playing')
-    // Fetch the frames for every playable turn up front. It is a handful of
-    // signs, and doing it here means no turn stalls mid-conversation.
     if (vocab.size > 0) return
     setLoadingVocab(true)
     const metas = playable
@@ -226,6 +174,7 @@ export function ScenarioView() {
 
   function nextTurn() {
     setCurrent(null)
+    setCurrentAttempt(null)
     setRevealArmed(false)
     if (index + 1 >= playable.length) {
       setStage('summary')
@@ -234,361 +183,468 @@ export function ScenarioView() {
     }
   }
 
-  // ---- intro ----------------------------------------------------------------
-  if (stage === 'intro') {
+  // ==========================================================================
+  // STAGE: HUB
+  // ==========================================================================
+  if (stage === 'hub') {
     return (
-      <section className="library-card">
-        <div className="library-head">
-          <h2 ref={stageHeadingRef} tabIndex={-1}>
-            {scenario.title}
-          </h2>
-          <span className="library-count">{scenario.subtitle}</span>
+      <section className="aww-scenario-hub">
+        <div className="aww-hub-header">
+          <h1 className="aww-hub-title">Immersive Scenarios</h1>
+          <p className="aww-hub-subtitle">Practice your sign language in real-world conversational environments.</p>
         </div>
 
-        {SCENARIOS.length > 1 && (
-          <div className="gloss-chips">
-            {SCENARIOS.map((s) => {
-              const covered = s.turns.filter((t) => references.has(t.gloss)).length
-              return (
-                <button
-                  key={s.id}
-                  className={s.id === scenario.id ? 'chip active' : 'chip'}
-                  onClick={() => {
-                    // Results belong to the scenario they came from — and so
-                    // does the loaded vocabulary, which sets the bar that
-                    // appropriateness is judged against.
-                    setScenarioId(s.id)
-                    setIndex(0)
-                    setOutcomes([])
-                    setCurrent(null)
-                    setVocab(new Map())
-                  }}
-                  title={`${covered} of ${s.turns.length} turns have a reference`}
-                >
-                  {s.title} {covered}/{s.turns.length}
-                </button>
-              )
-            })}
-          </div>
-        )}
-
-        <p className="hint-text">{scenario.description}</p>
-
-        {loading ? (
-          <p className="empty-state">Loading references…</p>
-        ) : (
-          <>
-            <ol className="turn-preview">
-              {scenario.turns.map((t) => (
-                <li key={t.id} className={references.has(t.gloss) ? '' : 'pending'}>
-                  <span className="rec-gloss" title={translationOf(t.gloss)}>
-                    {glossLabel(t.gloss)}
-                  </span>
-                  <span className="turn-prompt">{t.prompt}</span>
-                  {!references.has(t.gloss) && <em className="badge">reference pending</em>}
-                </li>
-              ))}
-            </ol>
-
-            <p className="hint-text">
-              {playable.length} of {scenario.turns.length} turns have a reference recording.
-              {pending.length > 0 && (
-                <>
-                  {' '}
-                  Missing: <strong>{pending.map((t) => t.gloss).join(', ')}</strong> — record them
-                  in the Record tab and they join the scenario automatically.
-                </>
-              )}
-            </p>
-
-            <div className="row-buttons">
+        <div className="aww-scenario-grid">
+          {SCENARIOS.map((s) => {
+            const covered = s.turns.filter((t) => references.has(t.gloss)).length
+            const isReady = covered === s.turns.length
+            return (
               <button
-                className="btn"
-                onClick={() => void startScenario()}
-                disabled={playable.length === 0}
+                key={s.id}
+                className={`aww-scenario-card theme-${s.id}`}
+                onClick={() => {
+                  setScenarioId(s.id)
+                  setIndex(0)
+                  setOutcomes([])
+                  setCurrent(null)
+                  setCurrentAttempt(null)
+                  setVocab(new Map())
+                  setStage('intro')
+                }}
               >
-                {playable.length === 0 ? 'No references yet' : 'Start scenario'}
+                <div className="card-glass-layer">
+                  <div className="card-top">
+                    <span className="card-status">
+                      {isReady ? 'Fully Playable' : `${covered}/${s.turns.length} Signs Ready`}
+                    </span>
+                    <span className="card-status">{s.turns.length} Turns</span>
+                  </div>
+                  <div className="card-bottom">
+                    <h3>{s.title}</h3>
+                    <p>{s.subtitle}</p>
+                    <div className="play-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                        <path d="M5 3l14 9-14 9V3z" fill="currentColor" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
               </button>
-            </div>
-          </>
-        )}
+            )
+          })}
 
-        <p className="draft-note">{scenario._draftNote}</p>
+          <div className="aww-scenario-card theme-hospital disabled">
+            <div className="card-glass-layer">
+              <div className="card-top">
+                <span className="card-status">Coming Soon</span>
+                <span className="card-status">Healthcare</span>
+              </div>
+              <div className="card-bottom">
+                <h3>Hospital Visit</h3>
+                <p>Communicating symptoms, medication, and understanding doctor instructions.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="aww-scenario-card theme-bus disabled">
+            <div className="card-glass-layer">
+              <div className="card-top">
+                <span className="card-status">Coming Soon</span>
+                <span className="card-status">Transit</span>
+              </div>
+              <div className="card-bottom">
+                <h3>Public Transit</h3>
+                <p>Buying bus and train tickets, asking for route directions and stops.</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     )
   }
 
-  // ---- summary --------------------------------------------------------------
+  // ==========================================================================
+  // STAGE: MISSION BRIEFING (INTRO)
+  // ==========================================================================
+  if (stage === 'intro') {
+    const isReady = playable.length === scenario.turns.length
+    return (
+      <section className="aww-mission-briefing">
+        {/* Full-width styled Hero Card */}
+        <div className={`briefing-hero-card theme-${scenario.id}`}>
+          <div className="briefing-hero-overlay">
+            <div className="briefing-nav-row">
+              <button className="aww-back-btn" onClick={() => setStage('hub')}>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Back to Hub
+              </button>
+              <div className="briefing-pills">
+                <span className="briefing-pill">MISSION BRIEFING</span>
+                <span className="briefing-pill">{scenario.turns.length} TURNS</span>
+                <span className="briefing-pill">{isReady ? 'READY TO PLAY' : `${playable.length}/${scenario.turns.length} READY`}</span>
+              </div>
+            </div>
+
+            <div className="briefing-hero-body">
+              <h1 ref={stageHeadingRef} tabIndex={-1}>{scenario.title}</h1>
+              <p className="briefing-hero-sub">{scenario.subtitle}</p>
+              <p className="briefing-hero-desc">{scenario.description}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Script Flow & Action Section */}
+        <div className="briefing-main-grid">
+          <div className="briefing-script-container">
+            <div className="briefing-section-header">
+              <h2>Conversation Sequence</h2>
+              <span className="section-meta">{playable.length} of {scenario.turns.length} Signs Available</span>
+            </div>
+
+            {loading ? (
+              <p className="empty-state">Loading signs and references...</p>
+            ) : (
+              <ol className="briefing-flow-list">
+                {scenario.turns.map((t, i) => {
+                  const hasRef = references.has(t.gloss)
+                  return (
+                    <li key={t.id} className={`briefing-flow-item ${hasRef ? 'ready' : 'pending'}`}>
+                      <div className="flow-num-col">
+                        <span className="flow-step">Turn {i + 1}</span>
+                        <span className={`flow-badge ${hasRef ? 'badge-ready' : 'badge-pending'}`}>
+                          {hasRef ? 'Ready' : 'Pending'}
+                        </span>
+                      </div>
+
+                      <div className="flow-content-col">
+                        <p className="flow-partner-line">"{t.partnerLine}"</p>
+                        <div className="flow-sign-row">
+                          <span className="flow-sign-tag">Sign to produce:</span>
+                          <strong className="flow-sign-gloss" title={translationOf(t.gloss)}>
+                            {glossLabel(t.gloss)}
+                          </strong>
+                          {translationOf(t.gloss) && (
+                            <span className="flow-sign-trans">({translationOf(t.gloss)})</span>
+                          )}
+                        </div>
+                        <p className="flow-prompt-text">{t.prompt}</p>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ol>
+            )}
+          </div>
+
+          {/* Action Sidebar / Card */}
+          <aside className="briefing-action-card">
+            <h3>Ready to begin?</h3>
+            <p className="action-card-text">
+              Step into the roleplay. You'll sign in response to the conversational prompts.
+            </p>
+
+            <div className="action-card-stats">
+              <div className="card-stat-box">
+                <span className="stat-number">{playable.length}</span>
+                <span className="stat-label">Ready</span>
+              </div>
+              <div className="card-stat-box">
+                <span className="stat-number" style={{ color: pending.length > 0 ? 'var(--danger)' : 'var(--text-dim)' }}>
+                  {pending.length}
+                </span>
+                <span className="stat-label">Missing</span>
+              </div>
+            </div>
+
+            <button
+              className="btn massive"
+              onClick={() => void startScenario()}
+              disabled={playable.length === 0}
+              style={{ width: '100%', justifyContent: 'center' }}
+            >
+              {playable.length === 0 ? 'Missing Reference Signs' : 'Start Scenario'}
+            </button>
+
+            {pending.length > 0 && (
+              <p className="action-missing-note">
+                Tip: Record the missing signs in the Record tab to unlock the full sequence.
+              </p>
+            )}
+          </aside>
+        </div>
+      </section>
+    )
+  }
+
+  // ==========================================================================
+  // STAGE: SUMMARY
+  // ==========================================================================
   if (stage === 'summary') {
     const total =
       outcomes.length > 0
         ? Math.round(outcomes.reduce((a, o) => a + o.score.rubric.total, 0) / outcomes.length)
         : 0
     const weakest = [...outcomes].sort((a, b) => a.score.rubric.total - b.score.rubric.total)[0]
-    const anyUnmeasured = outcomes.some((o) => o.score.rubric.unmeasured.length > 0)
 
     return (
-      <section className="library-card">
-        <div className="library-head">
-          <h2 ref={stageHeadingRef} tabIndex={-1}>
-            Scenario complete
-          </h2>
-          <span className="library-count">{scenario.title}</span>
-        </div>
-
-        <div className="result-top">
-          <ScoreBadge score={total} />
-          <div>
-            <p style={{ margin: 0 }}>
-              You completed {outcomes.length} of {scenario.turns.length} turns.
-            </p>
-            {weakest && (
-              <p style={{ margin: '6px 0 0' }}>
-                Weakest sign: <strong>{weakest.turn.gloss}</strong> ({weakest.score.rubric.total})
-              </p>
-            )}
+      <section className="aww-scenario-hub">
+        <div className="briefing-hero-card theme-restaurant" style={{ marginBottom: '32px' }}>
+          <div className="briefing-hero-overlay">
+            <div className="briefing-nav-row">
+              <button className="aww-back-btn" onClick={() => setStage('hub')}>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Back to Hub
+              </button>
+              <span className="briefing-pill">SCENARIO COMPLETE</span>
+            </div>
+            <div className="briefing-hero-body">
+              <h1 ref={stageHeadingRef} tabIndex={-1}>{scenario.title}</h1>
+              <p className="briefing-hero-sub">You completed {outcomes.length} of {scenario.turns.length} conversational turns.</p>
+            </div>
           </div>
         </div>
 
-        <ul className="mastery-list">
-          {outcomes.map((o) => (
-            <li className="mastery-row" key={o.turn.id}>
-              <span className="rec-gloss">{o.turn.gloss}</span>
-              <div className="mastery-bar">
-                <div style={{ width: `${o.score.rubric.total}%` }} />
-              </div>
-              <span className="mastery-pct">{o.score.rubric.total}</span>
-              <span className="mastery-meta">
-                {o.score.bestMatchGloss !== o.turn.gloss
-                  ? `closest match: ${o.score.bestMatchGloss}`
-                  : 'correct sign'}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <div className="briefing-main-grid">
+          <div className="briefing-script-container">
+            <div className="briefing-section-header">
+              <h2>Performance Breakdown</h2>
+            </div>
+            <ul className="mastery-list" style={{ marginTop: '16px' }}>
+              {outcomes.map((o) => (
+                <li className="mastery-row" key={o.turn.id}>
+                  <span className="rec-gloss">{o.turn.gloss}</span>
+                  <div className="mastery-bar">
+                    <div style={{ width: `${o.score.rubric.total}%` }} />
+                  </div>
+                  <span className="mastery-pct">{o.score.rubric.total}</span>
+                  <span className="mastery-meta">
+                    {o.score.bestMatchGloss !== o.turn.gloss
+                      ? `closest match: ${o.score.bestMatchGloss}`
+                      : 'correct sign'}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        <div className="rubric-note">
-          <p className="rubric-note-head">
-            <strong>How this is scored</strong>
-          </p>
-          <dl className="rubric-defs">
-            <dt>Accuracy — 50%</dt>
-            <dd>
-              How closely your hand movement matches the reference recording of this sign,
-              compared frame by frame with time warping.
-            </dd>
-            <dt>Appropriateness — 30%</dt>
-            <dd>
-              Whether you produced the sign that was asked for rather than a different one. Your
-              attempt is also scored against every other sign in the library; if another sign
-              matches better, this drops. It can only spot confusion with signs we hold
-              references for.
-            </dd>
-            <dt>Fluency &amp; timing — 20%</dt>
-            <dd>
-              How close your pace was to the reference. Judged separately because the accuracy
-              measure deliberately ignores speed, so signing slowly is not penalised twice.
-            </dd>
-          </dl>
-          <p className="rubric-note-foot">
-            <strong>Not scored: non-manual markers.</strong> The proposal allots 10% to facial
-            expression and head/body movement. This build tracks hand landmarks only, so that
-            signal is not captured and no score for it would be honest. Its 10% is reallocated
-            to accuracy — hence 50 / 30 / 20 rather than the proposal's 40 / 30 / 20 / 10.
-            Scoring it needs face and pose tracking, and is future work.
-            {anyUnmeasured && (
-              <>
-                {' '}
-                Components shown as &ldquo;n/a&rdquo; had no data for that turn; their weight was
-                shared across the rest rather than counted as zero.
-              </>
-            )}
-          </p>
-        </div>
+          <aside className="briefing-action-card">
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
+              <ScoreBadge score={total} />
+              {weakest && (
+                <p style={{ marginTop: '16px', textAlign: 'center', fontSize: '0.95rem' }}>
+                  Weakest sign: <strong>{weakest.turn.gloss}</strong> ({weakest.score.rubric.total}/100)
+                </p>
+              )}
+            </div>
 
-        <div className="row-buttons">
-          <button className="btn" onClick={() => void startScenario()}>
-            Run it again
-          </button>
-          <button className="btn btn-ghost" onClick={() => setStage('intro')}>
-            Back to overview
-          </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button className="btn massive" onClick={() => void startScenario()} style={{ width: '100%', justifyContent: 'center' }}>
+                Run Again
+              </button>
+              <button
+                className="btn ghost massive"
+                onClick={() => setStage('hub')}
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                Back to Hub
+              </button>
+            </div>
+          </aside>
         </div>
       </section>
     )
   }
 
-  // ---- playing --------------------------------------------------------------
+  // ==========================================================================
+  // STAGE: PLAYING (CINEMATIC 50/50 SPLIT-SCREEN)
+  // ==========================================================================
   if (loadingVocab) {
     return (
-      <section className="library-card">
-        <p className="empty-state">Loading the signs for this conversation…</p>
-      </section>
+      <div className="aww-practice-env">
+        <div className="aww-pane-content">
+          <p className="hint-text">Loading conversational signs...</p>
+        </div>
+      </div>
     )
   }
 
   if (!turn || !reference) {
     return (
-      <section className="library-card">
-        <p className="empty-state">This turn has no reference recording.</p>
-        <div className="row-buttons">
-          <button className="btn" onClick={() => setStage('intro')}>
-            Back to overview
+      <div className="aww-practice-env">
+        <div className="aww-pane-content">
+          <p className="hint-text">This turn has no reference recording.</p>
+          <button className="btn" onClick={() => setStage('intro')} style={{ marginTop: '16px' }}>
+            Back to Briefing
           </button>
         </div>
-      </section>
+      </div>
     )
   }
 
   return (
-    <div className="record-layout" data-phase={capture.phase}>
-      <section className="camera-card">
-        <CameraStage
-          videoRef={capture.tracking.videoRef}
-          canvasRef={capture.tracking.canvasRef}
-          status={capture.tracking.status}
-          error={capture.tracking.error}
-          onStart={() => void capture.tracking.start()}
-          idleHint="Start the camera to take part in the conversation."
-          inferring={capture.tracking.inferring}
-          pip={
-            stacked && !current ? (
+    <div className="aww-practice-env aww-scenario-env" data-phase={capture.phase}>
+      <span className="sr-only" aria-live="polite">{liveMessage}</span>
+
+      {/* Top Floating Leave Button */}
+      <button className="aww-leave-btn" onClick={() => setStage('hub')}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Leave Scenario
+      </button>
+
+      {/* Top Floating Cinematic Dialogue Subtitle Bar */}
+      {!current && (
+        <div className="aww-scenario-dialogue-bar">
+          <div className="dialogue-meta-row">
+            <span className="dialogue-turn-tag">Turn {index + 1} of {playable.length}</span>
+            <span className="dialogue-scenario-tag">{scenario.title}</span>
+          </div>
+          {turn.partnerLine && (
+            <p className="dialogue-partner-line">"{turn.partnerLine}"</p>
+          )}
+          <p className="dialogue-prompt-line">
+            Sign: <strong>{glossLabel(turn.gloss)}</strong> &mdash; {turn.prompt}
+          </p>
+          {turn.hint && (
+            <span className="dialogue-hint-pill">💡 {turn.hint}</span>
+          )}
+        </div>
+      )}
+
+      {/* The 50/50 Split Screen */}
+      <div className="aww-split-screen">
+        {/* Left Pane: Target Reference */}
+        <div className="aww-pane aww-pane-left">
+          <div className="aww-pane-header">
+            <p className="aww-pane-label">Reference</p>
+            <h2 className="aww-pane-title">{glossLabel(turn.gloss)}</h2>
+          </div>
+
+          <div className="aww-pane-content">
+            <SkeletonPlayer
+              frames={reference.frames}
+              videoWidth={reference.videoWidth}
+              videoHeight={reference.videoHeight}
+            />
+          </div>
+        </div>
+
+        {/* Right Pane: User Camera / Replay */}
+        <div className="aww-pane aww-pane-right">
+          <div className="aww-pane-header">
+            <p className="aww-pane-label">You</p>
+          </div>
+
+          {/* Live Camera */}
+          <div className={`aww-camera-container ${current ? 'hidden' : ''}`}>
+            <CameraStage
+              videoRef={capture.tracking.videoRef}
+              canvasRef={capture.tracking.canvasRef}
+              status={capture.tracking.status}
+              error={capture.tracking.error}
+              onStart={() => void capture.tracking.start()}
+              idleHint="Start camera to join the conversation"
+              inferring={capture.tracking.inferring}
+            />
+          </div>
+
+          {/* Replay Overlay on Scored Turn */}
+          {current && currentAttempt && (
+            <div className="aww-replay-container">
               <SkeletonPlayer
-                frames={reference.frames}
-                videoWidth={reference.videoWidth}
-                videoHeight={reference.videoHeight}
+                frames={currentAttempt.frames}
+                videoWidth={currentAttempt.videoWidth || reference.videoWidth}
+                videoHeight={currentAttempt.videoHeight || reference.videoHeight}
               />
-            ) : undefined
-          }
-        >
-          {capture.phase === 'countdown' && (
-            <div className="countdown-overlay">
-              <span key={capture.count}>{capture.count}</span>
             </div>
           )}
-          {capture.phase === 'recording' && (
-            <>
+        </div>
+      </div>
+
+      {/* Bottom HUD (Heads-Up Display) */}
+      {!current && (
+        <div className="aww-hud">
+          {capture.tracking.status !== 'running' ? (
+            <div className="aww-hud-idle">
+              <button className="btn massive ghost" onClick={() => void capture.tracking.start()}>
+                Turn on Camera
+              </button>
+              <p>Tracking runs entirely in your browser.</p>
+            </div>
+          ) : capture.phase === 'countdown' ? (
+            <div className="aww-hud-countdown">
+              <span>{capture.count}</span>
+              <button className="btn ghost massive" onClick={capture.cancel}>Cancel</button>
+            </div>
+          ) : capture.phase === 'recording' ? (
+            <div className="aww-hud-recording">
               <div className="rec-badge">● REC {(capture.elapsedMs / 1000).toFixed(1)} s</div>
-              <div className="rec-progress">
-                <div style={{ transform: `scaleX(${Math.min(capture.elapsedMs / captureMs, 1)})` }} />
-              </div>
-            </>
-          )}
-        </CameraStage>
-        <div className="camera-bar">
-          <span className="camera-stats">
-            Turn {index + 1} of {playable.length}
-          </span>
-          {capture.tracking.stats && (
-            <span className="camera-stats">
-              {capture.tracking.stats.fps.toFixed(0)} fps ·{' '}
-              {capture.tracking.stats.inferenceMs.toFixed(1)} ms
-            </span>
-          )}
-        </div>
-      </section>
-
-      <aside className="record-panel" data-reveal={revealArmed ? 'on' : undefined}>
-        {/* Decorative: "Turn N of M" below states the same thing in text. */}
-        <div className="turn-progress" aria-hidden="true">
-          {playable.map((t, i) => (
-            <span key={t.id} className={i < index ? 'done' : i === index ? 'active' : ''} />
-          ))}
-        </div>
-
-        <p className="sr-only" role="status">
-          {liveMessage}
-        </p>
-
-        <p className="partner-line">{turn.partnerLine}</p>
-        <h2 ref={stageHeadingRef} tabIndex={-1}>
-          Sign: {glossLabel(turn.gloss)}
-        </h2>
-        <p className="hint-text">{turn.prompt}</p>
-
-        {current ? (
-          <>
-            <div className="result-top">
-              <ScoreBadge score={current.rubric.total} />
-              <ul className="hint-list">
-                {current.bestMatchGloss !== turn.gloss && (
-                  <li>
-                    That looked closer to <strong>{current.bestMatchGloss}</strong> than to{' '}
-                    {turn.gloss}.
-                  </li>
-                )}
-                {current.detail.hints.map((h, i) => (
-                  <li key={i}>{h}</li>
-                ))}
-              </ul>
-            </div>
-            <RubricBars score={current} />
-            <div className="row-buttons">
-              <button className="btn" onClick={nextTurn}>
-                {index + 1 >= playable.length ? 'See summary' : 'Next turn'}
-              </button>
               <button
-                className="btn btn-ghost"
-                onClick={() => {
-                  setCurrent(null)
-                  setRevealArmed(false)
-                  capture.begin(captureMs)
-                }}
-                disabled={capture.tracking.status !== 'running'}
+                className="btn massive"
+                style={{ background: 'var(--p-coral-500)' }}
+                onClick={capture.finish}
               >
-                Try again
+                Stop & Score
               </button>
             </div>
-          </>
-        ) : (
-          <>
-            <div className="reference-preview">
-              <p className="compare-label">Reference</p>
-              {reference.provisional && (
-                <p className="provisional-note">
-                  Provisional reference — a team stand-in, not verified SSL.
-                </p>
-              )}
-              {/* Stacked, the player is in the camera stage; the label and the
-                  provisional note stay here at every width. */}
-              {!stacked && (
-                <SkeletonPlayer
-                  frames={reference.frames}
-                  videoWidth={reference.videoWidth}
-                  videoHeight={reference.videoHeight}
-                />
-              )}
-            </div>
-            {turn.hint && <p className="hint-text">💡 {turn.hint}</p>}
-            <div className="panel-actions">
-              {capture.phase === 'countdown' ? (
-                <button className="btn btn-ghost" onClick={capture.cancel}>
-                  Cancel
-                </button>
-              ) : capture.phase === 'recording' ? (
-                <button className="btn" onClick={capture.finish}>
-                  Stop &amp; score
-                </button>
-              ) : (
-                <button
-                  className="btn"
-                  onClick={() => capture.begin(captureMs)}
-                  disabled={capture.tracking.status !== 'running'}
-                  title={
-                    capture.tracking.status !== 'running' ? 'Start the camera first' : undefined
-                  }
-                >
-                  Sign it
-                </button>
-              )}
-            </div>
-          </>
-        )}
+          ) : (
+            <button
+              className="btn massive"
+              onClick={() => capture.begin(captureMs)}
+            >
+              Sign It
+            </button>
+          )}
+        </div>
+      )}
 
-        <button className="btn btn-ghost" onClick={() => setStage('intro')}>
-          Leave scenario
-        </button>
-      </aside>
+      {/* Central Score & Grading Overlay */}
+      {current && (
+        <div className="aww-result-overlay" data-reveal={revealArmed ? 'on' : undefined}>
+          <div className="aww-result-center">
+            <ScoreBadge score={current.rubric.total} />
+
+            <div className="aww-result-feedback">
+              {current.rubric.total === 100 ? (
+                <p className="perfect-hint">Flawless match! Perfect execution.</p>
+              ) : (
+                <ul className="hint-list" style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {current.bestMatchGloss !== turn.gloss && (
+                    <li>
+                      That looked closer to <strong>{current.bestMatchGloss}</strong> than to {turn.gloss}.
+                    </li>
+                  )}
+                  {current.detail.hints.map((h, i) => (
+                    <li key={i}>{h}</li>
+                  ))}
+                </ul>
+              )}
+
+              <div className="aww-result-actions" style={{ marginTop: '24px', display: 'flex', gap: '16px', justifyContent: 'center' }}>
+                <button
+                  className="btn massive"
+                  onClick={() => {
+                    setCurrent(null)
+                    setCurrentAttempt(null)
+                    setRevealArmed(false)
+                    capture.begin(captureMs)
+                  }}
+                >
+                  Try again
+                </button>
+                <button className="btn ghost massive" onClick={nextTurn}>
+                  {index + 1 >= playable.length ? 'See summary' : 'Next turn →'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
