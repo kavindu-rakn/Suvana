@@ -25,9 +25,19 @@ Fresh-history monorepo bootstrapped **24 Aug 2026** from working-tree snapshots.
 | Path | Source | Commit |
 |---|---|---|
 | `apps/shell`, `apps/learn`, `tools/reference-converter` | `ChamaraIT22076816/R26-SE-019` → `learn-ssl-module/` | `7f6fc4f` |
-| `services/recognition` | `ChamaraIT22076816/R26-SE-019` → `sinhala_sign_language_recognition/` | `7f6fc4f` |
+| `services/recognition` | `ChamaraIT22076816/R26-SE-019` → `sinhala_sign_language_recognition/` | `8a2ff2f` (partial re-sync, 26 Aug 2026 — see below) |
 | `apps/alerts`, `services/sound-awareness` | `ChamaraIT22076816/R26-SE-019` → `soundguard-karindra/` | `7f6fc4f` |
 | `apps/communicate` | [`lithiraMalkith/Sign-Detector`](https://github.com/lithiraMalkith/Sign-Detector) | `6fdfd04` ("Update #2", 16 Aug 2026) |
+
+### Re-sync log
+
+**26 Aug 2026 — `services/recognition`, `7f6fc4f` → `8a2ff2f` (selective).**
+
+Taken: `tests/test_keypoint_augmentation.py` and `tests/test_sinhala_labels.py` (35 tests, numpy + a mocked `requests`, no TensorFlow or MediaPipe needed — all 35 verified passing against this copy), the pytest line in the component README, and `model_accuracy_graph.png`.
+
+**Not taken, and not an oversight:** the same range added `webapp/static/learnssl.css`, `webapp/static/signspeak.css` and matching `index.html` sections. That is Lahiru's own integration approach in the team repo — embedding the other modules as panels inside the recognition page. Suvana integrates at the domain level instead (the shell owns routing and cross-module navigation), so importing those would duplicate the shell's job, re-introduce the sub-brand names "SignSpeak" and "Learn SSL" into Suvana UI copy, and collide with this copy's rebrand of the same file. Future re-syncs of this component should keep skipping them and take backend, model and test changes only.
+
+`data/processed/labels.npy` is **still absent upstream**, so the label-map gap in `services/recognition/DEPLOY-SUVANA.md` remains open.
 
 Deliberately excluded from every snapshot: git histories, `node_modules`, Python venvs, build outputs, datasets, and ~293 MB of Mixamo test FBX files (`lib/models` in Sign-Detector — nothing in code references them). The team repo's `SSL-Transformer/` folder was a stale placeholder and was not copied; the PP1 Python demo stays in the team repo as historical reference.
 
