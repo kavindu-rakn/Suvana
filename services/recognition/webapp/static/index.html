@@ -3260,11 +3260,25 @@
       .header-sep { display: none; }
       .header-actions { gap: 9px; }
     }
+
+    /* The module footer. Deliberately one line: the Suvana shell owns the
+       product footer, so a module only states what this page does with your
+       camera. It replaced a marketing footer whose Pricing/API/Blog/Terms
+       links all pointed at "#". */
+    .module-footer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px var(--gutter, 24px) 48px;
+      border-top: 1px solid var(--panel-border);
+      color: var(--text-faint);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      text-align: center;
+    }
+    .module-footer p { margin: 0; }
   </style>
   <!-- සුවණ AI assistant (additive; namespaced under .svn-ai*) -->
   <link rel="stylesheet" href="/assistant.css" />
-  <!-- SoundGuard mobile companion (additive; namespaced under .sg-*) -->
-  <link rel="stylesheet" href="/soundguard.css" />
 </head>
 <body>
   <!-- background layers -->
@@ -3293,278 +3307,21 @@
       </div>
     </div>
 
-    <!-- section navigation -->
-    <nav class="header-nav" aria-label="Page sections">
-      <a href="#overview">Overview</a>
-      <a href="#features">Features</a>
-      <a href="#soundguard">SoundGuard</a>
-      <a href="#how">How it works</a>
-      <a href="#feedback">Feedback</a>
-    </nav>
+    
 
     <div class="header-actions">
-      <button class="sg-header-btn" type="button" data-action="soundguard-qr" title="Connect SoundGuard Mobile App (Expo QR)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-        <span class="sg-pulse-dot"></span>
-        <span class="sg-btn-text">SoundGuard QR</span>
-      </button>
       <span class="version-badge">v1.0 &middot; Local</span>
       <div class="status-pill" id="connectionStatus">
         <span class="dot" id="connectionDot"></span>
         <span id="connectionLabel">Idle</span>
       </div>
       <span class="header-sep" aria-hidden="true"></span>
-      <a class="header-cta" href="#tool">Launch<span>&nbsp;Translator</span></a>
       <button class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H4a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 5.6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H10a1.65 1.65 0 0 0 1-1.51V2a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
       </button>
     </div>
     <span class="header-progress" aria-hidden="true"><i></i></span>
   </header>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-content">
-      <span class="hero-eyebrow">AI-Powered &middot; On-Device &middot; Real-Time</span>
-      <h1>Sign naturally. Watch it become <span class="gradient-text">speech</span>.</h1>
-      <p>It has been proven in studies that learning sign language keeps you sharp as you age and increases your thinking power. Learning sign language also helps you communicate with over <strong>72 million</strong> speakers worldwide. So test out our tool, learn and practice sign language, and have fun.</p>
-      <div class="hero-actions">
-        <a href="#tool" class="btn btn-primary">Get Started</a>
-      </div>
-    </div>
-    <div class="hero-visual" aria-hidden="true">
-      <span class="ping-ring r1"></span>
-      <span class="ping-ring r2"></span>
-      <span class="ping-ring r3"></span>
-      <div class="hero-medallion">
-        <svg width="72" height="72" viewBox="0 0 24 24" fill="none"><path d="M8 12.5V5.5a1.5 1.5 0 0 1 3 0v5M11 10.5v-7a1.5 1.5 0 0 1 3 0v7M14 10.8V5a1.5 1.5 0 0 1 3 0v9M17 11v-2a1.5 1.5 0 0 1 3 0v6a7 7 0 0 1-7 7h-1.6a6 6 0 0 1-5-2.7L3.6 14.8a1.6 1.6 0 0 1 2.5-2l1.9 2.3" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <!-- Premium Floating Chips -->
-      <span class="floating-chip chip-a">ආයුබෝවන්</span>
-      <!-- <span class="floating-chip chip-b">Hello</span> -->
-    </div>
-  </section>
-
-  <!-- WHAT IS SIGN LANGUAGE WITH IMAGE -->
-  <section class="landing-section what-is-section" id="overview">
-    <div class="what-is-wrapper">
-      <!-- Image Section -->
-      <div class="what-is-image">
-        <img src="/Sign.png" alt="Sign Language Illustration" />
-      </div>
-      <!-- Content Section -->
-      <div class="what-is-content">
-        <span class="eyebrow">Getting started</span>
-        <h2>What is Sign Language</h2>
-        <p>Sign Language is a visual language using hand gestures, facial expressions, and body movements to communicate. It is recognized as an official language in many countries and is primarily used by people who are deaf or hard of hearing.</p>
-      </div>
-    </div>
-    <!-- Steps Row -->
-    <div class="steps-row">
-      <div class="card step">
-        <div class="icon-medallion-sm">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
-        </div>
-        <h3>Learn</h3>
-        <p>Start learning this interesting sign language by learning basic signs for alphabets and common words from our Supported Signs panel.</p>
-      </div>
-      <div class="card step">
-        <div class="icon-medallion-sm">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="1" fill="#fff"/></svg>
-        </div>
-        <h3>Practice</h3>
-        <p>Head to the detection tool below and practice each sign until the model detects and recognizes it completely.</p>
-      </div>
-      <div class="card step">
-        <div class="icon-medallion-sm">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 9.5 17 19 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <h3>Test</h3>
-        <p>Test yourself by thinking of a sign, performing it, and letting the model understand it &mdash; then try again without the guide.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURES -->
-  <section class="landing-section features-section" id="features">
-    <div class="features-heading">
-      <span class="eyebrow">Explore the features</span>
-      <h2>Revolutionizing Sign Language Communication with Cutting-Edge Technology</h2>
-    </div>
-    <div class="features-list">
-      <div class="feature-item">
-        <div class="feature-item-title">
-          <h3>Real-Time Recognition</h3>
-          <div class="feature-divider"></div>
-        </div>
-        <p>Our advanced machine learning algorithms enable real-time recognition of sign language gestures, making communication faster and more efficient.</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-item-title">
-          <h3>Easy-to-Use Interface</h3>
-          <div class="feature-divider"></div>
-        </div>
-        <p>Our intuitive user interface is designed to be easy to use for people of all ages and skill levels, making it accessible to everyone.</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-item-title">
-          <h3>Adaptive Learning</h3>
-          <div class="feature-divider"></div>
-        </div>
-        <p>Our system uses adaptive learning to improve recognition accuracy over time, allowing for continuous improvement and increased efficiency.</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-item-title">
-          <h3>High Accuracy</h3>
-          <div class="feature-divider"></div>
-        </div>
-        <p>With a high accuracy rate, our system ensures that sign language communication is not only faster, but also more accurate.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SOUNDGUARD COMPONENT SHOWCASE -->
-  <section class="landing-section soundguard-section" id="soundguard">
-    <div class="sg-showcase-card">
-      <span class="sg-card-glow" aria-hidden="true"></span>
-      <div class="sg-header-block">
-        <div class="sg-header-text">
-          <span class="sg-eyebrow">Companion Mobile Ecosystem</span>
-          <h2>SoundGuard: <span class="sg-accent-text">Sound Awareness &amp; Emergency SOS</span></h2>
-          <p>An intelligent on-device mobile companion for Android and iOS designed to keep Deaf and hard-of-hearing individuals safe by detecting critical ambient sounds in real time and transmitting instant SOS emergency alerts.</p>
-        </div>
-        <div class="sg-hero-action">
-          <button class="sg-btn-primary" type="button" data-action="soundguard-qr">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            Generate QR to Connect
-          </button>
-          <span class="sg-badge-status">
-            <span class="sg-pulse-dot"></span> Expo Go &middot; Android &amp; iOS
-          </span>
-        </div>
-      </div>
-
-      <div class="sg-feature-grid">
-        <div class="sg-feature-pill">
-          <div class="sg-feat-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-          </div>
-          <h3>Environmental Sound Detection</h3>
-          <p>Real-time CNN classifier detects emergency sirens, car horns, fire alarms, and doorbells at 95.4% accuracy with high-contrast visual and haptic alerts.</p>
-        </div>
-
-        <div class="sg-feature-pill">
-          <div class="sg-feat-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </div>
-          <h3>Instant SOS &amp; Location Sharing</h3>
-          <p>One-touch emergency beacon broadcasts precise GPS location coordinates via automated SMS to trusted emergency contacts in your Safety Circle.</p>
-        </div>
-
-        <div class="sg-feature-pill">
-          <div class="sg-feat-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </div>
-          <h3>Live Speech-to-Text Captions</h3>
-          <p>Instant speech transcription converts conversations into clear, readable captions so hearing and non-hearing individuals can communicate seamlessly.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW IT WORKS -->
-  <section class="landing-section working-section" id="how">
-    <div class="working-content">
-      <span class="eyebrow">How it works</span>
-      <h2>Get to know, How it Works!</h2>
-      <p>To use the sign language recognition system, you simply need to get your hand detected and make a sign. Once you make a sign, refer to the guide for the corresponding words. The system will then scan your hand and use its built-in model to predict the sign you have made. Finally, the predicted class will be displayed, allowing you to communicate effectively through sign language. With this system, you can bridge the communication gap between sign language users and non-sign language users, making it easier for everyone to connect and interact.</p>
-      <a href="#tool" class="btn btn-primary">Try the Model</a>
-    </div>
-    <div class="working-flow" aria-hidden="true">
-      <div class="flow-step">
-        <div class="icon-medallion-sm">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3.5l4 3.5v-11l-4 3.5Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
-        </div>
-        <span>Capture</span>
-      </div>
-      <span class="flow-arrow">&rarr;</span>
-      <div class="flow-step">
-        <div class="icon-medallion-sm">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M8 12.5V5.5a1.5 1.5 0 0 1 3 0v5M11 10.5v-7a1.5 1.5 0 0 1 3 0v7M14 10.8V5a1.5 1.5 0 0 1 3 0v9M17 11v-2a1.5 1.5 0 0 1 3 0v6a7 7 0 0 1-7 7h-1.6a6 6 0 0 1-5-2.7L3.6 14.8a1.6 1.6 0 0 1 2.5-2l1.9 2.3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <span>Track landmarks</span>
-      </div>
-      <span class="flow-arrow">&rarr;</span>
-      <div class="flow-step">
-        <div class="icon-medallion-sm">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="7" y="7" width="10" height="10" rx="2" stroke="#fff" stroke-width="1.5"/><path d="M9 3v2M15 3v2M9 19v2M15 19v2M3 9h2M3 15h2M19 9h2M19 15h2" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </div>
-        <span>Predict sign</span>
-      </div>
-      <span class="flow-arrow">&rarr;</span>
-      <div class="flow-step">
-        <div class="icon-medallion-sm">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M17 8.5a5 5 0 0 1 0 7" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </div>
-        <span>Speak &amp; display</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <div class="cta-bar">
-    <div class="cta-content"><h3>Get Started and Try the Model</h3></div>
-    <a href="#tool" class="cta-button">Try Now</a>
-  </div>
-
-  <!-- WORKING IMAGE SECTION - Smaller Size -->
-  <section class="working-image-section">
-    <div class="working-image-container">
-      <img src="/Working.png" alt="How Sign Language Recognition Works" />
-      <div class="working-image-badge">
-        <span>How It Works</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- TESTIMONIALS -->
-  <section class="landing-section testimonials-section" id="feedback">
-    <div class="testimonials-heading">
-      <h2>Here are the Feedback given by the users and domain experts</h2>
-    </div>
-    <div class="testimonials-list">
-      <div class="card testimonial-card">
-        <div class="testimonial-header">
-          <span class="testimonial-avatar" aria-hidden="true">NP</span>
-          <div>
-            <h4>Nadeesha Perera</h4>
-            <p>UX Designer</p>
-          </div>
-        </div>
-        <blockquote>&ldquo;The sign language AI web app is an innovative and user-friendly tool that accurately detects hand gestures and translates them into corresponding signs. It ensures reliable performance, making it an excellent resource for communication and education.&rdquo;</blockquote>
-      </div>
-      <div class="card testimonial-card">
-        <div class="testimonial-header">
-          <span class="testimonial-avatar" aria-hidden="true">CS</span>
-          <div>
-            <h4>Chamika Silva</h4>
-            <p>Front-End Developer</p>
-          </div>
-        </div>
-        <blockquote>&ldquo;The user experience of the application is very smooth and easy to understand. Used this application to try out different signs and detection was smooth and prompt.&rdquo;</blockquote>
-      </div>
-      <div class="card testimonial-card">
-        <div class="testimonial-header">
-          <span class="testimonial-avatar" aria-hidden="true">RD</span>
-          <div>
-            <h4>Ruwan Dissanayake</h4>
-            <p>Accessibility Advocate</p>
-          </div>
-        </div>
-        <blockquote>&ldquo;The advancement in the field of sign language is really helpful for the deaf and hard of hearing community &mdash; it eliminates the need of a middle person by just using the website. The UI is super smooth and user-friendly.&rdquo;</blockquote>
-      </div>
-    </div>
-  </section>
 
   <!-- STATS BAR (anchor for #tool) -->
   <div class="stats-bar" id="tool">
@@ -3661,73 +3418,11 @@
   <!-- ============================================================
        PREMIUM FOOTER – added with polish & links 
        ============================================================ -->
-  <footer class="premium-footer">
-    <!-- oversized brand watermark, clipped by the footer's own overflow -->
-    <span class="footer-watermark" aria-hidden="true">සුවණ</span>
-    <span class="footer-aura" aria-hidden="true"></span>
-
-    <div class="footer-grid">
-      <!-- brand column -->
-      <div class="footer-brand">
-        <div class="footer-identity">
-          <span class="brand-mark footer-mark">
-            <img src="/suvana-logo.png" alt="Suvana logo" />
-          </span>
-          <span class="footer-wordmark">සුවණ</span>
-        </div>
-        <p>Bridging communication gaps through AI-powered sign language recognition. Learn, practice, and connect.</p>
-        <div class="footer-social">
-          <a href="#" aria-label="Twitter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
-          <a href="#" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
-          <a href="#" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
-        </div>
-      </div>
-
-      <!-- columns -->
-      <div class="footer-col">
-        <h4>Product</h4>
-        <ul>
-          <li><a href="#tool">Translator <span class="arrow">&rarr;</span></a></li>
-          <li><a href="#">Pricing <span class="arrow">&rarr;</span></a></li>
-          <li><a href="#">Roadmap <span class="arrow">&rarr;</span></a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Resources</h4>
-        <ul>
-          <li><a href="#">Documentation <span class="arrow">&rarr;</span></a></li>
-          <li><a href="#">API <span class="arrow">&rarr;</span></a></li>
-          <li><a href="#">Support <span class="arrow">&rarr;</span></a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="#">About <span class="arrow">&rarr;</span></a></li>
-          <li><a href="#">Blog <span class="arrow">&rarr;</span></a></li>
-          <li><a href="#">Contact <span class="arrow">&rarr;</span></a></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- capability register: the system's actual credentials, set as a spec strip -->
-    <div class="footer-spec">
-      <span class="spec-item"><b data-footer-signs>&mdash;</b> signs recognised</span>
-      <span class="spec-item">MediaPipe Holistic <i>&middot;</i> LSTM sequence model</span>
-      <span class="spec-item">On-device inference</span>
-      <span class="spec-item">Sinhala speech synthesis</span>
-    </div>
-
-    <!-- bottom bar -->
-    <div class="footer-bottom">
-      <span>&copy; 2026 සුවණ Suvana — Recognize</span>
-      <span class="footer-origin">Designed &amp; built in Sri Lanka</span>
-      <div class="legal-links">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Cookies</a>
-      </div>
-    </div>
+    <footer class="module-footer">
+    <p>
+      <span class="si" lang="si">සුවණ</span> Suvana — Recognition. Recognition runs on this
+      device's camera; frames are sent to the Suvana recognition service and are not stored.
+    </p>
   </footer>
 
   <!-- AUDIO HINT / SETTINGS (unchanged) -->
@@ -3819,22 +3514,9 @@
       map.forEach((_link, target) => io.observe(target));
     })();
 
-    // Footer spec strip: report the real class count rather than a number
-    // that goes stale when the dataset is retrained. Fails silently to the
-    // em dash already in the markup.
-    (() => {
-      const slot = document.querySelector("[data-footer-signs]");
-      if (!slot) return;
-      fetch("/api/labels")
-        .then((r) => r.json())
-        .then((d) => { if (d && d.count) slot.textContent = d.count; })
-        .catch(() => {});
-    })();
   </script>
 
   <!-- සුවණ AI assistant — self-injecting widget, loads after the main app -->
   <script src="/assistant.js" defer></script>
-  <!-- SoundGuard mobile companion module -->
-  <script src="/soundguard.js" defer></script>
 </body>
 </html>

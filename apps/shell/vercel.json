@@ -6,19 +6,19 @@
   "rewrites": [
     {
       "source": "/learn",
-      "destination": "https://REPLACE-WITH-LEARN-DEPLOYMENT.vercel.app/learn"
+      "destination": "https://suvana-learn.vercel.app/learn"
     },
     {
       "source": "/learn/:path*",
-      "destination": "https://REPLACE-WITH-LEARN-DEPLOYMENT.vercel.app/learn/:path*"
+      "destination": "https://suvana-learn.vercel.app/learn/:path*"
     },
     {
       "source": "/communicate",
-      "destination": "https://REPLACE-WITH-COMMUNICATE-DEPLOYMENT.vercel.app/communicate"
+      "destination": "https://suvana-communicate.vercel.app/communicate"
     },
     {
       "source": "/communicate/:path*",
-      "destination": "https://REPLACE-WITH-COMMUNICATE-DEPLOYMENT.vercel.app/communicate/:path*"
+      "destination": "https://suvana-communicate.vercel.app/communicate/:path*"
     }
   ]
 }

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { requireAdmin } from "@/lib/requireAdmin";
 import { connectDB } from "@/lib/db";
 import GlossModel from "@/models/Gloss";

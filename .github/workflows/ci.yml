@@ -1,0 +1,108 @@
+name: CI
+
+# Every deployable is built the way Vercel or Docker will build it, and every
+# existing test suite is run. Nothing here is new coverage — it is the coverage
+# the repo already had, finally executing on push.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  learn:
+    name: Learn — tests and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/learn
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/learn/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  shell:
+    name: Shell — build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/shell
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/shell/package-lock.json
+      - run: npm ci
+      - run: npm run build
+
+  communicate:
+    name: Communicate — build and type-check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/communicate
+    # `next build` type-checks, and the app reads configuration at module load,
+    # so it needs values present. These are deliberately fake: this job proves
+    # the code compiles, never that it can reach a database.
+    env:
+      NEXT_PUBLIC_BASE_PATH: /communicate
+      MONGODB_URI: mongodb://127.0.0.1:27017/ci
+      NEXTAUTH_SECRET: ci-only-not-a-real-secret
+      NGROK_UPDATE_SECRET: ci-only
+      CLOUDINARY_CLOUD_NAME: ci
+      CLOUDINARY_API_KEY: ci
+      CLOUDINARY_API_SECRET: ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/communicate/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  recognition:
+    name: Recognition — Python tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/recognition
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      # Only the two suites that are pure NumPy with `requests` mocked. The
+      # older tests in this folder import TensorFlow and MediaPipe, which is a
+      # multi-GB install for a CI run that would still not have the model.
+      - run: pip install numpy requests pytest
+      - run: pytest tests/test_keypoint_augmentation.py tests/test_sinhala_labels.py -q
+
+  alerts:
+    name: Alerts — type-check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/alerts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/alerts/package-lock.json
+      - run: npm ci
+      # No build: an Expo native build needs EAS and signing credentials.
+      # Type-checking is what CI can honestly assert about this app.
+      - run: npx tsc --noEmit

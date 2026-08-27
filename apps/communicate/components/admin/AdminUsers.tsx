@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiPath } from "@/lib/basePath";
 import { buttonVariants } from "@/components/ui/Button";
 
@@ -21,24 +21,28 @@ export function AdminUsers() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(apiPath("/api/admin/users"));
-      const data = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(data?.error ?? `Request failed (${res.status})`);
-      setUsers(data.users ?? []);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load accounts.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // The fetch lives inside the effect rather than in a callback it calls
+  // synchronously: every state update here happens after an await, so the
+  // effect body itself never triggers a cascading render. The cancelled flag
+  // keeps a slow response from writing to an unmounted component.
   useEffect(() => {
-    void load();
-  }, [load]);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(apiPath("/api/admin/users"));
+        const data = await res.json().catch(() => null);
+        if (!res.ok) throw new Error(data?.error ?? `Request failed (${res.status})`);
+        if (!cancelled) setUsers(data.users ?? []);
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : "Could not load accounts.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function setRole(user: AdminUser, role: "user" | "admin") {
     setBusyId(user.id);
