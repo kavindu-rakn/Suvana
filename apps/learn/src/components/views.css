@@ -2842,3 +2842,607 @@
   color: var(--text-dim);
   font-size: 1.2rem;
 }
+
+
+/* ============================================================================
+   SCENARIO HUB & THEMES
+   ========================================================================== */
+
+.aww-scenario-hub {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 24px 100px;
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+.aww-hub-header {
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.aww-hub-title {
+  font-family: var(--serif);
+  font-size: 3.5rem;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.aww-hub-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-dim);
+}
+
+.aww-scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 32px;
+}
+
+.aww-scenario-card {
+  font-family: inherit;
+  position: relative;
+  border: none;
+  border-radius: 28px;
+  height: 420px;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+}
+
+.aww-scenario-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 28px 56px rgba(0, 0, 0, 0.24);
+}
+
+.aww-scenario-card.disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Vibrant Scenario Environment Themes */
+.theme-restaurant {
+  background: linear-gradient(135deg, #871a1a 0%, #1a2a6c 50%, #b21f1f 100%);
+}
+
+.theme-introductions {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #6b11ff 100%);
+}
+
+.theme-hospital {
+  background: linear-gradient(135deg, #0ba360 0%, #3cba92 50%, #134e5e 100%);
+}
+
+.theme-bus {
+  background: linear-gradient(135deg, #f12711 0%, #f5af19 100%);
+}
+
+.aww-scenario-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255,255,255,0.25), transparent 50%),
+              radial-gradient(circle at bottom left, rgba(0,0,0,0.4), transparent 50%);
+  mix-blend-mode: overlay;
+}
+
+.card-glass-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%);
+  color: #fff;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-status {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.card-bottom h3 {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 400;
+  margin: 0 0 8px;
+  line-height: 1.15;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+
+.card-bottom p {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.85);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.play-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.aww-scenario-card:hover .play-circle {
+  background: var(--accent);
+  color: var(--p-ink);
+  transform: scale(1.1);
+}
+
+/* ============================================================================
+   MISSION BRIEFING (Awwwards-Level Rebuild)
+   ========================================================================== */
+
+.aww-mission-briefing {
+  max-width: 1100px;
+  margin: 32px auto;
+  padding: 0 24px 100px;
+  font-family: var(--sans);
+  color: var(--text);
+}
+
+.briefing-hero-card {
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  margin-bottom: 36px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
+}
+
+.briefing-hero-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255,255,255,0.2), transparent 50%);
+  mix-blend-mode: overlay;
+}
+
+.briefing-hero-overlay {
+  position: relative;
+  padding: 44px 48px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.7) 100%);
+  color: #fff;
+}
+
+.briefing-nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.aww-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 18px;
+  border-radius: 100px;
+  transition: all 0.2s ease;
+}
+
+.aww-back-btn:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: translateX(-3px);
+}
+
+.briefing-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.briefing-pill {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.briefing-hero-body h1 {
+  font-family: var(--serif);
+  font-size: 3.2rem;
+  font-weight: 400;
+  color: #fff;
+  margin: 0 0 10px;
+  line-height: 1.15;
+}
+
+.briefing-hero-sub {
+  font-size: 1.3rem;
+  color: rgba(255,255,255,0.9);
+  margin: 0 0 16px;
+}
+
+.briefing-hero-desc {
+  font-size: 1.08rem;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.85);
+  max-width: 780px;
+  margin: 0;
+}
+
+.briefing-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .briefing-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.briefing-script-container {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.04);
+}
+
+.briefing-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.briefing-section-header h2 {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  margin: 0;
+  color: var(--text);
+}
+
+.section-meta {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.briefing-flow-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.briefing-flow-item {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+
+.briefing-flow-item.pending {
+  opacity: 0.75;
+  border-style: dashed;
+}
+
+.flow-num-col {
+  flex-shrink: 0;
+  width: 85px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flow-step {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.flow-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.flow-badge.badge-ready {
+  background: rgba(0, 166, 147, 0.15);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.flow-badge.badge-pending {
+  background: rgba(220, 53, 69, 0.15);
+  color: var(--danger);
+  border: 1px dashed var(--danger);
+}
+
+.flow-content-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flow-partner-line {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--accent);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.flow-sign-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.flow-sign-tag {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.flow-sign-gloss {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.flow-sign-trans {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.flow-prompt-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+/* Action Sidebar */
+.briefing-action-card {
+  position: sticky;
+  top: 96px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.briefing-action-card h3 {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  margin: 0;
+  color: var(--text);
+}
+
+.action-card-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.action-card-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.card-stat-box {
+  flex: 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  font-family: var(--mono);
+  color: var(--text);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+
+.action-missing-note {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+  margin: 0;
+  text-align: center;
+}
+
+/* ============================================================================
+   SCENARIO PLAY SCREEN (Cinematic Split Screen + Teleprompter Bar)
+   ========================================================================== */
+
+.aww-scenario-env .aww-leave-btn {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(var(--surface-rgb, 20, 20, 20), 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text);
+  border: 1px solid var(--border-subtle);
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.aww-scenario-env .aww-leave-btn:hover {
+  background: rgba(var(--surface-rgb, 20, 20, 20), 0.9);
+  transform: translateX(-2px);
+}
+
+/* Floating Non-Intrusive Scenario Dialogue Subtitle Bar */
+.aww-scenario-dialogue-bar {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  width: 90%;
+  max-width: 680px;
+  background: rgba(var(--surface-rgb, 20, 20, 20), 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 16px 24px;
+  text-align: center;
+  box-shadow: 0 16px 36px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.dialogue-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialogue-turn-tag {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.dialogue-scenario-tag {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.dialogue-partner-line {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-style: italic;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.dialogue-prompt-line {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.dialogue-prompt-line strong {
+  color: var(--text);
+}
+
+.dialogue-hint-pill {
+  display: inline-block;
+  font-size: 0.8rem;
+  background: rgba(255,255,255,0.08);
+  color: var(--caution);
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-top: 2px;
+}
+
+/* Hide controls on Scenario reference skeleton player */
+.aww-scenario-env .skeleton-scrubber,
+.aww-scenario-env .skeleton-controls button {
+  display: none !important;
+}
