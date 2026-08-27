@@ -1,5 +1,7 @@
 # සුවණ Suvana
 
+![Suvana Hero Banner](docs/assets/suvana-hero.png)
+
 One platform for real-time two-way Deaf–hearing communication in Sri Lankan Sign Language (SSL). Integrated, single-brand build of the four components of SLIIT IT4010 research project **R26-SE-019** (Jan 2026 cohort). There are no sub-brands inside Suvana — the names the components were built under standalone (Sawana, SignSpeak, SoundGuard) live only in their source repos.
 
 ## Structure
