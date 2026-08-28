@@ -128,8 +128,14 @@
 
   const statCount = document.getElementById("statCount");
   const statAvgConfidence = document.getElementById("statAvgConfidence");
-  const statRate = document.getElementById("statRate");
+  const statFps = document.getElementById("statFps");
+  const statLatency = document.getElementById("statLatency");
   const statDuration = document.getElementById("statDuration");
+
+  const guideBtn = document.getElementById("guideBtn");
+  const guideClose = document.getElementById("guideClose");
+  const guideDrawer = document.getElementById("guideDrawer");
+  const guideSeqLen = document.getElementById("guideSeqLen");
 
   const settingsBtn = document.getElementById("settingsBtn");
   const settingsClose = document.getElementById("settingsClose");
@@ -160,6 +166,10 @@
   let recognizedCount = 0;
   let confidenceSum = 0;
   const historyEntries = [];
+
+  let frameSentTime = 0;
+  let frameCount = 0;
+  let lastFpsUpdate = performance.now();
 
   function setConnectionState(state, label) {
     connectionStatus.classList.remove("connected", "error");
@@ -298,15 +308,10 @@
   }
 
   function updateStats() {
-    statCount.textContent = String(recognizedCount);
-    statAvgConfidence.textContent =
-      recognizedCount > 0 ? `${Math.round((confidenceSum / recognizedCount) * 100)}%` : "—";
-
-    if (sessionStartTime) {
-      const elapsedMin = (Date.now() - sessionStartTime) / 60000;
-      statRate.textContent = elapsedMin > 0.05 ? (recognizedCount / elapsedMin).toFixed(1) : "—";
-    } else {
-      statRate.textContent = "—";
+    if (statCount) statCount.textContent = String(recognizedCount);
+    if (statAvgConfidence) {
+      statAvgConfidence.textContent =
+        recognizedCount > 0 ? `${Math.round((confidenceSum / recognizedCount) * 100)}%` : "—";
     }
   }
 
@@ -427,6 +432,19 @@
   }
 
   function handleFrameResult(data) {
+    if (frameSentTime > 0) {
+      const latency = Math.round(performance.now() - frameSentTime);
+      if (statLatency) statLatency.textContent = `${latency}ms`;
+    }
+    frameCount++;
+    const now = performance.now();
+    if (now - lastFpsUpdate >= 1000) {
+      const fps = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
+      if (statFps) statFps.textContent = `${fps}`;
+      frameCount = 0;
+      lastFpsUpdate = now;
+    }
+
     const progressPct = Math.min(100, Math.round((data.bufferProgress || 0) * 100));
     bufferFill.style.width = `${progressPct}%`;
 
@@ -510,6 +528,7 @@
 
     const dataUrl = captureCanvas.toDataURL("image/jpeg", JPEG_QUALITY);
     awaitingResponse = true;
+    frameSentTime = performance.now();
     ws.send(dataUrl);
   }
 
@@ -543,6 +562,8 @@
     lastAnnouncedGesture = null;
     sessionStartTime = Date.now();
     statDuration.textContent = "00:00";
+    if (statFps) statFps.textContent = "—";
+    if (statLatency) statLatency.textContent = "—";
     updateStats();
     durationTimer = setInterval(tickDuration, 1000);
 
@@ -581,6 +602,8 @@
     videoWrap.classList.remove("scanning");
     stopRenderLoop();
     bufferFill.style.width = "0%";
+    if (statFps) statFps.textContent = "—";
+    if (statLatency) statLatency.textContent = "—";
 
     startBtn.classList.remove("stop");
     startBtn.innerHTML = `
@@ -626,16 +649,37 @@
   });
 
   function openSettings() {
+    closeGuide();
     settingsDrawer.classList.add("open");
     settingsScrim.classList.add("show");
   }
   function closeSettings() {
     settingsDrawer.classList.remove("open");
-    settingsScrim.classList.remove("show");
+    if (!guideDrawer.classList.contains("open")) {
+      settingsScrim.classList.remove("show");
+    }
   }
   settingsBtn.addEventListener("click", openSettings);
   settingsClose.addEventListener("click", closeSettings);
-  settingsScrim.addEventListener("click", closeSettings);
+
+  function openGuide() {
+    closeSettings();
+    guideDrawer.classList.add("open");
+    settingsScrim.classList.add("show");
+  }
+  function closeGuide() {
+    guideDrawer.classList.remove("open");
+    if (!settingsDrawer.classList.contains("open")) {
+      settingsScrim.classList.remove("show");
+    }
+  }
+  if (guideBtn) guideBtn.addEventListener("click", openGuide);
+  if (guideClose) guideClose.addEventListener("click", closeGuide);
+
+  settingsScrim.addEventListener("click", () => {
+    closeSettings();
+    closeGuide();
+  });
 
   toggleSkeleton.addEventListener("change", () => {
     skeletonVisible = toggleSkeleton.checked;
@@ -648,6 +692,7 @@
     .then((r) => r.json())
     .then((data) => {
       infoSeqLen.textContent = `${data.sequenceLength} frames`;
+      if (guideSeqLen) guideSeqLen.textContent = `${data.sequenceLength} Frames`;
       infoThreshold.textContent = `${Math.round(data.confidenceThreshold * 100)}%`;
       infoClasses.textContent = String(data.numClasses);
     })

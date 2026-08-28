@@ -164,6 +164,42 @@ modules.forEach((mod: any, i) => {
   );
 });
 
+// 5b. Pipeline & Testimonials Animations
+gsap.from('.pipeline-card', {
+  y: 40,
+  opacity: 0,
+  duration: 0.8,
+  stagger: 0.15,
+  ease: 'power3.out',
+  scrollTrigger: {
+    trigger: '.pipeline-grid',
+    start: 'top 80%',
+  },
+});
+
+gsap.from('.pipeline-showcase', {
+  y: 40,
+  opacity: 0,
+  duration: 1,
+  ease: 'power3.out',
+  scrollTrigger: {
+    trigger: '.pipeline-showcase',
+    start: 'top 80%',
+  },
+});
+
+gsap.from('.testimonial-card', {
+  y: 40,
+  opacity: 0,
+  duration: 0.8,
+  stagger: 0.2,
+  ease: 'power3.out',
+  scrollTrigger: {
+    trigger: '.testimonials-grid',
+    start: 'top 80%',
+  },
+});
+
 // 6. Theme Toggle with View Transitions API
 const themeBtn = document.getElementById('theme-toggle');
 

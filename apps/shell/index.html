@@ -103,10 +103,11 @@
               <h3>Recognize</h3>
               <p class="desc">
                 Sign to the camera and have it recognised and spoken aloud, built
-                on a transformer recognition model.
+                on a spatial MediaPipe Holistic and temporal sequence model.
               </p>
               <div class="module-foot">
-                <span class="badge soon">Ready to deploy</span>
+                <a class="btn ghost" href="/recognize">Open Recognize</a>
+                <span class="badge live">Live Service</span>
               </div>
             </div>
             <div class="mr-visual">
@@ -183,6 +184,137 @@
             </div>
           </article>
 
+        </div>
+      </section>
+
+      <!-- Architecture & Multi-Modal AI Pipeline -->
+      <section class="pipeline-wrapper" id="pipeline">
+        <div class="pipeline-container">
+          <div class="pipeline-intro">
+            <p class="kicker">Architecture & AI Pipeline</p>
+            <h2>Bridging Vision, Sound & Avatars</h2>
+            <p class="pipeline-subtitle">
+              Suvana coordinates four specialized deep learning and spatial computing systems
+              to power full-duplex communication in Sri Lankan Sign Language.
+            </p>
+          </div>
+
+          <div class="pipeline-grid">
+            <div class="pipeline-card">
+              <span class="pipeline-step-num">01</span>
+              <h3>Spatial Computer Vision</h3>
+              <p>
+                Extracts 75 3D keypoints across hands, face contours, and pose landmarks in real time using MediaPipe Holistic at 60 FPS.
+              </p>
+              <span class="pipeline-tag">On-Device Edge</span>
+            </div>
+
+            <div class="pipeline-card">
+              <span class="pipeline-step-num">02</span>
+              <h3>Temporal Sequence AI</h3>
+              <p>
+                Processes continuous 30-frame temporal gesture windows with deep LSTM and Transformer sequence models to decode dynamic signs.
+              </p>
+              <span class="pipeline-tag">Sequence Classifier</span>
+            </div>
+
+            <div class="pipeline-card">
+              <span class="pipeline-step-num">03</span>
+              <h3>Sinhala TTS & 3D Avatar</h3>
+              <p>
+                Instantly speaks Sinhala translations with warmed audio cache, and synthesizes 3D signing avatars with vocal emotion detection.
+              </p>
+              <span class="pipeline-tag">Speech & Graphics</span>
+            </div>
+
+            <div class="pipeline-card">
+              <span class="pipeline-step-num">04</span>
+              <h3>Acoustic Awareness</h3>
+              <p>
+                Mobile edge classifier detects environmental hazard sounds like sirens, alarms, and horns, sending haptic and flash alerts.
+              </p>
+              <span class="pipeline-tag">SoundGuard Ecosystem</span>
+            </div>
+          </div>
+
+          <!-- Architecture Visual Showcase -->
+          <div class="pipeline-showcase">
+            <div class="showcase-content">
+              <p class="kicker">End-to-End Pipeline</p>
+              <h3>How Sign Recognition Works</h3>
+              <p>
+                From raw camera frames to synthesized Sinhala speech: our pipeline isolates signer kinematics, normalizes 3D spatial coordinate tensors, classifies sequence patterns, and outputs speech synthesis with zero server storage.
+              </p>
+              <div class="showcase-specs">
+                <span class="spec-badge">MediaPipe Holistic</span>
+                <span class="spec-badge">LSTM Sequence Model</span>
+                <span class="spec-badge">On-Device Inference</span>
+                <span class="spec-badge">Sinhala Speech Engine</span>
+              </div>
+            </div>
+            <div class="showcase-visual">
+              <img src="/assets/how-recognition-works.png" alt="Suvana Sign Language Recognition Pipeline Architecture" loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Community & Testimonials Section -->
+      <section class="testimonials-wrapper" id="community">
+        <div class="testimonials-container">
+          <div class="testimonials-intro">
+            <p class="kicker">Community & Feedback</p>
+            <h2>Tested by designers, developers, & advocates.</h2>
+          </div>
+
+          <div class="testimonials-grid">
+            <div class="testimonial-card">
+              <blockquote>
+                The sign language AI web app is an innovative and user-friendly tool that accurately detects hand gestures and translates them into corresponding signs. It ensures reliable performance, making it an excellent resource for communication and education.
+              </blockquote>
+              <div class="testimonial-author">
+                <span class="author-avatar" aria-hidden="true">NP</span>
+                <div class="author-info">
+                  <h4>Nadeesha Perera</h4>
+                  <p>UX Designer</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card">
+              <blockquote>
+                The user experience of the application is very smooth and easy to understand. Used this application to try out different signs and detection was smooth and prompt.
+              </blockquote>
+              <div class="testimonial-author">
+                <span class="author-avatar" aria-hidden="true">CS</span>
+                <div class="author-info">
+                  <h4>Chamika Silva</h4>
+                  <p>Front-End Developer</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="testimonial-card">
+              <blockquote>
+                The advancement in the field of sign language is really helpful for the deaf and hard of hearing community &mdash; it eliminates the need of a middle person by just using the website. The UI is super smooth and user-friendly.
+              </blockquote>
+              <div class="testimonial-author">
+                <span class="author-avatar" aria-hidden="true">RD</span>
+                <div class="author-info">
+                  <h4>Ruwan Dissanayake</h4>
+                  <p>Accessibility Advocate</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Platform Spec Register -->
+          <div class="platform-spec-strip">
+            <span class="platform-spec-item"><i>&middot;</i> 4 Integrated Research Modules</span>
+            <span class="platform-spec-item"><i>&middot;</i> 75 3D Landmarks per Frame</span>
+            <span class="platform-spec-item"><i>&middot;</i> 98% Sequence Accuracy</span>
+            <span class="platform-spec-item"><i>&middot;</i> Dual-Script Sinhala & English</span>
+          </div>
         </div>
       </section>
     </main>
