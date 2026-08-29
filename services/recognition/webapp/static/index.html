@@ -3276,6 +3276,126 @@
       text-align: center;
     }
     .module-footer p { margin: 0; }
+
+    /* Studio Header Buttons & HUD */
+    .btn-guide {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(45, 212, 191, 0.12);
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+    }
+    .btn-guide:hover {
+      background: rgba(45, 212, 191, 0.22);
+      border-color: var(--accent-2);
+      transform: translateY(-1px);
+    }
+    .btn-guide svg { color: var(--accent-2); }
+    @media (max-width: 760px) {
+      .btn-guide span { display: none; }
+      .btn-guide { padding: 8px; border-radius: 10px; }
+    }
+
+    /* Guide Drawer */
+    .guide-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(540px, 92vw);
+      background: rgba(10, 20, 20, 0.96);
+      border-left: 1px solid var(--panel-border);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      box-shadow: -20px 0 60px rgba(0, 0, 0, 0.6);
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 75;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      overflow-y: auto;
+    }
+    .guide-drawer.open { transform: translateX(0); }
+
+    .guide-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 16px;
+    }
+    .guide-head h3 {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .guide-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .guide-card h4 {
+      margin: 0;
+      font-size: 15px;
+      color: var(--accent-2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .guide-card p {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--text-dim);
+    }
+    .guide-diagram {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--panel-border);
+      margin-top: 6px;
+    }
+
+    .guide-specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .guide-spec-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .guide-spec-item span {
+      font-size: 11px;
+      color: var(--text-faint);
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .guide-spec-item strong {
+      font-size: 13px;
+      color: var(--text);
+    }
   </style>
   <!-- සුවණ AI assistant (additive; namespaced under .svn-ai*) -->
   <link rel="stylesheet" href="/assistant.css" />
@@ -3297,7 +3417,7 @@
       <div class="brand-text">
         <h1>
           <span class="sinhala-brand">සුවණ</span>
-          <span class="brand-en">Recognize — Sign to Speech</span>
+          <span class="brand-en">Recognize — AI Model Studio</span>
         </h1>
         <p>
           Real-time gesture recognition
@@ -3307,14 +3427,16 @@
       </div>
     </div>
 
-    
-
     <div class="header-actions">
-      <span class="version-badge">v1.0 &middot; Local</span>
+      <span class="version-badge">v1.0 &middot; Studio</span>
       <div class="status-pill" id="connectionStatus">
         <span class="dot" id="connectionDot"></span>
         <span id="connectionLabel">Idle</span>
       </div>
+      <button class="btn-guide" id="guideBtn" type="button" aria-label="Model Architecture & Guide">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span>AI Architecture &amp; Guide</span>
+      </button>
       <span class="header-sep" aria-hidden="true"></span>
       <button class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H4a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 5.6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H10a1.65 1.65 0 0 0 1-1.51V2a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
@@ -3334,8 +3456,12 @@
       <span class="stat-label">Avg. confidence</span>
     </div>
     <div class="stat-tile">
-      <span class="stat-value" id="statRate">&mdash;</span>
-      <span class="stat-label">Signs / min</span>
+      <span class="stat-value" id="statFps">&mdash;</span>
+      <span class="stat-label">Frame rate (FPS)</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-value" id="statLatency">&mdash;</span>
+      <span class="stat-label">Inference latency</span>
     </div>
     <div class="stat-tile">
       <span class="stat-value" id="statDuration">00:00</span>
@@ -3431,6 +3557,64 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
     Sound is blocked by the browser &mdash; click here to enable it
   </button>
+
+  <!-- ARCHITECTURE & GUIDE DRAWER -->
+  <aside class="guide-drawer" id="guideDrawer">
+    <div class="guide-head">
+      <h3>AI Architecture &amp; Guide</h3>
+      <button class="icon-btn" id="guideClose" aria-label="Close guide">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="guide-card">
+      <h4>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Model Pipeline Overview
+      </h4>
+      <p>
+        The recognition engine uses a multi-stage deep learning pipeline. Frames from your webcam are processed by MediaPipe Holistic to extract 3D spatial coordinate tensors across hands, pose, and face.
+      </p>
+      <img src="/Working.png" alt="How Sign Language Recognition Works" class="guide-diagram" />
+    </div>
+
+    <div class="guide-specs-grid">
+      <div class="guide-spec-item">
+        <span>Vision Engine</span>
+        <strong>MediaPipe Holistic</strong>
+      </div>
+      <div class="guide-spec-item">
+        <span>3D Keypoints</span>
+        <strong>75 Landmarks / Frame</strong>
+      </div>
+      <div class="guide-spec-item">
+        <span>Sequence Model</span>
+        <strong>Bidirectional LSTM</strong>
+      </div>
+      <div class="guide-spec-item">
+        <span>Temporal Window</span>
+        <strong id="guideSeqLen">30 Frames</strong>
+      </div>
+      <div class="guide-spec-item">
+        <span>Speech Output</span>
+        <strong>Sinhala TTS Cache</strong>
+      </div>
+      <div class="guide-spec-item">
+        <span>Privacy</span>
+        <strong>Zero Frame Storage</strong>
+      </div>
+    </div>
+
+    <div class="guide-card">
+      <h4>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+        Tips for Optimal Accuracy
+      </h4>
+      <p><strong>1. Lighting:</strong> Ensure your hands and face are evenly lit without strong backlighting.</p>
+      <p><strong>2. Posture:</strong> Position yourself ~0.7 to 1.2 meters from the camera so both hands are clearly within the frame.</p>
+      <p><strong>3. Timing:</strong> Perform signs smoothly and hold the final pose briefly for the temporal window buffer to reach 100%.</p>
+    </div>
+  </aside>
 
   <aside class="settings-drawer" id="settingsDrawer">
     <div class="settings-head">

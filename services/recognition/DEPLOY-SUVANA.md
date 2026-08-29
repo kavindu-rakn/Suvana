@@ -45,5 +45,11 @@ is slow; inference is CPU-only unless the host provides a GPU.
 
 ## After deploying
 
-Point the shell's Recognize card at the service URL — see the marked comment
-in `apps/web/index.html` (the `Recognize` card) and flip its badge to `Live`.
+Point the shell's Recognize card at the service URL: put the origin in the
+`data-service-url` attribute on the `Recognize` card in
+`apps/shell/index.html` (there is a marked comment above it). The card turns
+itself from "Ready to deploy" into a link and flips its own badge to "Live
+Service" — there is nothing else to change.
+
+Locally the shell already falls back to `http://localhost:7860`, so a container
+started with the command above is reachable from the landing page with no edit.
