@@ -105,9 +105,25 @@
                 Sign to the camera and have it recognised and spoken aloud, built
                 on a spatial MediaPipe Holistic and temporal sequence model.
               </p>
-              <div class="module-foot">
-                <a class="btn ghost" href="/recognize">Open Recognize</a>
-                <span class="badge live">Live Service</span>
+              <!-- RECOGNIZE SERVICE ORIGIN ---------------------------------
+                   Recognition is the one module the shell cannot proxy: the
+                   browser streams camera frames to it over a WebSocket, and
+                   Vercel's rewrites do not carry the upgrade. It runs on its
+                   own origin and serves its own page, so this is a
+                   cross-origin link, not a path on this domain.
+
+                   Put that origin in data-service-url once the container is
+                   deployed (e.g. "https://recognize.suvana.lk"). While it is
+                   empty the card says "Ready to deploy" rather than offering a
+                   link that goes nowhere — which is also what a viewer with no
+                   JavaScript sees. On localhost the shell falls back to
+                   http://localhost:7860, the Docker default in
+                   services/recognition/DEPLOY-SUVANA.md.
+                   ------------------------------------------------------- -->
+              <div class="module-foot" data-recognize-foot data-service-url="">
+                <a class="btn ghost" href="#" target="_blank" rel="noopener noreferrer" hidden>Open Recognize</a>
+                <span class="badge live" data-recognize-badge hidden>Live Service</span>
+                <span class="badge soon" data-recognize-placeholder>Ready to deploy</span>
               </div>
             </div>
             <div class="mr-visual">

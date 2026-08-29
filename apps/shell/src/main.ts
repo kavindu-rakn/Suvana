@@ -325,7 +325,39 @@ if (marqueeContent) {
   requestAnimationFrame(animateMarquee);
 }
 
-// 9. Page Transitions (Outbound)
+// 9. Recognize card
+// Recognition is the one module that is not a path on this domain — it needs
+// its own origin for the WebSocket (see the marked comment in index.html). The
+// card ships as "Ready to deploy" and only becomes a link once there is
+// somewhere for it to go, so the badge never claims more than is true.
+const recognizeFoot = document.querySelector<HTMLElement>('[data-recognize-foot]');
+
+if (recognizeFoot) {
+  const configured = recognizeFoot.dataset.serviceUrl?.trim() ?? '';
+  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  // The Docker default, so a local demo needs no edit to this file.
+  const serviceUrl = configured || (isLocal ? 'http://localhost:7860' : '');
+
+  if (serviceUrl) {
+    const link = recognizeFoot.querySelector('a');
+    const badge = recognizeFoot.querySelector<HTMLElement>('[data-recognize-badge]');
+
+    if (link) {
+      link.href = serviceUrl;
+      link.hidden = false;
+    }
+    if (badge) {
+      // A deployed origin is a live service; the localhost fallback is a
+      // container someone started by hand, and saying so avoids a green
+      // "Live" badge on a port that may well be closed.
+      if (!configured) badge.textContent = 'Local · port 7860';
+      badge.hidden = false;
+    }
+    recognizeFoot.querySelector('[data-recognize-placeholder]')?.remove();
+  }
+}
+
+// 10. Page Transitions (Outbound)
 document.body.addEventListener('click', (e) => {
   const target = e.target as HTMLElement;
   const link = target.closest('a');
