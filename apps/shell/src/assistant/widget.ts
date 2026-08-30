@@ -11,7 +11,16 @@ import { loadKnowledgeBase, SignKnowledgeBase } from './kb'
 import type { SignCard } from './kb'
 import { buildContext, localAnswer } from './engine'
 import type { Answer } from './engine'
-import { KEYS_URL, callGemini, readKey, verifyKey, writeKey } from './gemini'
+import {
+  KEYS_URL,
+  PREFERRED_MODEL,
+  callGemini,
+  readKey,
+  readModelPreference,
+  verifyKey,
+  writeKey,
+  writeModelPreference,
+} from './gemini'
 import type { Turn } from './gemini'
 
 const SIGNS_URL = '/data/signs.json'
@@ -93,20 +102,35 @@ export function mountAssistant(): void {
 
   const root = document.createElement('div')
   root.className = 'svn-ai'
+  // data-lenis-prevent: the shell runs Lenis globally with smoothWheel, which
+  // swallows wheel and touch events from every nested scroll container — the
+  // message log included, leaving the scrollbar as the only way to move. This
+  // attribute hands those events back to the browser inside the panel, which
+  // is also what you want for an overlay: scrolling the chat should never
+  // scroll the page behind it.
   root.innerHTML = `
-    <button class="svn-ai-launcher" type="button" aria-expanded="false" aria-controls="svn-ai-panel">
-      <span class="svn-ai-launcher-icon">${ICON_SPARK}</span>
-      <span class="svn-ai-launcher-text">Ask Suvana AI</span>
-    </button>
+    <div class="svn-ai-launcher-wrap">
+      <span class="svn-ai-tip" id="svn-ai-tip" role="tooltip">Ask Suvana AI</span>
+      <button
+        class="svn-ai-launcher"
+        type="button"
+        aria-expanded="false"
+        aria-controls="svn-ai-panel"
+        aria-label="Ask Suvana AI"
+        aria-describedby="svn-ai-tip"
+      >
+        <span class="svn-ai-launcher-icon">${ICON_SPARK}</span>
+      </button>
+    </div>
 
-    <section class="svn-ai-panel" id="svn-ai-panel" hidden aria-label="Suvana AI assistant">
+    <section class="svn-ai-panel" id="svn-ai-panel" hidden data-lenis-prevent aria-label="Suvana AI assistant">
       <header class="svn-ai-head">
         <div class="svn-ai-title">
           <h2>Suvana AI</h2>
           <p class="svn-ai-sub">Loading the sign index…</p>
         </div>
         <div class="svn-ai-head-actions">
-          <button class="svn-ai-icon" type="button" data-act="settings" aria-label="Assistant settings">${ICON_GEAR}</button>
+          <button class="svn-ai-icon" type="button" data-act="settings" aria-expanded="false" aria-label="Assistant settings">${ICON_GEAR}</button>
           <button class="svn-ai-icon" type="button" data-act="close" aria-label="Close assistant">${ICON_CLOSE}</button>
         </div>
       </header>
@@ -120,6 +144,14 @@ export function mountAssistant(): void {
         <label class="svn-ai-field">
           <span>Gemini API key</span>
           <input type="password" autocomplete="off" spellcheck="false" placeholder="AIza…" data-field="key" />
+        </label>
+        <label class="svn-ai-field">
+          <span>Model</span>
+          <input type="text" autocomplete="off" spellcheck="false" placeholder="${PREFERRED_MODEL}" data-field="model" />
+          <span class="svn-ai-field-hint">
+            A preference, not a requirement &mdash; model ids retire. If this one
+            isn&rsquo;t available to your key, the closest one that is gets used.
+          </span>
         </label>
         <div class="svn-ai-settings-actions">
           <button class="svn-ai-btn" type="button" data-act="save-key">Save &amp; verify</button>
@@ -154,6 +186,7 @@ export function mountAssistant(): void {
   const input = form.querySelector<HTMLInputElement>('input')!
   const settings = root.querySelector<HTMLElement>('.svn-ai-settings')!
   const keyInput = root.querySelector<HTMLInputElement>('[data-field="key"]')!
+  const modelInput = root.querySelector<HTMLInputElement>('[data-field="model"]')!
   const keyStatus = root.querySelector<HTMLElement>('[data-field="key-status"]')!
 
   const scrollDown = () => { log.scrollTop = log.scrollHeight }
@@ -220,15 +253,18 @@ export function mountAssistant(): void {
 
     const thinking = addThinking()
     try {
-      const text = await callGemini(key, message, history, buildContext(kb, message))
+      const { text } = await callGemini(key, message, history, buildContext(kb, message))
       thinking.remove()
       addAssistant({ ...base, text, via: 'gemini' })
       history.push({ role: 'user', content: message }, { role: 'assistant', content: text })
     } catch (err) {
-      // Never leave the user without a reply — fall back and say why.
+      // Never leave the user without a reply — fall back and say why, in one
+      // short line. Google's raw error is often a paragraph of migration
+      // advice, which is not what someone asking about a sign needs to read.
       thinking.remove()
-      const why = err instanceof Error ? err.message : 'The model call failed.'
-      addAssistant({ ...base, notice: `${why} Answered from Suvana's own index instead.` })
+      const raw = err instanceof Error ? err.message : ''
+      const why = raw.split(/(?<=[.!?])\s/)[0]?.trim() || 'The model call failed.'
+      addAssistant({ ...base, notice: `${why} Answered from Suvana’s own index.` })
       history.push({ role: 'user', content: message }, { role: 'assistant', content: base.text })
     } finally {
       setChips(base.chips)
@@ -240,6 +276,10 @@ export function mountAssistant(): void {
   function toggle(next = !open) {
     open = next
     panel.hidden = !open
+    if (!open) {
+      settings.hidden = true
+      root.classList.remove('is-settings')
+    }
     root.classList.toggle('is-open', open)
     launcher.setAttribute('aria-expanded', String(open))
     if (open) {
@@ -281,9 +321,17 @@ export function mountAssistant(): void {
         break
       case 'settings':
         settings.hidden = !settings.hidden
+        // Settings takes over the panel body instead of sharing it: sharing
+        // left the log a few pixels tall with the chip row overlapping the
+        // fields, which read as a broken layout rather than a drawer.
+        root.classList.toggle('is-settings', !settings.hidden)
+        btn.setAttribute('aria-expanded', String(!settings.hidden))
         if (!settings.hidden) {
           keyInput.value = readKey()
+          modelInput.value = readModelPreference()
           keyInput.focus()
+        } else {
+          input.focus()
         }
         break
       case 'save-key': {
@@ -295,6 +343,9 @@ export function mountAssistant(): void {
         }
         keyStatus.textContent = 'Checking…'
         delete keyStatus.dataset.tone
+        // Saved before verifying: verifyKey resolves against this preference,
+        // so writing it afterwards would have checked the previous model.
+        writeModelPreference(modelInput.value.trim() || PREFERRED_MODEL)
         const result = await verifyKey(key)
         keyStatus.textContent = result.message
         keyStatus.dataset.tone = result.ok ? 'good' : 'bad'
@@ -304,6 +355,7 @@ export function mountAssistant(): void {
       case 'clear-key':
         writeKey('')
         keyInput.value = ''
+        modelInput.value = PREFERRED_MODEL
         keyStatus.textContent = 'Key removed — answers come from Suvana’s own index.'
         keyStatus.dataset.tone = 'good'
         break
