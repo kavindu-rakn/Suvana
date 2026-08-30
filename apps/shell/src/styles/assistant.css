@@ -11,6 +11,9 @@
   right: clamp(14px, 3vw, 28px);
   bottom: clamp(14px, 3vw, 28px);
   z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   font-family: var(--sans);
 }
 
@@ -19,20 +22,51 @@
   --ai-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
 }
 
-/* ---- launcher ---- */
-.svn-ai-launcher {
+/* ---- launcher ----
+   A bare circular icon. The label used to sit inside the button, which made it
+   a wide pill parked over the footer links in the bottom-right corner; it is a
+   hover/focus tooltip now, so the resting footprint is just the icon. */
+.svn-ai-launcher-wrap {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-left: auto;
-  padding: 12px 20px 12px 14px;
+}
+
+.svn-ai.is-open .svn-ai-launcher-wrap {
+  display: none;
+}
+
+.svn-ai-tip {
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: var(--slate);
+  color: var(--paper);
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.svn-ai-launcher-wrap:hover .svn-ai-tip,
+.svn-ai-launcher-wrap:has(.svn-ai-launcher:focus-visible) .svn-ai-tip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.svn-ai-launcher {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
   border: none;
   border-radius: 999px;
   background: linear-gradient(100deg, var(--teal), var(--gold));
   color: #fff;
-  font-family: var(--sans);
-  font-size: 15px;
-  font-weight: 650;
   cursor: pointer;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -41,18 +75,15 @@
   transform: translateY(-2px);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
 }
-.svn-ai.is-open .svn-ai-launcher {
-  display: none;
-}
 .svn-ai-launcher-icon {
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
 }
 .svn-ai-launcher-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   animation: svnAiSpark 6s linear infinite;
 }
 @keyframes svnAiSpark {
@@ -76,8 +107,8 @@
 .svn-ai-panel {
   display: flex;
   flex-direction: column;
-  width: min(400px, calc(100vw - 28px));
-  height: min(620px, calc(100vh - 120px));
+  width: min(430px, calc(100vw - 28px));
+  height: min(660px, calc(100vh - 110px));
   background: var(--ai-surface);
   border: 1px solid var(--line);
   border-radius: 24px;
@@ -102,20 +133,20 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 18px 18px 14px;
+  padding: 20px 20px 17px;
   border-bottom: 1px solid var(--line);
   background: linear-gradient(135deg, rgba(0, 166, 147, 0.09), rgba(218, 165, 32, 0.09));
 }
 .svn-ai-title h2 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   color: var(--slate);
   letter-spacing: -0.01em;
 }
 .svn-ai-sub {
-  margin: 3px 0 0;
+  margin: 5px 0 0;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10.5px;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: var(--gold-ink);
@@ -147,25 +178,47 @@
   height: 15px;
 }
 
-/* ---- settings ---- */
+/* ---- settings ----
+   A view, not a drawer: while it is open the log, chips and composer are gone
+   and it owns the whole panel body. Sharing the body squeezed the log to a few
+   pixels and let the chip row sit on top of the fields. */
 .svn-ai-settings {
-  padding: 16px 18px;
-  border-bottom: 1px solid var(--line);
+  flex: 1;
+  min-height: 0;
+  padding: 20px;
   background: var(--ai-raised);
-  font-size: 0.88rem;
+  font-size: 0.9rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.svn-ai.is-settings .svn-ai-log,
+.svn-ai.is-settings .svn-ai-chips,
+.svn-ai.is-settings .svn-ai-composer {
+  display: none;
+}
+
+/* The gear is a toggle, so show which state it is in. */
+.svn-ai-icon[aria-expanded='true'] {
+  background: var(--slate);
+  border-color: var(--slate);
+  color: var(--paper);
 }
 .svn-ai-settings-lead {
-  margin: 0 0 12px;
-  line-height: 1.55;
+  margin: 0 0 15px;
+  line-height: 1.65;
   color: var(--ink);
   opacity: 0.9;
 }
 .svn-ai-field {
   display: block;
+  margin-bottom: 13px;
 }
-.svn-ai-field span {
+/* First child only: the hint below the input is also a <span> in here, and a
+   bare `.svn-ai-field span` turned it into an uppercase mono label. */
+.svn-ai-field > span:first-of-type {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 1px;
@@ -174,9 +227,9 @@
 }
 .svn-ai-field input {
   width: 100%;
-  padding: 9px 12px;
+  padding: 11px 13px;
   border: 1px solid var(--line);
-  border-radius: 9px;
+  border-radius: 10px;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--mono);
@@ -186,15 +239,27 @@
   outline: 2px solid var(--gold);
   outline-offset: 1px;
 }
+.svn-ai-field-hint {
+  display: block;
+  margin: 7px 0 0;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  line-height: 1.55;
+  color: var(--ink);
+  opacity: 0.62;
+}
 .svn-ai-settings-actions {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: 11px;
+  margin-top: 14px;
 }
 .svn-ai-btn {
-  padding: 7px 14px;
+  padding: 8px 15px;
   border: none;
   border-radius: 8px;
   background: var(--slate);
@@ -228,9 +293,9 @@
   color: var(--gold-ink);
 }
 .svn-ai-settings-note {
-  margin: 10px 0 0;
-  font-size: 0.82rem;
-  line-height: 1.5;
+  margin: 13px 0 0;
+  font-size: 0.84rem;
+  line-height: 1.6;
   color: var(--ink);
   opacity: 0.85;
 }
@@ -246,30 +311,39 @@
   color: #ff9d95;
 }
 .svn-ai-settings-fine {
-  margin: 10px 0 0;
-  font-size: 0.76rem;
-  line-height: 1.5;
+  margin: 13px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.6;
   color: var(--ink);
   opacity: 0.6;
 }
 
-/* ---- message log ---- */
+/* ---- message log ----
+   overscroll-behavior stops a scroll that reaches the end of the log from
+   chaining into the page behind the panel. `data-lenis-prevent` on the panel
+   (set in widget.ts) is what keeps the shell's global Lenis from swallowing
+   the wheel and touch events before they ever get here. */
 .svn-ai-log {
   flex: 1;
   overflow-y: auto;
-  padding: 18px;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
   scrollbar-width: thin;
 }
 .svn-ai-log::-webkit-scrollbar {
   display: block;
-  width: 6px;
+  width: 8px;
 }
 .svn-ai-log::-webkit-scrollbar-thumb {
   background: var(--line);
   border-radius: 999px;
+}
+.svn-ai-log::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-ink);
 }
 
 .svn-ai-msg {
@@ -281,11 +355,11 @@
 }
 
 .svn-ai-bubble {
-  max-width: 92%;
-  padding: 13px 16px;
+  max-width: 90%;
+  padding: 15px 18px;
   border-radius: 18px;
-  font-size: 0.94rem;
-  line-height: 1.62;
+  font-size: 0.95rem;
+  line-height: 1.72;
   overflow-wrap: anywhere;
 }
 .is-user .svn-ai-bubble {
@@ -304,7 +378,7 @@
   border-bottom-left-radius: 6px;
 }
 .svn-ai-bubble p {
-  margin: 0 0 9px;
+  margin: 0 0 11px;
 }
 .svn-ai-bubble p:last-child {
   margin-bottom: 0;
@@ -324,16 +398,16 @@
   font-size: 0.85em;
 }
 .svn-ai-bubble ul {
-  margin: 0 0 9px;
+  margin: 0 0 11px;
   padding-left: 18px;
 }
 .svn-ai-bubble li {
-  margin-bottom: 4px;
+  margin-bottom: 7px;
 }
 
 .svn-ai-via {
   display: inline-block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   padding: 2px 9px;
   border-radius: 999px;
   background: rgba(218, 165, 32, 0.16);
@@ -343,12 +417,23 @@
   letter-spacing: 1px;
   text-transform: uppercase;
 }
+
+/* The fallback note. Quiet by design — the answer above it is the content, and
+   this is a footnote explaining where it came from. */
 .svn-ai-notice {
-  margin: 9px 0 0 !important;
-  padding-top: 9px;
+  display: flex;
+  gap: 7px;
+  margin: 13px 0 0 !important;
+  padding-top: 12px;
   border-top: 1px dashed var(--line);
-  font-size: 0.82rem;
-  opacity: 0.75;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  opacity: 0.7;
+}
+.svn-ai-notice::before {
+  content: '⚠';
+  flex-shrink: 0;
+  opacity: 0.8;
 }
 
 /* thinking dots */
@@ -385,39 +470,42 @@
 
 /* ---- sign cards ---- */
 .svn-ai-card {
-  margin-top: 12px;
-  padding: 14px;
+  margin-top: 16px;
+  padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--paper);
+}
+.svn-ai-card + .svn-ai-card {
+  margin-top: 12px;
 }
 .svn-ai-card-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
 }
 .svn-ai-card-si {
   margin: 0 !important;
   font-family: var(--sinhala);
-  font-size: 1.3rem;
-  line-height: 1.5;
+  font-size: 1.35rem;
+  line-height: 1.6;
   color: var(--slate);
 }
 :root[data-theme='dark'] .svn-ai-card-si {
   color: var(--ink);
 }
 .svn-ai-card-gloss {
-  margin: 2px 0 0 !important;
-  font-size: 0.86rem;
+  margin: 4px 0 0 !important;
+  font-size: 0.88rem;
   font-style: italic;
   opacity: 0.8;
 }
 .svn-ai-speak {
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
   padding: 0;
   border: 1px solid var(--line);
@@ -438,7 +526,7 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin: 10px 0 0 !important;
+  margin: 14px 0 0 !important;
 }
 .svn-ai-chip-tag {
   padding: 3px 9px;
@@ -451,16 +539,19 @@
   text-transform: uppercase;
 }
 .svn-ai-card-tips {
-  margin: 10px 0 0 !important;
-  padding-left: 16px;
-  font-size: 0.84rem;
-  line-height: 1.55;
+  margin: 14px 0 0 !important;
+  padding-left: 17px;
+  font-size: 0.86rem;
+  line-height: 1.65;
   opacity: 0.85;
+}
+.svn-ai-card-tips li + li {
+  margin-top: 7px;
 }
 .svn-ai-card-cta {
   display: inline-block;
-  margin-top: 11px;
-  font-size: 0.85rem;
+  margin-top: 15px;
+  font-size: 0.87rem;
   font-weight: 650;
   color: var(--teal-ink);
   text-decoration: none;
@@ -473,22 +564,26 @@
 .svn-ai-chips {
   display: flex;
   gap: 8px;
-  padding: 0 18px;
+  padding: 0 20px;
   overflow-x: auto;
+  overscroll-behavior: contain;
   scrollbar-width: none;
 }
+.svn-ai-chips::-webkit-scrollbar {
+  display: none;
+}
 .svn-ai-chips:not(:empty) {
-  padding-bottom: 12px;
+  padding-bottom: 14px;
 }
 .svn-ai-chip {
   flex-shrink: 0;
-  padding: 7px 13px;
+  padding: 8px 14px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: transparent;
   color: var(--slate);
   font-family: var(--sans);
-  font-size: 0.82rem;
+  font-size: 0.83rem;
   white-space: nowrap;
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s;
@@ -500,20 +595,20 @@
 
 .svn-ai-composer {
   display: flex;
-  gap: 9px;
-  padding: 13px 18px 16px;
+  gap: 10px;
+  padding: 15px 20px 18px;
   border-top: 1px solid var(--line);
 }
 .svn-ai-composer input {
   flex: 1;
   min-width: 0;
-  padding: 11px 15px;
+  padding: 12px 16px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--ai-raised);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 0.92rem;
+  font-size: 0.93rem;
 }
 .svn-ai-composer input:focus-visible {
   outline: 2px solid var(--gold);
@@ -522,8 +617,8 @@
 .svn-ai-composer button {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
   padding: 0;
   border: none;
@@ -536,19 +631,22 @@
 .svn-ai-composer button:hover {
   background: var(--teal-ink);
 }
+.svn-ai-composer button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 .svn-ai-composer button svg {
   width: 19px;
   height: 19px;
 }
 
 @media (max-width: 480px) {
-  .svn-ai-launcher-text {
-    display: none;
-  }
-  .svn-ai-launcher {
-    padding: 14px;
-  }
   .svn-ai-panel {
-    height: min(560px, calc(100vh - 90px));
+    height: min(600px, calc(100vh - 90px));
+  }
+  /* No hover on touch, so the tooltip would never appear — and the icon in the
+     corner is the affordance people already recognise. */
+  .svn-ai-tip {
+    display: none;
   }
 }
