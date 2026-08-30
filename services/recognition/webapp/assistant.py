@@ -1,4 +1,9 @@
-"""සවන AI Assistant -- a self-contained, zero-cost help engine for the web app.
+"""Suvana AI Assistant -- a self-contained, zero-cost help engine for the web app.
+
+Rebranded from the team repo's copy: the standalone name this module was
+built under is a sub-brand, and Suvana carries no sub-brand names in UI copy.
+Only user-visible strings differ; the engine is untouched, so a re-sync should
+take upstream logic and re-apply these few strings.
 
 Design goals
 ------------
@@ -435,7 +440,7 @@ def local_answer(message: str) -> Dict[str, Any]:
     if GREETING_RE.search(low):
         return {
             "text": (
-                "ආයුබෝවන්! I'm **සවන AI**, your sign-language tutor for this app.\n\n"
+                "ආයුබෝවන්! I'm **සුවණ Suvana AI**, your sign-language tutor for this app.\n\n"
                 f"I know all **{len(KB.entries)}** signs this model was trained on. "
                 "Ask me how to sign something, what a sign means, or ask for a sign to practise."
             ),
@@ -455,7 +460,7 @@ def local_answer(message: str) -> Dict[str, Any]:
     if CAPABILITY_RE.search(low):
         return {
             "text": (
-                "I'm the built-in tutor for **සවන**. I can:\n\n"
+                "I'm the built-in tutor for **සුවණ Suvana**. I can:\n\n"
                 "• **Look up any sign** — \"how do I sign *to drink*?\"\n"
                 "• **Translate** — \"what does *gannawa* mean?\"\n"
                 "• **Browse by group** — \"show me the numbers\"\n"
@@ -577,7 +582,7 @@ PROVIDERS = {
     },
 }
 
-SYSTEM_PROMPT = """You are "සවන AI", the built-in tutor inside a Sinhala Sign Language recognition web app built as a university research project.
+SYSTEM_PROMPT = """You are "Suvana AI", the built-in tutor inside the Recognize module of Suvana, a Sri Lankan Sign Language platform built as a university research project.
 
 Your job is to help the user learn and practise the signs this app's model recognises.
 
@@ -587,6 +592,7 @@ Hard rules:
 - Keep answers short and warm — 2 to 5 sentences, or a tight bullet list. This is a chat bubble, not an essay.
 - Sinhala script may be used freely; the user reads Sinhala.
 - Use light markdown (**bold**, bullets with •). No headings, no code fences.
+- Never use a sub-brand name. The Suvana modules are Recognize, Communicate, Learn and Alerts.
 - If the retrieved context is empty and the question is about a specific sign, say plainly that it is not in this dataset."""
 
 
@@ -819,7 +825,7 @@ class ChatRequest(BaseModel):
 def assistant_meta():
     """Everything the UI needs to introduce itself, computed from real data."""
     return {
-        "name": "සවන AI",
+        "name": "සුවණ Suvana AI",
         "signCount": len(KB.entries),
         "summary": KB.stats_line(),
         "categories": {c: len(v) for c, v in KB.categories.items()},

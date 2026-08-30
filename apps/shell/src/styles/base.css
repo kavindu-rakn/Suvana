@@ -82,8 +82,11 @@ a:focus-visible,
   white-space: nowrap;
 }
 
-/* ---- header ---- */
-header {
+/* ---- header ----
+   Scoped to #header, not the bare element: a widget that mounts its own
+   <header> (the assistant panel does) must not inherit a fixed, full-width,
+   top-left position from the site chrome. */
+#header {
   position: fixed;
   top: 0;
   left: 0;
@@ -96,7 +99,7 @@ header {
   transition: transform 0.3s ease;
 }
 /* Hide header on scroll down, show on scroll up logic via JS class */
-header.nav-hidden {
+#header.nav-hidden {
   transform: translateY(-100%);
 }
 

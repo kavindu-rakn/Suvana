@@ -117,6 +117,13 @@ export function drawHands(
   ctx: CanvasRenderingContext2D,
   hands: TrackedHand[],
   fit: Fit = IDENTITY,
+  /**
+   * Force every hand to one colour instead of the left/right pair. The
+   * reference player passes this: there the skeleton is a teaching diagram and
+   * a colour that changes with which hand the signer used is just noise. In
+   * the live self-view the colour *is* information, so it is left unset.
+   */
+  colorOverride?: string,
 ) {
   const { width, height } = ctx.canvas
   const px = (p: { x: number }) => ((p.x - fit.cx) * fit.k + 0.5) * width
@@ -125,7 +132,7 @@ export function drawHands(
   const joint = Math.max(MIN_PX, width * JOINT_FRACTION)
 
   for (const hand of hands) {
-    const color = HAND_COLORS[hand.handedness] ?? FALLBACK_COLOR
+    const color = colorOverride ?? HAND_COLORS[hand.handedness] ?? FALLBACK_COLOR
     const pts = hand.landmarks
     if (pts.length === 0) continue
 

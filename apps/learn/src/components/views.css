@@ -1145,10 +1145,12 @@
   gap: 8px;
 }
 
+/* A label, not a control — filled tag rather than an outlined pill, so it
+   doesn't read as a button the learner should press. */
 .finger-chip {
   font: 600 13px var(--sans);
   color: var(--caution);
-  border: 1px solid currentColor;
+  background: rgb(218 165 32 / 0.14);
   border-radius: 999px;
   padding: 4px 12px;
   text-transform: capitalize;
@@ -1578,9 +1580,31 @@
   gap: 10px;
 }
 
-.player-controls .btn {
-  padding: 6px 14px;
-  font-size: 13px;
+/* Play/Pause and the speed toggle: same footprint, so the bar does not jiggle
+   when Play (icon) becomes 0.5x (text). */
+.player-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 46px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--border-interactive);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: 600 13px var(--sans);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.player-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+.player-btn[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .player-controls input[type='range'] {
@@ -1681,7 +1705,7 @@
 }
 
 .aww-topbar {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -1710,13 +1734,6 @@
   height: 34px;
   width: auto;
   display: block;
-  mix-blend-mode: multiply;
-  filter: contrast(1.2);
-}
-
-:root[data-theme='dark'] .aww-topbar .mark {
-  filter: invert(1) hue-rotate(180deg) contrast(1.5); 
-  mix-blend-mode: screen;
 }
 
 .aww-topbar .wordmark {
@@ -1771,7 +1788,7 @@
   justify-content: center;
   text-align: center;
   position: relative;
-  padding-top: 100px;
+  padding: 96px 24px 40px;
 }
 
 .aww-titles {
@@ -1785,13 +1802,7 @@
 .aww-hero-mark {
   height: 100px;
   width: auto;
-  margin-bottom: 30px;
-  mix-blend-mode: multiply;
-  filter: contrast(1.2);
-}
-:root[data-theme='dark'] .aww-hero-mark {
-  filter: invert(1) hue-rotate(180deg) contrast(1.5); 
-  mix-blend-mode: screen;
+  margin-bottom: 16px;
 }
 
 .aww-suvana-en {
@@ -1824,32 +1835,11 @@
   z-index: 2; /* Needs position relative to work */
 }
 
-.aww-hero-art {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  max-width: 800px;
-  opacity: 0.15;
-  z-index: 0;
-  pointer-events: none;
-}
-:root[data-theme='dark'] .aww-hero-art {
-  opacity: 0.05;
-}
-.aww-hero-art svg {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
 .aww-subline {
   max-width: 600px;
   font-size: clamp(1rem, 2vw, 1.25rem);
   color: var(--text-dim);
-  margin: 40px 0;
+  margin: 24px 0;
   z-index: 10;
   position: relative;
 }
@@ -1962,7 +1952,9 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  aspect-ratio: 1;
+  /* A fixed height instead of a 1:1 square: the square forced a ~600px card on
+     desktop that the content could never fill. */
+  height: 420px;
   background: var(--surface);
   border-radius: 30px;
   overflow: hidden;
@@ -1970,13 +1962,427 @@
   border: 1px solid var(--border-subtle);
 }
 
-.aww-css-art {
-  width: 60%;
-  height: 60%;
-  border-radius: 20px;
-  background: linear-gradient(135deg, var(--accent), var(--p-gold-400));
-  opacity: 0.5;
-  filter: blur(40px);
+@media (max-width: 768px) {
+  .aww-step-visual {
+    height: 340px;
+  }
+}
+
+/* ---- Hero Stats Strip ---- */
+.lhero-stats-strip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  padding: 12px 28px;
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  margin: 20px auto 0;
+}
+
+.lstat-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lstat-val {
+  font-family: var(--sans);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+.lstat-lbl {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.lstat-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border-subtle);
+}
+
+@media (max-width: 640px) {
+  .lhero-stats-strip {
+    border-radius: 20px;
+    padding: 14px 20px;
+    gap: 10px 16px;
+  }
+  .lstat-sep {
+    display: none;
+  }
+}
+
+/* ============================================================================
+   HERO ANIMATED FEATURE PREVIEW CARDS
+   ========================================================================== */
+
+.aww-preview-card {
+  width: 100%;
+  height: 100%;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 1. Vocab Card */
+.card-vocab {
+  background: linear-gradient(145deg, rgba(47, 79, 79, 0.12), rgba(218, 165, 32, 0.08));
+}
+
+.card-vocab-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  padding: 12px 18px;
+  border-radius: 999px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+.card-vocab-search .search-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+.card-vocab-search .search-text {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.card-vocab-pills {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.v-pill {
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border-interactive);
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: transform 0.3s ease;
+  animation: floatPill 3s infinite ease-in-out alternate;
+}
+
+.v-pill-1 { animation-delay: 0s; }
+.v-pill-2 { animation-delay: 0.6s; border-color: rgba(218, 165, 32, 0.4); }
+.v-pill-3 { animation-delay: 1.2s; border-color: rgba(47, 79, 79, 0.4); }
+.v-pill-4 { animation-delay: 1.8s; }
+
+@keyframes floatPill {
+  0% { transform: translateY(0px) scale(0.98); }
+  100% { transform: translateY(-6px) scale(1.02); }
+}
+
+.card-vocab-badge {
+  align-self: flex-start;
+  font-size: 0.78rem;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(218, 165, 32, 0.15);
+  color: var(--p-gold-400, #daa520);
+  font-weight: 600;
+}
+
+/* 2. Motion Capture Viewfinder Card */
+.card-capture {
+  background: #081014;
+  color: #fff;
+}
+
+.capture-hud-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.capture-hud-top .rec-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff4d4f;
+  animation: blinkRec 1s infinite alternate;
+}
+
+@keyframes blinkRec {
+  0% { opacity: 0.2; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+.capture-hud-top .fps-tag {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: #20b2aa;
+}
+
+.capture-viewfinder {
+  position: relative;
+  flex: 1;
+  margin: 16px 0;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.reticle-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #20b2aa;
+}
+.reticle-corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+.reticle-corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+.reticle-corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+.reticle-corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+.skeleton-hand-anim {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+/* An actual hand skeleton — bones plus joints — rather than a scatter of
+   unconnected dots. Drawn inline in Hero.tsx; this just sizes and pulses it. */
+.skeleton-hand-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 6px rgba(32, 178, 170, 0.45));
+  animation: handGlow 2.4s infinite alternate ease-in-out;
+}
+
+@keyframes handGlow {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #20b2aa, transparent);
+  box-shadow: 0 0 8px #20b2aa;
+  animation: scanMove 3s infinite linear;
+}
+
+@keyframes scanMove {
+  0% { top: 0; opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* 3. Joint Scoring Card */
+.card-scoring {
+  background: linear-gradient(135deg, rgba(32, 178, 170, 0.08), rgba(47, 79, 79, 0.12));
+}
+
+.score-dial-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-dial-outer {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 4px solid rgba(218, 165, 32, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(32, 178, 170, 0.15);
+}
+
+/* Only the arc spins — the score inside stays upright and readable. */
+.score-dial-outer::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 4px solid transparent;
+  border-top-color: var(--accent);
+  border-right-color: var(--accent);
+  animation: dialSpin 6s infinite linear;
+}
+
+@keyframes dialSpin {
+  to { transform: rotate(360deg); }
+}
+
+.score-dial-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.score-dial-inner .score-num {
+  font-family: var(--sans);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.score-dial-inner .score-lbl {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.finger-precision-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.f-bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.f-bar-row span {
+  width: 50px;
+}
+
+.f-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.f-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #20b2aa, #daa520);
+  animation: barGrow 2.5s infinite alternate ease-in-out;
+}
+
+.fill-98 { width: 98%; animation-delay: 0s; }
+.fill-95 { width: 95%; animation-delay: 0.3s; }
+.fill-92 { width: 92%; animation-delay: 0.6s; }
+
+@keyframes barGrow {
+  0% { transform: scaleX(0.7); }
+  100% { transform: scaleX(1); }
+}
+
+/* 4. Mastery Progress Card */
+.card-mastery {
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.1), rgba(47, 79, 79, 0.1));
+}
+
+.mastery-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.mastery-streak {
+  color: #ff8c00;
+}
+
+.mastery-level {
+  color: var(--accent);
+}
+
+.mastery-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  height: 120px;
+  padding: 0 8px;
+}
+
+.chart-bar {
+  flex: 1;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(to top, var(--accent), var(--p-gold-400, #daa520));
+  animation: chartPulse 2s infinite ease-in-out alternate;
+}
+
+.chart-bar.b1 { height: 40%; animation-delay: 0.1s; }
+.chart-bar.b2 { height: 60%; animation-delay: 0.2s; }
+.chart-bar.b3 { height: 50%; animation-delay: 0.3s; }
+.chart-bar.b4 { height: 80%; animation-delay: 0.4s; }
+.chart-bar.b5 { height: 70%; animation-delay: 0.5s; }
+.chart-bar.b6 { height: 90%; animation-delay: 0.6s; }
+.chart-bar.b7 { height: 100%; animation-delay: 0.7s; }
+
+@keyframes chartPulse {
+  0% { transform: scaleY(0.85); opacity: 0.8; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+
+.mastery-badge-row {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.m-badge {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.m-badge.gold {
+  background: rgba(218, 165, 32, 0.2);
+  color: var(--p-gold-400, #daa520);
+}
+
+.m-badge.teal {
+  background: rgba(32, 178, 170, 0.2);
+  color: var(--accent);
 }
 
 /* Footer Editorial */
@@ -2016,7 +2422,7 @@
 }
 
 .aww-footer-mega {
-  padding: 120px 24px;
+  padding: 120px 24px 140px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2025,13 +2431,61 @@
 
 .aww-footer-mega h2 {
   font-family: 'Noto Serif', serif;
-  font-size: clamp(4rem, 10vw, 8rem);
-  line-height: 0.9;
-  margin-bottom: 40px;
-  background: linear-gradient(to bottom, #fff, rgba(255,255,255,0.3));
+  font-size: clamp(4.5rem, 11vw, 8.5rem);
+  line-height: 1.05;
+  margin: 0;
+  color: #ffffff;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+.aww-start-cta-link {
+  display: inline-block;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  background-image: linear-gradient(
+    90deg,
+    var(--accent) 0%,
+    var(--p-gold-400, #daa520) 25%,
+    #48d1cc 50%,
+    var(--p-gold-400, #daa520) 75%,
+    var(--accent) 100%
+  );
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: suvanaGradientShift 6s linear infinite;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  text-decoration: none;
+  vertical-align: baseline;
+}
+
+.aww-start-cta-link:hover {
+  animation-duration: 1.5s;
+  transform: scale(1.04);
+  filter: drop-shadow(0 0 28px rgba(32, 178, 170, 0.5));
+}
+
+.aww-start-cta-link:focus-visible {
+  outline: 2px dashed var(--accent);
+  outline-offset: 8px;
+  border-radius: 8px;
+}
+
+@keyframes suvanaGradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
 }
 
 /* ============================================================================
@@ -2040,7 +2494,7 @@
 
 .aww-practice-env {
   position: fixed;
-  top: 61px;
+  top: var(--app-bar-h);
   left: 0;
   right: 0;
   bottom: 0;
@@ -2049,6 +2503,118 @@
   display: flex;
   flex-direction: column;
   z-index: 10;
+}
+
+/* Phone layout. Two flex:1 panes side by side become two ~185px columns
+   otherwise, and the fixed bottom tab bar (.tabs, --nav-offset tall) would sit
+   over the bottom of a full-height surface. */
+@media (max-width: 760px) {
+  .aww-practice-env {
+    /* Stop above the fixed tab bar so nothing is trapped behind it. */
+    bottom: var(--nav-offset);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .aww-split-screen {
+    flex-direction: column;
+  }
+
+  /* Browsing: a single scrolling column — the sign list. There is no hover on
+     touch, so the desktop preview pane is dropped here. */
+  .aww-browse .aww-split-screen {
+    height: 100%;
+  }
+  .aww-browse .aww-pane-right {
+    display: none;
+  }
+  .aww-browse .aww-pane-left {
+    flex: 1;
+    border-right: none;
+    overflow-y: auto;
+  }
+  .aww-browse .aww-pane-left .cs-nav-pane {
+    height: auto;
+    min-height: 100%;
+  }
+  .aww-browse .aww-pane-left .cs-signs-grid {
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* Practising: a compact reference on top, the camera filling the rest — both
+     visible at once, no scrolling between them. */
+  .aww-practice-env:not(.aww-browse) .aww-split-screen {
+    height: 100%;
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left {
+    flex: 0 0 40vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-right {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Both pane headers become a compact solid bar in flow instead of a large
+     title floating over the media. */
+  .aww-practice-env:not(.aww-browse) .aww-pane-header {
+    position: static;
+    inset: auto;
+    padding: 8px 14px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border-subtle);
+    text-shadow: none;
+    align-items: center;
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-title {
+    font-size: 1.3rem;
+  }
+  .aww-pane-header-actions .btn {
+    white-space: nowrap;
+  }
+
+  /* Header is in flow, so the media takes what is left. */
+  .aww-practice-env:not(.aww-browse) .aww-pane-content,
+  .aww-practice-env:not(.aww-browse) .aww-camera-container {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .skeleton-player {
+    height: 100%;
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .skeleton-player canvas {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+  }
+  /* Reference transport in flow at the bottom, not floating over a ~180px
+     skeleton. */
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .player-controls {
+    position: static;
+    inset: auto;
+    padding: 8px 12px;
+    background: var(--surface-2);
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    border-radius: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* The pane already ends above the tab bar (env bottom: var(--nav-offset)). */
+  .aww-cam-action {
+    left: 12px;
+    bottom: 14px;
+  }
+  .aww-cam-rec {
+    top: 12px;
+    right: 12px;
+  }
+  .aww-cam-countdown {
+    font-size: 4.5rem;
+  }
 }
 
 /* In Author Mode, .mode-banner-wrap adds ~64px above header, so top offset is ~125px */
@@ -2074,18 +2640,6 @@
   overflow: hidden;
 }
 
-.aww-pane::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 150px;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
-  pointer-events: none;
-  z-index: 5;
-}
-
 .aww-pane-left {
   border-right: 1px solid var(--border-subtle);
   background: var(--surface-2);
@@ -2093,6 +2647,11 @@
 
 .aww-pane-right {
   background: var(--surface);
+}
+
+/* Browsing: give the sign list a little more room than the preview. */
+.aww-browse .aww-split-screen .aww-pane-left {
+  flex: 1.3;
 }
 
 .aww-pane-header {
@@ -2116,8 +2675,36 @@
   font-size: 13px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 8px;
+}
+
+/* Light Mode: Ensure crisp dark labels before camera is active */
+:root[data-theme='light'] .aww-pane-right:not([data-camera-status='running']) .aww-pane-header,
+:root:not([data-theme='dark']) .aww-pane-right:not([data-camera-status='running']) .aww-pane-header,
+:root[data-theme='light'] .aww-pane-left .aww-pane-header,
+:root:not([data-theme='dark']) .aww-pane-left .aww-pane-header {
+  text-shadow: none;
+}
+
+:root[data-theme='light'] .aww-pane-right:not([data-camera-status='running']) .aww-pane-label,
+:root:not([data-theme='dark']) .aww-pane-right:not([data-camera-status='running']) .aww-pane-label {
+  color: #111816;
+  text-shadow: none;
+  font-weight: 700;
+}
+
+:root[data-theme='light'] .aww-pane-left .aww-pane-label,
+:root:not([data-theme='dark']) .aww-pane-left .aww-pane-label {
+  color: var(--text-dim, #5c7069);
+  text-shadow: none;
+  font-weight: 600;
+}
+
+:root[data-theme='light'] .aww-pane-left .aww-pane-title,
+:root:not([data-theme='dark']) .aww-pane-left .aww-pane-title {
+  color: var(--text, #111816);
+  text-shadow: none;
 }
 
 .aww-pane-title {
@@ -2126,6 +2713,39 @@
   color: #fff;
   margin: 0;
   line-height: 1.1;
+}
+
+/* Reference pane: round back button top-left, the label + sign name to the
+   right corner. */
+.aww-ref-header {
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.aww-back-round {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--border-interactive);
+  background: rgba(var(--surface-rgb), 0.7);
+  color: var(--text);
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.aww-back-round:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.aww-ref-heading {
+  text-align: right;
+  min-width: 0;
 }
 
 .aww-pane-content, .aww-camera-container, .aww-replay-container {
@@ -2137,10 +2757,97 @@
   position: relative;
 }
 
+/* Sign preview in the right pane while browsing — sits over the hidden camera
+   stage rather than in flow next to it, so the two don't stack to 200%. */
+.aww-preview-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .aww-camera-container.hidden {
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
+}
+
+.aww-camera-container .camera-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  border-radius: 0;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.aww-camera-container .stage-live {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.aww-camera-container .stage-live > video,
+.aww-camera-container .stage-live > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.aww-camera-container .camera-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--surface-2);
+  z-index: 4;
+}
+
+/* Camera-permission onboarding — the privacy line here is the same promise the
+   Learn hero makes, delivered at the moment the learner is asked for a camera. */
+.aww-camera-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  max-width: 380px;
+  padding: 0 24px;
+  color: var(--text);
+}
+
+.aww-camera-intro-lead {
+  margin: 0;
+  color: var(--text);
+}
+
+.aww-camera-intro-note {
+  margin: 0;
+  max-width: 320px;
+  color: var(--text-dim);
+}
+
+.aww-camera-intro-guide {
+  width: 96px;
+  height: auto;
+  margin: 2px 0;
+  color: var(--text-dim);
+  opacity: 0.7;
+}
+
+.aww-camera-intro .btn.massive {
+  margin-top: 6px;
 }
 
 .aww-replay-container {
@@ -2155,10 +2862,12 @@
 .aww-pane .skeleton-player {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Important to fill the pane! */
+  object-fit: cover;
 }
-/* Wait, SkeletonPlayer returns an SVG/Canvas. We must ensure it covers. */
-.aww-pane svg, .aww-pane canvas, .aww-pane video {
+.aww-pane .skeleton-player svg,
+.aww-pane .skeleton-player canvas,
+.aww-pane .stage-live video,
+.aww-pane .stage-live canvas {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2166,51 +2875,93 @@
 
 
 /* ============================================================================
-   HUD (Heads-Up Display)
+   CAMERA CONTROLS — anchored to the "You" pane, one action at a time
    ========================================================================== */
 
-.aww-hud {
+/* Action button, bottom-left of the camera view. */
+.aww-cam-action {
   position: absolute;
-  bottom: 36px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 24px;
+  bottom: 24px;
   z-index: 50;
-  display: flex;
-  flex-direction: column;
+}
+
+.aww-cam-btn {
+  display: inline-flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 999px;
+  font: 600 0.95rem var(--sans);
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.aww-cam-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.aww-cam-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.aww-cam-btn-stop {
+  background: var(--recording);
+  color: #fff;
+}
+.aww-cam-btn-stop:hover:not(:disabled) {
+  background: var(--recording-strong);
+}
+
+.aww-cam-btn-ghost {
   background: rgba(var(--surface-rgb), 0.85);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  padding: 20px 36px;
-  border-radius: 24px;
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
   color: var(--text);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-.aww-hud-idle, .aww-hud-actions, .aww-hud-recording {
-  display: flex;
+/* Recording timer, top-right — clear of the "You" label top-left. */
+.aww-cam-rec {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 50;
+  display: inline-flex;
   align-items: center;
-  gap: 16px;
-}
-.aww-hud-idle p {
-  color: var(--text-dim);
-  font-size: 0.9rem;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font: 700 13px var(--mono);
+  letter-spacing: 1px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
-.aww-hud-countdown {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+.aww-rec-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--recording);
+  animation: blinkRec 1s infinite alternate;
 }
-.aww-hud-countdown span {
-  font-size: 4rem;
-  font-weight: 800;
-  font-family: var(--mono);
+
+/* Countdown, centred over the camera. */
+.aww-cam-countdown {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  font: 800 6rem var(--mono);
   color: var(--p-gold-400);
-  line-height: 1;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
 }
 
 
@@ -2235,7 +2986,7 @@
   position: absolute;
   inset: 0;
   background: var(--surface);
-  opacity: 0.85;
+  opacity: 0.9;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: -1;
@@ -2283,6 +3034,77 @@
   padding-top: 20px;
 }
 
+/* Practice result: ring + feedback + actions in ONE card, so the card can
+   never clip the ring (it used to float over the ring's lower third).
+   ScenarioView keeps the older .aww-result-center / .aww-result-feedback. */
+.aww-result-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  text-align: center;
+  width: min(520px, calc(100% - 48px));
+  padding: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  pointer-events: auto;
+}
+
+/* Size the ring through the SVG — the old transform: scale(1.5) blurred it. */
+.aww-result-panel .score-badge svg {
+  width: 176px;
+  height: 176px;
+  background: var(--surface);
+  border-radius: 50%;
+}
+
+.aww-result-panel p {
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.aww-result-panel .aww-result-lead {
+  color: var(--text);
+}
+
+.aww-result-panel .aww-result-feedback {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  min-width: 0;
+  gap: 14px;
+  align-items: center;
+}
+
+.aww-result-panel .focus-block {
+  align-items: center;
+  margin-top: 4px;
+  border-top: none;
+  padding-top: 0;
+}
+
+.aww-result-panel .finger-chips {
+  justify-content: center;
+}
+
+.aww-result-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* Don't let the reference / replay skeletons ghost through the blurred
+   result overlay. */
+.aww-practice-env[data-phase='result'] .aww-pane-left .aww-pane-content,
+.aww-practice-env[data-phase='result'] .aww-replay-container {
+  visibility: hidden;
+}
+
 
 /* ============================================================================
    COMMAND PALETTE MODAL (Sign Picker)
@@ -2315,92 +3137,39 @@
 .aww-picker-content {
   position: relative;
   width: 90%;
-  max-width: 800px;
+  max-width: 920px;
   max-height: 85vh;
   background: var(--surface);
   border: 1px solid var(--border-interactive);
   border-radius: 24px;
-  padding: 32px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 40px 100px rgba(0,0,0,0.5);
-  overflow: hidden;
-}
-
-.aww-picker-content .picker-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.aww-picker-content h2 {
-  font-family: 'Noto Serif', serif;
-  font-size: 2rem;
-  margin: 0;
-}
-
-.aww-picker-content .picker-search {
-  font-size: 1.2rem;
-  padding: 16px 24px;
-  border-radius: 12px;
-  border: 1px solid var(--border-subtle);
-  background: var(--surface-2);
-  color: var(--text);
-  margin-bottom: 24px;
-  outline: none;
-}
-.aww-picker-content .picker-search:focus {
-  border-color: var(--accent);
-}
-
-.aww-picker-content .sign-list {
-  flex: 1;
   overflow-y: auto;
-  margin: 0 -32px; /* Pull out to edges */
-  padding: 0 32px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
 }
 
-.aww-picker-content .sign-row {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 16px;
-  background: var(--surface-2);
-  border: 1px solid transparent;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-}
-.aww-picker-content .sign-row:hover {
-  background: var(--surface-hover);
-  border-color: var(--accent);
-  transform: translateY(-2px);
-}
+/* The replay in the right pane doesn't need scrub controls; the reference in
+   the left pane very much does — a learner has to be able to pause, scrub and
+   slow the sign they are copying. */
+.aww-practice-env .aww-replay-container .player-controls { display: none !important; }
 
-.aww-picker-content .sign-row-name {
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 8px;
-}
-.aww-picker-content .sign-row-meta {
-  font-size: 0.85rem;
-  color: var(--text-dim);
+.aww-practice-env .aww-pane-left .skeleton-player { position: relative; }
+
+.aww-practice-env .aww-pane-left .player-controls {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 20px;
+  z-index: 20;
+  padding: 10px 16px;
+  background: rgba(var(--surface-rgb), 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
 }
 
-.aww-camera-container .camera-stage { width: 100%; height: 100%; max-height: none; aspect-ratio: auto; border-radius: 0; }
-
-.aww-camera-container .camera-placeholder {
-  display: none !important;
-}
-
-.aww-picker-content .category-rail { padding-bottom: 12px; margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
-
-.aww-practice-env .player-controls { display: none !important; }
 
 .aww-result-center .score-badge svg {
   background: var(--surface);
@@ -3721,3 +4490,466 @@
   align-items: center;
   gap: 14px;
 }
+
+/* ============================================================================
+   CATEGORY & SIGN DISCOVERY NAVIGATOR (2-Step Interactive Flow)
+   ========================================================================== */
+
+.cs-nav-container {
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.cs-nav-page {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 36px 24px 100px;
+}
+
+.cs-nav-modal {
+  width: 100%;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.cs-nav-pane {
+  width: 100%;
+  height: 100%;
+  padding: 16px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.cs-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.cs-nav-title-group .cs-nav-title {
+  font-family: var(--serif, 'Noto Serif', serif);
+  font-size: 1.35rem;
+  color: var(--text);
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.cs-nav-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin: 2px 0 0;
+}
+
+.cs-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 999px;
+  color: var(--text-dim);
+}
+
+/* Breadcrumbs & Back Button */
+.cs-nav-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cs-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cs-back-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+  display: block;
+}
+
+.cs-back-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.cs-crumb-sep {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.cs-crumb-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.cs-crumb-count {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+/* Search Row */
+.cs-search-row {
+  margin-bottom: 12px;
+}
+
+.cs-search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.cs-search-icon {
+  position: absolute;
+  left: 12px;
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--text-dim);
+  pointer-events: none;
+  display: block;
+}
+
+.cs-search-input {
+  width: 100%;
+  padding: 8px 30px 8px 36px;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-2);
+  color: var(--text);
+  outline: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.cs-search-input::-webkit-search-cancel-button,
+.cs-search-input::-webkit-search-decoration,
+.cs-search-input::-webkit-search-results-button,
+.cs-search-input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+.cs-search-input:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0 0 2px rgba(32, 178, 170, 0.15);
+}
+
+.cs-search-clear {
+  position: absolute;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+}
+.cs-search-clear:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+/* Suggested Banner (Compact Single Row) */
+.cs-suggested-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.1), rgba(32, 178, 170, 0.1));
+  border: 1px solid rgba(218, 165, 32, 0.3);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cs-suggested-banner:hover {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(218, 165, 32, 0.15), rgba(32, 178, 170, 0.15));
+}
+
+.cs-suggested-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cs-suggested-tag {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--p-gold-400, #daa520);
+  background: rgba(218, 165, 32, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.cs-suggested-gloss {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.cs-suggested-sub {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.cs-suggested-btn {
+  white-space: nowrap;
+}
+
+/* Custom Gloss Card (Admin) */
+.cs-custom-gloss-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px dashed var(--border-interactive);
+}
+
+.cs-custom-info h4 {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.cs-custom-info p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+/* Categories grid: responsive columns, same rhythm as the signs grid below. */
+.cs-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  padding: 2px;
+}
+
+.cs-category-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  height: 38px;
+  box-sizing: border-box;
+}
+
+.cs-category-card:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.cs-category-card:focus-visible {
+  outline: 2px solid var(--accent);
+}
+
+.cs-cat-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cs-cat-badge {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(32, 178, 170, 0.12);
+  color: var(--accent);
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+
+/* Signs Grid */
+.cs-signs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 8px;
+  max-height: calc(100vh - 210px);
+  overflow-y: auto;
+  padding: 4px 4px 12px 2px;
+}
+
+.cs-sign-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 3px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  /* Fixed, not min — a long gloss like "WAMATA U TURN EKEN HARENNA" used to
+     stretch its card to twice its neighbours' height (jagged masonry). */
+  height: 88px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.cs-sign-card:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.cs-sign-card.selected {
+  border-color: var(--accent);
+  background: rgba(32, 178, 170, 0.08);
+}
+
+.cs-sign-card.suggested {
+  border-color: rgba(218, 165, 32, 0.4);
+}
+
+.cs-sign-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.cs-sign-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.cs-sign-cat-tag {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.cs-sign-badges {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  gap: 2px;
+}
+
+.cs-suggested-chip {
+  font-size: 0.6rem;
+  background: rgba(218, 165, 32, 0.15);
+  color: var(--p-gold-400, #daa520);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.cs-team-chip {
+  font-size: 0.6rem;
+  background: rgba(32, 178, 170, 0.15);
+  color: var(--accent);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.cs-sign-gloss {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.2;
+  /* Clamp so a long gloss can't blow the card's fixed height — the meaning
+     line underneath carries the rest of the context. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cs-sign-meaning {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin: 2px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.cs-results-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.cs-empty-state {
+  text-align: center;
+  padding: 28px 16px;
+  background: var(--surface-2);
+  border-radius: 10px;
+  border: 1px dashed var(--border-subtle);
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+

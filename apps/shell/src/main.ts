@@ -2,6 +2,8 @@ import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initWebGLBackground } from './webgl';
+import { initTheme } from './theme';
+import { mountAssistant } from './assistant/widget';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -200,72 +202,8 @@ gsap.from('.testimonial-card', {
   },
 });
 
-// 6. Theme Toggle with View Transitions API
-const themeBtn = document.getElementById('theme-toggle');
-
-const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>';
-const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>';
-
-function paintBtn(theme: string) {
-  if (!themeBtn) return;
-  const next = theme === 'dark' ? 'light' : 'dark';
-  themeBtn.innerHTML = theme === 'dark' ? SUN : MOON;
-  themeBtn.setAttribute('aria-label', 'Switch to ' + next + ' theme');
-  themeBtn.setAttribute('title', 'Switch to ' + next + ' theme');
-}
-
-paintBtn(document.documentElement.dataset.theme || 'light');
-
-if (themeBtn) {
-  themeBtn.addEventListener('click', () => {
-    const currentTheme = document.documentElement.dataset.theme;
-    const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
-    const switchTheme = () => {
-      document.documentElement.dataset.theme = nextTheme;
-      paintBtn(nextTheme);
-      try { localStorage.setItem('suvana.theme', nextTheme); } catch (e) {}
-      window.dispatchEvent(new CustomEvent('theme-changed', { detail: { theme: nextTheme } }));
-    };
-
-    if (!(document as any).startViewTransition) {
-      switchTheme();
-      return;
-    }
-
-    const rect = themeBtn.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-    const maxRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
-
-    const transition = (document as any).startViewTransition(switchTheme);
-
-    // Prevent frozen custom cursor during transition
-    document.body.classList.add('is-transitioning');
-    transition.finished.finally(() => {
-      document.body.classList.remove('is-transitioning');
-    });
-
-    transition.ready.then(() => {
-      document.documentElement.animate(
-        {
-          clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${maxRadius}px at ${x}px ${y}px)`
-          ],
-        },
-        {
-          duration: 800,
-          easing: 'ease-in-out',
-          pseudoElement: '::view-transition-new(root)',
-        }
-      );
-    });
-  });
-}
+// 6. Theme Toggle (shared with the other pages the shell serves)
+initTheme();
 
 // 7. Auth Logic
 (async () => {
@@ -335,8 +273,12 @@ const recognizeFoot = document.querySelector<HTMLElement>('[data-recognize-foot]
 if (recognizeFoot) {
   const configured = recognizeFoot.dataset.serviceUrl?.trim() ?? '';
   const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-  // The Docker default, so a local demo needs no edit to this file.
-  const serviceUrl = configured || (isLocal ? 'http://localhost:7860' : '');
+  // Two local origins are plausible and both are documented: 8000 is the
+  // uvicorn command in the runbook, 7860 the Docker default in
+  // services/recognition/DEPLOY-SUVANA.md. Default to 8000 so the link works
+  // the moment the runbook is followed, then confirm by probe.
+  const LOCAL_PORTS = [8000, 7860];
+  const serviceUrl = configured || (isLocal ? `http://localhost:${LOCAL_PORTS[0]}` : '');
 
   if (serviceUrl) {
     const link = recognizeFoot.querySelector('a');
@@ -348,12 +290,37 @@ if (recognizeFoot) {
     }
     if (badge) {
       // A deployed origin is a live service; the localhost fallback is a
-      // container someone started by hand, and saying so avoids a green
-      // "Live" badge on a port that may well be closed.
-      if (!configured) badge.textContent = 'Local · port 7860';
+      // server someone started by hand, and saying so avoids a green "Live"
+      // badge on a port that may well be closed.
+      if (!configured) badge.textContent = `Local · port ${LOCAL_PORTS[0]}`;
       badge.hidden = false;
     }
     recognizeFoot.querySelector('[data-recognize-placeholder]')?.remove();
+
+    // Find which port is actually answering. The service serves no CORS
+    // headers by design (it is same-origin with its own page), so the response
+    // cannot be read — but a no-cors fetch still settles: it resolves opaque
+    // when something replied and rejects when the connection was refused,
+    // which is exactly the liveness question being asked. It cannot tell what
+    // is listening, so it only ever picks between the two documented ports.
+    if (!configured && isLocal) {
+      const probe = (port: number) =>
+        fetch(`http://localhost:${port}/api/info`, {
+          mode: 'no-cors',
+          signal: AbortSignal.timeout(1500),
+        }).then(() => port);
+
+      void Promise.any(LOCAL_PORTS.map(probe))
+        .then((port) => {
+          if (link) link.href = `http://localhost:${port}`;
+          if (badge) badge.textContent = `Local · port ${port}`;
+        })
+        .catch(() => {
+          // Nothing is up yet. Leave the link on the runbook's port and say so
+          // rather than implying a running service.
+          if (badge) badge.textContent = 'Local · not running';
+        });
+    }
   }
 }
 
@@ -395,3 +362,82 @@ document.body.addEventListener('click', (e) => {
     }
   }
 });
+
+// 11. Section navigation
+// The landing is one long page, so the header carries jump links. Two pieces:
+// the scroll itself has to go through Lenis (a native anchor jump sets
+// scrollTop directly, which Lenis then fights back to where it thinks the page
+// is), and an observer marks whichever section is in view.
+const navLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-links a'));
+
+if (navLinks.length) {
+  // Lenis is already intercepting the wheel, so hand it the target too. The
+  // offset clears the fixed header, which would otherwise cover the heading
+  // the reader just asked to see.
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
+    const id = link?.getAttribute('href');
+    if (!id || id === '#') return;
+    const target = document.querySelector(id);
+    if (!target) return;
+    e.preventDefault();
+    lenis.scrollTo(target as HTMLElement, { offset: -80, duration: 1.1 });
+    history.replaceState(null, '', id);
+  });
+
+  const sections = new Map<Element, HTMLAnchorElement>();
+  for (const link of navLinks) {
+    const target = document.querySelector(link.getAttribute('href') ?? '');
+    if (target) sections.set(target, link);
+  }
+
+  if (sections.size && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const link = sections.get(entry.target);
+          if (!link) continue;
+          navLinks.forEach((l) => l.classList.remove('is-current'));
+          link.classList.add('is-current');
+        }
+      },
+      // A band across the upper third of the viewport. That matches where a
+      // reader perceives "the section I'm in" better than dead centre does,
+      // and it keeps exactly one section current at a time.
+      { rootMargin: '-15% 0px -75% 0px', threshold: 0 },
+    );
+    sections.forEach((_link, target) => io.observe(target));
+  }
+}
+
+// 12. Live platform stat
+// The sign count is the one number on this page that changes when the model is
+// retrained, so it is read from the committed index rather than typed into the
+// markup. Everything else in the band is an architectural constant. On failure
+// the em dash already in the HTML stands — better than a wrong number.
+const signStat = document.querySelector<HTMLElement>('[data-stat="signs"]');
+if (signStat) {
+  void fetch('/data/signs.json', { cache: 'force-cache' })
+    .then((res) => (res.ok ? res.json() : null))
+    .then((data) => {
+      const count = data?.signs?.length;
+      if (!count) return;
+      // Count up, but only once the band is actually on screen.
+      const run = () => {
+        const value = { n: 0 };
+        gsap.to(value, {
+          n: count,
+          duration: 1.2,
+          ease: 'power2.out',
+          onUpdate: () => { signStat.textContent = String(Math.round(value.n)); },
+        });
+      };
+      ScrollTrigger.create({ trigger: signStat, start: 'top 90%', once: true, onEnter: run });
+    })
+    .catch(() => {});
+}
+
+// 13. The assistant. It carries its own knowledge base and talks to no Suvana
+// service, so it works here whether or not anything else is running.
+mountAssistant();

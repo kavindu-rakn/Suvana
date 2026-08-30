@@ -1,10 +1,23 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 
-// The shell is one static HTML page — no framework. Vite is here for two
+// The shell is plain HTML and TypeScript — no framework. Vite is here for two
 // reasons only: a dev server whose proxy mirrors the production rewrites, so
 // http://localhost:5173/learn and /communicate behave exactly as they will on
 // the real domain, and a build that hashes and copies public/.
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      // Two documents, not one: /alerts/ is a real page on this domain, since
+      // Alerts is the module with no web surface of its own to link out to.
+      // Nested as alerts/index.html so the built path is /alerts/ on any static
+      // host, with no clean-URL rewrite needed.
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        alerts: fileURLToPath(new URL('./alerts/index.html', import.meta.url)),
+      },
+    },
+  },
   server: {
     port: 5173,
     strictPort: true,

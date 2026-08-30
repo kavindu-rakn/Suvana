@@ -1,0 +1,389 @@
+/* ---- overview.css: the explainer, the step cards, the stats band and the
+   editorial feature list. These are the structures ported from the recognition
+   module's own landing page, rebuilt on Suvana's tokens. ---- */
+
+/* ---- header section nav ---- */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-links a {
+  position: relative;
+  padding: 4px 0;
+  color: var(--slate);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  opacity: 0.75;
+  transition: opacity 0.2s, color 0.2s;
+}
+
+.nav-links a:hover {
+  opacity: 1;
+  color: var(--gold-ink);
+}
+
+/* The underline marks the section currently in view. Drawn with a
+   transform-scaled pseudo-element so it animates without reflowing the bar. */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(100deg, var(--teal), var(--gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s ease;
+}
+
+.nav-links a.is-current {
+  opacity: 1;
+  color: var(--gold-ink);
+}
+
+.nav-links a.is-current::after {
+  transform: scaleX(1);
+}
+
+/* Below the wide breakpoint the brand and the controls need the whole bar. */
+@media (max-width: 900px) {
+  .nav-links {
+    display: none;
+  }
+}
+
+/* On a phone the bar is brand + toggle + one or two account links, and at
+   375px that does not fit: the wordmark ran into the toggle and the account
+   links wrapped to two lines each. Drop to the mark alone and let the links
+   stay on one line — the wordmark is the part the logo already says. */
+@media (max-width: 560px) {
+  .nav {
+    padding: 10px 16px;
+    gap: 10px;
+  }
+  .nav .brand {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .nav .wordmark {
+    display: none;
+  }
+  .nav-right {
+    gap: 10px;
+    min-width: 0;
+  }
+  .auth-slot {
+    gap: 8px;
+    font-size: 13px;
+    min-width: 0;
+  }
+  .auth-slot a {
+    white-space: nowrap;
+  }
+  .auth-slot .auth-cta {
+    padding: 6px 11px;
+  }
+  /* "Back to Home" on the module pages — the mark already goes home, so the
+     button only needs to be reachable, not wide. */
+  .nav-right .btn {
+    padding: 7px 13px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+/* ---- overview ---- */
+.overview-wrapper {
+  position: relative;
+  width: 100%;
+  background: var(--paper);
+  z-index: 2;
+  padding: 100px 24px 40px;
+}
+
+.overview-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 90px;
+}
+
+.overview-split {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 6vw;
+  align-items: center;
+}
+
+.overview-visual {
+  position: relative;
+  /* The illustration is square and lazy-loaded, so reserve its box: without
+     this the column is 0px tall until the image arrives and the whole section
+     jumps when it does. */
+  aspect-ratio: 1;
+  border-radius: 32px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(0, 166, 147, 0.1), rgba(218, 165, 32, 0.1));
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+}
+
+.overview-visual img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.overview-content h2 {
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  line-height: 1.15;
+  color: var(--slate);
+  margin: 14px 0 24px;
+  text-wrap: balance;
+}
+
+.overview-content p {
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: var(--ink);
+  opacity: 0.88;
+  margin: 0 0 18px;
+}
+
+.overview-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- step cards ---- */
+.steps-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+}
+
+.step-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 34px 28px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+:root[data-theme='dark'] .step-card {
+  background: rgba(18, 33, 32, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.step-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--teal);
+  box-shadow: 0 18px 40px rgba(0, 166, 147, 0.12);
+}
+
+.step-num {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--gold-ink);
+}
+
+.step-card h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--slate);
+}
+
+.step-card p {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+.step-link {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--teal-ink);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.step-link:hover {
+  color: var(--gold-ink);
+}
+
+/* ---- stats band ---- */
+.stats-band {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 44px 24px;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.stats-band .stat-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  text-align: center;
+}
+
+.stats-band .stat-tile + .stat-tile {
+  border-left: 1px solid var(--line);
+}
+
+.stat-value {
+  font-family: var(--sans);
+  font-size: clamp(2rem, 4vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(100deg, var(--teal), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.stat-value i {
+  font-style: normal;
+  font-size: 0.45em;
+  letter-spacing: 0;
+}
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--slate);
+  opacity: 0.8;
+}
+
+@media (max-width: 900px) {
+  .overview-split {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .overview-wrapper {
+    padding-top: 70px;
+  }
+  .overview-container {
+    gap: 60px;
+  }
+  .stats-band .stat-tile:nth-child(odd) {
+    border-left: none;
+  }
+}
+
+/* ---- editorial feature list ---- */
+.features-wrapper {
+  position: relative;
+  width: 100%;
+  background: var(--paper);
+  z-index: 2;
+  padding: 40px 24px 120px;
+}
+
+.features-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 6vw;
+  align-items: start;
+}
+
+.features-heading {
+  position: sticky;
+  top: 120px;
+}
+
+.features-heading h2 {
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+  line-height: 1.1;
+  color: var(--slate);
+  margin: 14px 0 0;
+}
+
+.features-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-item {
+  padding: 32px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.feature-item:first-child {
+  padding-top: 0;
+}
+
+.feature-item-title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+
+.feature-item-title h3 {
+  margin: 0;
+  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+  line-height: 1.25;
+  color: var(--slate);
+  white-space: nowrap;
+}
+
+/* The rule fills whatever the heading leaves — an editorial device that keeps
+   a ragged list of headings on one optical baseline. */
+.feature-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  opacity: 0.5;
+}
+
+.feature-item p {
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--ink);
+  opacity: 0.85;
+  max-width: 62ch;
+}
+
+@media (max-width: 900px) {
+  .features-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .features-heading {
+    position: static;
+  }
+  .feature-item-title h3 {
+    white-space: normal;
+  }
+}
