@@ -53,6 +53,18 @@ here and must survive every future re-sync:
 
 129 tests pass; typecheck and production build clean.
 
+**30 Aug 2026 — `services/recognition` backend, checked, nothing to take.**
+
+Verified against the team repo at `2d85c78` (fetched; `origin/main` had nothing
+newer). `server.py`, `assistant.py`, `soundguard.py`, `sinhala_labels.py`, both
+build scripts, all of `src/`, all of `tests/` and both config files are
+**identical**. The only commits touching that folder since the last sync
+(`5f945db`, `2f826ad`, `327274a`) all edit `webapp/static/index.html` — the team
+repo's own landing page, which embeds the other modules as panels. Suvana
+integrates at the domain level instead, so those keep being skipped, exactly as
+the 26 Aug entry below says. The Suvana copy's only intentional divergence is
+its rebranded frontend, plus the UI strings noted next.
+
 **30 Aug 2026 — `services/recognition/webapp/assistant.py`, UI copy only.**
 
 Five user-visible strings still carried the module's standalone sub-brand name,
@@ -66,7 +78,7 @@ Taken: `tests/test_keypoint_augmentation.py` and `tests/test_sinhala_labels.py` 
 
 **Not taken, and not an oversight:** the same range added `webapp/static/learnssl.css`, `webapp/static/signspeak.css` and matching `index.html` sections. That is Lahiru's own integration approach in the team repo — embedding the other modules as panels inside the recognition page. Suvana integrates at the domain level instead (the shell owns routing and cross-module navigation), so importing those would duplicate the shell's job, re-introduce the sub-brand names "SignSpeak" and "Learn SSL" into Suvana UI copy, and collide with this copy's rebrand of the same file. Future re-syncs of this component should keep skipping them and take backend, model and test changes only.
 
-`data/processed/labels.npy` is **still absent upstream**, so the label-map gap in `services/recognition/DEPLOY-SUVANA.md` remains open.
+~~`data/processed/labels.npy` is still absent upstream, so the label-map gap in `services/recognition/DEPLOY-SUVANA.md` remains open.~~ **Closed 30 Aug 2026**: `labels.npy`, `metadata.json` and `webapp/data/sinhala_labels.json` are committed here (~380 KB). They were caught by a bare `data/` ignore rule, so a clone got a service that started and logged `Loaded 0 gesture labels`. Do not regenerate them from the Kaggle corpus — the label order has to match the trained model's output indices exactly.
 
 Deliberately excluded from every snapshot: git histories, `node_modules`, Python venvs, build outputs, datasets, and ~293 MB of Mixamo test FBX files (`lib/models` in Sign-Detector — nothing in code references them). The team repo's `SSL-Transformer/` folder was a stale placeholder and was not copied; the PP1 Python demo stays in the team repo as historical reference.
 
