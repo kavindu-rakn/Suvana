@@ -43,7 +43,14 @@ tts_cache/
 # ------------------------------------------------------------------------------
 # Datasets & Extracted Features (Landmarks / Sequences)
 # ------------------------------------------------------------------------------
-data/
+# A bare `data/` excluded the whole tree at every level, which also swallowed
+# the two small derived files below -- so they never arrived with a clone or
+# reached the Docker image, and the service came up with no label map at all.
+# Anchored patterns instead, so git can still descend into those directories.
+/data/*
+!/data/processed/
+/data/processed/*
+/webapp/data/*
 dataset/
 datasets/
 *.npy
@@ -51,6 +58,16 @@ datasets/
 *.parquet
 *.feather
 *.h5.temp
+
+# Committed on purpose (~380 KB): without labels.npy every prediction reads
+# Gesture_0...Gesture_170, and without sinhala_labels.json there is no Sinhala
+# script and the assistant on that page reports zero signs. Both are derived
+# from Lahiru's processed dataset and must not be regenerated from the Kaggle
+# corpus -- the label order has to match the trained model's output indices
+# exactly. These negations must stay *after* `*.npy`: last match wins.
+!/data/processed/labels.npy
+!/data/processed/metadata.json
+!/webapp/data/sinhala_labels.json
 
 # ------------------------------------------------------------------------------
 # Model Weights & Training Checkpoints
