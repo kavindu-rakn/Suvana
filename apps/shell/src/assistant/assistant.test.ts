@@ -7,13 +7,17 @@
  * And `pickModel` exists because Google retires model ids — it is the code
  * that runs on the day the assistant would otherwise break, so it can never
  * be exercised by simply using the app.
+ *
+ * It is imported from `model.ts`, the half that has no environment
+ * assumptions: the same file runs in the browser and inside the serverless
+ * function that holds Suvana's key, so these tests cover both routes.
  */
 
 import { describe, expect, it } from 'vitest'
 
 import { SignKnowledgeBase, norm, ratio, tokens } from './kb'
 import { localAnswer, stripQuery } from './engine'
-import { PREFERRED_MODEL, pickModel } from './gemini'
+import { PREFERRED_MODEL, pickModel } from './model'
 
 describe('ratio — difflib.SequenceMatcher parity', () => {
   // Expected values produced by CPython:

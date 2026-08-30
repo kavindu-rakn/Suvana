@@ -13,8 +13,10 @@ import { buildContext, localAnswer } from './engine'
 import type { Answer } from './engine'
 import {
   KEYS_URL,
+  NoModelAccess,
   PREFERRED_MODEL,
-  callGemini,
+  askAssistant,
+  probeProxy,
   readKey,
   readModelPreference,
   verifyKey,
@@ -136,11 +138,14 @@ export function mountAssistant(): void {
       </header>
 
       <div class="svn-ai-settings" hidden>
-        <p class="svn-ai-settings-lead">
-          The assistant answers from Suvana's own sign index with no key at all.
-          Add a free <strong>Google Gemini</strong> key and the same retrieved
-          signs are handed to the model, so replies read more naturally.
-        </p>
+        <p class="svn-ai-settings-lead" data-field="route">Checking how this deployment answers&hellip;</p>
+        <details class="svn-ai-advanced">
+          <summary>Use your own Gemini key instead</summary>
+          <p class="svn-ai-settings-lead">
+            Only needed when this deployment has no model access of its own.
+            The key stays in this browser and is sent only to Google &mdash; it
+            never reaches a Suvana server.
+          </p>
         <label class="svn-ai-field">
           <span>Gemini API key</span>
           <input type="password" autocomplete="off" spellcheck="false" placeholder="AIza…" data-field="key" />
@@ -159,10 +164,7 @@ export function mountAssistant(): void {
           <a class="svn-ai-link" href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get a free key &rarr;</a>
         </div>
         <p class="svn-ai-settings-note" data-field="key-status"></p>
-        <p class="svn-ai-settings-fine">
-          The key is stored only in this browser and is sent only to Google —
-          it never reaches a Suvana server.
-        </p>
+        </details>
       </div>
 
       <div class="svn-ai-log" role="log" aria-live="polite"></div>
@@ -188,6 +190,7 @@ export function mountAssistant(): void {
   const keyInput = root.querySelector<HTMLInputElement>('[data-field="key"]')!
   const modelInput = root.querySelector<HTMLInputElement>('[data-field="model"]')!
   const keyStatus = root.querySelector<HTMLElement>('[data-field="key-status"]')!
+  const routeLine = root.querySelector<HTMLElement>('[data-field="route"]')!
 
   const scrollDown = () => { log.scrollTop = log.scrollHeight }
 
@@ -240,10 +243,10 @@ export function mountAssistant(): void {
     setChips([])
 
     const base = localAnswer(kb, message)
-    const key = readKey()
 
-    // No key: the local engine is the whole answer, and it is instant.
-    if (!key || !kb.size) {
+    // With no index there is nothing to ground a model answer in, so do not
+    // spend a call on it — the local reply already explains the situation.
+    if (!kb.size) {
       addAssistant(base)
       setChips(base.chips)
       history.push({ role: 'user', content: message }, { role: 'assistant', content: base.text })
@@ -253,18 +256,27 @@ export function mountAssistant(): void {
 
     const thinking = addThinking()
     try {
-      const { text } = await callGemini(key, message, history, buildContext(kb, message))
+      // Suvana's own model access first, then a personal key, then neither.
+      // Note this runs even with no key saved: the visitor path is the proxy,
+      // and short-circuiting on an empty key would mean it was never used.
+      const { text } = await askAssistant(message, history, buildContext(kb, message))
       thinking.remove()
       addAssistant({ ...base, text, via: 'gemini' })
       history.push({ role: 'user', content: message }, { role: 'assistant', content: text })
     } catch (err) {
-      // Never leave the user without a reply — fall back and say why, in one
-      // short line. Google's raw error is often a paragraph of migration
-      // advice, which is not what someone asking about a sign needs to read.
       thinking.remove()
-      const raw = err instanceof Error ? err.message : ''
-      const why = raw.split(/(?<=[.!?])\s/)[0]?.trim() || 'The model call failed.'
-      addAssistant({ ...base, notice: `${why} Answered from Suvana’s own index.` })
+      if (err instanceof NoModelAccess) {
+        // No model access anywhere. That is a supported configuration, not a
+        // failure, so the local answer stands with no apology attached.
+        addAssistant(base)
+      } else {
+        // Never leave the user without a reply — fall back and say why, in one
+        // short line. Google's raw error is often a paragraph of migration
+        // advice, which is not what someone asking about a sign needs to read.
+        const raw = err instanceof Error ? err.message : ''
+        const why = raw.split(/(?<=[.!?])\s/)[0]?.trim() || 'The model call failed.'
+        addAssistant({ ...base, notice: `${why} Answered from Suvana’s own index.` })
+      }
       history.push({ role: 'user', content: message }, { role: 'assistant', content: base.text })
     } finally {
       setChips(base.chips)
@@ -330,6 +342,16 @@ export function mountAssistant(): void {
           keyInput.value = readKey()
           modelInput.value = readModelPreference()
           keyInput.focus()
+          // Say plainly which of the two routes is answering, so nobody has to
+          // guess whether the key field matters on this deployment.
+          void probeProxy().then((ok) => {
+            routeLine.innerHTML = ok
+              ? 'Replies come from <strong>Suvana&rsquo;s own model access</strong>. ' +
+                'Nothing to set up &mdash; no key is needed here.'
+              : 'This deployment has no model access of its own, so replies come ' +
+                'from <strong>Suvana&rsquo;s sign index</strong> in fixed phrasing. ' +
+                'Add a key below to make them conversational.'
+          })
         } else {
           input.focus()
         }
