@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...but the template must ship, or a clone has nothing to copy and the
+# README's setup step points at a file that does not exist.
+!.env.local.example
 
 # vercel
 .vercel

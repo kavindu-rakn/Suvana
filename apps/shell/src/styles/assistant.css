@@ -251,6 +251,38 @@
   color: var(--ink);
   opacity: 0.62;
 }
+/* The personal-key section: collapsed by default, because on a deployment
+   with its own model access there is nothing here anyone needs to do. */
+.svn-ai-advanced {
+  margin-top: 4px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.svn-ai-advanced > summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 650;
+  color: var(--teal-ink);
+  list-style: none;
+}
+.svn-ai-advanced > summary::-webkit-details-marker {
+  display: none;
+}
+.svn-ai-advanced > summary::before {
+  content: '▸ ';
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.svn-ai-advanced[open] > summary::before {
+  content: '▾ ';
+}
+.svn-ai-advanced > summary:hover {
+  color: var(--gold-ink);
+}
+.svn-ai-advanced > .svn-ai-settings-lead {
+  margin-top: 12px;
+}
+
 .svn-ai-settings-actions {
   display: flex;
   align-items: center;

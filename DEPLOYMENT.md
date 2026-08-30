@@ -32,6 +32,26 @@ No environment variables. Vite builds with `base: '/learn/'` into `dist/learn`,
 so the deployment serves `/learn/*` on its own domain too — which is what makes
 the shell's rewrite a straight pass-through with no path rewriting.
 
+### 1b. `suvana-shell` — one optional environment variable
+
+| Variable | Value |
+|---|---|
+| `GEMINI_API_KEY` | A Google AI Studio key. Set it in the Vercel project's environment variables (Production, and Preview if you want it there). |
+
+This is what lets the built-in assistant answer conversationally without every
+visitor bringing their own key. It is read only by the `api/assistant` Edge
+function and never reaches the browser — do not rename it to `VITE_*`, which
+would inline it into the client bundle and publish it.
+
+Leave it unset and the assistant still works: it falls back to its local
+retrieval engine over the committed sign index.
+
+**Keep billing disabled on the Google project.** The endpoint is public, so
+anyone who finds it can spend the quota. It is rate limited per client, but
+serverless instances are ephemeral so that cap is per-instance rather than
+global — the real backstop is Google's own per-project limit, which with
+billing off means a burned daily quota rather than an invoice.
+
 ### 2. `suvana-communicate` — Root Directory `apps/communicate`
 
 Environment variables (Production):

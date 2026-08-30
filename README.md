@@ -99,33 +99,34 @@ One domain serves the whole web product. The shell (`apps/shell`) owns the root;
 - **`apps/alerts`** — `npm install`, then `npx expo run:android` (a dev build is required: the app has a custom native module, so Expo Go will not run it).
 - **`services/recognition`** — `pip install -r requirements.txt`, then see its README and `DEPLOY-SUVANA.md`. Capture is browser-side (`getUserMedia` → WebSocket), so it works off localhost. Locally it is simplest to borrow the team repo's venv rather than build a second 3 GB one — `DEMO.md` has the command. It needs two gitignored data files that never arrive with a clone; `DEMO.md` lists them and what breaks without them.
 
-### Lockfiles — regenerate with npm 10, not 11
+### Node version — pinned in `.nvmrc`
 
-CI pins Node 22, which ships **npm 10**. A lockfile written by **npm 11**
-(Node 24, what this repo is developed on) omits some transitive `@emnapi/*`
-packages that `@napi-rs/wasm-runtime` pulls in for its wasm fallbacks, and
-npm 10 refuses the install:
+CI reads `.nvmrc`, so it runs the same Node (and therefore the same npm) as
+this repo is developed on. That is not cosmetic. When CI pinned Node 22 (npm
+10) while lockfiles were written on Node 24 (npm 11), `npm ci` refused the
+install in both `apps/learn` and `apps/communicate`:
 
 ```
 npm ci can only install packages when your package.json and package-lock.json are in sync.
 Missing: @emnapi/runtime@1.11.3 from lock file
 ```
 
-npm 11 accepts its own lockfile, so this never appears locally — it only ever
-fails in CI. Note that `npm ci --dry-run --os=linux --cpu=x64` does **not**
-catch it either: the missing entries are not platform-specific, and the
-platform flags only change which optional packages get installed.
-
-A lock written by npm 10 is accepted by both, so use npm 10 whenever a
-dependency changes:
+npm 11 omits some transitive `@emnapi/*` packages that `@napi-rs/wasm-runtime`
+pulls in for its wasm fallbacks, and then accepts its own lockfile — so the gap
+was invisible locally and only ever failed in CI. Note that
+`npm ci --dry-run --os=linux --cpu=x64` does **not** catch it either: the
+missing entries are not platform-specific, so the platform flags change
+nothing. Reproduce a CI install with the version CI uses, not with flags:
 
 ```
-npx -y npm@10 install --package-lock-only --prefix apps/<app>
+npx -y npm@10 ci --dry-run --prefix apps/<app>
 ```
 
-Only `apps/learn` and `apps/communicate` are affected — they are the two that
-reach `@napi-rs/wasm-runtime`, via rolldown and Tailwind's oxide binding
-respectively. `apps/shell` and `apps/alerts` produce identical locks either way.
+The committed lockfiles are npm 10 output, which both majors accept, so they
+stay valid if the pin ever moves back down. Only `apps/learn` and
+`apps/communicate` are affected — they are the two that reach
+`@napi-rs/wasm-runtime`, via rolldown and Tailwind's oxide binding
+respectively.
 
 ## The built-in assistant
 
@@ -139,10 +140,21 @@ was trained on. It runs entirely in the browser:
   in `services/recognition/webapp/assistant.py`, scoring kept numerically
   identical (including a faithful `difflib.SequenceMatcher` ratio) so answers do
   not drift between the two surfaces.
-- **Optional model** — a free Gemini key, entered through the widget's gear.
-  The key is held in that browser's `localStorage` and sent only to Google; the
-  local engine still retrieves first and its hits are injected as grounded
-  context, and every failure falls back to the local answer.
+- **Model access** — `api/assistant`, a Vercel Edge function on the shell's own
+  project that holds `GEMINI_API_KEY` server-side. Visitors get conversational
+  replies without bringing a key, and the key never reaches the browser: a key
+  shipped to a static page is a published key, and no amount of minifying or
+  encoding changes that. `src/assistant/handler.ts` is the function's body,
+  kept separate so the Vite dev server runs the identical code on localhost.
+  With the variable unset the endpoint answers 503 and the widget quietly uses
+  its local engine — a deployment with no model access is supported, not
+  broken.
+- **A personal key** — still available under *Advanced* in the widget's gear,
+  for a deployment that has no access of its own. It stays in that browser and
+  is sent only to Google.
+
+In every case the local engine retrieves first and its hits are injected as
+grounded context, and every failure falls back to the local answer.
 
 The point of the port is that it depends on **no Suvana service**. The Python
 original reads a gitignored file next to a 3 GB TensorFlow container, so it

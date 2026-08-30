@@ -19,6 +19,7 @@ out/
 !.env.example
 !.env.local.example
 .vercel/
+.vite/
 .claude/
 
 # Datasets never enter this repo (see README provenance).
