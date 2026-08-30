@@ -99,6 +99,34 @@ One domain serves the whole web product. The shell (`apps/shell`) owns the root;
 - **`apps/alerts`** — `npm install`, then `npx expo run:android` (a dev build is required: the app has a custom native module, so Expo Go will not run it).
 - **`services/recognition`** — `pip install -r requirements.txt`, then see its README and `DEPLOY-SUVANA.md`. Capture is browser-side (`getUserMedia` → WebSocket), so it works off localhost. Locally it is simplest to borrow the team repo's venv rather than build a second 3 GB one — `DEMO.md` has the command. It needs two gitignored data files that never arrive with a clone; `DEMO.md` lists them and what breaks without them.
 
+### Lockfiles — regenerate with npm 10, not 11
+
+CI pins Node 22, which ships **npm 10**. A lockfile written by **npm 11**
+(Node 24, what this repo is developed on) omits some transitive `@emnapi/*`
+packages that `@napi-rs/wasm-runtime` pulls in for its wasm fallbacks, and
+npm 10 refuses the install:
+
+```
+npm ci can only install packages when your package.json and package-lock.json are in sync.
+Missing: @emnapi/runtime@1.11.3 from lock file
+```
+
+npm 11 accepts its own lockfile, so this never appears locally — it only ever
+fails in CI. Note that `npm ci --dry-run --os=linux --cpu=x64` does **not**
+catch it either: the missing entries are not platform-specific, and the
+platform flags only change which optional packages get installed.
+
+A lock written by npm 10 is accepted by both, so use npm 10 whenever a
+dependency changes:
+
+```
+npx -y npm@10 install --package-lock-only --prefix apps/<app>
+```
+
+Only `apps/learn` and `apps/communicate` are affected — they are the two that
+reach `@napi-rs/wasm-runtime`, via rolldown and Tailwind's oxide binding
+respectively. `apps/shell` and `apps/alerts` produce identical locks either way.
+
 ## The built-in assistant
 
 The shell ships **Suvana AI**, a tutor over the 171 signs the recognition model
