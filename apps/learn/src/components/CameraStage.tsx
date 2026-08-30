@@ -21,6 +21,12 @@ interface CameraStageProps {
    * overlay holds its last skeleton and dims instead of going blank.
    */
   inferring?: boolean
+  /**
+   * Replaces the plain "Start camera" placeholder while the camera is idle.
+   * The caller supplies its own copy and start button. `starting` and `error`
+   * states still use the built-in placeholder.
+   */
+  intro?: ReactNode
   /** Extra overlays rendered above the video (countdown, REC badge, …). */
   children?: ReactNode
 }
@@ -35,6 +41,7 @@ export function CameraStage({
   idleHint,
   pip,
   inferring = true,
+  intro,
   children,
 }: CameraStageProps) {
   // Which layer is full-bleed. Purely presentational, so it lives here rather
@@ -86,6 +93,8 @@ export function CameraStage({
                 Try again
               </button>
             </>
+          ) : status !== 'starting' && intro ? (
+            intro
           ) : (
             <>
               <p className="camera-hint">

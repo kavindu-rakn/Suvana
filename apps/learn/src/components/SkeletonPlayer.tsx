@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Pause, Play } from 'lucide-react'
 import { drawHands, fitFor } from '../vision/drawing'
 import type { HandFrame } from '../vision/types'
 
@@ -20,6 +21,8 @@ interface SkeletonPlayerProps {
    * whole sequence, not per frame.
    */
   fitToFrame?: boolean
+  /** Force one skeleton colour — see drawHands. Used by the reference player. */
+  colorOverride?: string
 }
 
 /** Replays a recorded landmark sequence on a canvas — no video involved. */
@@ -29,6 +32,7 @@ export function SkeletonPlayer({
   videoHeight,
   mirrored = true,
   fitToFrame = true,
+  colorOverride,
 }: SkeletonPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef(0)
@@ -39,6 +43,7 @@ export function SkeletonPlayer({
   const renderAtRef = useRef<(t: number) => void>(() => {})
 
   const [playing, setPlaying] = useState(true)
+  const [speed, setSpeed] = useState(1)
   const [timeMs, setTimeMs] = useState(0)
   const durationMs = Math.max(frames[frames.length - 1]?.timestampMs ?? 0, 1)
   const fit = useMemo(() => (fitToFrame ? fitFor(frames) : undefined), [frames, fitToFrame])
@@ -64,7 +69,7 @@ export function SkeletonPlayer({
       lastDrawn = idx
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       const frame = frames[idx]
-      if (frame) drawHands(ctx, frame.hands, fit)
+      if (frame) drawHands(ctx, frame.hands, fit, colorOverride)
     }
     renderAtRef.current = renderAt
 
@@ -73,12 +78,14 @@ export function SkeletonPlayer({
       return
     }
 
-    startedAtRef.current = performance.now() - offsetRef.current
+    // startedAt is in wall-clock; playback time is (elapsed * speed), so a
+    // resume at position `offset` starts `offset / speed` ago.
+    startedAtRef.current = performance.now() - offsetRef.current / speed
     // Paint immediately: rAF is suspended in hidden/occluded tabs, and the
     // first frame should be visible as soon as the player mounts.
     renderAt(offsetRef.current % durationMs)
     const loop = () => {
-      const t = (performance.now() - startedAtRef.current) % durationMs
+      const t = ((performance.now() - startedAtRef.current) * speed) % durationMs
       renderAt(t)
       if (performance.now() - lastUiPushRef.current > 100) {
         lastUiPushRef.current = performance.now()
@@ -88,7 +95,7 @@ export function SkeletonPlayer({
     }
     rafRef.current = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [playing, frames, durationMs, fit])
+  }, [playing, frames, durationMs, fit, speed, colorOverride])
 
   function togglePlay() {
     if (playing) offsetRef.current = lastTRef.current
@@ -98,7 +105,7 @@ export function SkeletonPlayer({
   function seek(t: number) {
     offsetRef.current = t
     if (playing) {
-      startedAtRef.current = performance.now() - t
+      startedAtRef.current = performance.now() - t / speed
     } else {
       renderAtRef.current(t)
     }
@@ -114,8 +121,16 @@ export function SkeletonPlayer({
         className={mirrored ? 'mirrored' : undefined}
       />
       <div className="player-controls">
-        <button className="btn btn-ghost" onClick={togglePlay}>
-          {playing ? 'Pause' : 'Play'}
+        <button className="player-btn" onClick={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>
+          {playing ? <Pause size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}
+        </button>
+        <button
+          className="player-btn"
+          onClick={() => setSpeed((s) => (s === 1 ? 0.5 : 1))}
+          aria-pressed={speed === 0.5}
+          aria-label={speed === 1 ? 'Play at half speed' : 'Play at normal speed'}
+        >
+          {speed === 1 ? '1x' : '0.5x'}
         </button>
         <input
           type="range"
@@ -123,6 +138,7 @@ export function SkeletonPlayer({
           max={durationMs}
           value={Math.round(timeMs)}
           onChange={(e) => seek(Number(e.target.value))}
+          aria-label="Scrub reference playback"
         />
         <span className="player-time">
           {(timeMs / 1000).toFixed(1)} / {(durationMs / 1000).toFixed(1)} s

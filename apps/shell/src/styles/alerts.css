@@ -1,0 +1,388 @@
+/* ---- alerts.css: the Alerts module page ----
+   Alerts is the one module with no web surface of its own, so this page is
+   where it lives on the domain: what it does, why it needs a build step, and
+   the pairing code. It reuses the shell's header, footer, buttons and css-art
+   so it reads as the same product rather than a microsite. */
+
+.page-alerts .module-page {
+  padding-top: 74px; /* clear the fixed header */
+}
+
+/* ---- module hero ---- */
+.module-hero {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 6vw;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 24px 90px;
+}
+
+.module-hero h1 {
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--slate);
+  margin: 12px 0 26px;
+}
+
+.module-lede {
+  font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+  line-height: 1.65;
+  color: var(--ink);
+  opacity: 0.9;
+  margin: 0 0 32px;
+  max-width: 56ch;
+  text-wrap: pretty;
+}
+
+.module-hero-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.module-hero-art .css-art {
+  aspect-ratio: 1;
+}
+
+/* ---- shared shell for the page's bands ---- */
+.alerts-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 52px;
+}
+
+.alerts-modes,
+.alerts-install,
+.alerts-connect {
+  padding: 90px 24px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.alerts-intro {
+  max-width: 720px;
+}
+
+.alerts-intro h2 {
+  font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+  line-height: 1.12;
+  color: var(--slate);
+  margin: 14px 0 20px;
+  text-wrap: balance;
+}
+
+.alerts-intro p {
+  font-size: 1.06rem;
+  line-height: 1.7;
+  color: var(--ink);
+  opacity: 0.88;
+  margin: 0;
+}
+
+/* ---- the three mode cards ---- */
+.alerts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.alerts-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 36px 30px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+:root[data-theme='dark'] .alerts-card {
+  background: rgba(18, 33, 32, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.alerts-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+}
+
+.alerts-card .step-num {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.alerts-card h3 {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  color: var(--slate);
+}
+
+.alerts-card > p {
+  margin: 0;
+  font-size: 0.99rem;
+  line-height: 1.65;
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+.alerts-points {
+  margin: auto 0 0;
+  padding: 18px 0 0 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.alerts-points li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 9px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  opacity: 0.8;
+}
+
+.alerts-points li:last-child {
+  margin-bottom: 0;
+}
+
+.alerts-points li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+}
+
+/* ---- install steps ---- */
+.alerts-steps {
+  counter-reset: step;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.alerts-steps > li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 76px;
+}
+
+.alerts-steps > li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: -2px;
+  font-family: var(--mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--gold-ink);
+  opacity: 0.55;
+}
+
+.alerts-steps h3 {
+  margin: 0 0 10px;
+  font-size: 1.35rem;
+  color: var(--slate);
+}
+
+.alerts-steps p {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ink);
+  opacity: 0.86;
+  max-width: 62ch;
+}
+
+.alerts-steps pre {
+  margin: 0 0 12px;
+  padding: 15px 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.04);
+  overflow-x: auto;
+}
+
+:root[data-theme='dark'] .alerts-steps pre {
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.alerts-steps pre code {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--teal-ink);
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: rgba(0, 166, 147, 0.12);
+  color: var(--teal-ink);
+}
+
+.alerts-fine {
+  font-size: 0.88rem !important;
+  opacity: 0.68 !important;
+}
+
+/* ---- connect panel ---- */
+.connect-panel {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: center;
+  padding: 44px;
+  border: 1px solid var(--line);
+  border-radius: 32px;
+  background: linear-gradient(135deg, rgba(0, 166, 147, 0.06), rgba(218, 165, 32, 0.06));
+}
+
+:root[data-theme='dark'] .connect-panel {
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.08), rgba(224, 180, 69, 0.06));
+}
+
+.connect-field span {
+  display: block;
+  margin-bottom: 7px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--gold-ink);
+}
+
+.connect-field input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.95rem;
+}
+
+.connect-field input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
+.connect-status {
+  margin: 14px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ink);
+  opacity: 0.8;
+}
+
+.connect-status[data-tone='good'] {
+  color: var(--teal-ink);
+  opacity: 1;
+}
+
+.connect-status[data-tone='bad'] {
+  color: #b3261e;
+  opacity: 1;
+}
+
+:root[data-theme='dark'] .connect-status[data-tone='bad'] {
+  color: #ff9d95;
+}
+
+.connect-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.qr-frame {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 260px;
+  aspect-ratio: 1;
+  padding: 18px;
+  border-radius: 22px;
+  /* White regardless of theme: a QR needs light modules to scan reliably. */
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.1);
+}
+
+.qr-frame svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.qr-empty {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #98a5a3;
+  text-align: center;
+}
+
+.qr-link {
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--teal-ink);
+  text-decoration: none;
+}
+
+.qr-link:hover {
+  color: var(--gold-ink);
+}
+
+@media (max-width: 900px) {
+  .module-hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-bottom: 60px;
+  }
+  .module-hero-art {
+    order: -1;
+  }
+  .module-hero-art .css-art {
+    aspect-ratio: 16 / 9;
+  }
+  .connect-panel {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 28px;
+  }
+  .connect-qr {
+    order: -1;
+  }
+  .alerts-modes,
+  .alerts-install,
+  .alerts-connect {
+    padding: 60px 24px;
+  }
+  .alerts-steps > li {
+    padding-left: 58px;
+  }
+}

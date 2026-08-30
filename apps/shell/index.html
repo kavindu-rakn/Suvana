@@ -49,6 +49,15 @@
           <img class="mark" src="/branding/suvana-mark.png" alt="" />
           <span class="wordmark">Suvana</span>
         </a>
+        <!-- Section navigation. The landing is a long single page, so without
+             these the only way back to the module list is to scroll. An
+             IntersectionObserver in main.ts marks the section in view. -->
+        <nav class="nav-links" aria-label="Page sections">
+          <a href="#overview">Overview</a>
+          <a href="#modules-wrapper">Modules</a>
+          <a href="#pipeline">Pipeline</a>
+          <a href="#community">Community</a>
+        </nav>
         <div class="nav-right">
           <button id="theme-toggle" class="theme-toggle" type="button"></button>
           <div id="auth-slot" class="auth-slot"></div>
@@ -84,6 +93,92 @@
           </div>
         </div>
       </section>
+
+      <!-- Overview: what the platform is for, before what it contains -->
+      <section class="overview-wrapper" id="overview">
+        <div class="overview-container">
+          <div class="overview-split">
+            <div class="overview-visual">
+              <img
+                src="/assets/sign-hero.png"
+                alt="A person signing in Sri Lankan Sign Language"
+                loading="lazy"
+              />
+            </div>
+            <div class="overview-content">
+              <p class="kicker">Getting started</p>
+              <h2>A language of hands, faces and movement.</h2>
+              <p>
+                Sri Lankan Sign Language is a full natural language — grammar carried
+                in handshape, orientation, motion and facial expression, not a
+                transliteration of Sinhala. Around 400,000 Deaf and hard-of-hearing
+                Sri Lankans use it, and almost no hearing services do.
+              </p>
+              <p>
+                Suvana works in both directions at once: it reads signing and speaks
+                it, speaks back in signing, teaches hearing people to sign, and keeps
+                Deaf users aware of sound they cannot hear.
+              </p>
+            </div>
+          </div>
+
+          <div class="steps-row">
+            <article class="step-card">
+              <span class="step-num">01</span>
+              <h3>Learn</h3>
+              <p>
+                Practise against recordings of real signers. Every attempt is scored
+                with corrections down to individual fingers.
+              </p>
+              <a class="step-link" href="/learn/">Open Learn &rarr;</a>
+            </article>
+            <article class="step-card">
+              <span class="step-num">02</span>
+              <h3>Practise</h3>
+              <p>
+                Sign to the camera in Recognize and watch the confidence bar climb
+                until the model reads you cleanly.
+              </p>
+              <a class="step-link" href="#modules-wrapper">Find Recognize &rarr;</a>
+            </article>
+            <article class="step-card">
+              <span class="step-num">03</span>
+              <h3>Converse</h3>
+              <p>
+                Speak Sinhala and watch a 3D avatar sign it back — the round trip
+                that makes a two-way conversation possible.
+              </p>
+              <a class="step-link" href="/communicate">Open Communicate &rarr;</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Platform register. The sign count is read from the platform's own
+           committed index rather than typed in, so it cannot go stale when the
+           model is retrained. The rest are architectural constants. -->
+      <div class="stats-band">
+        <div class="stat-tile">
+          <span class="stat-value" data-stat="signs">&mdash;</span>
+          <span class="stat-label">Signs recognised</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-value">4</span>
+          <span class="stat-label">Integrated modules</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-value">75</span>
+          <span class="stat-label">3D landmarks / frame</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-value">98.8%</span>
+          <span class="stat-label">Sequence test accuracy</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-value">&le;300<i>ms</i></span>
+          <span class="stat-label">Feedback latency target</span>
+        </div>
+      </div>
 
       <!-- Modules Section (Vertical Editorial) -->
       <section class="modules-vertical-wrapper" id="modules-wrapper">
@@ -190,7 +285,8 @@
                 sounds around them and can send SOS alerts.
               </p>
               <div class="module-foot">
-                <span class="badge soon">Mobile app · In integration</span>
+                <a class="btn ghost" href="/alerts/">Open Alerts</a>
+                <span class="badge soon">Companion phone app</span>
               </div>
             </div>
             <div class="mr-visual">
@@ -200,6 +296,62 @@
             </div>
           </article>
 
+        </div>
+      </section>
+
+      <!-- What the platform is claiming, as an editorial register -->
+      <section class="features-wrapper" id="features">
+        <div class="features-container">
+          <div class="features-heading">
+            <p class="kicker">Why it works</p>
+            <h2>Research decisions,<br />not feature checkboxes.</h2>
+          </div>
+          <div class="features-list">
+            <article class="feature-item">
+              <div class="feature-item-title">
+                <h3>Real-time, in the browser</h3>
+                <span class="feature-rule" aria-hidden="true"></span>
+              </div>
+              <p>
+                Landmark extraction runs on the device with MediaPipe, so practice
+                needs no install and camera frames never have to leave the machine
+                to be tracked.
+              </p>
+            </article>
+            <article class="feature-item">
+              <div class="feature-item-title">
+                <h3>Scored against real signers</h3>
+                <span class="feature-rule" aria-hidden="true"></span>
+              </div>
+              <p>
+                Attempts are compared with dynamic time warping against reference
+                recordings, which scores the whole movement — handshape, orientation
+                and trajectory — rather than a single frozen frame.
+              </p>
+            </article>
+            <article class="feature-item">
+              <div class="feature-item-title">
+                <h3>Corrections, not just a score</h3>
+                <span class="feature-rule" aria-hidden="true"></span>
+              </div>
+              <p>
+                Per-joint and per-frame deviation is what the comparison actually
+                produces, so feedback can say which finger drifted and where in the
+                movement it happened.
+              </p>
+            </article>
+            <article class="feature-item">
+              <div class="feature-item-title">
+                <h3>Practice that follows the learner</h3>
+                <span class="feature-rule" aria-hidden="true"></span>
+              </div>
+              <p>
+                Every attempt updates a running estimate of how well each sign is
+                known, weighting the next session toward the weakest and least
+                recently drilled signs.
+              </p>
+            </article>
+          </div>
         </div>
       </section>
 

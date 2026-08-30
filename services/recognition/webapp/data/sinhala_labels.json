@@ -1,0 +1,1028 @@
+{
+  "(1st way)": {
+    "category": "phrase",
+    "sinhala": "පළමු ක්‍රමය",
+    "speakText": "පළමු ක්‍රමය",
+    "speakLang": "si"
+  },
+  "(2nd way)": {
+    "category": "phrase",
+    "sinhala": "දෙවන ක්‍රමය",
+    "speakText": "දෙවන ක්‍රමය",
+    "speakLang": "si"
+  },
+  "(ex- kunu)": {
+    "category": "phrase",
+    "sinhala": "කුණු",
+    "speakText": "කුණු",
+    "speakLang": "si"
+  },
+  "100": {
+    "category": "number",
+    "sinhala": "සියය",
+    "speakText": "සියය",
+    "speakLang": "si"
+  },
+  "100 meters": {
+    "category": "phrase",
+    "sinhala": "100 මෙටෙර්ස්",
+    "speakText": "100 මෙටෙර්ස්",
+    "speakLang": "si"
+  },
+  "1000": {
+    "category": "number",
+    "sinhala": "දහස",
+    "speakText": "දහස",
+    "speakLang": "si"
+  },
+  "10000": {
+    "category": "number",
+    "sinhala": "දහ දහස්",
+    "speakText": "දහ දහස්",
+    "speakLang": "si"
+  },
+  "100000": {
+    "category": "number",
+    "sinhala": "ලක්ෂය",
+    "speakText": "ලක්ෂය",
+    "speakLang": "si"
+  },
+  "200": {
+    "category": "number",
+    "sinhala": "දෙසීය",
+    "speakText": "දෙසීය",
+    "speakLang": "si"
+  },
+  "2000": {
+    "category": "number",
+    "sinhala": "දෙදහස්",
+    "speakText": "දෙදහස්",
+    "speakLang": "si"
+  },
+  "200000": {
+    "category": "number",
+    "sinhala": "දෙලක්ෂය",
+    "speakText": "දෙලක්ෂය",
+    "speakLang": "si"
+  },
+  "30": {
+    "category": "number",
+    "sinhala": "තිහ",
+    "speakText": "තිහ",
+    "speakLang": "si"
+  },
+  "300": {
+    "category": "number",
+    "sinhala": "තුන් සීය",
+    "speakText": "තුන් සීය",
+    "speakLang": "si"
+  },
+  "3000": {
+    "category": "number",
+    "sinhala": "තුන් දහස්",
+    "speakText": "තුන් දහස්",
+    "speakLang": "si"
+  },
+  "300000": {
+    "category": "number",
+    "sinhala": "තුන් ලක්ෂය",
+    "speakText": "තුන් ලක්ෂය",
+    "speakLang": "si"
+  },
+  "40": {
+    "category": "number",
+    "sinhala": "හතළිහ",
+    "speakText": "හතළිහ",
+    "speakLang": "si"
+  },
+  "400": {
+    "category": "number",
+    "sinhala": "හතර සීය",
+    "speakText": "හතර සීය",
+    "speakLang": "si"
+  },
+  "4000": {
+    "category": "number",
+    "sinhala": "හතර දහස්",
+    "speakText": "හතර දහස්",
+    "speakLang": "si"
+  },
+  "50": {
+    "category": "number",
+    "sinhala": "පනහ",
+    "speakText": "පනහ",
+    "speakLang": "si"
+  },
+  "50 KM idiriyata yanna": {
+    "category": "phrase",
+    "sinhala": "50 කම් ඉදිරියට යන්න",
+    "speakText": "50 කම් ඉදිරියට යන්න",
+    "speakLang": "si"
+  },
+  "50 meters": {
+    "category": "phrase",
+    "sinhala": "50 මෙටෙර්ස්",
+    "speakText": "50 මෙටෙර්ස්",
+    "speakLang": "si"
+  },
+  "500": {
+    "category": "number",
+    "sinhala": "පන් සීය",
+    "speakText": "පන් සීය",
+    "speakLang": "si"
+  },
+  "5000": {
+    "category": "number",
+    "sinhala": "පන් දහස්",
+    "speakText": "පන් දහස්",
+    "speakLang": "si"
+  },
+  "60": {
+    "category": "number",
+    "sinhala": "හැට",
+    "speakText": "හැට",
+    "speakLang": "si"
+  },
+  "600": {
+    "category": "number",
+    "sinhala": "හය සීය",
+    "speakText": "හය සීය",
+    "speakLang": "si"
+  },
+  "6000": {
+    "category": "number",
+    "sinhala": "හය දහස්",
+    "speakText": "හය දහස්",
+    "speakLang": "si"
+  },
+  "70": {
+    "category": "number",
+    "sinhala": "හැත්තෑව",
+    "speakText": "හැත්තෑව",
+    "speakLang": "si"
+  },
+  "700": {
+    "category": "number",
+    "sinhala": "හත සීය",
+    "speakText": "හත සීය",
+    "speakLang": "si"
+  },
+  "7000": {
+    "category": "number",
+    "sinhala": "හත් දහස්",
+    "speakText": "හත් දහස්",
+    "speakLang": "si"
+  },
+  "80": {
+    "category": "number",
+    "sinhala": "අසූව",
+    "speakText": "අසූව",
+    "speakLang": "si"
+  },
+  "800": {
+    "category": "number",
+    "sinhala": "අට සීය",
+    "speakText": "අට සීය",
+    "speakLang": "si"
+  },
+  "8000": {
+    "category": "number",
+    "sinhala": "අට දහස්",
+    "speakText": "අට දහස්",
+    "speakLang": "si"
+  },
+  "90": {
+    "category": "number",
+    "sinhala": "අනූව",
+    "speakText": "අනූව",
+    "speakLang": "si"
+  },
+  "900": {
+    "category": "number",
+    "sinhala": "නවය සීය",
+    "speakText": "නවය සීය",
+    "speakLang": "si"
+  },
+  "9000": {
+    "category": "number",
+    "sinhala": "නවය දහස්",
+    "speakText": "නවය දහස්",
+    "speakLang": "si"
+  },
+  "A": {
+    "category": "letter",
+    "sinhala": "A",
+    "speakText": "A",
+    "speakLang": "en"
+  },
+  "April": {
+    "category": "month",
+    "sinhala": "අප්‍රේල්",
+    "speakText": "අප්‍රේල්",
+    "speakLang": "si"
+  },
+  "August": {
+    "category": "month",
+    "sinhala": "අගෝස්තු",
+    "speakText": "අගෝස්තු",
+    "speakLang": "si"
+  },
+  "B(first way)": {
+    "category": "letter",
+    "sinhala": "B",
+    "speakText": "B",
+    "speakLang": "en"
+  },
+  "B(second way)": {
+    "category": "letter",
+    "sinhala": "B",
+    "speakText": "B",
+    "speakLang": "en"
+  },
+  "Bilpatha": {
+    "category": "phrase",
+    "sinhala": "බිල්පත",
+    "speakText": "බිල්පත",
+    "speakLang": "si"
+  },
+  "C": {
+    "category": "letter",
+    "sinhala": "C",
+    "speakText": "C",
+    "speakLang": "en"
+  },
+  "D": {
+    "category": "letter",
+    "sinhala": "D",
+    "speakText": "D",
+    "speakLang": "en"
+  },
+  "December": {
+    "category": "month",
+    "sinhala": "දෙසැම්බර්",
+    "speakText": "දෙසැම්බර්",
+    "speakLang": "si"
+  },
+  "E": {
+    "category": "letter",
+    "sinhala": "E",
+    "speakText": "E",
+    "speakLang": "en"
+  },
+  "F": {
+    "category": "letter",
+    "sinhala": "F",
+    "speakText": "F",
+    "speakLang": "en"
+  },
+  "February": {
+    "category": "month",
+    "sinhala": "පෙබරවාරි",
+    "speakText": "පෙබරවාරි",
+    "speakLang": "si"
+  },
+  "G": {
+    "category": "letter",
+    "sinhala": "G",
+    "speakText": "G",
+    "speakLang": "en"
+  },
+  "H": {
+    "category": "letter",
+    "sinhala": "H",
+    "speakText": "H",
+    "speakLang": "en"
+  },
+  "I": {
+    "category": "letter",
+    "sinhala": "I",
+    "speakText": "I",
+    "speakLang": "en"
+  },
+  "J": {
+    "category": "letter",
+    "sinhala": "J",
+    "speakText": "J",
+    "speakLang": "en"
+  },
+  "January": {
+    "category": "month",
+    "sinhala": "ජනවාරි",
+    "speakText": "ජනවාරි",
+    "speakLang": "si"
+  },
+  "July": {
+    "category": "month",
+    "sinhala": "ජූලි",
+    "speakText": "ජූලි",
+    "speakLang": "si"
+  },
+  "June": {
+    "category": "month",
+    "sinhala": "ජූනි",
+    "speakText": "ජූනි",
+    "speakLang": "si"
+  },
+  "K(first way)": {
+    "category": "letter",
+    "sinhala": "K",
+    "speakText": "K",
+    "speakLang": "en"
+  },
+  "K(second way)": {
+    "category": "letter",
+    "sinhala": "K",
+    "speakText": "K",
+    "speakLang": "en"
+  },
+  "Kadaya": {
+    "category": "phrase",
+    "sinhala": "කඩය",
+    "speakText": "කඩය",
+    "speakLang": "si"
+  },
+  "Kanda nagala bahinna": {
+    "category": "phrase",
+    "sinhala": "කන්ද නැගල බහින්න",
+    "speakText": "කන්ද නැගල බහින්න",
+    "speakLang": "si"
+  },
+  "L": {
+    "category": "letter",
+    "sinhala": "L",
+    "speakText": "L",
+    "speakLang": "en"
+  },
+  "M": {
+    "category": "letter",
+    "sinhala": "M",
+    "speakText": "M",
+    "speakLang": "en"
+  },
+  "Mage nama": {
+    "category": "phrase",
+    "sinhala": "මගේ නම",
+    "speakText": "මගේ නම",
+    "speakLang": "si"
+  },
+  "Mage nama Daham": {
+    "category": "phrase",
+    "sinhala": "මගේ නම දහම්",
+    "speakText": "මගේ නම දහම්",
+    "speakLang": "si"
+  },
+  "May": {
+    "category": "month",
+    "sinhala": "මැයි",
+    "speakText": "මැයි",
+    "speakLang": "si"
+  },
+  "Mrach": {
+    "category": "month",
+    "sinhala": "මාර්තු",
+    "speakText": "මාර්තු",
+    "speakLang": "si"
+  },
+  "November": {
+    "category": "month",
+    "sinhala": "නොවැම්බර්",
+    "speakText": "නොවැම්බර්",
+    "speakLang": "si"
+  },
+  "O": {
+    "category": "letter",
+    "sinhala": "O",
+    "speakText": "O",
+    "speakLang": "en"
+  },
+  "October": {
+    "category": "month",
+    "sinhala": "ඔක්තෝබර්",
+    "speakText": "ඔක්තෝබර්",
+    "speakLang": "si"
+  },
+  "October(second way)": {
+    "category": "month",
+    "sinhala": "ඔක්තෝබර්",
+    "speakText": "ඔක්තෝබර්",
+    "speakLang": "si"
+  },
+  "P": {
+    "category": "letter",
+    "sinhala": "P",
+    "speakText": "P",
+    "speakLang": "en"
+  },
+  "Q": {
+    "category": "letter",
+    "sinhala": "Q",
+    "speakText": "Q",
+    "speakLang": "en"
+  },
+  "R": {
+    "category": "letter",
+    "sinhala": "R",
+    "speakText": "R",
+    "speakLang": "en"
+  },
+  "S": {
+    "category": "letter",
+    "sinhala": "S",
+    "speakText": "S",
+    "speakLang": "en"
+  },
+  "September (similar to s)": {
+    "category": "month",
+    "sinhala": "සැප්තැම්බර්",
+    "speakText": "සැප්තැම්බර්",
+    "speakLang": "si"
+  },
+  "T": {
+    "category": "letter",
+    "sinhala": "T",
+    "speakText": "T",
+    "speakLang": "en"
+  },
+  "T shirt eke mila kiiyada": {
+    "category": "phrase",
+    "sinhala": "ටී ෂර්ට් එකේ මිල කීයද",
+    "speakText": "ටී ෂර්ට් එකේ මිල කීයද",
+    "speakLang": "si"
+  },
+  "U": {
+    "category": "letter",
+    "sinhala": "U",
+    "speakText": "U",
+    "speakLang": "en"
+  },
+  "V": {
+    "category": "letter",
+    "sinhala": "V",
+    "speakText": "V",
+    "speakLang": "en"
+  },
+  "W": {
+    "category": "letter",
+    "sinhala": "W",
+    "speakText": "W",
+    "speakLang": "en"
+  },
+  "X": {
+    "category": "letter",
+    "sinhala": "X",
+    "speakText": "X",
+    "speakLang": "en"
+  },
+  "Y": {
+    "category": "letter",
+    "sinhala": "Y",
+    "speakText": "Y",
+    "speakLang": "en"
+  },
+  "Z": {
+    "category": "letter",
+    "sinhala": "Z",
+    "speakText": "Z",
+    "speakLang": "en"
+  },
+  "adinawa": {
+    "category": "phrase",
+    "sinhala": "අදිනවා",
+    "speakText": "අදිනවා",
+    "speakLang": "si"
+  },
+  "adum sodanawa": {
+    "category": "phrase",
+    "sinhala": "ඇදුම් සෝදනවා",
+    "speakText": "ඇදුම් සෝදනවා",
+    "speakLang": "si"
+  },
+  "ahanawa": {
+    "category": "phrase",
+    "sinhala": "අහනවා",
+    "speakText": "අහනවා",
+    "speakLang": "si"
+  },
+  "ambaranawa": {
+    "category": "phrase",
+    "sinhala": "අම්බරනවා",
+    "speakText": "අම්බරනවා",
+    "speakLang": "si"
+  },
+  "andanawa": {
+    "category": "phrase",
+    "sinhala": "අන්දනවා",
+    "speakText": "අන්දනවා",
+    "speakLang": "si"
+  },
+  "andinawa(draw)": {
+    "category": "phrase",
+    "sinhala": "අඳිනවා",
+    "speakText": "අඳිනවා",
+    "speakLang": "si"
+  },
+  "asniipai": {
+    "category": "phrase",
+    "sinhala": "අසනීපයි",
+    "speakText": "අසනීපයි",
+    "speakLang": "si"
+  },
+  "athu gaanawa": {
+    "category": "phrase",
+    "sinhala": "අතු ගානවා",
+    "speakText": "අතු ගානවා",
+    "speakLang": "si"
+  },
+  "awidinawa": {
+    "category": "phrase",
+    "sinhala": "ඇවිදිනවා",
+    "speakText": "ඇවිදිනවා",
+    "speakLang": "si"
+  },
+  "bag eka": {
+    "category": "phrase",
+    "sinhala": "බග් එක",
+    "speakText": "බග් එක",
+    "speakLang": "si"
+  },
+  "balanawa": {
+    "category": "phrase",
+    "sinhala": "බලනවා",
+    "speakText": "බලනවා",
+    "speakLang": "si"
+  },
+  "bara kilogram 1 k ": {
+    "category": "phrase",
+    "sinhala": "බර කිලෝග්‍රෑම් 1 ක්",
+    "speakText": "බර කිලෝග්‍රෑම් 1 ක්",
+    "speakLang": "si"
+  },
+  "beheth kiiyada": {
+    "category": "phrase",
+    "sinhala": "බෙහෙත් කීයද",
+    "speakText": "බෙහෙත් කීයද",
+    "speakLang": "si"
+  },
+  "bonawa": {
+    "category": "phrase",
+    "sinhala": "බොනවා",
+    "speakText": "බොනවා",
+    "speakLang": "si"
+  },
+  "dakinawa": {
+    "category": "phrase",
+    "sinhala": "දකිනවා",
+    "speakText": "දකිනවා",
+    "speakLang": "si"
+  },
+  "dakunata harenna": {
+    "category": "phrase",
+    "sinhala": "දකුණට හැරෙන්න",
+    "speakText": "දකුණට හැරෙන්න",
+    "speakLang": "si"
+  },
+  "dakunata(right)": {
+    "category": "phrase",
+    "sinhala": "දකුණට",
+    "speakText": "දකුණට",
+    "speakLang": "si"
+  },
+  "denawa": {
+    "category": "phrase",
+    "sinhala": "දෙනවා",
+    "speakText": "දෙනවා",
+    "speakLang": "si"
+  },
+  "doctor koheda inne": {
+    "category": "phrase",
+    "sinhala": "ඩොක්ටර් කොහෙද ඉන්නේ",
+    "speakText": "ඩොක්ටර් කොහෙද ඉන්නේ",
+    "speakLang": "si"
+  },
+  "duwanawa": {
+    "category": "phrase",
+    "sinhala": "දුවනවා",
+    "speakText": "දුවනවා",
+    "speakLang": "si"
+  },
+  "ellanawa": {
+    "category": "phrase",
+    "sinhala": "එල්ලනවා",
+    "speakText": "එල්ලනවා",
+    "speakLang": "si"
+  },
+  "gannawa": {
+    "category": "phrase",
+    "sinhala": "ගන්නවා",
+    "speakText": "ගන්නවා",
+    "speakLang": "si"
+  },
+  "gas kapanawa": {
+    "category": "phrase",
+    "sinhala": "ගස් කපනවා",
+    "speakText": "ගස් කපනවා",
+    "speakLang": "si"
+  },
+  "gedara issaraha": {
+    "category": "phrase",
+    "sinhala": "ගෙදර ඉස්සරහ",
+    "speakText": "ගෙදර ඉස්සරහ",
+    "speakLang": "si"
+  },
+  "geyak hadanawa": {
+    "category": "phrase",
+    "sinhala": "ගෙයක් හදනවා",
+    "speakText": "ගෙයක් හදනවා",
+    "speakLang": "si"
+  },
+  "haaranawa": {
+    "category": "phrase",
+    "sinhala": "හාරනවා",
+    "speakText": "හාරනවා",
+    "speakLang": "si"
+  },
+  "hadanawa(ex- lii walin putuwak mesayk)": {
+    "category": "phrase",
+    "sinhala": "හදනවා",
+    "speakText": "හදනවා",
+    "speakLang": "si"
+  },
+  "hatharamn handiya(4 way junction)": {
+    "category": "phrase",
+    "sinhala": "හතරම්න් හන්දිය",
+    "speakText": "හතරම්න් හන්දිය",
+    "speakLang": "si"
+  },
+  "hinawenawa(1st way)": {
+    "category": "phrase",
+    "sinhala": "හිනාවෙනවා",
+    "speakText": "හිනාවෙනවා",
+    "speakLang": "si"
+  },
+  "hinawenawa(2nd way)": {
+    "category": "phrase",
+    "sinhala": "හිනාවෙනවා",
+    "speakText": "හිනාවෙනවා",
+    "speakLang": "si"
+  },
+  "iranawa": {
+    "category": "phrase",
+    "sinhala": "ඉරනවා",
+    "speakText": "ඉරනවා",
+    "speakLang": "si"
+  },
+  "ischole bag eka": {
+    "category": "phrase",
+    "sinhala": "ඉස්චෝලේ බග් එක",
+    "speakText": "ඉස්චෝලේ බග් එක",
+    "speakLang": "si"
+  },
+  "kaamak hadanawa": {
+    "category": "phrase",
+    "sinhala": "කෑමක් හදනවා",
+    "speakText": "කෑමක් හදනවා",
+    "speakLang": "si"
+  },
+  "kadanawa": {
+    "category": "phrase",
+    "sinhala": "කඩනවා",
+    "speakText": "කඩනවා",
+    "speakLang": "si"
+  },
+  "kanawa": {
+    "category": "phrase",
+    "sinhala": "කනවා",
+    "speakText": "කනවා",
+    "speakLang": "si"
+  },
+  "kasanawa": {
+    "category": "phrase",
+    "sinhala": "කසනවා",
+    "speakText": "කසනවා",
+    "speakLang": "si"
+  },
+  "kotanawa": {
+    "category": "phrase",
+    "sinhala": "කොටනවා",
+    "speakText": "කොටනවා",
+    "speakLang": "si"
+  },
+  "kunu damanawa": {
+    "category": "phrase",
+    "sinhala": "කුණු දමනවා",
+    "speakText": "කුණු දමනවා",
+    "speakLang": "si"
+  },
+  "laptop eka": {
+    "category": "phrase",
+    "sinhala": "ලැප්ටොප් එක",
+    "speakText": "ලැප්ටොප් එක",
+    "speakLang": "si"
+  },
+  "liyanawa": {
+    "category": "phrase",
+    "sinhala": "ලියනවා",
+    "speakText": "ලියනවා",
+    "speakLang": "si"
+  },
+  "mage bage eke hoyanna udaw karanna": {
+    "category": "phrase",
+    "sinhala": "මගේ ගේ එකේ හොයන්න උදව් කරන්න",
+    "speakText": "මගේ ගේ එකේ හොයන්න උදව් කරන්න",
+    "speakLang": "si"
+  },
+  "mage lap eka hoyanna udaw karanna ": {
+    "category": "phrase",
+    "sinhala": "මගේ ලැප් එක හොයන්න උදව් කරන්න",
+    "speakText": "මගේ ලැප් එක හොයන්න උදව් කරන්න",
+    "speakLang": "si"
+  },
+  "mage phone eka hoyanna udaw karanna": {
+    "category": "phrase",
+    "sinhala": "මගේ ෆොනේ එක හොයන්න උදව් කරන්න",
+    "speakText": "මගේ ෆොනේ එක හොයන්න උදව් කරන්න",
+    "speakLang": "si"
+  },
+  "makanawa": {
+    "category": "phrase",
+    "sinhala": "මකනවා",
+    "speakText": "මකනවා",
+    "speakLang": "si"
+  },
+  "mama oyata usaaviyedi nadu pawaranawa": {
+    "category": "phrase",
+    "sinhala": "මම ඔයාට උසාවියේදී නඩු පවරනවා",
+    "speakText": "මම ඔයාට උසාවියේදී නඩු පවරනවා",
+    "speakLang": "si"
+  },
+  "mas maalu kapanawa": {
+    "category": "phrase",
+    "sinhala": "මස් මාළු කපනවා",
+    "speakText": "මස් මාළු කපනවා",
+    "speakLang": "si"
+  },
+  "mata asaniipai": {
+    "category": "phrase",
+    "sinhala": "මට අසනීපයි",
+    "speakText": "මට අසනීපයි",
+    "speakLang": "si"
+  },
+  "mata beheth denna": {
+    "category": "phrase",
+    "sinhala": "මට බෙහෙත් දෙන්න",
+    "speakText": "මට බෙහෙත් දෙන්න",
+    "speakLang": "si"
+  },
+  "mata pannanne(baduwk pennaddi kiyanne)": {
+    "category": "phrase",
+    "sinhala": "මට පන්නන්නේ",
+    "speakText": "මට පන්නන්නේ",
+    "speakLang": "si"
+  },
+  "miladii gannawa": {
+    "category": "phrase",
+    "sinhala": "මිලදී ගන්නවා",
+    "speakText": "මිලදී ගන්නවා",
+    "speakLang": "si"
+  },
+  "miliyanaya (meka pennaddigassala pennanna.)": {
+    "category": "phrase",
+    "sinhala": "මිලියනය",
+    "speakText": "මිලියනය",
+    "speakLang": "si"
+  },
+  "muuna kasanawa": {
+    "category": "phrase",
+    "sinhala": "මූණ කසනවා",
+    "speakText": "මූණ කසනවා",
+    "speakLang": "si"
+  },
+  "muuna soodanawa": {
+    "category": "phrase",
+    "sinhala": "මූණ සෝදනවා",
+    "speakText": "මූණ සෝදනවා",
+    "speakLang": "si"
+  },
+  "naanawa": {
+    "category": "phrase",
+    "sinhala": "නානවා",
+    "speakText": "නානවා",
+    "speakLang": "si"
+  },
+  "nagitinawa": {
+    "category": "phrase",
+    "sinhala": "නැගිටිනවා",
+    "speakText": "නැගිටිනවා",
+    "speakLang": "si"
+  },
+  "nurse": {
+    "category": "phrase",
+    "sinhala": "නුර්සේ",
+    "speakText": "නුර්සේ",
+    "speakLang": "si"
+  },
+  "nurse mata beheth denna": {
+    "category": "phrase",
+    "sinhala": "නුර්සේ මට බෙහෙත් දෙන්න",
+    "speakText": "නුර්සේ මට බෙහෙත් දෙන්න",
+    "speakLang": "si"
+  },
+  "nurse mata beheth ennath karanawa": {
+    "category": "phrase",
+    "sinhala": "නුර්සේ මට බෙහෙත් එන්නත් කරනවා",
+    "speakText": "නුර්සේ මට බෙහෙත් එන්නත් කරනවා",
+    "speakLang": "si"
+  },
+  "oluwa kasanawa": {
+    "category": "phrase",
+    "sinhala": "ඔලුව කසනවා",
+    "speakText": "ඔලුව කසනවා",
+    "speakLang": "si"
+  },
+  "osawanawa": {
+    "category": "phrase",
+    "sinhala": "ඔසවනවා",
+    "speakText": "ඔසවනවා",
+    "speakLang": "si"
+  },
+  "oyaage upandinaya kawadda": {
+    "category": "phrase",
+    "sinhala": "ඔයාගේ උපන්දිනය කවද්ද",
+    "speakText": "ඔයාගේ උපන්දිනය කවද්ද",
+    "speakLang": "si"
+  },
+  "paadam karanawa": {
+    "category": "phrase",
+    "sinhala": "පාඩම් කරනවා",
+    "speakText": "පාඩම් කරනවා",
+    "speakLang": "si"
+  },
+  "paan(bread) kapanawa": {
+    "category": "phrase",
+    "sinhala": "පාන් කපනවා",
+    "speakText": "පාන් කපනවා",
+    "speakLang": "si"
+  },
+  "paara dige kelin gihilla wamata harenne": {
+    "category": "phrase",
+    "sinhala": "පාර දිගේ කෙලින් ගිහිල්ල වමට හැරෙන්නේ",
+    "speakText": "පාර දිගේ කෙලින් ගිහිල්ල වමට හැරෙන්නේ",
+    "speakLang": "si"
+  },
+  "paare idiriyata yanna": {
+    "category": "phrase",
+    "sinhala": "පාරේ ඉදිරියට යන්න",
+    "speakText": "පාරේ ඉදිරියට යන්න",
+    "speakLang": "si"
+  },
+  "paninawa": {
+    "category": "phrase",
+    "sinhala": "පනිනවා",
+    "speakText": "පනිනවා",
+    "speakLang": "si"
+  },
+  "parimaawa liter 1 k": {
+    "category": "phrase",
+    "sinhala": "පරිමාව ලිටෙර් 1 ක්",
+    "speakText": "පරිමාව ලිටෙර් 1 ක්",
+    "speakLang": "si"
+  },
+  "peenawa": {
+    "category": "phrase",
+    "sinhala": "පීනවා",
+    "speakText": "පීනවා",
+    "speakLang": "si"
+  },
+  "phone eka": {
+    "category": "phrase",
+    "sinhala": "ෆොනේ එක",
+    "speakText": "ෆොනේ එක",
+    "speakLang": "si"
+  },
+  "pigana hodanawa": {
+    "category": "phrase",
+    "sinhala": "පිගන හෝදනවා",
+    "speakText": "පිගන හෝදනවා",
+    "speakLang": "si"
+  },
+  "pihinanawa": {
+    "category": "phrase",
+    "sinhala": "පිහිනනවා",
+    "speakText": "පිහිනනවා",
+    "speakLang": "si"
+  },
+  "pitipassata enna": {
+    "category": "phrase",
+    "sinhala": "පිටිපස්සට එන්න",
+    "speakText": "පිටිපස්සට එන්න",
+    "speakLang": "si"
+  },
+  "randu karagannawa": {
+    "category": "phrase",
+    "sinhala": "රැඳු කරගන්නවා",
+    "speakText": "රැඳු කරගන්නවා",
+    "speakLang": "si"
+  },
+  "sodanawa": {
+    "category": "phrase",
+    "sinhala": "සෝදනවා",
+    "speakText": "සෝදනවා",
+    "speakLang": "si"
+  },
+  "soynawa": {
+    "category": "phrase",
+    "sinhala": "සොයනවා",
+    "speakText": "සොයනවා",
+    "speakLang": "si"
+  },
+  "sudu kolayak": {
+    "category": "phrase",
+    "sinhala": "සුදු කොලයක්",
+    "speakText": "සුදු කොලයක්",
+    "speakLang": "si"
+  },
+  "thattu karanawa": {
+    "category": "phrase",
+    "sinhala": "තට්ටු කරනවා",
+    "speakText": "තට්ටු කරනවා",
+    "speakLang": "si"
+  },
+  "thel liter 1 k": {
+    "category": "phrase",
+    "sinhala": "තෙල් ලිටෙර් 1 ක්",
+    "speakText": "තෙල් ලිටෙර් 1 ක්",
+    "speakLang": "si"
+  },
+  "therum gannawa": {
+    "category": "phrase",
+    "sinhala": "තේරුම් ගන්නවා",
+    "speakText": "තේරුම් ගන්නවා",
+    "speakLang": "si"
+  },
+  "thoranawa": {
+    "category": "phrase",
+    "sinhala": "තෝරනවා",
+    "speakText": "තෝරනවා",
+    "speakLang": "si"
+  },
+  "udaw karanawa": {
+    "category": "phrase",
+    "sinhala": "උදව් කරනවා",
+    "speakText": "උදව් කරනවා",
+    "speakLang": "si"
+  },
+  "uthuranawa": {
+    "category": "phrase",
+    "sinhala": "උතුරනවා",
+    "speakText": "උතුරනවා",
+    "speakLang": "si"
+  },
+  "waadi wenawa": {
+    "category": "phrase",
+    "sinhala": "වාදී වෙනවා",
+    "speakText": "වාදී වෙනවා",
+    "speakLang": "si"
+  },
+  "wada karanawa": {
+    "category": "phrase",
+    "sinhala": "වැඩ කරනවා",
+    "speakText": "වැඩ කරනවා",
+    "speakLang": "si"
+  },
+  "wama(left)": {
+    "category": "phrase",
+    "sinhala": "වම",
+    "speakText": "වම",
+    "speakLang": "si"
+  },
+  "wamaata harenna": {
+    "category": "phrase",
+    "sinhala": "වමාට හැරෙන්න",
+    "speakText": "වමාට හැරෙන්න",
+    "speakLang": "si"
+  },
+  "wamata U turn eken harenna": {
+    "category": "phrase",
+    "sinhala": "වමට උ තුරන් එකෙන් හැරෙන්න",
+    "speakText": "වමට උ තුරන් එකෙන් හැරෙන්න",
+    "speakLang": "si"
+  },
+  "wapuranawa": {
+    "category": "phrase",
+    "sinhala": "වපුරනවා",
+    "speakText": "වපුරනවා",
+    "speakLang": "si"
+  },
+  "wiyadam karanawa": {
+    "category": "phrase",
+    "sinhala": "වියදම් කරනවා",
+    "speakText": "වියදම් කරනවා",
+    "speakLang": "si"
+  },
+  "yanawa": {
+    "category": "phrase",
+    "sinhala": "යනවා",
+    "speakText": "යනවා",
+    "speakLang": "si"
+  }
+}

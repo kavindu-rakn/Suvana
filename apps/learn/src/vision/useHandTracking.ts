@@ -203,6 +203,20 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
     setHands([])
   }, [])
 
+  // Re-attach active stream and resume rAF if the video element mounts or changes while running.
+  useEffect(() => {
+    const video = videoRef.current
+    if (status === 'running' && streamRef.current && video && video.srcObject !== streamRef.current) {
+      video.srcObject = streamRef.current
+      void video.play().catch(() => {})
+      if (!activeRef.current) {
+        activeRef.current = true
+        setInferring(true)
+        rafRef.current = requestAnimationFrame(() => void processFrame())
+      }
+    }
+  })
+
   // Release the camera on unmount. The landmarker is shared, so it stays up.
   useEffect(() => {
     return () => {

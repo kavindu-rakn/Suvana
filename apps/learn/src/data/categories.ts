@@ -42,6 +42,26 @@ export function categoryOf(rec: Categorisable): string {
   return rec.sourceCategory ?? UNCATEGORISED
 }
 
+const MONTH_ORDER = [
+  'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+  'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER',
+]
+
+/**
+ * Order the signs within a category for display. Alphabetical is the sensible
+ * default, but the months have a canonical sequence everyone knows — showing
+ * "April, August, December…" reads as broken. Non-month glosses in the folder
+ * (MONTH, YEAR, dataset typos) fall through to the end, alphabetically.
+ */
+export function orderSigns<T extends { gloss: string }>(category: string, signs: T[]): T[] {
+  if (category !== 'Months') return signs
+  const rank = (gloss: string) => {
+    const i = MONTH_ORDER.indexOf(gloss.toUpperCase())
+    return i === -1 ? MONTH_ORDER.length : i
+  }
+  return [...signs].sort((a, b) => rank(a.gloss) - rank(b.gloss) || a.gloss.localeCompare(b.gloss))
+}
+
 /** Category names present in a set of references, ordered for display. */
 export function categoriesIn(recs: Categorisable[]): string[] {
   const names = [...new Set(recs.map(categoryOf))]

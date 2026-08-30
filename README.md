@@ -8,7 +8,7 @@ One platform for real-time two-way Deaf–hearing communication in Sri Lankan Si
 
 | Path | Module | Stack |
 |---|---|---|
-| `apps/shell` | The Suvana landing — owns the domain root and proxies the modules | Static HTML, Vite (dev proxy + build) |
+| `apps/shell` | The Suvana landing and the **Alerts** page at `/alerts/`, plus the built-in **Suvana AI** tutor — owns the domain root and proxies the modules | Static HTML + TypeScript, Vite (dev proxy + build) |
 | `apps/learn` | **Learn** — gamified SSL learning & practice, served at `/learn/` | React + Vite, MediaPipe Tasks Vision in-browser, DTW scoring |
 | `apps/communicate` | **Communicate** — speech → 3D signing avatar, with audio emotion recognition | Next.js 16 full-stack (MongoDB + Auth.js, Cloudinary, Three.js); ASR/emotion served externally |
 | `apps/alerts` | **Alerts** — sound awareness / SOS companion app | Expo / React Native, TF.js |
@@ -24,12 +24,53 @@ Fresh-history monorepo bootstrapped **24 Aug 2026** from working-tree snapshots.
 
 | Path | Source | Commit |
 |---|---|---|
-| `apps/shell`, `apps/learn`, `tools/reference-converter` | `ChamaraIT22076816/R26-SE-019` → `learn-ssl-module/` | `7f6fc4f` |
+| `apps/shell`, `tools/reference-converter` | `ChamaraIT22076816/R26-SE-019` → `learn-ssl-module/` | `7f6fc4f` |
+| `apps/learn` | `ChamaraIT22076816/R26-SE-019` → `learn-ssl-module/web/` | `2d85c78` (re-sync, 30 Aug 2026 — see below) |
 | `services/recognition` | `ChamaraIT22076816/R26-SE-019` → `sinhala_sign_language_recognition/` | `8a2ff2f` (partial re-sync, 26 Aug 2026 — see below) |
 | `apps/alerts`, `services/sound-awareness` | `ChamaraIT22076816/R26-SE-019` → `soundguard-karindra/` | `7f6fc4f` |
 | `apps/communicate` | [`lithiraMalkith/Sign-Detector`](https://github.com/lithiraMalkith/Sign-Detector) | `6fdfd04` ("Update #2", 16 Aug 2026) |
 
 ### Re-sync log
+
+**30 Aug 2026 — `apps/learn`, `7f6fc4f` → `2d85c78` (merge, not copy).**
+
+The team repo carried three days of newer Learn work: the Practice redesign
+(one card system, iconified controls, mobile tab-bar fixes, capture-failure vs
+low-score results), `CategorySignNavigator`, a fourth hero step, reduced-motion
+handling, and Lenis scoped to the hero instead of running globally and
+hijacking every scroll container in the app.
+
+That copy is deployed **standalone** from the team repo, so its commit
+`3e38643` deliberately stripped four Suvana couplings. All four are re-applied
+here and must survive every future re-sync:
+
+| Coupling | Where |
+|---|---|
+| `base: '/learn/'`, `outDir: dist/learn`, port 5174 | `vite.config.ts` (kept, not taken) |
+| `/learn/`-prefixed cache headers | `vercel.json` (kept, not taken) |
+| `src/app/session.ts` + the account link in the app bar | `src/App.tsx`, `src/index.css` |
+| Brand links home, "Back to Home" button | `src/components/Hero.tsx` |
+
+129 tests pass; typecheck and production build clean.
+
+**30 Aug 2026 — `services/recognition` backend, checked, nothing to take.**
+
+Verified against the team repo at `2d85c78` (fetched; `origin/main` had nothing
+newer). `server.py`, `assistant.py`, `soundguard.py`, `sinhala_labels.py`, both
+build scripts, all of `src/`, all of `tests/` and both config files are
+**identical**. The only commits touching that folder since the last sync
+(`5f945db`, `2f826ad`, `327274a`) all edit `webapp/static/index.html` — the team
+repo's own landing page, which embeds the other modules as panels. Suvana
+integrates at the domain level instead, so those keep being skipped, exactly as
+the 26 Aug entry below says. The Suvana copy's only intentional divergence is
+its rebranded frontend, plus the UI strings noted next.
+
+**30 Aug 2026 — `services/recognition/webapp/assistant.py`, UI copy only.**
+
+Five user-visible strings still carried the module's standalone sub-brand name,
+which Suvana UI copy does not use. Rebranded, plus a system-prompt rule so the
+model does not reintroduce them. The engine is untouched: future re-syncs
+should take upstream logic and re-apply those strings. See the module docstring.
 
 **26 Aug 2026 — `services/recognition`, `7f6fc4f` → `8a2ff2f` (selective).**
 
@@ -37,7 +78,7 @@ Taken: `tests/test_keypoint_augmentation.py` and `tests/test_sinhala_labels.py` 
 
 **Not taken, and not an oversight:** the same range added `webapp/static/learnssl.css`, `webapp/static/signspeak.css` and matching `index.html` sections. That is Lahiru's own integration approach in the team repo — embedding the other modules as panels inside the recognition page. Suvana integrates at the domain level instead (the shell owns routing and cross-module navigation), so importing those would duplicate the shell's job, re-introduce the sub-brand names "SignSpeak" and "Learn SSL" into Suvana UI copy, and collide with this copy's rebrand of the same file. Future re-syncs of this component should keep skipping them and take backend, model and test changes only.
 
-`data/processed/labels.npy` is **still absent upstream**, so the label-map gap in `services/recognition/DEPLOY-SUVANA.md` remains open.
+~~`data/processed/labels.npy` is still absent upstream, so the label-map gap in `services/recognition/DEPLOY-SUVANA.md` remains open.~~ **Closed 30 Aug 2026**: `labels.npy`, `metadata.json` and `webapp/data/sinhala_labels.json` are committed here (~380 KB). They were caught by a bare `data/` ignore rule, so a clone got a service that started and logged `Loaded 0 gesture labels`. Do not regenerate them from the Kaggle corpus — the label order has to match the trained model's output indices exactly.
 
 Deliberately excluded from every snapshot: git histories, `node_modules`, Python venvs, build outputs, datasets, and ~293 MB of Mixamo test FBX files (`lib/models` in Sign-Detector — nothing in code references them). The team repo's `SSL-Transformer/` folder was a stale placeholder and was not copied; the PP1 Python demo stays in the team repo as historical reference.
 
@@ -52,11 +93,34 @@ One domain serves the whole web product. The shell (`apps/shell`) owns the root;
 
 ## Running
 
-- **`apps/shell`** — `npm install`, then `npm run dev` (port 5173). Serves the landing and proxies the other modules.
+- **`apps/shell`** — `npm install`, then `npm run dev` (port 5173). Serves the landing, the Alerts page at `/alerts/`, and proxies the other modules. `npm run build` typechecks first. See `DEMO.md` for running all four together.
 - **`apps/learn`** — `npm install`, then `npm run dev` (port 5174, served under `/learn/`). The `predev` hook regenerates `public/reference-index.json`; running `npx vite` directly skips it and the app loads with no references. Runtime asset paths must use `import.meta.env.BASE_URL` — a bare `/references/...` breaks under the prefix.
 - **`apps/communicate`** — `npm install`, copy `.env.local.example` → `.env.local` and fill it, then `npm run dev`. Needs MongoDB Atlas, an Auth.js secret, Cloudinary keys and the ngrok shared secret — all avatar models and gloss animations live in Cloudinary, not in this repo; the speech backend URL is read from MongoDB at runtime.
 - **`apps/alerts`** — `npm install`, then `npx expo run:android` (a dev build is required: the app has a custom native module, so Expo Go will not run it).
-- **`services/recognition`** — `pip install -r requirements.txt`, then see its README. Before wiring into the web shell, verify the webcam is captured browser-side (frames/landmarks sent to the API), not server-side.
+- **`services/recognition`** — `pip install -r requirements.txt`, then see its README and `DEPLOY-SUVANA.md`. Capture is browser-side (`getUserMedia` → WebSocket), so it works off localhost. Locally it is simplest to borrow the team repo's venv rather than build a second 3 GB one — `DEMO.md` has the command. It needs two gitignored data files that never arrive with a clone; `DEMO.md` lists them and what breaks without them.
+
+## The built-in assistant
+
+The shell ships **Suvana AI**, a tutor over the 171 signs the recognition model
+was trained on. It runs entirely in the browser:
+
+- **Knowledge base** — `apps/shell/public/data/signs.json`, committed, built by
+  `apps/shell/scripts/build-sign-index.py` from the recognition module's label
+  data and its English gloss map. Rebuild it after a retrain.
+- **Retrieval and intents** — `apps/shell/src/assistant/`, a port of the engine
+  in `services/recognition/webapp/assistant.py`, scoring kept numerically
+  identical (including a faithful `difflib.SequenceMatcher` ratio) so answers do
+  not drift between the two surfaces.
+- **Optional model** — a free Gemini key, entered through the widget's gear.
+  The key is held in that browser's `localStorage` and sent only to Google; the
+  local engine still retrieves first and its hits are injected as grounded
+  context, and every failure falls back to the local answer.
+
+The point of the port is that it depends on **no Suvana service**. The Python
+original reads a gitignored file next to a 3 GB TensorFlow container, so it
+answered "0 signs" on a fresh checkout and went down whenever recognition did.
+The copy on the Recognize page is unchanged and still needs that file — see
+`DEMO.md`.
 
 ## Licences
 
@@ -64,8 +128,9 @@ Reference corpora in `apps/learn`: `kaggle_*` files are CC0; `yohan_*` files are
 
 ## Near-term work
 
-1. Branding pass — palette tokens + logos into `packages/branding`, retheme every frontend, strip all sub-brand names from UI copy.
-2. One-domain topology (rewrites or subdomains) tying `apps/shell`, `apps/learn` and `apps/communicate` together.
-3. Extract `services/speech` from the notebooks and point `apps/communicate` at a persistent URL (a DB config write — no code change).
-4. Wire `services/recognition` into the shell; SoundGuard rebrand build.
+1. ~~Branding pass~~ and ~~one-domain topology~~ — done. All four modules are
+   reachable from the landing, and no sub-brand name remains in UI copy.
+2. Extract `services/speech` from the notebooks and point `apps/communicate` at a persistent URL (a DB config write — no code change). Until then Communicate transcription is UI-only.
+3. Get `data/processed/labels.npy` committed somewhere durable, or accept that Recognize needs a manual file drop on every fresh clone.
+4. Build the Alerts dev client and put an APK somewhere `/alerts/` can link to, so the page can offer a download rather than a build command.
 5. Unified sign-on across modules is documented future work, not current scope.

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#FDFDFD" />
+    <meta
+      name="description"
+      content="Suvana Alerts — a companion phone app that keeps Deaf and hard-of-hearing users aware of important sounds, transcribes speech live, and sends SOS alerts."
+    />
+    <title>Alerts · සුවණ Suvana</title>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('suvana.theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          }
+          document.documentElement.dataset.theme = t;
+        } catch (e) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&family=Noto+Serif+Sinhala:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body class="page-alerts">
+    <header id="header">
+      <div class="nav">
+        <a href="/" aria-label="Suvana home" class="brand">
+          <img class="mark" src="/branding/suvana-mark.png" alt="" />
+          <span class="wordmark">Suvana</span>
+        </a>
+        <nav class="nav-links" aria-label="Page sections">
+          <a href="/#modules-wrapper">Modules</a>
+          <a href="#install">Install</a>
+          <a href="#connect">Connect</a>
+        </nav>
+        <div class="nav-right">
+          <button id="theme-toggle" class="theme-toggle" type="button"></button>
+          <a class="btn ghost" href="/">Back to Home</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="module-page">
+      <section class="module-hero">
+        <div class="module-hero-inner">
+          <p class="kicker">Sound awareness · Companion app</p>
+          <h1>Alerts</h1>
+          <p class="module-lede">
+            The one part of Suvana that is not a web page. Alerts runs on the phone
+            in a Deaf user's pocket, listening for the sounds they cannot hear —
+            and it can raise an SOS with their location when something goes wrong.
+          </p>
+          <div class="module-hero-foot">
+            <a class="btn" href="#install">How to install it</a>
+            <span class="badge soon">Android · dev build required</span>
+          </div>
+        </div>
+        <div class="module-hero-art" aria-hidden="true">
+          <div class="css-art art-alerts">
+            <div class="ripple-circle"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="alerts-modes">
+        <div class="alerts-container">
+          <div class="alerts-intro">
+            <p class="kicker">Two modes, one microphone</p>
+            <h2>Awareness, and understanding.</h2>
+            <p>
+              The two halves serve the same person in completely different
+              situations, so the app hands the microphone cleanly between them
+              rather than running both at once.
+            </p>
+          </div>
+
+          <div class="alerts-grid">
+            <article class="alerts-card">
+              <span class="step-num">Listen</span>
+              <h3>Environmental sound awareness</h3>
+              <p>
+                An on-device classifier watches for sirens, alarms, horns, doorbells
+                and knocking, and raises a high-contrast visual alert with a distinct
+                haptic signature per sound — so the phone can be understood in a
+                pocket, without looking at it.
+              </p>
+              <ul class="alerts-points">
+                <li>Runs on the device with ONNX Runtime — no audio is uploaded</li>
+                <li>Escalating alerts, so a smoke alarm does not feel like a doorbell</li>
+                <li>Keeps working with the screen off via a background service</li>
+              </ul>
+            </article>
+
+            <article class="alerts-card">
+              <span class="step-num">Transcribe</span>
+              <h3>Live speech captions</h3>
+              <p>
+                Turns the conversation happening in front of the user into readable
+                text on the phone, so a hearing person who does not sign can still be
+                understood in a shop, a clinic or a classroom.
+              </p>
+              <ul class="alerts-points">
+                <li>Speech recognition on the device</li>
+                <li>Sized for reading at arm's length, not for a transcript archive</li>
+                <li>Hands the microphone back to Listen the moment it is closed</li>
+              </ul>
+            </article>
+
+            <article class="alerts-card">
+              <span class="step-num">SOS</span>
+              <h3>Safety circle</h3>
+              <p>
+                A Safety Circle of trusted contacts, and a one-touch emergency beacon
+                that sends them an SMS with the user's current GPS location.
+              </p>
+              <ul class="alerts-points">
+                <li>SMS, so it works without the recipient installing anything</li>
+                <li>Location attached automatically</li>
+                <li>History of what was detected and what was sent</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="alerts-install" id="install">
+        <div class="alerts-container">
+          <div class="alerts-intro">
+            <p class="kicker">Installing</p>
+            <h2>Why there is no download button.</h2>
+            <p>
+              Alerts uses three custom native modules — the ONNX inference runtime,
+              on-device speech recognition, and a foreground service that keeps
+              listening with the screen off. <strong>Expo Go cannot load any of
+              them</strong>, so the app has to be built into its own APK first.
+              That is a real constraint, not a missing feature: the same
+              capabilities are what make it useful.
+            </p>
+          </div>
+
+          <ol class="alerts-steps">
+            <li>
+              <h3>Build the dev client once</h3>
+              <p>
+                From <code>apps/alerts</code>, with an Android device connected and
+                USB debugging on. This compiles the native modules and installs the
+                app.
+              </p>
+              <pre><code>npx expo run:android</code></pre>
+              <p class="alerts-fine">
+                A cloud build works too — <code>eas build --profile development
+                --platform android</code> — and gives you an APK to sideload
+                instead.
+              </p>
+            </li>
+            <li>
+              <h3>Start the bundler</h3>
+              <p>
+                Afterwards, the installed app only needs the JavaScript bundle, so
+                day-to-day it is one command. The phone and this computer must be on
+                the same network.
+              </p>
+              <pre><code>npx expo start --dev-client</code></pre>
+            </li>
+            <li>
+              <h3>Point the app at this machine</h3>
+              <p>
+                Scan the code below with the installed Suvana app, or open the link
+                on the phone.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="alerts-connect" id="connect">
+        <div class="alerts-container">
+          <div class="alerts-intro">
+            <p class="kicker">Connect</p>
+            <h2>Pair a phone with this machine.</h2>
+            <p>
+              Expo prints a URL like <code>exp://192.168.1.5:8081</code> when the
+              bundler starts. Paste it — or just the IP address — and the code is
+              generated here in the browser.
+            </p>
+          </div>
+
+          <div class="connect-panel">
+            <div class="connect-form">
+              <label class="connect-field">
+                <span>Bundler address</span>
+                <input
+                  type="text"
+                  id="metro-url"
+                  autocomplete="off"
+                  spellcheck="false"
+                  placeholder="exp://192.168.1.5:8081"
+                />
+              </label>
+              <p class="connect-status" id="connect-status">
+                Waiting for an address.
+              </p>
+              <p class="alerts-fine">
+                Nothing is sent anywhere — the code is drawn in this page from the
+                address you type.
+              </p>
+            </div>
+            <div class="connect-qr">
+              <div class="qr-frame" id="qr-frame" aria-live="polite">
+                <p class="qr-empty">The code appears here</p>
+              </div>
+              <a class="qr-link" id="qr-link" href="#" hidden>Open on this device</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-editorial">
+      <div class="footer-mega">
+        <h2>Back to<br />Suvana</h2>
+        <a href="/" class="btn primary massive">All four modules</a>
+      </div>
+      <div class="footer-bottom">
+        <div class="fb-left">
+          <span class="fb-logo">SUVANA</span>
+          <span class="copyright">&copy; 2026 Suvana. All rights reserved.</span>
+        </div>
+        <div class="fb-right">
+          <a href="/#modules-wrapper">Modules</a>
+          <a href="/learn/">Learn</a>
+          <a href="/communicate">Communicate</a>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/alerts.ts"></script>
+  </body>
+</html>
