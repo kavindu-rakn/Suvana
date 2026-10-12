@@ -271,7 +271,7 @@ if (marqueeContent) {
 const recognizeFoot = document.querySelector<HTMLElement>('[data-recognize-foot]');
 
 if (recognizeFoot) {
-  const configured = recognizeFoot.dataset.serviceUrl?.trim() ?? '';
+  const configured = recognizeFoot.dataset.serviceUrl?.trim() || (import.meta.env.VITE_RECOGNIZE_URL as string | undefined)?.trim() || '';
   const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
   // Two local origins are plausible and both are documented: 8000 is the
   // uvicorn command in the runbook, 7860 the Docker default in
