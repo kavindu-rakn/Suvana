@@ -35,7 +35,6 @@ Rules:
 - Next: each lane starts its 13 Oct tasks from BOARD.md.
 
 
-<<<<<<< HEAD
 ### 2026-10-13 01:28 | claude-code | Q-01
 - What: done (review). Per-module AGENTS.md + CLAUDE.md stubs for apps/learn and services/recognition; root AGENTS.md index and reconciled rules (9.3 KB); .claude/ narrowed; README links docs/plan. Rule-by-rule table vs the 10-Oct CLAUDE.md in handoffs/Q-01.md.
 - Branch @ sha: agent/claude/Q-01-agents-md (see git log)
@@ -77,6 +76,7 @@ Rules:
 - Plan correction: clean lane lacks untracked calibration data; baseline 138/2 does not apply here, calibration/weight-fit and opt-in evaluation tests skip (7 total). No data generated or committed.
 - Next: L-05 storage on a leaf stacked on this logic-only branch, then L-06 from L-04.
 
+<<<<<<< HEAD
 ### 2026-10-13 01:49 | codex | L-06
 - What: Cache headers, standalone root redirect and asset versioning ready for review; R26-only header instructions and version-bump rule in handoffs/L-06.md.
 - Branch @ sha: agent/codex/L-06-cache-headers @ task HEAD, stacked on L-04 e9fa2bc. L-05 52124ae stays a sibling leaf.
@@ -114,4 +114,12 @@ Rules:
 - Screenshots: C:/Users/User/Documents/Suvana-wt/antigravity/.agent-local/screens/Q-00/index.html
 - Needs kvn: review and merge so Codex can shoot L-05 storage screens
 - Next: re-shoot I-01 after waiting for the landing intro animation to finish
+
+### 2026-10-13 01:42 | codex | L-05
+- What: Storage resilience implemented; partial pending required screenshots and kvn UI adoption. Safe loads preserve bundled references; guarded fields and render-error Reload fallback added.
+- Branch @ sha: agent/codex/L-05-storage @ task HEAD, stacked on L-04 e9fa2bc (merge L-04 first).
+- Gates: clean npm ci/lint/test/build passed; 1 existing PracticeView warning / 0 new; 142 passed / 7 skipped; main JS 143.56 kB gzip; guard 152; diff check passed.
+- Screenshots: pending because Q-00 remains absent from origin/main dd92377; no browser captures. Details and before-state instructions in handoffs/L-05.md.
+- Needs kvn: review screenshots after Q-00 merges; adopt/merge only after visual review; port in R-00 M0 after merge.
+- Next: L-06 from L-04 (L-05 stays a leaf; nothing stacked on it).
 

@@ -19,6 +19,8 @@ import { CameraStage } from './CameraStage'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
 import { band } from '../scoring/band'
+import { safeLoad } from '../storage/safeLoad'
+import { StorageNotice } from '../storage/StorageNotice'
 
 type Stage = 'hub' | 'intro' | 'playing' | 'summary'
 
@@ -33,6 +35,7 @@ interface TurnOutcome {
  * through the existing DTW path, and reports against the proposal's rubric.
  */
 export function ScenarioView() {
+  const [storageOk, setStorageOk] = useState(true)
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id)
   const scenario: Scenario = SCENARIOS.find((s) => s.id === scenarioId) ?? SCENARIOS[0]
 
@@ -49,7 +52,8 @@ export function ScenarioView() {
 
   useEffect(() => {
     void (async () => {
-      const [local, refIndex] = await Promise.all([listRecordings(), loadReferenceIndex()])
+      const { data: [local, refIndex], storageOk: ok } = await safeLoad(listRecordings, loadReferenceIndex)
+      setStorageOk(ok)
       setLocalRecs(local)
       setReferences(pickReferences([...local.map(toMeta), ...refIndex]))
       setLoading(false)
@@ -204,6 +208,7 @@ export function ScenarioView() {
   if (stage === 'hub') {
     return (
       <section className="aww-scenario-hub">
+        <StorageNotice storageOk={storageOk} />
         <div className="aww-hub-header">
           <h1 className="aww-hub-title">Immersive Scenarios</h1>
           <p className="aww-hub-subtitle">Practice your sign language in real-world conversational environments.</p>
@@ -285,6 +290,7 @@ export function ScenarioView() {
     const isReady = playable.length === scenario.turns.length
     return (
       <section className="aww-mission-briefing">
+        <StorageNotice storageOk={storageOk} />
         {/* Full-width styled Hero Card */}
         <div className={`briefing-hero-card theme-${scenario.id}`}>
           <div className="briefing-hero-overlay">
@@ -425,6 +431,7 @@ export function ScenarioView() {
 
     return (
       <section className="aww-scenario-hub">
+        <StorageNotice storageOk={storageOk} />
         <div className={`briefing-hero-card theme-${scenario.id}`} style={{ marginBottom: '32px' }}>
           <div className="briefing-hero-overlay">
             <div className="briefing-nav-row">
@@ -500,6 +507,7 @@ export function ScenarioView() {
   if (loadingVocab) {
     return (
       <div className="aww-practice-env">
+        <StorageNotice storageOk={storageOk} />
         <div className="aww-pane-content">
           <p className="hint-text">Loading conversational signs...</p>
         </div>
@@ -510,6 +518,7 @@ export function ScenarioView() {
   if (!turn || !reference) {
     return (
       <div className="aww-practice-env">
+        <StorageNotice storageOk={storageOk} />
         <div className="aww-pane-content">
           <p className="hint-text">This turn has no reference recording.</p>
           <button className="btn" onClick={() => setStage('intro')} style={{ marginTop: '16px' }}>
@@ -522,6 +531,7 @@ export function ScenarioView() {
 
   return (
     <div className="aww-practice-env aww-scenario-env" data-phase={capture.phase}>
+      <StorageNotice storageOk={storageOk} />
       <span className="sr-only" aria-live="polite">{liveMessage}</span>
 
       {/* Teleprompter strip across the top — the prompt belongs over "you", not

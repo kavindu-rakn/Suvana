@@ -5,6 +5,8 @@ import { deleteRecording, listRecordings, saveRecording } from '../storage/recor
 import { loadReferenceFrames, loadReferenceIndex } from '../storage/bundledReferences'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { glossLabel, translationOf } from '../data/translations'
+import { safeLoad } from '../storage/safeLoad'
+import { StorageNotice } from '../storage/StorageNotice'
 
 interface Row {
   meta: RecordingMeta
@@ -13,6 +15,7 @@ interface Row {
 
 /** Reference library: local (IndexedDB) + bundled recordings, replay, JSON export/import. */
 export function LibraryView() {
+  const [storageOk, setStorageOk] = useState(true)
   const [local, setLocal] = useState<SignRecording[]>([])
   const [bundled, setBundled] = useState<RecordingMeta[]>([])
   const [loading, setLoading] = useState(true)
@@ -26,12 +29,15 @@ export function LibraryView() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const refreshLocal = useCallback(async () => {
-    setLocal(await listRecordings())
+    const { data: [loc], storageOk: ok } = await safeLoad(listRecordings)
+    setLocal(loc)
+    setStorageOk((previous) => previous && ok)
   }, [])
 
   useEffect(() => {
     void (async () => {
-      const [loc, index] = await Promise.all([listRecordings(), loadReferenceIndex()])
+      const { data: [loc, index], storageOk: ok } = await safeLoad(listRecordings, loadReferenceIndex)
+      setStorageOk(ok)
       setLocal(loc)
       setBundled(index)
       setLoading(false)
@@ -174,6 +180,7 @@ export function LibraryView() {
 
   return (
     <section className="library-card">
+      <StorageNotice storageOk={storageOk} />
       <div className="library-head">
         <h2>Reference library</h2>
         <span className="library-count">

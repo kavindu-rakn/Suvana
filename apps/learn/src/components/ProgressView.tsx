@@ -11,6 +11,8 @@ import { loadReferenceIndex } from '../storage/bundledReferences'
 import { pickReferenceList } from '../storage/references'
 import { toMeta } from '../vision/types'
 import { categoryOf, categoriesIn } from '../data/categories'
+import { safeLoad } from '../storage/safeLoad'
+import { StorageNotice } from '../storage/StorageNotice'
 
 const ACTIVITY_DAYS = 14
 // The full catalogue is Practice's job. Progress shows only what the learner
@@ -105,6 +107,7 @@ export function ProgressView({
   onPractise?: (gloss?: string) => void
 }) {
   const [summaries, setSummaries] = useState<GlossMastery[]>([])
+  const [storageOk, setStorageOk] = useState(true)
   const [categoryMap, setCategoryMap] = useState<Map<string, string>>(new Map())
   const [availableCategories, setAvailableCategories] = useState<string[]>([])
 
@@ -128,11 +131,10 @@ export function ProgressView({
 
   useEffect(() => {
     void (async () => {
-      const [loc, bun, log] = await Promise.all([
-        listRecordings(),
-        loadReferenceIndex(),
-        listAttempts(),
-      ])
+      const { data: [loc, bun, log], storageOk: ok } = await safeLoad(
+        listRecordings, loadReferenceIndex, listAttempts,
+      )
+      setStorageOk(ok)
       // The same one-per-gloss list Practice builds, so the totals here and
       // there can never disagree (see hero-copy-must-match-build).
       const refs = pickReferenceList([...loc.map(toMeta), ...bun])
@@ -212,6 +214,7 @@ export function ProgressView({
   if (loading) {
     return (
       <section className="pg">
+        <StorageNotice storageOk={storageOk} />
         <header className="pg-masthead">
           <div className="pg-masthead-lead">
             <p className="pg-kicker">Learner dashboard</p>
@@ -230,6 +233,7 @@ export function ProgressView({
   if (total === 0) {
     return (
       <section className="pg">
+        <StorageNotice storageOk={storageOk} />
         <header className="pg-masthead">
           <div className="pg-masthead-lead">
             <p className="pg-kicker">Learner dashboard</p>
@@ -251,6 +255,7 @@ export function ProgressView({
 
   return (
     <section className="pg">
+      <StorageNotice storageOk={storageOk} />
       <header className="pg-masthead">
         <div className="pg-masthead-lead">
           <p className="pg-kicker">Learner dashboard</p>

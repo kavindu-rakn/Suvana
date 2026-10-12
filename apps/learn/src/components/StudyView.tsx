@@ -4,6 +4,8 @@ import { listSamples } from '../metrics/latencyStore'
 import type { LatencySample } from '../metrics/latency'
 import { buildExport, downloadFile, toCsv } from '../pilot/exportResults'
 import { LatencyPanel } from './LatencyPanel'
+import { readLocal, safeLoad } from '../storage/safeLoad'
+import { StorageNotice } from '../storage/StorageNotice'
 
 const PARTICIPANT_KEY = 'ssl-learn-participant'
 
@@ -19,13 +21,14 @@ export function StudyView() {
   const [attemptCount, setAttemptCount] = useState(0)
   const [latency, setLatency] = useState<LatencySample[]>([])
   const [loading, setLoading] = useState(true)
-  const [participantCode, setParticipantCode] = useState(
-    () => localStorage.getItem(PARTICIPANT_KEY) ?? '',
-  )
+  const [savedParticipant] = useState(() => readLocal(PARTICIPANT_KEY))
+  const [storageOk, setStorageOk] = useState(savedParticipant.storageOk)
+  const [participantCode, setParticipantCode] = useState(savedParticipant.value)
 
   useEffect(() => {
     void (async () => {
-      const [log, samples] = await Promise.all([listAttempts(), listSamples()])
+      const { data: [log, samples], storageOk: ok } = await safeLoad(listAttempts, listSamples)
+      setStorageOk((previous) => previous && ok)
       setAttemptCount(log.length)
       setLatency(samples)
       setLoading(false)
@@ -35,7 +38,9 @@ export function StudyView() {
   async function exportResults(format: 'json' | 'csv') {
     // Re-read rather than exporting the state loaded on mount, so attempts made
     // since this tab was opened are in the file the participant hands over.
-    const [attempts, samples] = await Promise.all([listAttempts(), listSamples()])
+    const { data: [attempts, samples], storageOk: ok } = await safeLoad(listAttempts, listSamples)
+    setStorageOk((previous) => previous && ok)
+    if (!ok) return // Never export a partial log as a complete study result.
     const data = buildExport(participantCode, attempts, samples)
     const stamp = data.exportedAt.slice(0, 10)
     const base = `ssl-learn_${data.participantCode}_${stamp}`.replace(/[^\w.-]+/g, '_')
@@ -48,6 +53,7 @@ export function StudyView() {
 
   return (
     <section className="library-card">
+      <StorageNotice storageOk={storageOk} />
       <div className="library-head">
         <h2>Study session</h2>
         <span className="library-count">pilot tooling — not part of the learner experience</span>
@@ -61,7 +67,11 @@ export function StudyView() {
             value={participantCode}
             onChange={(e) => {
               setParticipantCode(e.target.value)
-              localStorage.setItem(PARTICIPANT_KEY, e.target.value)
+              try {
+                localStorage.setItem(PARTICIPANT_KEY, e.target.value)
+              } catch {
+                setStorageOk(false)
+              }
             }}
             placeholder="e.g. P01"
           />

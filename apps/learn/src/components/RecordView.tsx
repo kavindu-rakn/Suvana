@@ -12,6 +12,8 @@ import { CameraStage } from './CameraStage'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { CategorySignNavigator } from './CategorySignNavigator'
 import { captureDeadline } from '../vision/cameraLifecycle'
+import { readLocal, safeLoad } from '../storage/safeLoad'
+import { StorageNotice } from '../storage/StorageNotice'
 
 const COUNTDOWN_S = 3
 const MAX_MS = 8000
@@ -48,14 +50,16 @@ export function RecordView() {
    * until it is filled. It persists on edit, not only on save, so the name is
    * genuinely remembered on the next visit.
    */
-  const [signer, setSigner] = useState(() => localStorage.getItem(SIGNER_KEY) ?? '')
+  const [savedSigner] = useState(() => readLocal(SIGNER_KEY))
+  const [storageOk, setStorageOk] = useState(savedSigner.storageOk)
+  const [signer, setSigner] = useState(savedSigner.value)
 
   function updateSigner(next: string) {
     setSigner(next)
     try {
       localStorage.setItem(SIGNER_KEY, next)
     } catch {
-      /* Private-mode Safari throws; the field still works for this session. */
+      setStorageOk(false)
     }
   }
 
@@ -82,7 +86,8 @@ export function RecordView() {
   // Load all references and local recordings
   useEffect(() => {
     void (async () => {
-      const [loc, index] = await Promise.all([listRecordings(), loadReferenceIndex()])
+      const { data: [loc, index], storageOk: ok } = await safeLoad(listRecordings, loadReferenceIndex)
+      setStorageOk((previous) => previous && ok)
       setLocalRecs(loc)
       const all = pickReferenceList([...loc.map(toMeta), ...index])
       setReferences(all)
@@ -230,6 +235,7 @@ export function RecordView() {
         setIsCustomMode(false)
       }
     } catch (e) {
+      setStorageOk(false)
       console.error('Failed to save recording', e)
       setSaveError('Could not save to library. Try again.')
       return
@@ -254,6 +260,7 @@ export function RecordView() {
 
   return (
     <div className="aww-practice-env aww-studio-env" data-phase={phase}>
+      <StorageNotice storageOk={storageOk} />
       {/* The 50/50 Dual Studio View */}
       <div className="aww-split-screen">
         {/* Left Pane: Target Reference Benchmark or In-Pane Category & Sign Browser */}
