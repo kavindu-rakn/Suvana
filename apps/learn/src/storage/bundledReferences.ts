@@ -1,4 +1,5 @@
 import type { RecordingMeta, SignRecording } from '../vision/types'
+import { withAssetVersion } from '../app/assetVersion'
 
 /**
  * Bundled reference recordings ship with the app in public/references/.
@@ -16,7 +17,7 @@ import type { RecordingMeta, SignRecording } from '../vision/types'
  */
 
 // BASE_URL-relative: this module is served under /learn/ (see vite.config.ts).
-const INDEX_URL = `${import.meta.env.BASE_URL}reference-index.json`
+const INDEX_URL = withAssetVersion(`${import.meta.env.BASE_URL}reference-index.json`)
 
 // Module-level, so the four views share one request no matter how many mount
 // concurrently or how often the learner switches tabs.
@@ -88,7 +89,7 @@ export function loadReferenceFrames(file: string): Promise<SignRecording | null>
     return cached
   }
 
-  const pending = fetch(`${import.meta.env.BASE_URL}references/${file}`)
+  const pending = fetch(withAssetVersion(`${import.meta.env.BASE_URL}references/${file}`))
     .then((r) => (r.ok ? (r.json() as Promise<SignRecording>) : null))
     .catch(() => null)
 
