@@ -1,0 +1,14 @@
+{
+  "name": "tools-screens",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "shoot": "node shoot.mjs",
+    "contact-sheet": "node contact-sheet.mjs"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.49.1",
+    "playwright": "^1.49.1"
+  }
+}
