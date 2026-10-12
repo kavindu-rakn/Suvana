@@ -41,6 +41,8 @@ Every agent follows this file. It overrides any habit or default of the tool.
 
 Pass the port with `npm run dev -- --port 5184` (etc.).
 
+**Already created (K-01, 13 Oct):** `Suvana-wt\claude`, `Suvana-wt\codex` and `Suvana-wtntigravity` exist as worktrees detached at `main` (0ad2c55), and `core.longpaths` is on. **Do not run the "first time" commands below.** Start every task, including your first, with the "next task" commands: `git fetch origin`, then `git switch -c <board branch> origin/main`. Install dependencies (`npm ci`) in the app folders your task needs; worktrees start without `node_modules`. `Suvana-wt\claude-thesis` is created only if DN-20 = yes.
+
 - **Branch name:** `agent/<tool>/<ID>-<slug>`, `<tool>` in `claude`, `codex`, `antigravity` (the thesis lane uses `claude`). Example `agent/codex/L-04-camera-lifecycle`. The board gives the exact name.
 
 **Git Bash: first time (per lane)**
