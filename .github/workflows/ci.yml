@@ -10,6 +10,18 @@ on:
   workflow_dispatch:
 
 jobs:
+  sync-guards:
+    name: Sync guards — Suvana couplings intact
+    runs-on: ubuntu-latest
+    # Offline and dependency-free: asserts every Suvana-specific change declared
+    # in tools/sync/upstreams.json survived the last re-sync from upstream.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: node tools/sync/sync.mjs guard
+
   learn:
     name: Learn — tests and build
     runs-on: ubuntu-latest

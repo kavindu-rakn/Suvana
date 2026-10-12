@@ -28,6 +28,9 @@ out/
 /datasets/
 /dataset/
 
+# tools/sync keeps blobless clones of the upstream repos here
+/tools/sync/.cache/
+
 # OS / editor noise
 .DS_Store
 Thumbs.db

@@ -1,0 +1,327 @@
+{
+  "$schema-note": "Read by tools/sync/sync.mjs; see tools/sync/README.md. Paths in couplings/suvanaOnly/skip/guards are relative to the component's `to` folder and may use * and ** globs. `synced` is the upstream commit Suvana matches, apart from what is declared here — set it with `sync.mjs record`, never by hand.",
+  "upstreams": {
+    "r26": {
+      "url": "https://github.com/ChamaraIT22076816/R26-SE-019.git",
+      "branch": "main"
+    },
+    "sign-detector": {
+      "url": "https://github.com/lithiraMalkith/Sign-Detector.git",
+      "branch": "main"
+    }
+  },
+  "components": [
+    {
+      "id": "learn",
+      "owner": "kvn",
+      "upstream": "r26",
+      "from": "learn-ssl-module/web",
+      "to": "apps/learn",
+      "synced": "334beba05e201acd4ecb2e64b75b915cac3cf8be",
+      "recorded": "2026-10-10",
+      "policy": "Take everything, then re-apply the couplings below. Learn is developed in both repos (decided 2026-10-10), so `status` also flags Suvana-side edits that still need porting back to R26.",
+      "couplings": {
+        "vite.config.ts": "base '/learn/', outDir dist/learn, port 5174 — served under /learn/ on the Suvana domain",
+        "vercel.json": "/learn/-prefixed cache headers, to match the base path",
+        "src/App.tsx": "fetches the platform session and passes <AccountButton> into AppNavBar's account slot",
+        "src/components/Hero.tsx": "brand links and the 'Back to Home' button go to the Suvana landing (/)",
+        "src/index.css": "account-button styles; on phones the account takes the On-Device AI dot's place",
+        "src/components/AppNavBar.tsx": "TEMPORARY: the optional `account` slot, also prepared in R26's working tree. Once R26 commits it, run `record learn` and delete this line",
+        "package-lock.json": "npm 10 output (CI's npm) — regenerate with `npx -y npm@10 install` if upstream changes package.json; never copy upstream's"
+      },
+      "suvanaOnly": {
+        "src/app/session.ts": "reads the one Suvana account from Communicate, same-origin",
+        "src/app/AccountButton.tsx": "the round account button in the app bar"
+      },
+      "guards": [
+        {
+          "file": "vite.config.ts",
+          "has": [
+            "base: '/learn/'",
+            "outDir: 'dist/learn'"
+          ],
+          "why": "Learn must build for /learn/"
+        },
+        {
+          "file": "vercel.json",
+          "has": [
+            "/learn/"
+          ],
+          "why": "cache headers must match the base path"
+        },
+        {
+          "file": "src/App.tsx",
+          "has": [
+            "fetchSession",
+            "<AccountButton"
+          ],
+          "why": "platform sign-in state in the app bar"
+        },
+        {
+          "file": "src/components/AppNavBar.tsx",
+          "has": [
+            "account?: ReactNode",
+            "{account}"
+          ],
+          "why": "the slot the account button renders into"
+        },
+        {
+          "file": "src/components/Hero.tsx",
+          "has": [
+            "href=\"/\"",
+            "Back to Home"
+          ],
+          "why": "Learn links back to the Suvana landing"
+        },
+        {
+          "file": "src/index.css",
+          "has": [
+            ".app-account {",
+            ":has(.app-account)"
+          ],
+          "why": "account button sizing and the phone layout fix"
+        },
+        {
+          "files": "src/**/*.tsx",
+          "lacks": [
+            "Sawana",
+            "SignSpeak",
+            "SoundGuard"
+          ],
+          "why": "no sub-brand names inside Suvana"
+        }
+      ]
+    },
+    {
+      "id": "recognition",
+      "owner": "Lahiru",
+      "upstream": "r26",
+      "from": "sinhala_sign_language_recognition",
+      "to": "services/recognition",
+      "synced": "334beba05e201acd4ecb2e64b75b915cac3cf8be",
+      "recorded": "2026-10-10",
+      "policy": "Take backend, model and test changes. Skip the team repo's own landing page: Suvana integrates modules at the domain level, and its frontend here is rebranded.",
+      "couplings": {
+        "webapp/assistant.py": "five user-visible strings rebranded plus a system-prompt rule (1968cf2); take upstream logic, re-apply the strings",
+        "README.md": "Lahiru's '(Unit Testing)' label kept as a comment above a pytest command that still runs",
+        ".gitignore": "anchored data rules so labels.npy / sinhala_labels.json can be committed (c5b5b3b)",
+        "requirements.txt": "Suvana pins fastapi 0.103.2 / uvicorn 0.23.2 / websockets 11.0.3 (8ecb443, reason not recorded); upstream and Lahiru's venv run 0.141.1 / 0.52.1 / 16.1.1 — verify the Docker build before converging"
+      },
+      "suvanaOnly": {
+        "DEPLOY-SUVANA.md": "runbook for the recognize. subdomain",
+        "Dockerfile": "container build for the service",
+        ".dockerignore": "container build context",
+        "data/processed/labels.npy": "label order matching the trained model's outputs — never regenerate from the corpus",
+        "data/processed/metadata.json": "companion to labels.npy",
+        "webapp/data/sinhala_labels.json": "Sinhala script for each label",
+        "webapp/static/suvana-logo.png": "Suvana branding"
+      },
+      "skip": {
+        "webapp/static/**": "Suvana-branded frontend; upstream's index.html embeds the other modules as panels, which the shell does here (b4ad381, 87a6d3a)"
+      },
+      "guards": [
+        {
+          "file": ".gitignore",
+          "has": [
+            "!/data/processed/labels.npy"
+          ],
+          "why": "without it a clone logs 'Loaded 0 gesture labels'"
+        },
+        {
+          "file": "webapp/static/index.html",
+          "lacks": [
+            "Sawana",
+            "SignSpeak",
+            "Learn SSL"
+          ],
+          "why": "no sub-brand names inside Suvana"
+        }
+      ]
+    },
+    {
+      "id": "alerts",
+      "owner": "Karindra",
+      "upstream": "r26",
+      "from": "soundguard-karindra/sound_awareness_mobile",
+      "to": "apps/alerts",
+      "synced": "7f6fc4f446b63249ad02385ca60d8aa4c3e6969d",
+      "recorded": "2026-08-24",
+      "policy": "Take everything, then re-apply the rebrand.",
+      "couplings": {
+        "app.json": "app name 'Suvana' and Suvana permission copy",
+        "app/**": "Suvana rebrand of screen copy and palette (bootstrap)",
+        "components/**": "Suvana rebrand of copy and palette (bootstrap)",
+        "constants/theme.ts": "Suvana palette",
+        "assets/images/*.png": "Suvana icons and splash",
+        "utils/*.ts": "Suvana rebrand of notification and engine copy (bootstrap)",
+        "package.json": "adds @expo-google-fonts/noto-serif, the brand typeface",
+        "package-lock.json": "follows package.json"
+      },
+      "guards": [
+        {
+          "file": "app.json",
+          "has": [
+            "\"name\": \"Suvana\""
+          ],
+          "why": "the installed app is called Suvana"
+        }
+      ]
+    },
+    {
+      "id": "sound-awareness",
+      "owner": "Karindra",
+      "upstream": "r26",
+      "from": "soundguard-karindra/sound_awareness_backend",
+      "to": "services/sound-awareness",
+      "synced": "7f6fc4f446b63249ad02385ca60d8aa4c3e6969d",
+      "recorded": "2026-08-24",
+      "policy": "Take everything."
+    },
+    {
+      "id": "reference-converter",
+      "owner": "kvn",
+      "upstream": "r26",
+      "from": "learn-ssl-module/tools",
+      "to": "tools/reference-converter",
+      "synced": "7f6fc4f446b63249ad02385ca60d8aa4c3e6969d",
+      "recorded": "2026-08-24",
+      "policy": "Take everything. Its three differences are Suvana-side work (31c2d49, d3432eb, dde167d) not yet ported to R26 — deliberately left undeclared so `status` keeps flagging them until they are."
+    },
+    {
+      "id": "communicate",
+      "owner": "Lithira",
+      "upstream": "sign-detector",
+      "from": "",
+      "to": "apps/communicate",
+      "synced": "48ab8cb3f4f1e0a58045877024f76392459c9d85",
+      "recorded": "2026-10-10",
+      "policy": "Three-way merge everything. Upstream changes that alter product behaviour come to kvn first: 7948c4a (registration closed) was NOT taken — Lithira closed it because friends with accounts had recorded audio samples, and they have no Suvana access.",
+      "couplings": {
+        "app/register/page.tsx": "registration stays open in Suvana (decided 2026-10-10, see policy); Suvana title",
+        "components/Navbar.tsx": "keeps the Sign-up button (see policy); Suvana name, theme toggle, admin link",
+        "next.config.ts": "basePath from NEXT_PUBLIC_BASE_PATH — served under /communicate",
+        "components/Providers.tsx": "SessionProvider under the base path",
+        "components/LogoutButton.tsx": "sign-out under the base path",
+        "app/register/RegisterForm.tsx": "API calls through apiPath()",
+        "app/contribute/ContributeClient.tsx": "API calls through apiPath()",
+        "app/dashboard/settings/SettingsClient.tsx": "API calls through apiPath()",
+        "app/dashboard/sign-model/SignModelClient.tsx": "API calls through apiPath()",
+        "app/dashboard/speech-to-text/SpeechToTextClient.tsx": "API calls through apiPath()",
+        "components/dictionary/SignDictionaryWorkbench.tsx": "API calls through apiPath(), including the animation fetch the guard caught on 2026-10-10",
+        "app/api/stt/route.ts": "sends x-api-key to the extracted speech service when STT_API_KEY is set (32f9ea5)",
+        "app/api/animations/route.ts": "writes are admin-only (3e07d2f)",
+        "app/api/animations/upload/route.ts": "writes are admin-only (3e07d2f)",
+        "app/api/models/route.ts": "writes are admin-only (3e07d2f)",
+        "lib/auth.config.ts": "role carried through the session (3e07d2f)",
+        "lib/auth.ts": "role carried through the session; ADMIN_EMAILS bootstrap (3e07d2f)",
+        "models/User.ts": "role field (3e07d2f)",
+        "types/next-auth.d.ts": "role on the session type (3e07d2f)",
+        "proxy.ts": "guards /admin (3e07d2f)",
+        "app/layout.tsx": "Suvana identity, Noto Serif, theme bootstrap",
+        "app/globals.css": "Suvana palette, dark/light theme",
+        "app/login/page.tsx": "Suvana title",
+        "app/contribute/page.tsx": "Suvana title",
+        "app/dashboard/*/page.tsx": "Suvana titles",
+        "components/Footer.tsx": "Suvana identity",
+        "components/auth/AuthShell.tsx": "Suvana identity",
+        "components/home/*.tsx": "Suvana copy",
+        "components/gloss/GlossSequenceList.tsx": "Suvana palette",
+        "components/audio/AudioFilePicker.tsx": "brand typeface",
+        "components/ui/Button.tsx": "brand typeface",
+        ".gitignore": "ships .env.local.example",
+        "package-lock.json": "npm 10 output (CI's npm) — regenerate with `npx -y npm@10 install` if upstream changes package.json",
+        "components/three/SignAvatar.tsx": "animation fetch through apiPath() (missed until the sync guard caught it, 2026-10-10)"
+      },
+      "suvanaOnly": {
+        "lib/basePath.ts": "apiPath() / BASE_PATH — every client fetch goes through it",
+        "lib/requireAdmin.ts": "server-side admin check",
+        "lib/roles.ts": "roles and ADMIN_EMAILS",
+        "app/admin/page.tsx": "admin area",
+        "app/api/admin/users/route.ts": "admin user list and role change",
+        "components/admin/AdminUsers.tsx": "admin area UI",
+        "components/ThemeToggle.tsx": "platform-wide theme toggle",
+        "app/icon.png": "the Suvana mark as favicon",
+        ".env.local.example": "the env template the README's setup step copies"
+      },
+      "skip": {
+        ".claude/**": "Lithira's local agent settings",
+        ".tmp-proposal.txt": "scratch file",
+        "app/favicon.ico": "replaced by app/icon.png",
+        "lib/models/**": "~293 MB of Mixamo test FBX; nothing references them",
+        "**/__pycache__/**": "bytecode"
+      },
+      "guards": [
+        {
+          "file": "next.config.ts",
+          "has": [
+            "NEXT_PUBLIC_BASE_PATH"
+          ],
+          "why": "Communicate is served under /communicate"
+        },
+        {
+          "files": "app/**/*.tsx",
+          "lacks": [
+            "re:fetch\\(\\s*[\"'`]/api"
+          ],
+          "why": "client fetches must go through apiPath(); basePath does not rewrite them"
+        },
+        {
+          "files": "components/**/*.tsx",
+          "lacks": [
+            "re:fetch\\(\\s*[\"'`]/api"
+          ],
+          "why": "client fetches must go through apiPath(); basePath does not rewrite them"
+        },
+        {
+          "files": "components/**/*.tsx",
+          "lacks": [
+            "SignSpeak"
+          ],
+          "why": "no sub-brand names inside Suvana"
+        },
+        {
+          "files": "app/**/*.tsx",
+          "lacks": [
+            "SignSpeak"
+          ],
+          "why": "no sub-brand names inside Suvana"
+        },
+        {
+          "file": "app/api/animations/route.ts",
+          "has": [
+            "requireAdmin"
+          ],
+          "why": "shared content is admin-write only"
+        },
+        {
+          "file": "app/api/animations/upload/route.ts",
+          "has": [
+            "requireAdmin"
+          ],
+          "why": "shared content is admin-write only"
+        },
+        {
+          "file": "app/api/models/route.ts",
+          "has": [
+            "requireAdmin"
+          ],
+          "why": "shared content is admin-write only"
+        },
+        {
+          "file": "app/register/page.tsx",
+          "has": [
+            "RegisterForm"
+          ],
+          "why": "registration stays open in Suvana (2026-10-10)"
+        },
+        {
+          "file": "components/Navbar.tsx",
+          "has": [
+            "href=\"/register\""
+          ],
+          "why": "Sign-up stays in the navbar; upstream 7948c4a removes it and merges cleanly, so only this guard notices"
+        }
+      ]
+    }
+  ]
+}
