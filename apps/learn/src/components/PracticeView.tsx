@@ -16,7 +16,7 @@ import { listRecordings } from '../storage/recordingStore'
 import { loadReferenceFrames, loadReferenceIndex } from '../storage/bundledReferences'
 import { pickReferenceList } from '../storage/references'
 import { categoryOf, orderSigns } from '../data/categories'
-import { glossLabel, translationOf } from '../data/translations'
+import { glossLabel } from '../data/translations'
 import { addAttempt, listAttempts } from '../learner/attemptLog'
 import type { AttemptLogEntry } from '../learner/attemptLog'
 import { summarizeAll } from '../learner/mastery'
@@ -32,13 +32,13 @@ import type { PracticeSession } from '../learner/session'
 import { scoreAttempt, topFingers } from '../scoring/score'
 import type { ScoreResult } from '../scoring/score'
 import { FINGER_LABEL } from '../scoring/landmarks'
-import type { Finger } from '../scoring/landmarks'
+import { band } from '../scoring/band'
 import { useFeedbackLatency } from '../metrics/useFeedbackLatency'
 import { drawHands, fitFor } from '../vision/drawing'
 import { CameraStage } from './CameraStage'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
-import type { HandAccuracyInfo } from './ScoreBadge'
+import type { HandFeedback } from './ScoreBadge'
 import { CategorySignNavigator } from './CategorySignNavigator'
 import { shortcutBlockedByTarget } from '../app/keyboard'
 
@@ -271,8 +271,7 @@ export function PracticeView({
     if (phase === 'countdown') return `Get ready. Recording starts in ${COUNTDOWN_S} seconds.`
     if (phase === 'recording') return 'Recording. Sign now.'
     if (phase === 'result' && result) {
-      const bandLabel =
-        result.score >= 85 ? 'Great match' : result.score >= 60 ? 'Getting there' : 'Keep practising'
+      const bandLabel = band(result.score).label
       const hint = result.hints[0] ? ` ${result.hints[0]}` : ''
       return `${selectedRef.current?.gloss ?? 'Sign'} scored ${result.score} out of 100. ${bandLabel}.${hint}`
     }
@@ -391,31 +390,21 @@ export function PracticeView({
   const noAttemptHands =
     result != null && result.hands.length > 0 && result.hands.every((h) => h.missing)
 
-  const fingerFocus = result ? topFingers(result) : []
   const resultNotes = result ? result.hints.filter((h) => !h.startsWith('Check your ')) : []
 
-  // Compute handsData for anatomical vector illustration in ScoreBadge
-  const handsData: HandAccuracyInfo[] = useMemo(() => {
+  // Measured per-hand scores for ScoreBadge. When the take was scored
+  // mirrored, the learner signed with the other hand than the reference's, so
+  // each score is labelled with the learner's hand.
+  const handFeedback: HandFeedback[] = useMemo(() => {
     if (!result) return []
-    const worstSet = new Set(topFingers(result))
-    return result.hands.map((h) => {
-      const fingerList: Finger[] = ['thumb', 'index', 'middle', 'ring', 'pinky']
-      const fingers = fingerList.map((key) => {
-        const isWeak = worstSet.has(key)
-        const name = FINGER_LABEL[key] || (key.charAt(0).toUpperCase() + key.slice(1))
-        const accuracy = isWeak
-          ? Math.max(45, Math.min(Math.round(h.score * 0.8), 75))
-          : Math.min(99, Math.max(Math.round(h.score * 1.05), 88))
-        return { name, key, accuracy, isWeak }
-      })
-      return {
-        handedness: h.handedness,
-        score: h.score,
-        missing: h.missing,
-        fingers,
-      }
-    })
+    return result.hands.map((h) => ({
+      handedness: result.mirrored ? (h.handedness === 'Left' ? 'Right' : 'Left') : h.handedness,
+      score: h.score,
+      missing: h.missing,
+    }))
   }, [result])
+
+  const fingerFocus = result ? topFingers(result) : []
 
   const progress = useMemo(() => {
     if (!result || !selected) return { delta: null as number | null, best: false }
@@ -638,14 +627,10 @@ export function PracticeView({
                 <div className="aww-ref-heading">
                   <p className="aww-pane-label">Reference</p>
                   <div className="aww-ref-title-wrap">
+                    {/* glossLabel() already carries the English meaning */}
                     <h2 className="aww-pane-title">
                       {glossLabel(selected.gloss)}
                     </h2>
-                    {translationOf(selected.gloss) && (
-                      <span className="aww-pane-si-sub" lang="si">
-                        {translationOf(selected.gloss)}
-                      </span>
-                    )}
                     {selected.gloss === suggested && (
                       <span className="badge cs-suggested-chip">Suggested</span>
                     )}
@@ -677,7 +662,7 @@ export function PracticeView({
             <div>
               <p className="aww-pane-label">{browsing ? 'Preview' : 'You'}</p>
               {browsing && previewRec && (
-                <h2 className="aww-pane-title">{previewRec.gloss}</h2>
+                <h2 className="aww-pane-title">{glossLabel(previewRec.gloss)}</h2>
               )}
             </div>
           </div>
@@ -834,8 +819,7 @@ export function PracticeView({
                   score={result.score}
                   delta={progress.delta}
                   best={progress.best}
-                  twoHanded={result.twoHanded}
-                  handsData={handsData}
+                  hands={handFeedback}
                 />
                 <div className="aww-result-feedback">
                   {result.score === 100 ? (
