@@ -1,0 +1,161 @@
+# සුවණ Suvana: instructions for every coding agent
+
+This file is the **single source of truth** for Claude Code, OpenAI Codex and
+Google Antigravity:
+- **Codex and Antigravity** read it natively.
+- **Claude Code** reads it through the `@AGENTS.md` import in `CLAUDE.md`.
+
+Do not copy these rules into other instruction files. Link here instead, and
+keep this file under 10 KB, because Antigravity truncates long rule files.
+
+## What Suvana is
+
+Suvana is a single-platform, single-brand build of the SLIIT IT4010 research
+project **R26-SE-019** (Jan 2026 cohort): real-time two-way Deaf–hearing
+communication in Sri Lankan Sign Language (SSL).
+- **Supervisor:** Ms. Hansi De Silva. **Co-supervisor:** Ms. Ishara Weerathunga.
+- **External partner:** The School for the Deaf, Ratmalana.
+- `README.md` covers the structure, the one-domain topology and how to run each
+  module. `DEPLOYMENT.md` covers deployment, and `DEMO.md` covers running
+  everything together.
+
+## Right now: the 12–22 Oct 2026 push (read this first)
+
+kvn is finishing Suvana for the **final demo and final thesis, both around
+22 Oct 2026**, and everything must be **demo-ready by 21 Oct**. The goals:
+- a genuinely good Learn;
+- every teammate's component integrated, so the demo works on any device;
+- one brand, served at **suvana.help**.
+
+**The plan is in `docs/plan/`.** Start with `docs/plan/README.md`. It gives the
+reading order, the task board (`BOARD.md` / `tasks.json`), the decisions
+(`DECISIONS.md`) and the handoff journal (`LOG.md`). Work only on tasks the
+board assigns to your tool. If the plan is wrong, report it
+("Plan correction: …") in your handoff and in `LOG.md`. Do not silently work
+around it.
+
+**Learn is developed here and mirrored to the team repo:**
+- It is ported to R26-SE-019 `learn-ssl-module/web` after every Learn
+  milestone.
+- `learn-ssl-module.vercel.app` is redeployed from there, so the team repo
+  always has kvn's latest Learn.
+- Keep Learn changes portable: Suvana-only wiring stays inside the declared
+  couplings.
+- The procedure is in `docs/plan/07-r26-mirror.md`.
+
+## Who owns what
+
+kvn (Ranathunga R A K N) owns this repo and the Suvana brand. Older documents
+and commit history use other names: **Chamara = Lahiru, Malkith = Lithira,
+Gimhan = Karindra**.
+
+| Suvana module | Owner | Upstream |
+|---|---|---|
+| Learn: `apps/learn`, `tools/reference-converter` | kvn | **Developed here.** Mirrored to R26-SE-019 `learn-ssl-module/` |
+| Recognize: `services/recognition` | Lahiru | R26-SE-019 `sinhala_sign_language_recognition/` |
+| Communicate: `apps/communicate`, `services/speech` | Lithira | `lithiraMalkith/Sign-Detector` (hosted at sign-detector-tawny.vercel.app) |
+| Alerts: `apps/alerts`, `services/sound-awareness` | Karindra | R26-SE-019 `soundguard-karindra/` |
+| Shell: `apps/shell`, `packages/branding` | kvn | None: Suvana's own |
+
+## Hard rules
+
+1. **One brand.**
+   - Every Suvana surface says Suvana, with descriptive module names.
+   - Sawana, SignSpeak and SoundGuard are the teammates' standalone names. They
+     never appear in Suvana UI copy.
+2. **Never invent SSL content.**
+   - No made-up glosses, meanings, Sinhala translations, sign or gloss order,
+     or handshape, location or movement descriptions.
+   - References come from the public corpora, Lithira's mapper (gloss order),
+     kvn, or real signers.
+3. **Never invent or misquote figures.**
+   - Learn's 74.6% separation is never the ≥90% accuracy target, and is always
+     quoted with its 65.4% majority-class baseline.
+   - Do not quote teammates' accuracy claims as Suvana results.
+   - No study participants exist yet.
+4. **Never regenerate Recognize's label files** (`labels.npy`,
+   `sinhala_labels.json`). Their order must match the trained model's outputs.
+5. **Integrate at the contract (HTTP) level.**
+   - Never rewrite a teammate's stack.
+   - Datasets, video clips, model binaries, `.env*` files and secrets never
+     enter a repo. Large assets stay server-side, in Cloudinary or in blob
+     storage.
+6. **UI changes are kvn's decision, made from rendered before/after
+   screenshots, desktop and phone.**
+   - Never adopt a UI change from a description.
+   - Freeze the UI during a study: from a pilot's first participant to its
+     last, Learn's interaction, scoring and feedback do not change.
+7. **Licences.**
+   - `kaggle_*` references are CC0.
+   - `yohan_*` references are CC BY-NC-SA 4.0 (non-commercial).
+   - Corpus video is not cleared for use until kvn decides (see
+     `docs/plan/DECISIONS.md`).
+8. **The uploaded draft thesis is never edited.** Editing it after 11 Oct costs
+   50% of the marks. The final thesis is a separate copy.
+9. **Never buy anything, deploy, merge, push, or message anyone.** kvn does
+   those, or approves each one explicitly in chat. That includes the
+   suvana.help domain, Vercel promotions and messages to teammates.
+
+## How agents work in parallel
+
+The full protocol is `docs/plan/08-agent-protocol.md`. The short version:
+- **One task, one branch, one worktree.**
+  - Never work on `main`.
+  - Create a git worktree for your task branch, using the branch name the board
+    gives.
+  - Never edit files outside your task's listed file boundary.
+- **Commits.**
+  - You **may commit on your own branch**.
+  - Never commit to `main` and never push.
+  - kvn reviews and merges each branch in GitHub Desktop.
+  - Commit messages are a short summary line plus a point-form body, with
+    **no `Co-Authored-By` trailer**.
+- **In the R26-SE-019 repo, agents never commit.** Hand kvn two copyable
+  blocks, the summary line and then the point-form description, and he commits.
+- **Claim and hand off through files, not chat.**
+  - Start `docs/plan/handoffs/<TASK-ID>.md` when you begin.
+  - Finish it with what changed, the gate results, the screenshots taken and
+    what is left.
+  - Append one entry to `docs/plan/LOG.md`.
+  - Agents never edit `BOARD.md`, `tasks.json` or `DECISIONS.md`. kvn does.
+- **Shared hot files have one owner per day.** These are `package.json`,
+  lockfiles, `apps/learn/src/App.tsx`, `index.css`, `vercel.json`,
+  `tools/sync/upstreams.json`, `README.md`, `AGENTS.md` and `CLAUDE.md`. See
+  `docs/plan/10-schedule.md`.
+
+## Gates: run them before every commit, and report the results
+
+The commands below are for Git Bash.
+- **Learn:** `cd apps/learn && npm test && npm run lint && npm run build`.
+  Lint has two known upstream warnings, and nothing else is acceptable.
+- **Shell:** `cd apps/shell && npm run build`.
+- **Communicate:**
+  - Run `cd apps/communicate && npm run lint`.
+  - Then run `MSYS_NO_PATHCONV=1 NEXT_PUBLIC_BASE_PATH=/communicate npm run build`.
+  - In PowerShell, set `$env:NEXT_PUBLIC_BASE_PATH='/communicate'` first.
+- **Sync couplings:** `MSYS_NO_PATHCONV=1 node tools/sync/sync.mjs guard`.
+  Every check must pass.
+- **UI changes:** include desktop and phone screenshots of the before and after
+  states in the handoff, for kvn's decision.
+
+## Syncing with the upstream repos
+
+`tools/sync/` is the procedure; its README has the steps: `status`, `apply`,
+resolve, gates, `guard`, `record`, then log it in `README.md`.
+- **Product-behaviour changes go to kvn before they are taken.** Example:
+  Lithira closing registration was deliberately not taken.
+- **UI changes upstream** are decided from rendered before/after screenshots.
+- **Declare every Suvana-specific change in `tools/sync/upstreams.json`** with
+  its reason, and add a guard for anything a clean merge could silently undo.
+
+## Conventions
+
+- **Node** is pinned in `.nvmrc`.
+- **Lockfiles** are npm 10 output, matching CI. Never copy an upstream lockfile.
+- **In Git Bash,** prefix any command that passes `/communicate` (or another
+  leading-slash path) with `MSYS_NO_PATHCONV=1`. Otherwise MSYS rewrites it
+  into a Windows path.
+- **Client code in Communicate** never calls `fetch("/api/...")` with a bare
+  path. Route it through `apiPath()`.
+- **Learn runtime asset paths** use `import.meta.env.BASE_URL`.
+- **Explain architectural choices briefly** rather than making them silently.
