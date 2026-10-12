@@ -50,3 +50,19 @@ Rules:
 - Screenshots: n/a (manual check written in handoffs/L-02.md)
 - Needs kvn: none. Plan correction: test baseline in lane worktrees is 133 + 7 skipped (no corpus), not 138 + 2.
 - Next: L-01 finger states, stacked on this branch.
+
+### 2026-10-13 01:50 | kvn (in chat to claude-code) | DN-17 amendment
+- What: decision. Per-finger Correct/Almost/Wrong states are hidden for now: no fixed cut-off on the measured per-finger deviation separates correct takes from wrong signs (calibration corpus figures in handoffs/L-01.md). Result screen keeps the overall score, per-hand scores (two-handed signs) and "Focus on" chips. Revisit with L-17.
+- Branch @ sha: n/a
+- Gates: n/a
+- Screenshots: .agent-local/screens/L-01/index.html (rejected variants A and B included)
+- Needs kvn: copy into DECISIONS.md (amends D-A12)
+- Next: L-01 ships without finger states.
+
+### 2026-10-13 01:58 | claude-code | L-01
+- What: done (review). Invented per-finger % and the 90/75/60 tiers removed; band() is the only label scale; two-handed signs show measured per-hand scores; meaning shown once without lang="si"; fingerStates.ts kept (tested, not wired in) with a corpus test that records why.
+- Branch @ sha: agent/claude/L-01-finger-states (stacked on agent/claude/L-02-keyboard; see git log)
+- Gates: guard ok; lint 1 warning (L-04's); tests 144 passed + 9 skipped; build ok 141.61 kB gzip
+- Screenshots: C:\Users\User\Documents\Suvana-wt\claude\.agent-local\screens\L-01\index.html
+- Needs kvn: adopt/reject the UI from the contact sheet; record the DN-17 amendment. Plan correction: L-01's 0.1/0.05 cut-offs and HINT_MIN_DEVIATION fire on correct takes (for L-17); 07's M0 commit text needs the new wording.
+- Next: claude-code's 13 Oct tasks are done; 14 Oct R-00 M0 port after kvn merges.
