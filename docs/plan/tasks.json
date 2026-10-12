@@ -6,7 +6,7 @@
     "day": "2026-10-12",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a (kvn, GitHub Desktop)",
     "r26_port": "no",
     "screenshots": "no",
@@ -748,7 +748,7 @@
     "deps": [
       "K-01"
     ],
-    "status": "todo",
+    "status": "changes requested",
     "branch": "agent/antigravity/Q-00-screens",
     "r26_port": "no",
     "screenshots": "no",
@@ -771,7 +771,9 @@
       "`--seed <attempts.json>` seeds IndexedDB through addInitScript so Path/Progress states can be shot",
       "`node tools/screens/contact-sheet.mjs <TASK>` writes index.html with before/after side by side for kvn",
       "fixtures.html renders ScoreBadge and the result card from JSON fixtures in dev only; `npm run build` output contains no fixtures.html",
-      "Learn gates pass"
+      "Learn gates pass",
+      "REWORK 13 Oct (kvn review): rebase on main; fixtures.tsx uses the new ScoreBadge props (`hands`, no HandAccuracyInfo/twoHanded/handsData) so `npm run build` (tsc) passes",
+      "REWORK: every fixture gloss is a real gloss from public/reference-index.json (STHUTHI, AMMA, SUBHA_UDASANAK are not), the two-handed fixture is a real two-handed reference, and no fixture contains invented hint or coaching text (use strings the scorer actually produces, or none) and no per-finger percentages"
     ]
   },
   {
@@ -783,7 +785,7 @@
     "deps": [
       "K-01"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/claude/Q-01-agents-md",
     "r26_port": "no",
     "screenshots": "no",
@@ -1047,7 +1049,7 @@
     "deps": [
       "L-02"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/claude/L-01-finger-states",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1078,7 +1080,7 @@
     "day": "2026-10-13",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/claude/L-02-keyboard",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1126,7 +1128,7 @@
     "day": "2026-10-13",
     "size": "M",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-04-camera-lifecycle",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1155,7 +1157,7 @@
     "day": "2026-10-13",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "blocked on Q-00 screenshots",
     "branch": "agent/codex/L-05-storage",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1188,7 +1190,7 @@
     "day": "2026-10-13",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-06-cache-headers",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1583,7 +1585,8 @@
       "Path hint when the trajectory term contributes more than the handshape term; a test on at least one real recorded attempt pair shows it can fire (if it cannot under 0.8/0.2 weighting, the handoff says so and the hint is dropped)",
       "Missing-hand hint uses the learner's hand when mirrored",
       "Hints are typed objects {kind, finger?, ratio?}, at most 2, ordered by contribution",
-      "Score values unchanged: existing evaluation tests pass unchanged"
+      "Score values unchanged: existing evaluation tests pass unchanged",
+      "Re-derive HINT_MIN_DEVIATION from the calibration corpus: at 0.1 it fires on 99.7% of fingers in correct takes (fingerStates.calibration.test.ts), which is why Practice hides every 'Check your ...' hint. Per-finger states (D-A15) return only with cut-offs that separate correct from wrong; export HINT_MIN_DEVIATION from score.ts for fingerStates.ts"
     ]
   },
   {
@@ -2180,7 +2183,7 @@
     "day": "2026-10-13",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "changes requested",
     "branch": "agent/antigravity/I-01-shell-brand",
     "r26_port": "no",
     "screenshots": "yes",
@@ -2196,7 +2199,8 @@
       "data-service-url is filled from VITE_RECOGNIZE_URL at build time; localhost fallback kept",
       "The recognize.suvana.lk example (:211) is replaced",
       "Home-page preview cards are not changed",
-      "Shell tests and build pass; before/after screenshots (desktop and phone)"
+      "Shell tests and build pass; before/after screenshots (desktop and phone)",
+      "REWORK 13 Oct: re-shoot before/after; the 13 Oct shots captured the shell's intro counter (only a digit visible). Wait for the landing to finish its intro before capturing, desktop and phone"
     ]
   },
   {
@@ -2206,7 +2210,7 @@
     "day": "2026-10-13",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/antigravity/I-02-alerts-strings",
     "r26_port": "no",
     "screenshots": "yes",

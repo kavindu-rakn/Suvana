@@ -147,7 +147,7 @@ Then append to `docs/plan/LOG.md` (template inside it). For R26 port tasks the h
 ## 9. Gates before you commit (mirror CI)
 
 - `node tools/sync/sync.mjs guard` (from the worktree root).
-- **Learn** (`apps/learn`): `npm ci && npm run lint && npm test && npm run build`. Baseline 12 Oct: 138 passed + 2 skipped; 2 warnings (0 after L-02 and L-04); **no new warnings**; main JS <= 160 kB gzip.
+- **Learn** (`apps/learn`): `npm ci && npm run lint && npm test && npm run build`. Baseline 12 Oct in the primary checkout (corpus present): 138 passed + 2 skipped; in a lane worktree the untracked calibration corpus is absent, so main gives 133 passed + 7 skipped (13 Oct; grows as tasks add tests); 2 warnings (0 after L-02 and L-04); **no new warnings**; main JS <= 160 kB gzip.
 - **Shell:** `npm ci && npm test && npm run build`.
 - **Communicate:** `npm run lint && MSYS_NO_PATHCONV=1 NEXT_PUBLIC_BASE_PATH=/communicate npm run build` (needs a local `.env.local`; in PowerShell set `$env:NEXT_PUBLIC_BASE_PATH='/communicate'` first; CI sets the same base path).
 - **Recognition:** `pytest tests/test_keypoint_augmentation.py tests/test_sinhala_labels.py -q`.

@@ -13,7 +13,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 | ID | Title | Owner | Day | Size | Deps | Status | Branch | r26_port | Screenshots | Decisions |
 |---|---|---|---|---|---|---|---|---|---|---|
-| K-01 | Merge the re-sync branch and this plan into main; set up local excludes and pull R26 | kvn | 2026-10-12 | S | - | todo | `n/a (kvn, GitHub Desktop)` | no | no | - |
+| K-01 | Merge the re-sync branch and this plan into main; set up local excludes and pull R26 | kvn | 2026-10-12 | S | - | done | `n/a (kvn, GitHub Desktop)` | no | no | - |
 | K-02 | Decide the open decisions by their needed-by dates | kvn | 2026-10-12 to 2026-10-19 | S | - | todo | `n/a` | no | no | DN-01..DN-20 |
 | K-03 | Send the teammate asks to Lithira, Lahiru and Karindra | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
 | K-04 | Create accounts and secrets: three Vercel projects, Atlas M0, Cloudinary, NEXTAUTH_SECRET, optional Gemini key | kvn | 2026-10-13 to 2026-10-14 | M | K-01 | todo | `n/a` | no | no | - |
@@ -44,8 +44,8 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | D-08 | Commit the R26 M2 port and redeploy learn-ssl-module | kvn | 2026-10-19 | S | R-04 | todo | `n/a (R26)` | no | no | - |
 | D-09 | Attach suvana.help to suvana-shell and re-run the smoke | kvn | 2026-10-20 | S | K-08 | todo | `n/a` | no | no | - |
 | D-10 | Final R26 commit and learn-ssl-module redeploy | kvn | 2026-10-21 | S | R-05 | todo | `n/a (R26)` | no | no | - |
-| Q-00 | Screenshot tooling: Playwright shooter, contact sheet, fake-camera clips, dev-only fixtures page | antigravity | 2026-10-13 | M | K-01 | todo | `agent/antigravity/Q-00-screens` | no | no | - |
-| Q-01 | Agent instruction files: root AGENTS.md as single source, slim CLAUDE.md, per-module AGENTS.md | claude-code | 2026-10-13 | M | K-01 | todo | `agent/claude/Q-01-agents-md` | no | no | DN-12 |
+| Q-00 | Screenshot tooling: Playwright shooter, contact sheet, fake-camera clips, dev-only fixtures page | antigravity | 2026-10-13 | M | K-01 | changes requested | `agent/antigravity/Q-00-screens` | no | no | - |
+| Q-01 | Agent instruction files: root AGENTS.md as single source, slim CLAUDE.md, per-module AGENTS.md | claude-code | 2026-10-13 | M | K-01 | done | `agent/claude/Q-01-agents-md` | no | no | DN-12 |
 | Q-02 | .gitattributes for line endings and a union merge for LOG.md | antigravity | 2026-10-14 | S | K-01 | todo | `agent/antigravity/Q-02-gitattributes` | no | no | - |
 | Q-03 | Close CI gaps: concurrency, Docker build, R26-form Learn build, dist smoke, extended brand grep | codex | 2026-10-20 | M | R-01, I-01, I-02 | todo | `agent/codex/Q-03-ci` | no | no | - |
 | Q-04 | Playwright smoke for Learn (keyboard, storage failure, onboarding) | antigravity | 2026-10-15 | M | Q-00, L-02, L-05, L-07 | todo | `agent/antigravity/Q-04-e2e` | no | no | - |
@@ -55,12 +55,12 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | Q-07 | Handedness reality check | kvn | 2026-10-14 | S | - | todo | `n/a` | no | no | - |
 | Q-08 | Demo-ready gate run and release tag proposal | claude-code | 2026-10-21 | S | L-26, L-27 | todo | `agent/claude/Q-08-gates` | no | no | - |
 | Q-09 | Measure end-to-end feedback latency (capture end to result shown) | codex | 2026-10-19 | S | L-16a, Q-00, K-13 | todo | `agent/codex/Q-09-latency` | no | no | - |
-| L-01 | Replace invented per-finger percentages with measured Correct/Almost/Wrong states (DN-17); one label scale | claude-code | 2026-10-13 | S | L-02 | todo | `agent/claude/L-01-finger-states` | yes | yes | DN-17 |
-| L-02 | Keyboard: Esc no longer exits to the Hero; Enter/Space respect the focused control | claude-code | 2026-10-13 | S | - | todo | `agent/claude/L-02-keyboard` | yes | no | - |
+| L-01 | Replace invented per-finger percentages with measured Correct/Almost/Wrong states (DN-17); one label scale | claude-code | 2026-10-13 | S | L-02 | done | `agent/claude/L-01-finger-states` | yes | yes | DN-17 |
+| L-02 | Keyboard: Esc no longer exits to the Hero; Enter/Space respect the focused control | claude-code | 2026-10-13 | S | - | done | `agent/claude/L-02-keyboard` | yes | no | - |
 | L-03 | Practice capture robustness: wall-clock backstop, safe initial load, no empty-reference logging | claude-code | 2026-10-14 | S | - | todo | `agent/claude/L-03-capture-robustness` | yes | no | - |
-| L-04 | Camera lifecycle: lost track, frame-loop errors, insecure origin, GPU-to-CPU fallback, resume | codex | 2026-10-13 | M | - | todo | `agent/codex/L-04-camera-lifecycle` | yes | no | - |
-| L-05 | Storage resilience: safeLoad, guarded localStorage, top-level ErrorBoundary | codex | 2026-10-13 | S | - | todo | `agent/codex/L-05-storage` | yes | yes | - |
-| L-06 | Cache headers, standalone root redirect, asset-version rule | codex | 2026-10-13 | S | - | todo | `agent/codex/L-06-cache-headers` | yes | no | - |
+| L-04 | Camera lifecycle: lost track, frame-loop errors, insecure origin, GPU-to-CPU fallback, resume | codex | 2026-10-13 | M | - | done | `agent/codex/L-04-camera-lifecycle` | yes | no | - |
+| L-05 | Storage resilience: safeLoad, guarded localStorage, top-level ErrorBoundary | codex | 2026-10-13 | S | - | blocked on Q-00 screenshots | `agent/codex/L-05-storage` | yes | yes | - |
+| L-06 | Cache headers, standalone root redirect, asset-version rule | codex | 2026-10-13 | S | - | done | `agent/codex/L-06-cache-headers` | yes | no | - |
 | L-07 | First-run onboarding, hands-in-frame gate, longer capture window with learner-take trimming | claude-code | 2026-10-14 | M | L-03 | todo | `agent/claude/L-07-onboarding` | yes | yes | - |
 | L-08 | Learner playback: 0.5x start, speed control, mirror label, raw-framing view with frame outline, sized wrist-anchored ghost | claude-code | 2026-10-15 | M | L-07 | todo | `agent/claude/L-08-playback` | yes | yes | - |
 | L-09 | Curriculum report, data-derived units and scenario coverage table | antigravity | 2026-10-14 | M | L-10 | todo | `agent/antigravity/L-09-curriculum` | yes | no | - |
@@ -95,8 +95,8 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | R-03 | M1: port Learn into the R26 working tree | claude-code | 2026-10-17 | S | R-02 | todo | `none (R26 working tree)` | no | yes | - |
 | R-04 | M2: port Learn into the R26 working tree | claude-code | 2026-10-19 | S | R-03 | todo | `none (R26 working tree)` | no | yes | - |
 | R-05 | Final Learn port to R26 for the demo | claude-code | 2026-10-21 | S | R-04, L-26, L-27, Q-08 | todo | `none (R26 working tree)` | no | no | - |
-| I-01 | Shell: remove the 'SoundGuard Ecosystem' sub-brand, configurable Recognize URL, fix the stale example | antigravity | 2026-10-13 | S | - | todo | `agent/antigravity/I-01-shell-brand` | no | yes | - |
-| I-02 | Alerts: user-visible strings say Suvana | antigravity | 2026-10-13 | S | - | todo | `agent/antigravity/I-02-alerts-strings` | no | yes | - |
+| I-01 | Shell: remove the 'SoundGuard Ecosystem' sub-brand, configurable Recognize URL, fix the stale example | antigravity | 2026-10-13 | S | - | changes requested | `agent/antigravity/I-01-shell-brand` | no | yes | - |
+| I-02 | Alerts: user-visible strings say Suvana | antigravity | 2026-10-13 | S | - | done | `agent/antigravity/I-02-alerts-strings` | no | yes | - |
 | I-03 | Fix stale integration docs and record the Communicate gate | antigravity | 2026-10-14 | S | - | todo | `agent/antigravity/I-03-stale-docs` | no | no | - |
 | I-04 | Recognition re-sync of Lahiru's 656f371..ec2604a (code and tests only) | codex | 2026-10-14 | M | K-01 | todo | `agent/codex/I-04-recognition-sync` | no | no | DN-18 |
 | I-05 | Reference-converter: take kvn's port 5909a56 and declare the 3 undeclared diffs | codex | 2026-10-16 | S | I-04 | todo | `agent/codex/I-05-converter-port` | yes | no | - |
@@ -492,6 +492,8 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
   - [ ] `node tools/screens/contact-sheet.mjs <TASK>` writes index.html with before/after side by side for kvn
   - [ ] fixtures.html renders ScoreBadge and the result card from JSON fixtures in dev only; `npm run build` output contains no fixtures.html
   - [ ] Learn gates pass
+  - [ ] REWORK 13 Oct (kvn review): rebase on main; fixtures.tsx uses the new ScoreBadge props (`hands`, no HandAccuracyInfo/twoHanded/handsData) so `npm run build` (tsc) passes
+  - [ ] REWORK: every fixture gloss is a real gloss from public/reference-index.json (STHUTHI, AMMA, SUBHA_UDASANAK are not), the two-handed fixture is a real two-handed reference, and no fixture contains invented hint or coaching text (use strings the scorer actually produces, or none) and no per-finger percentages
 
 ### Q-01: Agent instruction files: root AGENTS.md as single source, slim CLAUDE.md, per-module AGENTS.md
 
@@ -886,6 +888,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
   - [ ] Missing-hand hint uses the learner's hand when mirrored
   - [ ] Hints are typed objects {kind, finger?, ratio?}, at most 2, ordered by contribution
   - [ ] Score values unchanged: existing evaluation tests pass unchanged
+  - [ ] Re-derive HINT_MIN_DEVIATION from the calibration corpus: at 0.1 it fires on 99.7% of fingers in correct takes (fingerStates.calibration.test.ts), which is why Practice hides every 'Check your ...' hint. Per-finger states (D-A15) return only with cut-offs that separate correct from wrong; export HINT_MIN_DEVIATION from score.ts for fingerStates.ts
 
 ### L-18: Export the DTW alignment path and worst-frame index
 
@@ -1171,6 +1174,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
   - [ ] The recognize.suvana.lk example (:211) is replaced
   - [ ] Home-page preview cards are not changed
   - [ ] Shell tests and build pass; before/after screenshots (desktop and phone)
+  - [ ] REWORK 13 Oct: re-shoot before/after; the 13 Oct shots captured the shell's intro counter (only a digit visible). Wait for the landing to finish its intro before capturing, desktop and phone
 
 ### I-02: Alerts: user-visible strings say Suvana
 
