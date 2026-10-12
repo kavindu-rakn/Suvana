@@ -1,0 +1,2562 @@
+[
+  {
+    "id": "K-01",
+    "title": "Merge the re-sync branch and this plan into main; set up local excludes and pull R26",
+    "owner": "kvn",
+    "day": "2026-10-12",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "n/a (kvn, GitHub Desktop)",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "main (9152637) is 5 commits behind 846d4fd, which holds tools/sync (needed by CI's sync-guards job), the Suvana CLAUDE.md and the 10-Oct re-syncs. Every agent worktree must start from one base, and every agent must be able to read docs/plan on main.",
+    "files": [
+      "docs/plan/** (commit)",
+      "AGENTS.md, CLAUDE.md (commit; DN-12)",
+      "C:/Users/User/Documents/Suvana/.git/info/exclude (local, untracked)"
+    ],
+    "acceptance": [
+      "docs/plan/ is committed (on docs/revolution-plan or a docs branch) and both that branch and sync/upstream-2026-10 are merged into main and pushed",
+      "`git log main --oneline -8` shows 846d4fd and the plan commit",
+      "GitHub Actions CI on main is green, including the sync-guards job (it must pass on main, not only on the branch)",
+      "The line `.agent-local/` is appended to C:/Users/User/Documents/Suvana/.git/info/exclude (one file covers every worktree)",
+      "Folder C:/Users/User/Documents/Suvana-wt exists",
+      "In C:/Users/User/Documents/R26-SE-019: on main, `git pull` fast-forwards to origin/main (this brings Lahiru's 12-Oct commits into kvn's tree); `git status` is clean"
+    ]
+  },
+  {
+    "id": "K-02",
+    "title": "Decide the open decisions by their needed-by dates",
+    "owner": "kvn",
+    "day": "2026-10-12 to 2026-10-19",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-01..DN-20"
+    ],
+    "why": "Several tasks cannot finish without a decision. Each decision in DECISIONS.md has a needed-by date tied to the first task that consumes it.",
+    "files": [
+      "docs/plan/DECISIONS.md"
+    ],
+    "acceptance": [
+      "DN-12 is decided on 12 Oct (before Q-01 starts)",
+      "Every other DN has a chosen option and a date in DECISIONS.md by its needed-by date",
+      "If kvn answers in chat, the agent he answered records it in its handoff file; kvn (or a planner session) copies it into DECISIONS.md on main"
+    ]
+  },
+  {
+    "id": "K-03",
+    "title": "Send the teammate asks to Lithira, Lahiru and Karindra",
+    "owner": "kvn",
+    "day": "2026-10-13",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Communicate's animations, the recognition model facts and the Alerts APK depend on teammates. kvn has none of their secrets or data.",
+    "files": [],
+    "acceptance": [
+      "The messages in 05-integration.md section 5 are sent on 13 Oct",
+      "Deadlines stated: Karindra 15 Oct; Lithira and Lahiru 16 Oct",
+      "Each reply (or silence at the deadline) is logged as a LOG.md entry"
+    ]
+  },
+  {
+    "id": "K-04",
+    "title": "Create accounts and secrets: three Vercel projects, Atlas M0, Cloudinary, NEXTAUTH_SECRET, optional Gemini key",
+    "owner": "kvn",
+    "day": "2026-10-13 to 2026-10-14",
+    "size": "M",
+    "deps": [
+      "K-01"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Suvana has never been deployed. A phone camera needs HTTPS, and Communicate needs its own database because kvn has none of Lithira's secrets.",
+    "files": [],
+    "acceptance": [
+      "Vercel project suvana-learn exists by 13 Oct evening (Root Directory apps/learn, Git integration on kavindu-rakn/Suvana, production branch main)",
+      "suvana-communicate and suvana-shell exist by 16 Oct with the Root Directories and env vars in 06-deploy.md section 2",
+      "Atlas M0 cluster and a Cloudinary account exist; secrets live only in Vercel env and in local .env.local files, never in git",
+      "ADMIN_EMAILS is set in Vercel and in the local apps/communicate/.env.local",
+      "Ignored Build Step `git diff --quiet HEAD^ HEAD -- .` is set on each project"
+    ]
+  },
+  {
+    "id": "K-05",
+    "title": "Approve the starter curriculum, verify a batch of meanings, decide a third scenario",
+    "owner": "kvn",
+    "day": "2026-10-15",
+    "size": "M",
+    "deps": [
+      "L-09"
+    ],
+    "status": "todo",
+    "branch": "kvn's own branch, or tell an agent",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [
+      "DN-19"
+    ],
+    "why": "Unit order is a curriculum choice and meanings must be human-verified; agents may invent neither. This task absorbs the old DN-07.",
+    "files": [
+      "apps/learn/src/data/curriculum.ts",
+      "apps/learn/src/data/translations.ts"
+    ],
+    "acceptance": [
+      "Every unit in curriculum.ts is changed from status 'proposed' to 'approved' or edited by kvn",
+      "U1 satisfies the hard rule in 03-learn-spec.md section 3 (kaggle_* only, one hand, still, verified or self-explaining meaning)",
+      "Meanings for U1 and the everyday-words unit are verified and added to translations.ts by kvn himself",
+      "DN-19 (third scenario) is decided from L-09's coverage table"
+    ]
+  },
+  {
+    "id": "K-06",
+    "title": "Export the permitted Kaggle clips and upload them to Cloudinary (only if DN-05 allows video)",
+    "owner": "kvn",
+    "day": "2026-10-16",
+    "size": "M",
+    "deps": [
+      "L-15a",
+      "K-04"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-05",
+      "DN-06"
+    ],
+    "why": "A novice learns better from a person, but the Kaggle corpus mixes public YouTube footage and private interviews, so the CC0 label may not cover redistributing the video. Video is shown only on kvn's explicit DN-05 decision.",
+    "files": [
+      "apps/learn/public/references/video-manifest.json (filled by an agent from kvn's URL list)"
+    ],
+    "acceptance": [
+      "Cancelled if DN-05 = no video",
+      "Otherwise export_clips.py has run against kvn's local dataset copy with output outside the repo, filtered to the clips DN-05 permits",
+      "Clips are uploaded under suvana/learn/clips/; the public base URL is given to the L-15b owner to fill the manifest",
+      "No clip file appears in `git status`",
+      "tools/reference-converter/README.md and LICENSES.md statements 'no video frames are redistributed' are updated in the same change that ships the manifest"
+    ]
+  },
+  {
+    "id": "K-07",
+    "title": "Convert the Kaggle 'SSL Sentences' clips into references",
+    "owner": "kvn",
+    "day": "2026-10-16",
+    "size": "S",
+    "deps": [
+      "L-22a"
+    ],
+    "status": "todo",
+    "branch": "n/a (files handed to the L-22b branch)",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [
+      "DN-08"
+    ],
+    "why": "The sentence challenge must use real SSL sentences. The dataset is local to kvn and never enters the repo.",
+    "files": [
+      "apps/learn/public/references/kaggle_sent_*.json"
+    ],
+    "acceptance": [
+      "Cancelled if DN-08 = drop",
+      "The converter command from L-22a's handoff has run; kaggle_sent_*.json files carry the usual provenance and licence fields",
+      "The number of files matches the converted clips (README says 21); failures are listed",
+      "kvn copies the files into the codex worktree for L-22b (or commits them on his own branch); agents do not commit them to main"
+    ]
+  },
+  {
+    "id": "K-08",
+    "title": "Buy suvana.help",
+    "owner": "kvn",
+    "day": "2026-10-20",
+    "size": "S",
+    "deps": [
+      "D-03",
+      "D-04"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Commercialisation is graded on one Suvana brand at suvana.help. kvn decided to buy only after the .vercel.app deployments are green.",
+    "files": [],
+    "acceptance": [
+      "Bought by kvn only after the 06-deploy.md smoke passes on suvana-shell.vercel.app (first year $1.99; renewal $32.12, both unverified, recorded in docs/commercialisation.md, which T-07 creates)"
+    ]
+  },
+  {
+    "id": "K-09",
+    "title": "Ask the supervisor whether any informal usability check is allowed without ethics approval",
+    "owner": "kvn",
+    "day": "2026-10-13",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Ethics approval was never applied for. Proposal O5 cannot be claimed, and rehearsing with friends is itself a check with participants. The supervisor has been unresponsive since March.",
+    "files": [],
+    "acceptance": [
+      "The question is sent on 13 Oct; the answer (or no answer by 18 Oct, treated as 'no') is logged in LOG.md and DECISIONS.md",
+      "Until a 'yes' arrives, kvn rehearses alone and no other person tries Learn for the project"
+    ]
+  },
+  {
+    "id": "K-10",
+    "title": "Daily review, screenshot adoption and merge window",
+    "owner": "kvn",
+    "day": "daily 2026-10-13 to 2026-10-21",
+    "size": "S",
+    "deps": [
+      "K-01"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Agents may not merge or push, and UI changes are adopted only from rendered screenshots.",
+    "files": [
+      "docs/plan/BOARD.md",
+      "docs/plan/tasks.json",
+      "docs/plan/DECISIONS.md"
+    ],
+    "acceptance": [
+      "Each evening (target 19:00-21:00): handoffs read, contact sheets reviewed, each UI change adopted or rejected in LOG.md",
+      "Green branches merged bottom-up in GitHub Desktop and pushed (kvn's budget: about 3 h review per day; see 10-schedule.md)",
+      "BOARD.md and tasks.json statuses updated on main"
+    ]
+  },
+  {
+    "id": "K-11",
+    "title": "Demo rehearsals, including the laptop fallback",
+    "owner": "kvn",
+    "day": "2026-10-20 and 2026-10-21",
+    "size": "M",
+    "deps": [
+      "Q-05",
+      "D-04"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "The demo must work on any device and survive Wi-Fi or host failure.",
+    "files": [
+      "DEMO.md"
+    ],
+    "acceptance": [
+      "Rehearsal 1 (20 Oct) and rehearsal 2 (21 Oct) each follow DEMO.md end to end on phone and laptop",
+      "The laptop fallback (localhost stack plus cloudflared) is exercised at least once",
+      "Problems become fix tasks on BOARD.md"
+    ]
+  },
+  {
+    "id": "K-12",
+    "title": "Final demo and thesis submission",
+    "owner": "kvn",
+    "day": "2026-10-22",
+    "size": "M",
+    "deps": [
+      "T-08",
+      "K-11"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Final deliverables are due 22 Oct.",
+    "files": [],
+    "acceptance": [
+      "IT22552860_FINAL is submitted with its Turnitin report",
+      "The final demo is delivered"
+    ]
+  },
+  {
+    "id": "K-13",
+    "title": "Record two hand-fixture clips for automated screenshots",
+    "owner": "kvn",
+    "day": "2026-10-13",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Chromium's fake camera shows a test pattern with no hands, so result, finger-state, replay and stars screens can never be rendered for before/after screenshots without a real hand clip.",
+    "files": [
+      "C:/Users/User/Documents/Suvana-wt/_fixtures/ (outside every repo)"
+    ],
+    "acceptance": [
+      "Two clips exist: hands-sign.y4m (about 5 s, kvn imitating one kaggle_* reference shown in Learn) and no-hands.y4m (about 3 s, empty frame)",
+      "Converted with ffmpeg to .y4m at 640x480 (command in tools/screens/README.md once Q-00 lands)",
+      "The clips are test input only: never committed, uploaded, or used as an SSL reference"
+    ]
+  },
+  {
+    "id": "T-01",
+    "title": "Create the final-thesis working copy; the uploaded draft stays untouched",
+    "owner": "kvn",
+    "day": "2026-10-13",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "The panel deducts 50% if the uploaded draft is edited after 11 Oct. The final thesis is a separate file.",
+    "files": [
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/IT22552860_FINAL.docx"
+    ],
+    "acceptance": [
+      "IT22552860_FINAL.docx exists as a copy",
+      "IT22552860_DRAFT.docx and IT22552860_DRAFT-preview.pdf keep their modified times"
+    ]
+  },
+  {
+    "id": "T-02",
+    "title": "Draft revised Ch1/Ch4/Ch5 text for what was actually built",
+    "owner": "claude-code-thesis",
+    "day": "2026-10-19",
+    "size": "M",
+    "deps": [
+      "T-01"
+    ],
+    "status": "todo",
+    "branch": "none (writes outside the repo)",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-16"
+    ],
+    "why": "The final thesis must describe the game path, stages, feedback, deployment and any video truthfully.",
+    "files": [
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/final-source/01-introduction.md",
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/final-source/04-design.md",
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/final-source/05-implementation.md"
+    ],
+    "acceptance": [
+      "Starts from scratchpad thesis/*.md; describes only features merged by 19 Oct 09:00; each changed paragraph is marked for kvn",
+      "Section 5.5 carries placeholders for the deployed URLs and commit sha, filled on 21 Oct from Q-08",
+      "States the capture-protocol change (L-07) and that the 85/60 bands were not recalibrated (unless T-03 re-ran the evaluation)",
+      "No invented figures or SSL content; draft text implying per-finger percentages is replaced"
+    ]
+  },
+  {
+    "id": "T-03",
+    "title": "Draft Ch6/Ch7/Ch8: objectives table, panel responses, limitations, future work",
+    "owner": "claude-code-thesis",
+    "day": "2026-10-20",
+    "size": "M",
+    "deps": [
+      "T-02",
+      "Q-09",
+      "L-13"
+    ],
+    "status": "todo",
+    "branch": "none (writes outside the repo)",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "PP1 (game, sentence) and PP2 (adaptation) must be answered explicitly and honestly.",
+    "files": [
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/final-source/06-results.md",
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/final-source/07-discussion.md",
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/final-source/08-conclusion.md"
+    ],
+    "acceptance": [
+      "The O1-O5 table uses the wording rules in 09-thesis-final.md (never 'Met' for O1 unless Q-09 measured end-to-end)",
+      "The PP2 answer quotes ADAPTATION.md rules exactly; 74.6% appears only with 65.4% and AUC 0.744",
+      "Engineering numbers come from the Q-08 gate output and Q-09 latency output, cited",
+      "No recognition accuracy and no participant figures"
+    ]
+  },
+  {
+    "id": "T-04",
+    "title": "Learner-model worked example computed with the real code",
+    "owner": "claude-code-thesis",
+    "day": "2026-10-17",
+    "size": "S",
+    "deps": [
+      "L-13"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/T-04-worked-example",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "An open draft item and the clearest way to show the PP2 panel how adaptation works.",
+    "files": [
+      "apps/learn/src/learner/workedExample.test.ts",
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/final-source/04-design.md"
+    ],
+    "acceptance": [
+      "A test runs one sign through 4 scripted attempts using mastery.ts/session.ts/game.ts and prints EWMA, need, stars and the chosen next item with its reason",
+      "The thesis table reproduces that output exactly and cites the test"
+    ]
+  },
+  {
+    "id": "T-05",
+    "title": "Figures, placeholders, chart titles, accessibility and Appendix B",
+    "owner": "kvn",
+    "day": "2026-10-21",
+    "size": "M",
+    "deps": [
+      "T-02",
+      "T-03"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-16"
+    ],
+    "why": "Open CHECKs in the draft.",
+    "files": [
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/IT22552860_FINAL.docx"
+    ],
+    "acceptance": [
+      "The 4 figure placeholders are filled or removed and figures renumbered; chart titles and footnotes complete; alt text and contrast checked",
+      "Appendix B describes kvn's own revisions in his words; DN-16 applied; section 5.5 placeholders filled"
+    ]
+  },
+  {
+    "id": "T-07",
+    "title": "Commercialisation write-up (open core, licences, costs, competitors)",
+    "owner": "claude-code-thesis",
+    "day": "2026-10-19",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/claude/T-07-commercialisation",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-04",
+      "DN-15"
+    ],
+    "why": "Commercialisation is graded; it feeds the presentation, the pricing page and the thesis if the template allows.",
+    "files": [
+      "docs/commercialisation.md"
+    ],
+    "acceptance": [
+      "Covers open-core editions, licence constraints (CC0 landmarks vs BY-NC-SA; corpus-video provenance), B2B/B2G/NGO lines, on-device privacy, and costs with source and date (domain $1.99/$32.12; Vercel Pro needed for commercial use; recognition host from DN-02)",
+      "Competitor table from 02-learn-vision.md with sources; no users, revenue or prices unless kvn supplies them"
+    ]
+  },
+  {
+    "id": "T-08",
+    "title": "Turnitin report and final PDF",
+    "owner": "kvn",
+    "day": "2026-10-22",
+    "size": "M",
+    "deps": [
+      "T-05",
+      "T-09"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Submission requirements.",
+    "files": [
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/IT22552860_FINAL.docx"
+    ],
+    "acceptance": [
+      "Turnitin similarity report generated and acceptable; files named by registration number; final PDF exported"
+    ]
+  },
+  {
+    "id": "T-09",
+    "title": "Own-words pass on chapters that will not change",
+    "owner": "kvn",
+    "day": "2026-10-16 to 2026-10-18",
+    "size": "M",
+    "deps": [
+      "T-01"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Moves thesis load off 21 Oct, which already holds rehearsal 2, the final port and the tag.",
+    "files": [
+      "C:/Users/User/Documents/S L I I T/Y4S1/RP/Thesis/IT22552860_FINAL.docx"
+    ],
+    "acceptance": [
+      "Ch2 (literature) and Ch3 (methodology) own-words pass done by 18 Oct",
+      "Remaining chapters get their pass on 21 Oct after the T-02/T-03 text is pasted"
+    ]
+  },
+  {
+    "id": "D-01",
+    "title": "Deployment smoke script and DEPLOYMENT.md refresh",
+    "owner": "antigravity",
+    "day": "2026-10-17",
+    "size": "S",
+    "deps": [
+      "L-06"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/D-01-smoke",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Suvana has never run in production, and DEPLOYMENT.md is stale (labels row, HF free tier, shell env).",
+    "files": [
+      "tools/smoke/smoke.mjs",
+      "tools/smoke/README.md",
+      "DEPLOYMENT.md"
+    ],
+    "acceptance": [
+      "`node tools/smoke/smoke.mjs <base-url>` runs every check in 06-deploy.md section 4 (status codes and cache headers) and exits non-zero on any failure",
+      "DEPLOYMENT.md matches 06-deploy.md: project table, env, order, Hobby caveat, recognition hosting options, domain steps"
+    ]
+  },
+  {
+    "id": "D-02",
+    "title": "Deploy suvana-learn (.vercel.app) from current main",
+    "owner": "kvn",
+    "day": "2026-10-14",
+    "size": "S",
+    "deps": [
+      "K-01",
+      "K-04"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Learn is static and needs no secrets. Deploying early enables phone testing from 15 Oct; every later merge to main redeploys it automatically.",
+    "files": [],
+    "acceptance": [
+      "https://suvana-learn.vercel.app/learn/ returns 200 (the bare root returns 404 until L-06 is merged, then redirects)",
+      "On kvn's phone the camera starts on /learn/",
+      "After L-06 merges, `node tools/smoke/smoke.mjs` learn checks pass (once D-01 exists)"
+    ]
+  },
+  {
+    "id": "D-03",
+    "title": "Deploy suvana-communicate, then suvana-shell",
+    "owner": "kvn",
+    "day": "2026-10-17",
+    "size": "M",
+    "deps": [
+      "D-02",
+      "I-01",
+      "I-07",
+      "K-04"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-13"
+    ],
+    "why": "One Suvana origin with the shared session and every module.",
+    "files": [],
+    "acceptance": [
+      "suvana-communicate builds with NEXT_PUBLIC_BASE_PATH=/communicate and kvn's Atlas, Cloudinary and secret; register and sign in work on its own URL",
+      "https://suvana-shell.vercel.app/ serves the landing, /learn/, /communicate and /alerts/; the smoke script passes",
+      "No placeholder animations exist in the production database"
+    ]
+  },
+  {
+    "id": "D-04",
+    "title": "Host Recognize on the chosen platform with an uptime ping",
+    "owner": "kvn",
+    "day": "2026-10-18",
+    "size": "M",
+    "deps": [
+      "I-08"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-02"
+    ],
+    "why": "Recognize has no host anywhere; hosting is the only way to show it on a phone.",
+    "files": [],
+    "acceptance": [
+      "Live on the DN-02 host; /api/info reports numClasses: 171; one live recognition works on a phone",
+      "Uptime ping every 10 minutes from 20 to 22 Oct",
+      "The URL is passed to I-10"
+    ]
+  },
+  {
+    "id": "D-05",
+    "title": "Speech service: laptop-only by default; host only if DN-03 says so",
+    "owner": "kvn",
+    "day": "2026-10-19",
+    "size": "S",
+    "deps": [
+      "I-09"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-03"
+    ],
+    "why": "CPU speech inference is slow and hosting costs money; laptop-only keeps kvn's load down.",
+    "files": [],
+    "acceptance": [
+      "Default: DN-03 = laptop only; the speech container runs on the laptop and its URL is registered in Communicate Settings on demo day; DEMO.md says so",
+      "If DN-03 = host: a hosted URL is registered and STT tested once"
+    ]
+  },
+  {
+    "id": "D-06",
+    "title": "Commit the R26 M0 port and redeploy learn-ssl-module.vercel.app",
+    "owner": "kvn",
+    "day": "2026-10-14",
+    "size": "S",
+    "deps": [
+      "R-00"
+    ],
+    "status": "todo",
+    "branch": "n/a (R26: kvn commits)",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "The live R26 Learn shows invented per-finger percentages and serves a year-long immutable cache. Those fixes must be live early, not on 17 Oct.",
+    "files": [],
+    "acceptance": [
+      "kvn commits the R-00 working-tree changes in R26 with R-00's two blocks and pushes",
+      "07-r26-mirror.md section 6 is followed: preview, share-link check on desktop and phone, promote",
+      "https://learn-ssl-module.vercel.app/ returns 200 and shows no '%' next to fingers"
+    ]
+  },
+  {
+    "id": "D-07",
+    "title": "Commit the R26 M1 port and redeploy learn-ssl-module",
+    "owner": "kvn",
+    "day": "2026-10-17",
+    "size": "S",
+    "deps": [
+      "R-03"
+    ],
+    "status": "todo",
+    "branch": "n/a (R26)",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "R26 must always have kvn's latest Learn.",
+    "files": [],
+    "acceptance": [
+      "Same as D-06 for M1"
+    ]
+  },
+  {
+    "id": "D-08",
+    "title": "Commit the R26 M2 port and redeploy learn-ssl-module",
+    "owner": "kvn",
+    "day": "2026-10-19",
+    "size": "S",
+    "deps": [
+      "R-04"
+    ],
+    "status": "todo",
+    "branch": "n/a (R26)",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "R26 must always have kvn's latest Learn.",
+    "files": [],
+    "acceptance": [
+      "Same as D-06 for M2"
+    ]
+  },
+  {
+    "id": "D-09",
+    "title": "Attach suvana.help to suvana-shell and re-run the smoke",
+    "owner": "kvn",
+    "day": "2026-10-20",
+    "size": "S",
+    "deps": [
+      "K-08"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "The one-brand commercial URL.",
+    "files": [],
+    "acceptance": [
+      "suvana.help and www.suvana.help (redirecting to the apex) resolve over HTTPS to suvana-shell",
+      "The smoke passes against https://suvana.help; sign-in carries across /, /learn/ and /communicate",
+      "VITE_RECOGNIZE_URL (and AUTH_URL if used) updated; a docs agent updates DEPLOYMENT.md and README.md in that day's single-writer slot"
+    ]
+  },
+  {
+    "id": "D-10",
+    "title": "Final R26 commit and learn-ssl-module redeploy",
+    "owner": "kvn",
+    "day": "2026-10-21",
+    "size": "S",
+    "deps": [
+      "R-05"
+    ],
+    "status": "todo",
+    "branch": "n/a (R26)",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "The demo build must be live at R26's URL.",
+    "files": [],
+    "acceptance": [
+      "Same as D-06 for the final range; the deployment's git sha is recorded next to the Suvana tag demo-2026-10-21"
+    ]
+  },
+  {
+    "id": "Q-00",
+    "title": "Screenshot tooling: Playwright shooter, contact sheet, fake-camera clips, dev-only fixtures page",
+    "owner": "antigravity",
+    "day": "2026-10-13",
+    "size": "M",
+    "deps": [
+      "K-01"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/Q-00-screens",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Every UI task needs desktop and phone before/after screenshots, and Codex has no browser. Result screens need a real hand clip in the fake camera.",
+    "files": [
+      "tools/screens/package.json",
+      "tools/screens/package-lock.json",
+      "tools/screens/shoot.mjs",
+      "tools/screens/contact-sheet.mjs",
+      "tools/screens/README.md",
+      "apps/learn/fixtures.html",
+      "apps/learn/src/dev/fixtures.tsx",
+      "apps/learn/src/dev/fixtures/*.json"
+    ],
+    "acceptance": [
+      "tools/screens has its own package.json with @playwright/test (npm 10 lockfile); apps/learn/package.json is NOT touched",
+      "`node tools/screens/shoot.mjs --base <url> --id <TASK> --label before|after --paths /learn/,...` writes desktop-1280x800 and phone-390x844 PNGs to <worktree>/.agent-local/screens/<TASK>/",
+      "`--fake-video <file.y4m>` launches Chromium with --use-fake-device-for-media-stream and --use-file-for-fake-video-capture; README gives the ffmpeg command to make a .y4m",
+      "`--seed <attempts.json>` seeds IndexedDB through addInitScript so Path/Progress states can be shot",
+      "`node tools/screens/contact-sheet.mjs <TASK>` writes index.html with before/after side by side for kvn",
+      "fixtures.html renders ScoreBadge and the result card from JSON fixtures in dev only; `npm run build` output contains no fixtures.html",
+      "Learn gates pass"
+    ]
+  },
+  {
+    "id": "Q-01",
+    "title": "Agent instruction files: root AGENTS.md as single source, slim CLAUDE.md, per-module AGENTS.md",
+    "owner": "claude-code",
+    "day": "2026-10-13",
+    "size": "M",
+    "deps": [
+      "K-01"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/Q-01-agents-md",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-12"
+    ],
+    "why": "Codex and Antigravity read AGENTS.md, Claude reads CLAUDE.md. No rule may be lost and nothing may drift. The plan itself already lives in docs/plan, so this task does not block other tasks. Root AGENTS.md and CLAUDE.md (= @AGENTS.md + Claude-only notes) already exist on docs/revolution-plan (DN-12 implemented, pending kvn's merge in K-01); this task reconciles them and adds the rest.",
+    "files": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "apps/learn/AGENTS.md",
+      "apps/learn/CLAUDE.md",
+      "services/recognition/AGENTS.md",
+      "services/recognition/CLAUDE.md",
+      ".gitignore",
+      "README.md"
+    ],
+    "acceptance": [
+      "Root AGENTS.md is 10 KB or less: guardrails, owners, conventions, a summary of docs/plan/08-agent-protocol.md, and a doc index that tells Codex to read apps/learn/AGENTS.md before Learn work (Codex started at the worktree root does not load it)",
+      "CLAUDE.md = '@AGENTS.md' plus Claude-only notes; a diff table in the handoff shows every rule of today's CLAUDE.md and where it now lives",
+      "apps/learn and services/recognition each have AGENTS.md plus a CLAUDE.md containing only '@AGENTS.md'",
+      "No GEMINI.md and no Antigravity workflows are created",
+      "In .gitignore, `.claude/` becomes `.claude/*` with `!.claude/rules/` and `!.claude/launch.json`",
+      "README.md gets one line linking docs/plan/README.md"
+    ]
+  },
+  {
+    "id": "Q-02",
+    "title": ".gitattributes for line endings and a union merge for LOG.md",
+    "owner": "antigravity",
+    "day": "2026-10-14",
+    "size": "S",
+    "deps": [
+      "K-01"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/Q-02-gitattributes",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Three tools on Windows otherwise produce whole-file CRLF/LF diffs, and parallel branches all append to docs/plan/LOG.md.",
+    "files": [
+      ".gitattributes"
+    ],
+    "acceptance": [
+      "`* text=auto` with LF for source and text files, binaries marked binary",
+      "`docs/plan/LOG.md merge=union` is present",
+      "`git add --renormalize . && git status --short | wc -l` is run: if more than 20 files change, the renormalisation is NOT committed; the list goes to kvn in the handoff"
+    ]
+  },
+  {
+    "id": "Q-03",
+    "title": "Close CI gaps: concurrency, Docker build, R26-form Learn build, dist smoke, extended brand grep",
+    "owner": "codex",
+    "day": "2026-10-20",
+    "size": "M",
+    "deps": [
+      "R-01",
+      "I-01",
+      "I-02"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/Q-03-ci",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "CI never builds the Dockerfiles, never checks Learn in its R26 form, and cannot catch sub-brands outside Learn.",
+    "files": [
+      ".github/workflows/ci.yml"
+    ],
+    "acceptance": [
+      "`concurrency` with cancel-in-progress added",
+      "A docker-build job for services/recognition and services/speech runs on workflow_dispatch only (no push)",
+      "A job builds apps/learn with suvana.config.json removed and asserts dist/index.html has no '/learn/' paths",
+      "A job asserts dist/learn/index.html references only /learn/assets and dist/learn/wasm/*.wasm exists",
+      "A grep job fails on 'SoundGuard|SignSpeak|Sawana' in user-visible files under apps/shell, apps/alerts, apps/communicate/app and services/recognition/webapp/static, with an allow-list for internal identifiers (soundguard.js, signspeak.contribute.speakerKey, withSoundGuardBackground)",
+      "CI green on the branch"
+    ]
+  },
+  {
+    "id": "Q-04",
+    "title": "Playwright smoke for Learn (keyboard, storage failure, onboarding)",
+    "owner": "antigravity",
+    "day": "2026-10-15",
+    "size": "M",
+    "deps": [
+      "Q-00",
+      "L-02",
+      "L-05",
+      "L-07"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/Q-04-e2e",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "There are no component or E2E tests; keyboard, storage and onboarding regressions would reach the demo unnoticed.",
+    "files": [
+      "tools/screens/e2e/*.spec.ts",
+      "tools/screens/playwright.config.ts",
+      "tools/screens/package.json"
+    ],
+    "acceptance": [
+      "Runs against `vite preview` with the fake camera (K-13 clips when present, else the default pattern)",
+      "Specs: onboarding shows on first run; Esc during countdown stays in Practice; Enter on a focused Retry retries; blocked IndexedDB (addInitScript) still renders the sign list with a notice",
+      "`npm run e2e` in tools/screens; documented; not yet required in CI",
+      "Later UI tasks add their own specs here (new files only)"
+    ]
+  },
+  {
+    "id": "Q-05",
+    "title": "DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check",
+    "owner": "antigravity",
+    "day": "2026-10-20",
+    "size": "S",
+    "deps": [
+      "D-03",
+      "D-04"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/Q-05-demo",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "The final demo needs a timed script per module and a rehearsed fallback for every external dependency.",
+    "files": [
+      "DEMO.md"
+    ],
+    "acceptance": [
+      "Timed script for Shell, Learn (starter sign Watch/Try/Recall, Path, feedback, 'Why this sign?'), Communicate (avatar-only if Lithira's data is missing), Recognize, Alerts",
+      "A 'say up front' list: deployed vs local, no recognition accuracy quoted, 74.6% only with 65.4%, Hero cards are decorative, no participants",
+      "Fallback commands: localhost ports, cloudflared, `vite preview` offline Learn, hotspot",
+      "Learn demo-profile and reset steps",
+      "Three adversarial assistant prompts ('how do I sign X', 'translate Y to SSL', 'describe the handshape for Z') and the expected refusal; result of running them recorded"
+    ]
+  },
+  {
+    "id": "Q-06",
+    "title": "Full real-device matrix (iPhone Safari, Android Chrome, laptop)",
+    "owner": "kvn",
+    "day": "2026-10-19",
+    "size": "M",
+    "deps": [
+      "Q-06a",
+      "L-16b"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Camera lifecycle on real phones is the riskiest untested area.",
+    "files": [
+      "docs/plan/handoffs/Q-06.md (written by an agent from kvn's notes)"
+    ],
+    "acceptance": [
+      "On each device against the deployed URL: permission deny then retry, app switch and return, rotate, camera unplug or disable (laptop), slow network, full Watch/Try/Recall",
+      "Failures become fix tasks for 20 Oct"
+    ]
+  },
+  {
+    "id": "Q-06a",
+    "title": "Early phone check of the deployed Learn and device inventory",
+    "owner": "kvn",
+    "day": "2026-10-15",
+    "size": "S",
+    "deps": [
+      "D-02",
+      "L-04"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Finding phone camera problems on 19 Oct leaves one day to fix them.",
+    "files": [],
+    "acceptance": [
+      "kvn records which phones he owns or can borrow (iPhone? Android?) in LOG.md",
+      "On each: camera starts, one Practice take completes, app switch and return works or fails (noted)",
+      "Failures become fix tasks for the codex lane on 16 Oct"
+    ]
+  },
+  {
+    "id": "Q-07",
+    "title": "Handedness reality check",
+    "owner": "kvn",
+    "day": "2026-10-14",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "MediaPipe gets an unmirrored video, so every 'Left/Right hand' label may be swapped (04-bugs.md S1).",
+    "files": [],
+    "acceptance": [
+      "kvn raises only his right hand in Practice and Record and notes the label shown",
+      "Result logged in LOG.md; if swapped, a UI-label-only fix is added to L-26 (scoring untouched)"
+    ]
+  },
+  {
+    "id": "Q-08",
+    "title": "Demo-ready gate run and release tag proposal",
+    "owner": "claude-code",
+    "day": "2026-10-21",
+    "size": "S",
+    "deps": [
+      "L-26",
+      "L-27"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/Q-08-gates",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Freeze a known-good commit for the demo, the thesis section 5.5 and the final R26 port.",
+    "files": [
+      "docs/plan/handoffs/Q-08.md"
+    ],
+    "acceptance": [
+      "All gates on main: guard, Learn lint (0 warnings), tests, build size, shell, Communicate (MSYS_NO_PATHCONV=1), recognition pytest, alerts tsc, the Playwright smoke",
+      "Regression list checked against 04-bugs.md",
+      "kvn receives the tag name demo-2026-10-21 and the sha (kvn tags it); the gate output is saved for T-03"
+    ]
+  },
+  {
+    "id": "Q-09",
+    "title": "Measure end-to-end feedback latency (capture end to result shown)",
+    "owner": "codex",
+    "day": "2026-10-19",
+    "size": "S",
+    "deps": [
+      "L-16a",
+      "Q-00",
+      "K-13"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/Q-09-latency",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Proposal O1 is feedback within 300 ms. Scoring compute (1.8 ms median) is not that objective; end-to-end is cheap to measure.",
+    "files": [
+      "tools/screens/e2e/latency.spec.ts",
+      "tools/screens/latency-report.mjs"
+    ],
+    "acceptance": [
+      "Reads the performance marks suvana:capture-end and suvana:result-shown (added by L-16a) over 20 runs with the K-13 clip on kvn's laptop",
+      "Prints median and p90 with machine and browser details; output saved in the handoff for T-03",
+      "No number is quoted anywhere without this output"
+    ]
+  },
+  {
+    "id": "L-01",
+    "title": "Replace invented per-finger percentages with measured on/close/off states; one label scale",
+    "owner": "claude-code",
+    "day": "2026-10-13",
+    "size": "S",
+    "deps": [
+      "L-02"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-01-finger-states",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [
+      "DN-17"
+    ],
+    "why": "Fabricated finger % (PracticeView ~384-408, ScoreBadge 94-242) break 'never invent figures', and the tier titles contradict the 85/60 bands. It is live on learn-ssl-module.vercel.app.",
+    "files": [
+      "apps/learn/src/scoring/fingerStates.ts",
+      "apps/learn/src/scoring/fingerStates.test.ts",
+      "apps/learn/src/components/PracticeView.tsx",
+      "apps/learn/src/components/ScoreBadge.tsx",
+      "apps/learn/src/components/views.css"
+    ],
+    "acceptance": [
+      "fingerStates.ts derives on/close/off per finger from HandScore.perLandmark grouped by LANDMARK_FINGER; off > 0.1 (HINT_MIN_DEVIATION), close > 0.05; the 0.05 cut-off is documented as an untuned UI constant; tested",
+      "No '%' is rendered next to any finger, in UI or SVG titles (grep check in the handoff)",
+      "ScoreBadge no longer copies the overall score to every finger; Scenario results show no per-finger data unless real data is passed",
+      "Only band() labels (85/60) remain; 'Master Execution' and 'Fluent Signing' tiers removed (Hero decorative cards untouched)",
+      "The English meaning span no longer carries lang=\"si\" and the meaning is not shown twice",
+      "Stacked on L-02 (logic) as the leaf branch; lint no new warnings; tests pass; before/after screenshots of a result screen at desktop and phone (fixtures page until K-13 exists)"
+    ]
+  },
+  {
+    "id": "L-02",
+    "title": "Keyboard: Esc no longer exits to the Hero; Enter/Space respect the focused control",
+    "owner": "claude-code",
+    "day": "2026-10-13",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/claude/L-02-keyboard",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Bugs A1/A2 are demo-killers: Esc cancels a countdown and throws the learner out; Enter on Retry goes to the next sign. Also lint warning PracticeView.tsx:479.",
+    "files": [
+      "apps/learn/src/components/AppNavBar.tsx",
+      "apps/learn/src/components/PracticeView.tsx"
+    ],
+    "acceptance": [
+      "AppNavBar returns early when e.defaultPrevented; Practice's Esc handlers call preventDefault and are registered in the capture phase (AppNavBar's window listener is registered first, so a bubble-phase guard alone does not work)",
+      "Global shortcuts skip button, a, select, input, textarea and [contenteditable] targets",
+      "The keyboard effect no longer depends on the whole tracking object; the PracticeView.tsx:479 warning is gone",
+      "Manual check written in the handoff: countdown then Esc cancels and stays in Practice; Enter on focused Retry retries"
+    ]
+  },
+  {
+    "id": "L-03",
+    "title": "Practice capture robustness: wall-clock backstop, safe initial load, no empty-reference logging",
+    "owner": "claude-code",
+    "day": "2026-10-14",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/claude/L-03-capture-robustness",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Bugs A6 (Practice part), A7 (Practice backstop) and A13: a take can hang forever, an IndexedDB failure empties the sign list, an empty reference logs a 0.",
+    "files": [
+      "apps/learn/src/components/PracticeView.tsx"
+    ],
+    "acceptance": [
+      "setTimeout backstop finishes the take at captureMs+500 even with no frames",
+      "Initial load uses Promise.allSettled; a failed IndexedDB still shows the bundled index (uses L-05's safeLoad if merged)",
+      "Attempts with hands.length === 0 are not logged",
+      "Delta computed against the previous attempt by id",
+      "Tracking status 'error' during capture abandons the take with a message; a take running while the tab is hidden is abandoned"
+    ]
+  },
+  {
+    "id": "L-04",
+    "title": "Camera lifecycle: lost track, frame-loop errors, insecure origin, GPU-to-CPU fallback, resume",
+    "owner": "codex",
+    "day": "2026-10-13",
+    "size": "M",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/codex/L-04-camera-lifecycle",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Bugs A7, A8, A17 and suspicions S2, S3, S7: an unplugged or backgrounded camera freezes the app silently; phones over plain HTTP show a raw TypeError.",
+    "files": [
+      "apps/learn/src/vision/useHandTracking.ts",
+      "apps/learn/src/vision/handTracker.ts",
+      "apps/learn/src/vision/useSignCapture.ts",
+      "apps/learn/src/components/RecordView.tsx"
+    ],
+    "acceptance": [
+      "track.onended/onmute stop the stream and set status 'error' with 'Camera disconnected' plus a restart action",
+      "processFrame wrapped in try/catch; an error sets status 'error' instead of killing the loop",
+      "!window.isSecureContext gives 'Camera needs HTTPS'",
+      "If createFromOptions with the GPU delegate rejects, retry once with delegate 'CPU'",
+      "visibilitychange/pageshow re-play the video or reacquire an ended stream",
+      "A stale error is cleared on remount; wall-clock backstops in RecordView and useSignCapture",
+      "Lint warning useHandTracking.ts:207 gone; unit tests for pure helpers where feasible"
+    ]
+  },
+  {
+    "id": "L-05",
+    "title": "Storage resilience: safeLoad, guarded localStorage, top-level ErrorBoundary",
+    "owner": "codex",
+    "day": "2026-10-13",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/codex/L-05-storage",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Bugs A6 and A15: blocked IndexedDB or localStorage blanks Scenario, Progress, Library, Study and Record; any render throw gives a white screen.",
+    "files": [
+      "apps/learn/src/storage/safeLoad.ts",
+      "apps/learn/src/storage/safeLoad.test.ts",
+      "apps/learn/src/storage/StorageNotice.tsx",
+      "apps/learn/src/storage/StorageNotice.css",
+      "apps/learn/src/components/ScenarioView.tsx",
+      "apps/learn/src/components/ProgressView.tsx",
+      "apps/learn/src/components/LibraryView.tsx",
+      "apps/learn/src/components/StudyView.tsx",
+      "apps/learn/src/components/RecordView.tsx",
+      "apps/learn/src/main.tsx"
+    ],
+    "acceptance": [
+      "safeLoad() never rejects; returns [] for failed stores plus storageOk; unit-tested with rejecting fakes",
+      "The four views and RecordView use it (data-loading lines only); a non-blocking 'progress can't be saved in this browser' notice (own CSS file, not views.css) appears when storageOk is false",
+      "localStorage reads at RecordView:50 and StudyView:23-24 wrapped in try/catch",
+      "main.tsx wraps <App> in an ErrorBoundary with a Reload button",
+      "Before/after screenshots of the notice state at desktop and phone"
+    ]
+  },
+  {
+    "id": "L-06",
+    "title": "Cache headers, standalone root redirect, asset-version rule",
+    "owner": "codex",
+    "day": "2026-10-13",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/codex/L-06-cache-headers",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Bugs A9/A10: year-long immutable caching of un-hashed references, wasm and models; the deployment root returns 404. Browsers that already cached R26 assets keep them for a year.",
+    "files": [
+      "apps/learn/vercel.json",
+      "apps/learn/src/app/assetVersion.ts",
+      "apps/learn/src/vision/handTracker.ts (WASM_DIR, MODEL_PATH)",
+      "reference loader file (the one that fetches references/*.json)"
+    ],
+    "acceptance": [
+      "Suvana vercel.json: /learn/(models|references|wasm)/(.*) -> 'public, max-age=86400, stale-while-revalidate=604800' (no immutable); non-permanent redirect '/' -> '/learn/'",
+      "The handoff gives the R26-form vercel.json change (header on /(models|references|wasm)/(.*), NO redirect) for R-00",
+      "assetVersion.ts exports ASSET_VERSION; references, wasm and model URLs carry ?v=ASSET_VERSION; the rule 'bump ASSET_VERSION whenever a reference, wasm or model file changes' is written in apps/learn/README.md's maintenance notes or the handoff",
+      "Verified later by D-01 smoke"
+    ]
+  },
+  {
+    "id": "L-07",
+    "title": "First-run onboarding, hands-in-frame gate, longer capture window with learner-take trimming",
+    "owner": "claude-code",
+    "day": "2026-10-14",
+    "size": "M",
+    "deps": [
+      "L-03"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-07-onboarding",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Learnability B3/B10: no guide; Record works before hands are visible; a fixed durationMs+1500 window cuts off hesitant novices.",
+    "files": [
+      "apps/learn/src/components/Onboarding.tsx",
+      "apps/learn/src/components/Onboarding.css",
+      "apps/learn/src/components/PracticeView.tsx",
+      "apps/learn/src/scoring/trimTake.ts",
+      "apps/learn/src/scoring/trimTake.test.ts"
+    ],
+    "acceptance": [
+      "A 3-step overlay (frame yourself; watch at 0.5x then 'My turn', mirror explained; what the 85/60 match bands mean, not correctness) on first run and from a 'How it works' link; first-run flag stored with try/catch",
+      "Live 'hands in frame' pill; Record disabled until hands are seen in 5 consecutive frames",
+      "Capture window = max(2 x reference.durationMs, durationMs + 3000)",
+      "Leading and trailing no-hand frames are trimmed from the learner's take before scoring, matching how the converter trims references (check tools/reference-converter and cite it); tested",
+      "No SSL content; all copy generic",
+      "Leaf UI branch stacked on L-03; before/after screenshots at desktop 1280x800 and phone 390x844"
+    ]
+  },
+  {
+    "id": "L-08",
+    "title": "Learner playback: 0.5x start, speed control, mirror label, raw-framing view with frame outline, sized wrist-anchored ghost",
+    "owner": "claude-code",
+    "day": "2026-10-15",
+    "size": "M",
+    "deps": [
+      "L-07"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-08-playback",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Learnability B1/B6 and bug A12: per-clip zoom hides where the hands were and how large the movement was; 1x looping is too fast; the ghost is a stretched 300x150 bitmap.",
+    "files": [
+      "apps/learn/src/components/SkeletonPlayer.tsx",
+      "apps/learn/src/vision/drawing.ts",
+      "apps/learn/src/components/PracticeView.tsx",
+      "apps/learn/src/components/views.css"
+    ],
+    "acceptance": [
+      "0.5x for the first 2 loops, then 1x; a visible 0.25/0.5/0.75/1 control replaces the cycling button",
+      "'Mirrored: copy it like a mirror' label when mirrored",
+      "Default view is raw framing (fitToFrame=false) inside a plain rectangle labelled 'position in the original video frame'; a 'Zoom to hands' toggle restores the per-clip fit",
+      "NO body or head silhouette is drawn (references contain no pose; a body outline would imply a location the data does not contain)",
+      "Ghost canvas width/height = video.videoWidth/Height; ghost translated so its wrist sits on the learner's tracked wrist",
+      "Before/after screenshots (desktop and phone) for a one-handed and a two-handed sign"
+    ]
+  },
+  {
+    "id": "L-09",
+    "title": "Curriculum report, data-derived units and scenario coverage table",
+    "owner": "antigravity",
+    "day": "2026-10-14",
+    "size": "M",
+    "deps": [
+      "L-10"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/L-09-curriculum",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Cold start is alphabetical (ADINAWA). The planned 'Greetings / numbers 1-5' starter cannot be built: all five greetings and numbers 1, 2, 4, 5 are yohan_* (non-commercial) and there is no '3' in either corpus.",
+    "files": [
+      "apps/learn/scripts/curriculum-report.mjs",
+      "apps/learn/src/data/curriculum.ts"
+    ],
+    "acceptance": [
+      "The script prints the exact count of glosses with a verified meaning (resolving ~40 vs ~75) and, per category: gloss, licence, hands, motion, hasMeaning",
+      "curriculum.ts exports typed units built ONLY by rules from data, marked status 'proposed'; U1 = kaggle_* AND (verified meaning OR self-explaining letter/number/month) AND one hand AND still, 5-8 signs; later units by category then difficulty",
+      "No unit list is hand-written by the agent; no meaning, order claim or sign description is invented",
+      "A coverage table: for each proposal scenario (healthcare, job interview, social gathering, restaurant, emergency), which existing glosses could serve as single-sign turns, by licence; no gloss order is proposed",
+      "The handoff includes readable tables for K-05"
+    ]
+  },
+  {
+    "id": "L-10",
+    "title": "Reference metadata: hands, motion, duration, licence, hasMeaning in the generated index",
+    "owner": "antigravity",
+    "day": "2026-10-14",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/antigravity/L-10-ref-meta",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Difficulty, licence mode and the curriculum need per-reference facts derived from data, never from authored descriptions.",
+    "files": [
+      "apps/learn/scripts/build-reference-index.mjs",
+      "apps/learn/src/data/referenceIndex.test.ts"
+    ],
+    "acceptance": [
+      "build-reference-index.mjs (already run by predev/prebuild/pretest) adds hands (1|2), motion ('still'|'moving' from normalised wrist path, threshold documented as untuned), durationMs, licence (from id prefix), hasMeaning",
+      "apps/learn/package.json is untouched; the output stays generated and gitignored",
+      "A test over 3 known references passes"
+    ]
+  },
+  {
+    "id": "L-11",
+    "title": "Path view: units, stars, locks, unit detail, nav entry, 'Why this sign?' chip",
+    "owner": "claude-code",
+    "day": "2026-10-16",
+    "size": "M",
+    "deps": [
+      "L-12",
+      "K-05"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-11-path",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Answers PP1's 'game with levels and goals'. Learn has no levels, goals or unlocks today.",
+    "files": [
+      "apps/learn/src/components/PathView.tsx",
+      "apps/learn/src/components/PathView.css",
+      "apps/learn/src/App.tsx",
+      "apps/learn/src/components/AppNavBar.tsx",
+      "tools/screens/e2e/path.spec.ts"
+    ],
+    "acceptance": [
+      "A 'Path' destination in the nav; unit cards show title, stars earned/possible and locked/open/passed/mastered from learner/game.ts",
+      "Unit detail lists signs with stars and stage buttons; 'Practise this unit' calls startSession (N=8)",
+      "Works with an empty attempt log (U1 open, rest locked)",
+      "The 'Why this sign?' chip shows the reason from L-13 if merged (else hidden)",
+      "A path.spec.ts smoke is added; before/after screenshots (desktop and phone) using --seed states"
+    ]
+  },
+  {
+    "id": "L-12",
+    "title": "Game logic: stars, unit state, unlocks, daily goal, streak, XP",
+    "owner": "codex",
+    "day": "2026-10-15",
+    "size": "M",
+    "deps": [
+      "L-09"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/L-12-game-logic",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [
+      "DN-10",
+      "DN-11"
+    ],
+    "why": "The game layer must be pure, tested and explainable to the panel.",
+    "files": [
+      "apps/learn/src/learner/game.ts",
+      "apps/learn/src/learner/game.test.ts",
+      "apps/learn/src/learner/attemptLog.ts",
+      "apps/learn/src/pilot/exportResults.ts",
+      "apps/learn/src/data/curriculum.ts (types only)"
+    ],
+    "acceptance": [
+      "starsFor: 1 = a Try at >=60; 2 = a Try at >=85; 3 = a Recall at >=60 with revealed=false (constants exported and documented as 'match', not correctness)",
+      "unitState: passed when every sign has >=2 stars; mastered when every sign is mastered (EWMA >=0.85 after >=3 attempts); U1 always open; passing unit N opens N+1",
+      "dailyGoal default 10 scored attempts per local day; streak = consecutive days with the goal met; xp = total stars",
+      "Attempt entries gain optional stage ('try'|'recall'|'sentence'), revealed, sessionId; old entries default to 'try'; pilot export tests pass",
+      "Full branch coverage of game.ts"
+    ]
+  },
+  {
+    "id": "L-13",
+    "title": "Adaptation fix: review/new interleave, reachable sessions, reasons, ADAPTATION.md",
+    "owner": "codex",
+    "day": "2026-10-16",
+    "size": "M",
+    "deps": [
+      "L-12"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/L-13-adaptation",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Bugs A4/A5: weak signs are never revisited and sessions are unreachable. PP2 asked how adaptation works.",
+    "files": [
+      "apps/learn/src/learner/mastery.ts",
+      "apps/learn/src/learner/session.ts",
+      "apps/learn/src/learner/mastery.test.ts",
+      "apps/learn/src/learner/session.test.ts",
+      "apps/learn/src/learner/nextExercise.ts",
+      "apps/learn/src/learner/ADAPTATION.md"
+    ],
+    "acceptance": [
+      "Due reviews (attempted signs with need > 0.5) come before new signs; a new sign only when no due review exists; sessions interleave about 2 reviews : 1 new",
+      "Each recommendation returns a reason: 'review: score dropped' / 'review: not practised for N days' / 'new: next in unit' / 'retry: last two tries below 60'",
+      "nextExercise.ts (pure): two Try attempts below 60 -> offer 0.25x plus ghost; a Recall below 60 -> step back to Try; a Try >=85 -> unlock Recall",
+      "A test proves a sign scored 30 is resurfaced before an unseen sign",
+      "ADAPTATION.md lists every rule and constant (EWMA 0.5; 0.85/3; 0.6; need formula; 0.5 due threshold; interleave; 60/85) in plain words, says 'rule-based by design', marks untuned constants, and names BKT as future work"
+    ]
+  },
+  {
+    "id": "L-14",
+    "title": "Meaning coverage: verified-first browse and a 'meaning not yet verified' chip",
+    "owner": "antigravity",
+    "day": "2026-10-15",
+    "size": "S",
+    "deps": [
+      "L-10"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/L-14-meaning-coverage",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Learnability B2: most signs show only a transliterated label.",
+    "files": [
+      "apps/learn/src/components/CategorySignNavigator.tsx",
+      "apps/learn/src/data/meaningCoverage.ts",
+      "apps/learn/src/data/meaningCoverage.test.ts"
+    ],
+    "acceptance": [
+      "Browse orders signs with a verified meaning (or self-explaining letters, numbers, months) first in each category",
+      "Unverified signs show a 'meaning not yet verified' chip",
+      "translations.ts is not edited",
+      "A recommender preference, if it needs learner/ files, is proposed as a diff in the handoff for the codex lane",
+      "Before/after screenshots (desktop and phone)"
+    ]
+  },
+  {
+    "id": "L-15a",
+    "title": "Clip export script (only if DN-05 allows video)",
+    "owner": "codex",
+    "day": "2026-10-15",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/codex/L-15a-export-clips",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-05"
+    ],
+    "why": "Maps each kaggle_* reference to its source clip by the recorded sourceFile so kvn can export permitted clips.",
+    "files": [
+      "tools/reference-converter/export_clips.py"
+    ],
+    "acceptance": [
+      "Cancelled if DN-05 = no video",
+      "--dataset-dir, --out (refuses a path inside any git repo), --allow-list <file> (refIds DN-05 permits)",
+      "Writes <refId>.mp4 (H.264 480p, muted, +faststart), .webm and a .jpg poster; trims only if the reference stores offsets (the handoff states which)",
+      "Dry-run mode prints the mapping and counts; no dataset or clip is committed"
+    ]
+  },
+  {
+    "id": "L-15b",
+    "title": "SignVideo component and video manifest (only if DN-05 allows video)",
+    "owner": "antigravity",
+    "day": "2026-10-16",
+    "size": "M",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/antigravity/L-15b-signvideo",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [
+      "DN-05",
+      "DN-06"
+    ],
+    "why": "Shows a real signer where licence and provenance allow; falls back to the skeleton everywhere else.",
+    "files": [
+      "apps/learn/src/components/SignVideo.tsx",
+      "apps/learn/src/components/SignVideo.css",
+      "apps/learn/src/data/videoManifest.ts",
+      "apps/learn/src/data/videoManifest.test.ts",
+      "apps/learn/public/references/video-manifest.json"
+    ],
+    "acceptance": [
+      "Cancelled if DN-05 = no video",
+      "<video muted playsinline loop preload='metadata'>, 0.5x then 1x, mirror toggle, poster; on error falls back to SkeletonPlayer",
+      "video-manifest.json schema {refId:{mp4,webm,poster,licence,source}}, initially empty; a test rejects any non-kaggle_ entry",
+      "The credit line is copied verbatim from LICENSES.md (Kahawearachchi et al., Sinhala Sign Language Video Dataset) plus the takedown/contact note DN-05 requires",
+      "Rendered with a neutral sample video (not SSL content) for screenshots"
+    ]
+  },
+  {
+    "id": "L-16a",
+    "title": "Practice stage machine: Watch then Try, with performance marks",
+    "owner": "claude-code",
+    "day": "2026-10-17",
+    "size": "M",
+    "deps": [
+      "L-11",
+      "L-12",
+      "L-13"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-16a-watch-try",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "The core learning loop starts with watching slowly and imitating.",
+    "files": [
+      "apps/learn/src/components/PracticeView.tsx",
+      "apps/learn/src/components/practiceStages.ts",
+      "apps/learn/src/components/practiceStages.test.ts",
+      "apps/learn/src/components/views.css"
+    ],
+    "acceptance": [
+      "Stage machine watch -> try (recall stub disabled) in a pure, tested practiceStages.ts",
+      "Watch shows SignVideo if the manifest has the reference (L-15b merged), else the skeleton at 0.5x, with 'My turn'",
+      "Try works as today; attempts logged with stage 'try' and sessionId",
+      "Stars change and the L-13 next-exercise suggestion show on the result card",
+      "performance.mark('suvana:capture-end') and ('suvana:result-shown') emitted for Q-09",
+      "Keyboard flows from L-02 hold; before/after screenshots of each stage (desktop and phone)"
+    ]
+  },
+  {
+    "id": "L-16b",
+    "title": "Recall stage: hidden reference, cue, reveal costs the third star",
+    "owner": "claude-code",
+    "day": "2026-10-18",
+    "size": "M",
+    "deps": [
+      "L-16a"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-16b-recall",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [
+      "DN-09"
+    ],
+    "why": "The direct answer to PP1's 'showing the accuracy is not enough': the learner performs from memory.",
+    "files": [
+      "apps/learn/src/components/PracticeView.tsx",
+      "apps/learn/src/components/practiceStages.ts",
+      "apps/learn/src/components/views.css"
+    ],
+    "acceptance": [
+      "Recall hides the reference and shows the cue (verified meaning via translationOf, else glossLabel, per DN-09)",
+      "'Reveal (costs the 3rd star)' sets revealed=true; after scoring the reference is shown beside the result",
+      "No hints before the reveal in Recall",
+      "prefers-reduced-motion respected; before/after screenshots (desktop and phone)"
+    ]
+  },
+  {
+    "id": "L-17",
+    "title": "Feedback engine: gated 'Close match', timing and path hints, mirrored hand label, typed hints",
+    "owner": "codex",
+    "day": "2026-10-17",
+    "size": "M",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/codex/L-17-hints",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Learnability B5 and bug A11: feedback never says how to fix the attempt, says 'Close match' at low scores, and names the wrong hand when mirrored.",
+    "files": [
+      "apps/learn/src/scoring/score.ts",
+      "apps/learn/src/scoring/score.test.ts",
+      "apps/learn/src/scoring/hints.ts",
+      "apps/learn/src/scoring/hints.test.ts"
+    ],
+    "acceptance": [
+      "'Close match' only when score >= 85",
+      "Timing hint when attemptActiveMs / reference.durationMs is outside [0.67, 1.5] (untuned constants, documented), ratio rounded to 1 decimal",
+      "Path hint when the trajectory term contributes more than the handshape term; a test on at least one real recorded attempt pair shows it can fire (if it cannot under 0.8/0.2 weighting, the handoff says so and the hint is dropped)",
+      "Missing-hand hint uses the learner's hand when mirrored",
+      "Hints are typed objects {kind, finger?, ratio?}, at most 2, ordered by contribution",
+      "Score values unchanged: existing evaluation tests pass unchanged"
+    ]
+  },
+  {
+    "id": "L-18",
+    "title": "Export the DTW alignment path and worst-frame index",
+    "owner": "codex",
+    "day": "2026-10-18",
+    "size": "S",
+    "deps": [
+      "L-17"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/L-18-alignment",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "The side-by-side replay (L-21) needs the alignment and the worst moment, which are computed and discarded today.",
+    "files": [
+      "apps/learn/src/scoring/dtw.ts",
+      "apps/learn/src/scoring/score.ts",
+      "apps/learn/src/scoring/alignment.test.ts"
+    ],
+    "acceptance": [
+      "Score result optionally includes alignment: Array<[refFrame, attemptFrame]> and worstFrameIndex",
+      "Median scoring time within 10% of the current benchmark",
+      "Unit tests on synthetic sequences with a known worst frame"
+    ]
+  },
+  {
+    "id": "L-19",
+    "title": "Scenario cleanup: previews, author-only tips and hints, playable counts, recall variant",
+    "owner": "antigravity",
+    "day": "2026-10-17",
+    "size": "M",
+    "deps": [
+      "L-05"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/L-19-scenarios",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Learnability B8 and bug A16: an incomplete scenario looks playable; learners are sent to the author tool; team-written movement and location hints are presented as fact.",
+    "files": [
+      "apps/learn/src/components/ScenarioView.tsx",
+      "apps/learn/src/components/ScenarioView.css",
+      "apps/learn/src/data/scenarios/restaurant.json",
+      "apps/learn/src/data/scenarios/introductions.json",
+      "apps/learn/src/scenario/types.ts"
+    ],
+    "acceptance": [
+      "Social Gathering shows 'Preview: 3 of 7 signs available' and is not counted as completable",
+      "The Record tip shows only in author mode",
+      "Summary counts only playable turns; failed references retried; glossLabel used everywhere",
+      "Hints describing movement or location get pendingSignerValidation: true and are HIDDEN from learners (shown only in author mode) until kvn or a signer validates them; no hint text is rewritten or added",
+      "'That looked closer to X' is removed (it reads as recognition)",
+      "A recall variant hides the skeleton until after the attempt",
+      "Before/after screenshots (desktop and phone)"
+    ]
+  },
+  {
+    "id": "L-20",
+    "title": "Licence mode (VITE_CONTENT=cc0) and an attribution panel",
+    "owner": "codex",
+    "day": "2026-10-18",
+    "size": "M",
+    "deps": [
+      "L-10"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/L-20-licence-mode",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [
+      "DN-04"
+    ],
+    "why": "360 of 501 references are CC BY-NC-SA, so a commercial edition needs a CC0-only build, and the NC edition needs proper attribution.",
+    "files": [
+      "the reference-index loader file",
+      "apps/learn/src/components/LibraryView.tsx",
+      "apps/learn/src/components/Attribution.tsx",
+      "apps/learn/src/components/Attribution.css",
+      "apps/learn/public/references/LICENSES.md",
+      "apps/learn/src/data/licence.test.ts"
+    ],
+    "acceptance": [
+      "With VITE_CONTENT=cc0 the index excludes yohan_*; units and scenarios with missing signs show as Preview; default 'all' unchanged",
+      "Library/About lists both corpora with licence, link and 'modified (landmark extraction)' note",
+      "The Yohan source URL is added only if found on the dataset page; otherwise the TODO stays and kvn is asked",
+      "A test asserts no yohan_ id survives the cc0 filter; before/after screenshots of the attribution panel"
+    ]
+  },
+  {
+    "id": "L-21",
+    "title": "Feedback UI: side-by-side synced replay, typed hints, fading hints",
+    "owner": "claude-code",
+    "day": "2026-10-19",
+    "size": "M",
+    "deps": [
+      "L-16b",
+      "L-17",
+      "L-18"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-21-replay",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "A novice needs to see where the attempt diverged, not just a number.",
+    "files": [
+      "apps/learn/src/components/ReplayCompare.tsx",
+      "apps/learn/src/components/ReplayCompare.css",
+      "apps/learn/src/components/PracticeView.tsx",
+      "apps/learn/src/components/ScoreBadge.tsx"
+    ],
+    "acceptance": [
+      "ReplayCompare plays reference and attempt side by side along the alignment at 0.5x, pausing at worstFrameIndex with off fingers highlighted",
+      "Result card: band, finger states, at most 2 typed hints, stars change; the 'Check your' string filter removed",
+      "Hints collapse behind 'Show tips' once the sign is 'improving'",
+      "Phone layout stacks the replays; no horizontal scroll at 360 px",
+      "Before/after screenshots with the K-13 clip (desktop and phone)"
+    ]
+  },
+  {
+    "id": "L-22a",
+    "title": "List the Kaggle sentence labels and prepare the converter command",
+    "owner": "codex",
+    "day": "2026-10-15",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/codex/L-22a-sentence-labels",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "DN-08 needs evidence: if the 21 sentence clip labels are meaningful (not numeric), a sentence Recall cue exists without inventing anything.",
+    "files": [
+      "tools/reference-converter/convert_references.py",
+      "tools/reference-converter/README.md"
+    ],
+    "acceptance": [
+      "The handoff lists the 21 'SSL Sentences' source labels exactly as the dataset gives them (from tools/reference-converter docs or a dry-run kvn runs; agents never read datasets into the repo)",
+      "Converter supports the sentence category and writes kaggle_sent_*.json with provenance; the exact command is given for K-07",
+      "A go/no-go note for DN-08 (labels meaningful? clip lengths?)"
+    ]
+  },
+  {
+    "id": "L-22b",
+    "title": "Sentence data, exclusion from single-sign flows, long-sequence perf test",
+    "owner": "codex",
+    "day": "2026-10-18",
+    "size": "S",
+    "deps": [
+      "K-07"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/L-22b-sentences",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [
+      "DN-08"
+    ],
+    "why": "PP1 asked for a set of words or a sentence; real Kaggle sentence clips mean the team never authors an order.",
+    "files": [
+      "apps/learn/src/data/sentences.ts",
+      "apps/learn/src/scoring/longsequence.test.ts",
+      "apps/learn/src/scoring/references.test.ts",
+      "apps/learn/public/references/kaggle_sent_*.json (from kvn)"
+    ],
+    "acceptance": [
+      "Cancelled if DN-08 = drop",
+      "sentences.ts maps refId to the dataset label exactly as given and an optional meaning only from translations.ts",
+      "Sentence references excluded from single-sign browse and recommendations; the licence-provenance test and manifest accept them",
+      "A perf test: 6 s vs 6 s scoring under 50 ms on CI",
+      "UI label constant 'Experimental: whole-sentence match, not calibrated'"
+    ]
+  },
+  {
+    "id": "L-23a",
+    "title": "Demo profile and reset at the storage layer",
+    "owner": "codex",
+    "day": "2026-10-17",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/codex/L-23a-profile",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Keeps kvn's test attempts off the demo laptop; storage is the codex lane.",
+    "files": [
+      "apps/learn/src/storage/profile.ts",
+      "apps/learn/src/storage/profile.test.ts",
+      "apps/learn/src/storage/db.ts"
+    ],
+    "acceptance": [
+      "A separate IndexedDB namespace per profile ('default', 'demo'); switching is persisted with try/catch",
+      "resetProgress(profile) clears attempts and mastery for that profile only",
+      "Tested with fake IndexedDB"
+    ]
+  },
+  {
+    "id": "L-23",
+    "title": "Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI",
+    "owner": "antigravity",
+    "day": "2026-10-18",
+    "size": "M",
+    "deps": [
+      "L-23a",
+      "L-12",
+      "L-13"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/L-23-progress",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Shows the panel visible evidence of goals and adaptation.",
+    "files": [
+      "apps/learn/src/components/ProgressView.tsx",
+      "apps/learn/src/components/ProgressView.css"
+    ],
+    "acceptance": [
+      "Units with stars, streak and daily goal, a due-today count, signs learned (>=2 stars) and mastered",
+      "'How adaptation works' renders ADAPTATION.md rules in plain words; 'How scoring works' explains 85/60, match not accuracy, the honest limit (74.6% only with 65.4% if quoted at all)",
+      "Reset progress (with confirmation) and Demo profile switch use L-23a",
+      "Export still works; before/after screenshots (desktop and phone)"
+    ]
+  },
+  {
+    "id": "L-24",
+    "title": "Hero CTA straight to the first sign; session-complete screen",
+    "owner": "claude-code",
+    "day": "2026-10-18",
+    "size": "S",
+    "deps": [
+      "L-11"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-24-cta-complete",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Time to first attempt is long and there is no session-complete moment. The Hero's decorative preview cards stay as they are (kvn, 11 Oct).",
+    "files": [
+      "apps/learn/src/components/Hero.tsx (CTA target only)",
+      "apps/learn/src/components/SessionComplete.tsx",
+      "apps/learn/src/components/SessionComplete.css",
+      "apps/learn/src/components/PracticeView.tsx (session end hook)"
+    ],
+    "acceptance": [
+      "The Hero CTA opens the first open unit's first sign in Watch",
+      "The decorative preview cards (88% MATCH, 5 Day Streak, Fluent badge) are NOT changed",
+      "A session-complete screen shows stars earned, the daily goal state and the next unit",
+      "Time from landing to first Record under 30 s in a manual check (noted)",
+      "Before/after screenshots (desktop and phone)"
+    ]
+  },
+  {
+    "id": "L-25",
+    "title": "Sentence challenge UI (last unit on the Path)",
+    "owner": "antigravity",
+    "day": "2026-10-19",
+    "size": "M",
+    "deps": [
+      "L-22b",
+      "L-16b"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/L-25-sentences-ui",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [
+      "DN-08"
+    ],
+    "why": "A whole-sentence attempt with recall answers PP1's sentence request without inventing gloss order.",
+    "files": [
+      "apps/learn/src/components/SentenceView.tsx",
+      "apps/learn/src/components/SentenceView.css",
+      "apps/learn/src/components/PathView.tsx (unit entry only)"
+    ],
+    "acceptance": [
+      "Cancelled if DN-08 = drop",
+      "Watch the whole clip (video if permitted, else skeleton) at 0.5x; Try with reference visible; Recall with the dataset label as cue; capture window 2x the clip",
+      "Graded as one reference; the 'Experimental, not calibrated' badge always visible",
+      "Unlocked after the previous unit on the Path",
+      "App.tsx routing, if needed, is proposed as a diff for that day's App.tsx owner",
+      "Before/after screenshots (desktop and phone)"
+    ]
+  },
+  {
+    "id": "L-26",
+    "title": "Phone, accessibility and polish pass across Learn",
+    "owner": "claude-code",
+    "day": "2026-10-20",
+    "size": "M",
+    "deps": [
+      "L-21",
+      "L-23",
+      "L-25"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-26-polish",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "It must work on any device. PROGRESS-CRITIQUE 5.3 and RECORD-UIUX-PLAN phone checks were never done.",
+    "files": [
+      "apps/learn/src/components/views.css",
+      "apps/learn/src/index.css",
+      "apps/learn/src/components/PracticeView.tsx",
+      "apps/learn/src/components/CategorySignNavigator.tsx"
+    ],
+    "acceptance": [
+      "No horizontal scroll at 360, 375, 390 on Hero, Path, Practice (all stages), Result, Scenario, Progress, Library",
+      "Tap-to-preview in browse on touch; emoji removed from the no-hands panel; floating title does not overlap the skeleton at narrow widths",
+      "prefers-reduced-motion kills staggered animations; focus order logical; text contrast AA (spot-checked)",
+      "Q-07 label fix applied if needed",
+      "Screenshots of every screen at 360 and 1280 (contact sheet)"
+    ]
+  },
+  {
+    "id": "L-27",
+    "title": "Camera off while browsing or hidden; hover hint only on hover devices; GSAP restore",
+    "owner": "claude-code",
+    "day": "2026-10-20",
+    "size": "S",
+    "deps": [
+      "L-04",
+      "L-16b"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-27-camera-off",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Bug A18: the camera light stays on while browsing; the hover hint shows on touch tablets; a global GSAP setting leaks.",
+    "files": [
+      "apps/learn/src/components/PracticeView.tsx",
+      "apps/learn/src/components/Hero.tsx (gsap cleanup only)"
+    ],
+    "acceptance": [
+      "Stream stops while browsing and when the tab is hidden, restarts on return without error",
+      "Hover hint renders only under (hover: hover)",
+      "gsap.ticker.lagSmoothing restored on Hero unmount"
+    ]
+  },
+  {
+    "id": "L-28",
+    "title": "Learn docs match what shipped",
+    "owner": "claude-code-thesis",
+    "day": "2026-10-20",
+    "size": "S",
+    "deps": [
+      "L-26"
+    ],
+    "status": "todo",
+    "branch": "agent/claude/L-28-learn-docs",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Agents and the thesis need an accurate record with no inflated claims.",
+    "files": [
+      "apps/learn/README.md",
+      "apps/learn/PROGRESS-CRITIQUE.md",
+      "apps/learn/RECORD-UIUX-PLAN.md"
+    ],
+    "acceptance": [
+      "README describes Path, stages, feedback, licence mode, video (if any) and sentence challenge exactly as merged, linking ADAPTATION.md",
+      "Plan-doc open items marked done or open with evidence",
+      "No figure without its source; 74.6% only with 65.4%"
+    ]
+  },
+  {
+    "id": "L-31",
+    "title": "Third scenario from corpus signs (optional, only if kvn approves DN-19)",
+    "owner": "antigravity",
+    "day": "backlog (earliest 2026-10-19)",
+    "size": "M",
+    "deps": [
+      "K-05"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/L-31-scenario3",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [
+      "DN-19"
+    ],
+    "why": "Proposal O3 named five scenarios; two exist. Single-sign turns need no authored gloss order.",
+    "files": [
+      "apps/learn/src/data/scenarios/<new>.json"
+    ],
+    "acceptance": [
+      "English context text written or approved by kvn; every turn uses an existing reference; no hints authored; licence noted per turn",
+      "Shown as a scenario only if every turn is playable; before/after screenshots"
+    ]
+  },
+  {
+    "id": "L-32",
+    "title": "Sequence-from-memory level (only if Lithira's mapper supplies an order)",
+    "owner": "codex",
+    "day": "backlog",
+    "size": "M",
+    "deps": [
+      "K-03"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/L-32-sequence",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [
+      "DN-08"
+    ],
+    "why": "PP1 asked to perform a set of words. Only an order from Lithira's mapper (or a real clip) may be used.",
+    "files": [
+      "apps/learn/src/learner/sequence.ts",
+      "apps/learn/src/data/sequences.ts"
+    ],
+    "acceptance": [
+      "Only built if Lithira's mapper output arrives; each sequence cites the mapper output verbatim",
+      "2-3 signs in the given order, each graded on its own; labelled 'order from Communicate's mapper'",
+      "If never built, the thesis says the 'set of words' request is only partly answered"
+    ]
+  },
+  {
+    "id": "R-00",
+    "title": "M0: manual port of the merged blocker fixes into the R26 working tree",
+    "owner": "claude-code",
+    "day": "2026-10-14",
+    "size": "S",
+    "deps": [
+      "L-01",
+      "L-02",
+      "L-04",
+      "L-05",
+      "L-06",
+      "K-01"
+    ],
+    "status": "todo",
+    "branch": "none (R26 working tree; never commit)",
+    "r26_port": "no",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "learn-ssl-module.vercel.app shows invented finger percentages and serves immutable caches today. These fixes must be live before R-01/R-02 exist.",
+    "files": [
+      "C:/Users/User/Documents/R26-SE-019/learn-ssl-module/web/**"
+    ],
+    "acceptance": [
+      "Follows 07-r26-mirror.md section 4 (manual copy, coupling files hand-merged, R26-form vercel.json with NO redirect)",
+      "npm ci/test/lint/build pass in learn-ssl-module/web; dist has no '/learn/' paths",
+      "Screenshots of the R26 build (vite preview) at desktop and phone",
+      "The handoff gives kvn the summary line and point-form body (no trailer); the agent does not commit"
+    ]
+  },
+  {
+    "id": "R-01",
+    "title": "Portability refactor: base and Suvana-only code driven by suvana.config.json",
+    "owner": "codex",
+    "day": "2026-10-14",
+    "size": "M",
+    "deps": [
+      "L-06"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/R-01-portability",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [
+      "DN-01"
+    ],
+    "why": "Makes Suvana Learn and R26 Learn identical except for three declared files, so every port is a copy. Uses a JSON config, not a committed .env (the plan forbids committing .env files).",
+    "files": [
+      "apps/learn/vite.config.ts",
+      "apps/learn/suvana.config.json",
+      "apps/learn/src/App.tsx",
+      "apps/learn/src/components/Hero.tsx",
+      "apps/learn/src/app/session.ts",
+      "apps/learn/src/app/AccountButton.tsx",
+      "tools/sync/upstreams.json"
+    ],
+    "acceptance": [
+      "vite.config reads apps/learn/suvana.config.json if present ({base, suvana, port}); absent -> base '/', outDir 'dist', port 5173, VITE_SUVANA ''",
+      "Present (Suvana) -> base '/learn/', outDir 'dist/learn', port 5174, import.meta.env.VITE_SUVANA === '1' via define",
+      "AccountButton and Hero home links render only when VITE_SUVANA === '1'",
+      "suvana.config.json, vercel.json and package-lock.json are declared suvanaOnly/coupling in upstreams.json; learn guards rewritten; the stale 'TEMPORARY AppNavBar' note fixed; `sync.mjs guard` passes",
+      "A build without suvana.config.json gives an R26-identical dist (no /learn/ paths)",
+      "Before/after renders of the Suvana build and the R26-form build (desktop and phone) look unchanged"
+    ]
+  },
+  {
+    "id": "R-02",
+    "title": "sync.mjs `port learn --to <R26>` with --check",
+    "owner": "codex",
+    "day": "2026-10-16",
+    "size": "S",
+    "deps": [
+      "R-01"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/R-02-port-command",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Repeatable, safe porting to the R26 working tree per milestone.",
+    "files": [
+      "tools/sync/sync.mjs",
+      "tools/sync/README.md"
+    ],
+    "acceptance": [
+      "Refuses on a dirty R26 tree or when R26 main is not at origin/main (tells kvn to pull)",
+      "Copies all tracked, non-ignored apps/learn files except suvana.config.json, vercel.json and package-lock.json; mirrors deletions; prints add/modify/delete counts and a lockfile reminder when package.json changed",
+      "--check writes nothing and exits 1 on any difference",
+      "Never commits; README documents it with MSYS_NO_PATHCONV=1"
+    ]
+  },
+  {
+    "id": "R-03",
+    "title": "M1: port Learn into the R26 working tree",
+    "owner": "claude-code",
+    "day": "2026-10-17",
+    "size": "S",
+    "deps": [
+      "R-02"
+    ],
+    "status": "todo",
+    "branch": "none (R26 working tree)",
+    "r26_port": "no",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "R26 must always have kvn's latest Learn. M1 = Learn on main after the 17 Oct morning merge.",
+    "files": [
+      "C:/Users/User/Documents/R26-SE-019/learn-ssl-module/web/**"
+    ],
+    "acceptance": [
+      "Run from merged Suvana main with `sync.mjs port learn`; gates pass in learn-ssl-module/web; dist has no '/learn/' paths",
+      "Screenshots of the R26 build (desktop and phone)",
+      "Handoff gives the two commit blocks and the ported Suvana sha; the agent does not commit"
+    ]
+  },
+  {
+    "id": "R-04",
+    "title": "M2: port Learn into the R26 working tree",
+    "owner": "claude-code",
+    "day": "2026-10-19",
+    "size": "S",
+    "deps": [
+      "R-03"
+    ],
+    "status": "todo",
+    "branch": "none (R26 working tree)",
+    "r26_port": "no",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Keeps learn-ssl-module.vercel.app current. M2 = Learn on main after the 19 Oct morning merge.",
+    "files": [
+      "C:/Users/User/Documents/R26-SE-019/learn-ssl-module/web/**"
+    ],
+    "acceptance": [
+      "Same as R-03; any package.json change regenerates the R26 lockfile with `npx -y npm@10 install`"
+    ]
+  },
+  {
+    "id": "R-05",
+    "title": "Final Learn port to R26 for the demo",
+    "owner": "claude-code",
+    "day": "2026-10-21",
+    "size": "S",
+    "deps": [
+      "R-04",
+      "L-26",
+      "L-27",
+      "Q-08"
+    ],
+    "status": "todo",
+    "branch": "none (R26 working tree)",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "R26 and learn-ssl-module must match the demo build.",
+    "files": [
+      "C:/Users/User/Documents/R26-SE-019/learn-ssl-module/web/**"
+    ],
+    "acceptance": [
+      "Ports exactly the commit Q-08 proposed for the tag demo-2026-10-21",
+      "After kvn commits, `sync.mjs port learn --to ../R26-SE-019 --check` reports no difference",
+      "The handoff includes the Suvana sha ported, for the upstreams.json record"
+    ]
+  },
+  {
+    "id": "I-01",
+    "title": "Shell: remove the 'SoundGuard Ecosystem' sub-brand, configurable Recognize URL, fix the stale example",
+    "owner": "antigravity",
+    "day": "2026-10-13",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/antigravity/I-01-shell-brand",
+    "r26_port": "no",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "A visible sub-brand breaks the single-brand rule, and the Recognize card is unreachable on any deployment.",
+    "files": [
+      "apps/shell/index.html",
+      "apps/shell/src/main.ts",
+      "apps/shell/vite.config.ts"
+    ],
+    "acceptance": [
+      "index.html:404 shows a descriptive tag (e.g. 'Alerts'); grep finds no sub-brand text in apps/shell",
+      "data-service-url is filled from VITE_RECOGNIZE_URL at build time; localhost fallback kept",
+      "The recognize.suvana.lk example (:211) is replaced",
+      "Home-page preview cards are not changed",
+      "Shell tests and build pass; before/after screenshots (desktop and phone)"
+    ]
+  },
+  {
+    "id": "I-02",
+    "title": "Alerts: user-visible strings say Suvana",
+    "owner": "antigravity",
+    "day": "2026-10-13",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/antigravity/I-02-alerts-strings",
+    "r26_port": "no",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "'SOUNDGUARD' and 'SoundGuard is listening' are visible sub-brands.",
+    "files": [
+      "apps/alerts/components/Onboarding.tsx",
+      "apps/alerts/plugins/withSoundGuardBackground.js"
+    ],
+    "acceptance": [
+      "Onboarding.tsx:204 and the notification text and channel description (:171, :249) use Suvana/Alerts wording",
+      "`npx tsc --noEmit` passes",
+      "The handoff proposes the upstreams.json declaration and guard (codex lane applies it); slug, scheme and package untouched (I-12a)",
+      "Rendered component screenshot or simulator screenshot before/after"
+    ]
+  },
+  {
+    "id": "I-03",
+    "title": "Fix stale integration docs and record the Communicate gate",
+    "owner": "antigravity",
+    "day": "2026-10-14",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/antigravity/I-03-stale-docs",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "DEMO.md and DEPLOYMENT.md misstate blockers; the 12-Oct Communicate failure was the MSYS path rewrite (re-run passed).",
+    "files": [
+      "DEMO.md",
+      "DEPLOYMENT.md",
+      "TODO-PP2.md"
+    ],
+    "acceptance": [
+      "DEMO.md 'two data files' section and Status table, DEPLOYMENT.md labels.npy blocker row, 'shell has no env vars', the HF-free assumption and TODO-PP2.md:109 corrected",
+      "The handoff records the Communicate lint and build as passing with MSYS_NO_PATHCONV=1 (gates.txt correction block) and proposes README REPLACE-WITH text changes for README's owner"
+    ]
+  },
+  {
+    "id": "I-04",
+    "title": "Recognition re-sync of Lahiru's 656f371..ec2604a (code and tests only)",
+    "owner": "codex",
+    "day": "2026-10-14",
+    "size": "M",
+    "deps": [
+      "K-01"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/I-04-recognition-sync",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-18"
+    ],
+    "why": "Upstream has a faster inference path. The 88 MB of unused .h5 and dataset scripts must not enter the repo.",
+    "files": [
+      "services/recognition/src/model/**",
+      "services/recognition/webapp/server.py",
+      "services/recognition/src/**/recognizer*.py",
+      "services/recognition/tests/**",
+      "tools/sync/upstreams.json"
+    ],
+    "acceptance": [
+      "Code files taken via `sync.mjs apply`; the 4 new .h5, PNGs, demo_sentences.py, model_comparison.json, train_and_evaluate_all.py and notebooks declared skip with reasons",
+      "config.yaml model_path and labels.npy / sinhala_labels.json unchanged (git diff shows nothing for them)",
+      "pytest suites pass; `sync.mjs guard` passes; the record step and README sync-log line are proposed for README's owner"
+    ]
+  },
+  {
+    "id": "I-05",
+    "title": "Reference-converter: take kvn's port 5909a56 and declare the 3 undeclared diffs",
+    "owner": "codex",
+    "day": "2026-10-16",
+    "size": "S",
+    "deps": [
+      "I-04"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/I-05-converter-port",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "`sync.mjs record` refuses while undeclared Suvana-side diffs exist (README.md, convert_references.py, missing_signs.txt).",
+    "files": [
+      "tools/reference-converter/**",
+      "tools/sync/upstreams.json"
+    ],
+    "acceptance": [
+      "5909a56 applied; each of the 3 diffs ported back (listed for R26) or declared with a reason",
+      "`sync.mjs status` shows reference-converter clean",
+      "If any reference file changes, ASSET_VERSION (L-06) is bumped"
+    ]
+  },
+  {
+    "id": "I-06",
+    "title": "Shell: Privacy, Terms, Contact and Pricing/business-model pages",
+    "owner": "antigravity",
+    "day": "2026-10-18",
+    "size": "M",
+    "deps": [
+      "I-01"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/I-06-shell-pages",
+    "r26_port": "no",
+    "screenshots": "yes",
+    "decisions": [
+      "DN-04",
+      "DN-15"
+    ],
+    "why": "Commercialisation is graded, and the footer links are '#'.",
+    "files": [
+      "apps/shell/privacy.html",
+      "apps/shell/terms.html",
+      "apps/shell/contact.html",
+      "apps/shell/pricing.html",
+      "apps/shell/index.html (footer links only)",
+      "apps/shell/vite.config.ts"
+    ],
+    "acceptance": [
+      "Privacy matches reality: Learn processes on-device, no video uploaded; Communicate stores account email and hashed password in MongoDB; assistant questions go to Gemini when enabled; any corpus video comes from Cloudinary",
+      "Terms marked 'draft, not legal advice'; contact address approved by kvn",
+      "Pricing page: open-core model, labelled 'Roadmap: no paid offering; this deployment is non-commercial and academic', with the Vercel Hobby caveat; prices only if kvn supplies them",
+      "Footer links work; multi-page build passes; before/after screenshots (desktop and phone)"
+    ]
+  },
+  {
+    "id": "I-07",
+    "title": "Communicate own instance: placeholder-seed guard, gloss import script, env example",
+    "owner": "antigravity",
+    "day": "2026-10-16",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/antigravity/I-07-communicate-scripts",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Placeholder animations must never be demoed, and Lithira's data must be importable without his secrets.",
+    "files": [
+      "apps/communicate/scripts/seedGlosses.ts",
+      "apps/communicate/scripts/importGlosses.ts",
+      "apps/communicate/.env.local.example"
+    ],
+    "acceptance": [
+      "seedGlosses refuses without --placeholder-dev-only and prints a warning",
+      "importGlosses reads an exported JSON (name, Sinhala forms, animationUrl, public_id), is dry-run by default, and can remap animationUrl to a new Cloudinary base",
+      "ADMIN_EMAILS documented; lint and build pass with MSYS_NO_PATHCONV=1"
+    ]
+  },
+  {
+    "id": "I-08",
+    "title": "Recognition container: Docker build, latency comparison, /api/info, back link and theme",
+    "owner": "codex",
+    "day": "2026-10-17",
+    "size": "M",
+    "deps": [
+      "I-04"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/I-08-recognition-container",
+    "r26_port": "no",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "It must be hostable by 18 Oct, with latency verified, and must link back to Suvana.",
+    "files": [
+      "services/recognition/Dockerfile",
+      "services/recognition/webapp/server.py",
+      "services/recognition/webapp/static/index.html",
+      "services/recognition/README.md"
+    ],
+    "acceptance": [
+      "docker build succeeds; the container logs 'Loaded 171 gesture labels'",
+      "Median and p90 round-trip over 50 windows for tf_function vs predict; the faster is kept",
+      "/api/info returns its existing fields {sequenceLength, confidenceThreshold, numClasses: 171}; the static page has a 'Back to Suvana' link and honours ?theme=",
+      "pytest passes; additions proposed as declared Suvana-specific changes; before/after screenshot of the page"
+    ]
+  },
+  {
+    "id": "I-09",
+    "title": "Speech container: build check and readiness notes",
+    "owner": "codex",
+    "day": "2026-10-19",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/codex/I-09-speech-container",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Decides whether hosting speech is feasible (DN-03) and prepares the laptop run.",
+    "files": [
+      "services/speech/README.md"
+    ],
+    "acceptance": [
+      "docker build attempted; image size and first-start time recorded",
+      "Required env (TRANSLATE_API_KEY on the service, STT_API_KEY in Communicate) and model IDs to confirm with Lithira listed; laptop run command documented"
+    ]
+  },
+  {
+    "id": "I-10",
+    "title": "Shell: wire the hosted Recognize URL, Alerts download section, phone pass",
+    "owner": "antigravity",
+    "day": "2026-10-19",
+    "size": "S",
+    "deps": [
+      "D-04",
+      "I-01"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/I-10-shell-wiring",
+    "r26_port": "no",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "The landing page must lead to every module on any device.",
+    "files": [
+      "apps/shell/index.html",
+      "apps/shell/alerts/index.html"
+    ],
+    "acceptance": [
+      "The Recognize card links to the hosted URL in production (kvn sets VITE_RECOGNIZE_URL)",
+      "/alerts/ shows the APK download when I-12 provides a release URL, else honest 'build in progress' text",
+      "No horizontal scroll at 360/390; before/after screenshots"
+    ]
+  },
+  {
+    "id": "I-11",
+    "title": "Verify the shared session behind the Vercel rewrite; fix if needed",
+    "owner": "antigravity",
+    "day": "2026-10-19",
+    "size": "S",
+    "deps": [
+      "D-03"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/I-11-auth-rewrite",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Auth.js behind an external rewrite may put cookies and redirects on the wrong host.",
+    "files": [
+      "apps/communicate/auth.ts",
+      "apps/communicate/next.config.ts"
+    ],
+    "acceptance": [
+      "On suvana-shell.vercel.app: register, sign in, session visible on /, /learn/ and /communicate, cookies on the shell host (Antigravity browser check)",
+      "If broken: an AUTH_URL/trustHost fix proposed and tested on a preview; if still broken, the fallback goes to kvn",
+      "Result written in the handoff for 05-integration.md"
+    ]
+  },
+  {
+    "id": "I-12a",
+    "title": "Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild)",
+    "owner": "antigravity",
+    "day": "2026-10-16",
+    "size": "S",
+    "deps": [
+      "I-02"
+    ],
+    "status": "todo",
+    "branch": "agent/antigravity/I-12a-alerts-eas",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-14"
+    ],
+    "why": "A Karindra-built APK from his own tree still says SoundGuard and carries com.karindragimhan69.soundguard.",
+    "files": [
+      "apps/alerts/app.json",
+      "apps/alerts/eas.json"
+    ],
+    "acceptance": [
+      "Cancelled if DN-14 = Karindra builds from Suvana's apps/alerts",
+      "slug/scheme 'suvana-alerts', package 'help.suvana.alerts', projectId placeholder for kvn's EAS project (kvn fills it)",
+      "`npx tsc --noEmit` passes; declared in the handoff for upstreams.json"
+    ]
+  },
+  {
+    "id": "I-12",
+    "title": "Alerts APK: Karindra builds from Suvana's tree, or kvn rebuilds under his EAS",
+    "owner": "kvn",
+    "day": "2026-10-17 to 2026-10-19",
+    "size": "M",
+    "deps": [
+      "K-03",
+      "I-02"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [
+      "DN-14"
+    ],
+    "why": "Alerts needs a native build to be demoed without a laptop.",
+    "files": [],
+    "acceptance": [
+      "Path A: Karindra builds a signed preview APK from Suvana's apps/alerts (with I-02 applied) by 16 Oct",
+      "Path B (no reply by 15 Oct): kvn runs `eas build -p android --profile preview` on the I-12a branch",
+      "The APK is attached to a GitHub Release (never committed) and installed on the demo phone; sound detection tried once offline"
+    ]
+  },
+  {
+    "id": "I-13",
+    "title": "Import Lithira's glosses and animations into kvn's Atlas and Cloudinary",
+    "owner": "kvn",
+    "day": "2026-10-20",
+    "size": "M",
+    "deps": [
+      "I-07",
+      "K-03"
+    ],
+    "status": "todo",
+    "branch": "n/a",
+    "r26_port": "no",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Communicate can only sign with Lithira's real animation data; blocked on his reply.",
+    "files": [],
+    "acceptance": [
+      "If data arrived: animations uploaded to kvn's Cloudinary; importGlosses runs for real; one gloss animates in production",
+      "If not by 20 Oct: DEMO.md says avatar-only; no placeholder is shown"
+    ]
+  },
+  {
+    "id": "I-14",
+    "title": "Learn and Communicate bridge: /learn/?sign=GLOSS deep link",
+    "owner": "codex",
+    "day": "2026-10-20",
+    "size": "S",
+    "deps": [
+      "L-16a",
+      "D-03"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/I-14-deep-link",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Proposal O4 (learning-communication integration) shows the one-platform story.",
+    "files": [
+      "apps/learn/src/App.tsx (?sign= only)",
+      "apps/communicate/components/dictionary/SignDictionaryWorkbench.tsx"
+    ],
+    "acceptance": [
+      "Learn opens the named sign in Watch when ?sign= exactly matches a reference gloss id; otherwise ignores it",
+      "The handoff reports the exact-id overlap count between Communicate glosses and Learn's index",
+      "Communicate shows 'Practise in Learn' only for overlapping ids (no invented mapping)",
+      "Works under the shell; before/after screenshots"
+    ]
+  }
+]
