@@ -188,9 +188,25 @@ function toMatch(entry: IndexedEntry, matchType: GlossMatch["matchType"]): Gloss
 const round = (n: number) => Math.round(n * 100) / 100;
 
 /**
+ * Maximum number of consecutive tokens to join when attempting multi-word
+ * sign lookup. Sinhala phrases registered as glosses are typically 2–3 words
+ * (e.g. "ඇදුම් සෝදනවා"), so 4 covers all realistic cases without making
+ * the scan expensive.
+ */
+const MAX_PHRASE_TOKENS = 4;
+
+/**
  * Matches a list of Sinhala tokens, reporting which ones found nothing so the
  * UI can show what's missing from the dictionary rather than silently
  * dropping it.
+ *
+ * Uses **greedy longest-match-first n-gram scanning**: at each position,
+ * the longest composite phrase (up to `MAX_PHRASE_TOKENS` consecutive tokens
+ * joined with a space) is tried first through the full matching ladder
+ * (exact → stem → phonetic → fuzzy). If the composite matches, all its
+ * constituent tokens are consumed at once. This lets multi-word signs such
+ * as "ඇදුම් සෝදනවා" match when the ASR tokenizer returns each word
+ * separately, without requiring any changes to how signs are registered.
  */
 export function matchSinhalaTokens(
   tokens: string[],
@@ -199,11 +215,28 @@ export function matchSinhalaTokens(
   const index = buildSinhalaIndex(candidates);
   const matches: GlossMatch[] = [];
   const unmatched: string[] = [];
+  let i = 0;
 
-  for (const token of tokens) {
-    const match = matchToken(token, index);
-    if (match) matches.push(match);
-    else if (normalizeSinhala(token)) unmatched.push(token);
+  while (i < tokens.length) {
+    let matched = false;
+
+    // Try longest composite phrase first, then progressively shorter.
+    for (let n = Math.min(MAX_PHRASE_TOKENS, tokens.length - i); n >= 1; n--) {
+      const composite = tokens.slice(i, i + n).join(" ");
+      const match = matchToken(composite, index);
+      if (match) {
+        matches.push(match);
+        i += n;
+        matched = true;
+        break;
+      }
+    }
+
+    if (!matched) {
+      const token = tokens[i];
+      if (normalizeSinhala(token)) unmatched.push(token);
+      i++;
+    }
   }
 
   return { matches, unmatched };

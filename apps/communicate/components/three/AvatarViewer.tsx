@@ -31,6 +31,14 @@ function FramingRig({ model }: { model: QuickMagicModel | null }) {
 
   useEffect(() => {
     if (!model) return;
+    // Force the 0.01 scale to propagate before measuring — without this,
+    // the first frame after mount can read the stale identity matrix and
+    // compute a bounding box 100× too large, making the avatar fill the
+    // entire viewport. This is the root cause of the "oversized on first
+    // load" bug that only appears on Vercel (longer fetch ⇒ model arrives
+    // after R3F's render loop goes idle, so no automatic matrix update
+    // has run yet).
+    model.scene.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(model.scene);
     if (box.isEmpty()) return;
 

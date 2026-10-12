@@ -1,5 +1,6 @@
 "use client";
 
+import { apiPath } from "@/lib/basePath";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import * as THREE from "three";
 import { toAnimationClip } from "@/lib/animation/mixamoJsonToClip";
@@ -235,7 +236,7 @@ function GlossSequencer({
       if (!clip) {
         try {
           const res = await fetch(
-            `/api/animations/fetch?url=${encodeURIComponent(entry.cloudinaryUrl)}`
+            apiPath(`/api/animations/fetch?url=${encodeURIComponent(entry.cloudinaryUrl)}`)
           );
           if (!res.ok) throw new Error(`Failed to fetch animation (${res.status})`);
           const json = await res.json();
