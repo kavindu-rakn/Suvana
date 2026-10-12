@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import type { Tab } from '../app/tabs'
 import { ALL_TABS, ICONS } from '../app/tabs'
 import type { AppMode } from '../app/mode'
+import { shortcutBlockedByTarget } from '../app/keyboard'
 import { ThemeToggle } from './ThemeToggle'
 
 interface AppNavBarProps {
@@ -66,11 +67,13 @@ export function AppNavBar({
     }
   }, [tab, tabs])
 
-  // Global keyboard shortcuts: 1, 2, 3... to jump tabs; Esc to go to Hero
+  // Global keyboard shortcuts: 1, 2, 3... to jump tabs; Esc to go to Hero.
+  // A view that uses a key itself (Practice's Esc cancels a countdown) calls
+  // preventDefault from a capture-phase listener, which runs before this one.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement)?.tagName
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+      if (e.defaultPrevented) return
+      if (shortcutBlockedByTarget(e.key, e.target)) return
 
       if (e.key === 'Escape') {
         onLeaveToHero()
