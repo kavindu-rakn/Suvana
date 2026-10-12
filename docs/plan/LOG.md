@@ -99,11 +99,12 @@ Rules:
 - Plan corrections applied: lane-worktree test baseline (08 section 9), M0 commit wording (07 section 4), L-17 re-derives HINT_MIN_DEVIATION.
 - Tomorrow first: antigravity reworks Q-00, then re-shoots I-01; kvn merges Q-00 at midday so codex can shoot L-05.
 
-### 2026-10-13 02:10 | antigravity | I-01
-- What: done: Removed 'SoundGuard Ecosystem' sub-brand tag from pipeline section, updated recognize example URL to recognize.suvana.help, injected VITE_RECOGNIZE_URL into data-service-url at build time while keeping localhost fallback.
-- Branch @ sha: agent/antigravity/I-01-shell-brand@c11fc7f
+### 2026-10-13 03:05 | antigravity | I-01 re-shot
+- What: done: Removed 'SoundGuard Ecosystem' sub-brand tag from pipeline section, updated recognize example URL to recognize.suvana.help, injected VITE_RECOGNIZE_URL into data-service-url at build time while keeping localhost fallback. Screenshots re-shot with landing intro and preloader fully finished, capturing both hero typography and pipeline tag comparisons.
+- Branch @ sha: agent/antigravity/I-01-shell-brand (rebased on main @ 2fd433a)
 - Gates: guard ok (152 checks passed) | shell tests 44 passed | shell build 180.47 kB gzip main bundle | VITE_RECOGNIZE_URL injection verified
 - Screenshots: C:/Users/User/Documents/Suvana-wt/antigravity/.agent-local/screens/I-01/index.html
-- Needs kvn: none
-- Next: I-02 (Alerts: user-visible strings say Suvana)
+- Needs kvn: review and merge for single-brand shell
+- Next: I-01 ready for review
+
 
