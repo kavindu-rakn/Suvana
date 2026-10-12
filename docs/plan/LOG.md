@@ -66,3 +66,13 @@ Rules:
 - Screenshots: C:\Users\User\Documents\Suvana-wt\claude\.agent-local\screens\L-01\index.html
 - Needs kvn: adopt/reject the UI from the contact sheet; record the DN-17 amendment. Plan correction: L-01's 0.1/0.05 cut-offs and HINT_MIN_DEVIATION fire on correct takes (for L-17); 07's M0 commit text needs the new wording.
 - Next: claude-code's 13 Oct tasks are done; 14 Oct R-00 M0 port after kvn merges.
+
+### 2026-10-13 01:36 | codex | L-04
+- What: Camera lifecycle, GPU-to-CPU fallback and wall-clock capture safeguards ready for review; no real-device verification claimed.
+- Branch @ sha: agent/codex/L-04-camera-lifecycle @ task HEAD (see handoffs/L-04.md and git log -1 on branch).
+- Gates: guard 152; lint 1 existing PracticeView warning, 0 new; tests 137 passed / 7 skipped; build 143.21 kB gzip; diff check passed.
+- Screenshots: n/a (logic-only).
+- Needs kvn: review/merge; real-camera and phone checks at Q-06a/Q-06; R-00 port after merge.
+- Plan correction: clean lane lacks untracked calibration data; baseline 138/2 does not apply here, calibration/weight-fit and opt-in evaluation tests skip (7 total). No data generated or committed.
+- Next: L-05 storage on a leaf stacked on this logic-only branch, then L-06 from L-04.
+
