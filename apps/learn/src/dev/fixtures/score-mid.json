@@ -2,24 +2,17 @@
   "score": 72,
   "delta": -3,
   "best": false,
-  "twoHanded": false,
-  "gloss": "STHUTHI",
+  "gloss": "AHANAWA",
   "resultNotes": [
-    "Index and middle fingers are slightly off",
-    "Keep hand upright"
+    "Check your index finger — its shape drifts from the reference."
   ],
-  "fingerFocus": ["index", "middle"],
-  "handsData": [
+  "fingerFocus": [
+    "index"
+  ],
+  "hands": [
     {
       "handedness": "Right",
-      "score": 72,
-      "fingers": [
-        { "name": "Thumb", "key": "thumb", "accuracy": 84 },
-        { "name": "Index", "key": "index", "accuracy": 65 },
-        { "name": "Middle", "key": "middle", "accuracy": 62 },
-        { "name": "Ring", "key": "ring", "accuracy": 78 },
-        { "name": "Pinky", "key": "pinky", "accuracy": 81 }
-      ]
+      "score": 72
     }
   ]
 }

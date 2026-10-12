@@ -2,35 +2,19 @@
   "score": 84,
   "delta": 8,
   "best": true,
-  "twoHanded": true,
-  "gloss": "SUBHA_UDASANAK",
+  "gloss": "AYUBOWAN",
   "resultNotes": [
-    "Both hands tracked nicely",
-    "Left pinky extension needs work"
+    "Close match — both hands are tracking the reference well."
   ],
-  "fingerFocus": ["pinky"],
-  "handsData": [
+  "fingerFocus": [],
+  "hands": [
     {
       "handedness": "Left",
-      "score": 80,
-      "fingers": [
-        { "name": "Thumb", "key": "thumb", "accuracy": 85 },
-        { "name": "Index", "key": "index", "accuracy": 82 },
-        { "name": "Middle", "key": "middle", "accuracy": 80 },
-        { "name": "Ring", "key": "ring", "accuracy": 78 },
-        { "name": "Pinky", "key": "pinky", "accuracy": 60 }
-      ]
+      "score": 80
     },
     {
       "handedness": "Right",
-      "score": 88,
-      "fingers": [
-        { "name": "Thumb", "key": "thumb", "accuracy": 90 },
-        { "name": "Index", "key": "index", "accuracy": 88 },
-        { "name": "Middle", "key": "middle", "accuracy": 86 },
-        { "name": "Ring", "key": "ring", "accuracy": 85 },
-        { "name": "Pinky", "key": "pinky", "accuracy": 84 }
-      ]
+      "score": 88
     }
   ]
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ScoreBadge, type HandAccuracyInfo } from '../components/ScoreBadge'
+import { ScoreBadge, type HandFeedback } from '../components/ScoreBadge'
 import { FINGER_LABEL, type Finger } from '../scoring/landmarks'
 import { RotateCcw, ArrowRight, X, Sun, Moon } from 'lucide-react'
 import '../index.css'
@@ -15,12 +15,11 @@ interface ResultFixture {
   score: number
   delta?: number
   best?: boolean
-  twoHanded?: boolean
   noHands?: boolean
   gloss: string
   resultNotes: string[]
-  fingerFocus: string[]
-  handsData: HandAccuracyInfo[]
+  fingerFocus?: string[]
+  hands?: HandFeedback[]
 }
 
 const FIXTURES: Record<string, ResultFixture> = {
@@ -117,8 +116,7 @@ function FixtureCard({ id, data }: { id: string; data: ResultFixture }) {
               score={data.score}
               delta={data.delta ?? null}
               best={data.best ?? false}
-              twoHanded={data.twoHanded ?? false}
-              handsData={data.handsData}
+              hands={data.hands}
             />
             <div className="aww-result-feedback">
               {data.score === 100 ? (

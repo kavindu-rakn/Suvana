@@ -2,24 +2,15 @@
   "score": 92,
   "delta": 6,
   "best": true,
-  "twoHanded": false,
-  "gloss": "AYUBOWAN",
+  "gloss": "DAKINAWA",
   "resultNotes": [
-    "Good wrist alignment",
-    "Finger placement matches well"
+    "Close match — keep the same handshape and pace."
   ],
   "fingerFocus": [],
-  "handsData": [
+  "hands": [
     {
       "handedness": "Right",
-      "score": 92,
-      "fingers": [
-        { "name": "Thumb", "key": "thumb", "accuracy": 95 },
-        { "name": "Index", "key": "index", "accuracy": 92 },
-        { "name": "Middle", "key": "middle", "accuracy": 90 },
-        { "name": "Ring", "key": "ring", "accuracy": 88 },
-        { "name": "Pinky", "key": "pinky", "accuracy": 94 }
-      ]
+      "score": 92
     }
   ]
 }

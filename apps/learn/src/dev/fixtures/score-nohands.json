@@ -1,10 +1,10 @@
 {
   "score": 0,
   "noHands": true,
-  "gloss": "AMMA",
+  "gloss": "KANAWA",
   "resultNotes": [
     "The AI tracker didn't detect a hand gesture in that take."
   ],
   "fingerFocus": [],
-  "handsData": []
+  "hands": []
 }
