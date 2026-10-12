@@ -55,7 +55,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | Q-07 | Handedness reality check | kvn | 2026-10-14 | S | - | todo | `n/a` | no | no | - |
 | Q-08 | Demo-ready gate run and release tag proposal | claude-code | 2026-10-21 | S | L-26, L-27 | todo | `agent/claude/Q-08-gates` | no | no | - |
 | Q-09 | Measure end-to-end feedback latency (capture end to result shown) | codex | 2026-10-19 | S | L-16a, Q-00, K-13 | todo | `agent/codex/Q-09-latency` | no | no | - |
-| L-01 | Replace invented per-finger percentages with measured on/close/off states; one label scale | claude-code | 2026-10-13 | S | L-02 | todo | `agent/claude/L-01-finger-states` | yes | yes | DN-17 |
+| L-01 | Replace invented per-finger percentages with measured Correct/Almost/Wrong states (DN-17); one label scale | claude-code | 2026-10-13 | S | L-02 | todo | `agent/claude/L-01-finger-states` | yes | yes | DN-17 |
 | L-02 | Keyboard: Esc no longer exits to the Hero; Enter/Space respect the focused control | claude-code | 2026-10-13 | S | - | todo | `agent/claude/L-02-keyboard` | yes | no | - |
 | L-03 | Practice capture robustness: wall-clock backstop, safe initial load, no empty-reference logging | claude-code | 2026-10-14 | S | - | todo | `agent/claude/L-03-capture-robustness` | yes | no | - |
 | L-04 | Camera lifecycle: lost track, frame-loop errors, insecure origin, GPU-to-CPU fallback, resume | codex | 2026-10-13 | M | - | todo | `agent/codex/L-04-camera-lifecycle` | yes | no | - |
@@ -620,7 +620,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
   - [ ] Prints median and p90 with machine and browser details; output saved in the handoff for T-03
   - [ ] No number is quoted anywhere without this output
 
-### L-01: Replace invented per-finger percentages with measured on/close/off states; one label scale
+### L-01: Replace invented per-finger percentages with measured Correct/Almost/Wrong states (DN-17); one label scale
 
 - **Owner / day / size:** claude-code / 2026-10-13 / S
 - **Depends on:** L-02; decisions DN-17
@@ -628,7 +628,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 - **Why:** Fabricated finger % (PracticeView ~384-408, ScoreBadge 94-242) break 'never invent figures', and the tier titles contradict the 85/60 bands. It is live on learn-ssl-module.vercel.app.
 - **Files:** `apps/learn/src/scoring/fingerStates.ts`, `apps/learn/src/scoring/fingerStates.test.ts`, `apps/learn/src/components/PracticeView.tsx`, `apps/learn/src/components/ScoreBadge.tsx`, `apps/learn/src/components/views.css`
 - **Acceptance:**
-  - [ ] fingerStates.ts derives on/close/off per finger from HandScore.perLandmark grouped by LANDMARK_FINGER; off > 0.1 (HINT_MIN_DEVIATION), close > 0.05; the 0.05 cut-off is documented as an untuned UI constant; tested
+  - [ ] fingerStates.ts derives Correct/Almost/Wrong per finger (DN-17 wording) from HandScore.perLandmark grouped by LANDMARK_FINGER; Wrong > 0.1 (HINT_MIN_DEVIATION), Almost > 0.05, otherwise Correct; the 0.05 cut-off is documented as an untuned UI constant; tested
   - [ ] No '%' is rendered next to any finger, in UI or SVG titles (grep check in the handoff)
   - [ ] ScoreBadge no longer copies the overall score to every finger; Scenario results show no per-finger data unless real data is passed
   - [ ] Only band() labels (85/60) remain; 'Master Execution' and 'Fluent Signing' tiers removed (Hero decorative cards untouched)

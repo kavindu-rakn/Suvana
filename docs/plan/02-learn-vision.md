@@ -32,7 +32,7 @@ A hearing beginner with no SSL watches a sign slowly, copies it, then performs i
 - This answers PP1's "showing the accuracy of the gesture is not enough": the learner proves retrieval, not copying. Retrieval practice is well supported in general; no study has tested it on sign vocabulary, and the thesis says so.
 
 ### Pillar 3: Honest, actionable feedback
-- Each finger: **on / close / off**, from the measured per-landmark deviation. No percentages.
+- Each finger: **Correct / Almost / Wrong** (kvn's wording, DN-17), from the measured per-landmark deviation. No percentages.
 - At most two hints, ordered by contribution: handshape (which finger), timing ("about 2x faster than the reference"), path ("the hand path differs; watch the movement at 0.5x"). Thresholds are untuned UI constants and are documented as such.
 - "Close match" only when the score is >= 85.
 - Side-by-side synced replay (reference vs you, 0.5x), pausing at the worst-matching moment.

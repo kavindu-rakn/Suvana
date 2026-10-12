@@ -55,7 +55,7 @@ Handoff: changed file list, gate results, screenshots, the Suvana sha ported, an
 Learn: port Suvana blocker fixes (M0) from Suvana <sha>
 ```
 ```
-- Replace invented per-finger percentages with measured on/close/off states
+- Replace invented per-finger percentages with measured Correct/Almost/Wrong states
 - Fix Esc and Enter/Space keyboard traps in Practice
 - Detect lost cameras, recover the frame loop, require HTTPS, fall back to CPU
 - Survive blocked IndexedDB and localStorage; add an error boundary

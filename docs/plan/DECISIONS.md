@@ -15,6 +15,10 @@ Only kvn (or a planner session he starts) edits this file, on `main`. If kvn ans
 | D-A7 | 12 Oct | suvana.help is bought later, by kvn, once everything is deployed on .vercel.app. Agents never buy. | kvn |
 | D-A8 | 12 Oct | kvn has no teammate secrets. Plan around hosted versions where usable; list exact asks per teammate. | kvn |
 | D-A9 | 12 Oct | Final demo about 22 Oct; demo-ready by 21 Oct. | kvn |
+| D-A11 | 13 Oct | DN-01: Learn stays portable through **one config switch** (option B): Suvana-only parts are turned on by `apps/learn/suvana.config.json`; all other Learn files identical in both repos; verified with before/after renders of both builds (R-01). | kvn |
+| D-A12 | 13 Oct | DN-17: per-finger feedback is qualitative, from the measured per-finger deviation, labelled **Correct / Almost / Wrong** (kvn's wording; replaces on/close/off). No percentages next to any finger. | kvn |
+| D-A13 | 13 Oct | DN-18: from Lahiru's 12-Oct recognition commits take **code and tests only**; skip the 4 `.h5` models, PNGs, notebooks, training scripts, `demo_sentences.py` and `model_comparison.json`; never quote 98.78%. | kvn |
+| D-A14 | 13 Oct | DN-10: game rules **looser** than the draft (stars 60/85 + Recall >= 60, unit pass = all signs >= 2 stars, daily goal 10). kvn gave no numbers: L-12's owner proposes concrete looser thresholds with a rendered mock for kvn's approval before building; nothing is built on guessed values. | kvn |
 | D-A10 | 10 Oct | Upstream changes that alter product behaviour go to kvn before they are taken (e.g. Lithira closing registration was not taken). UI changes are decided from rendered before/after screenshots, desktop and phone. | Suvana CLAUDE.md |
 
 ## B. Plan defaults forced by hard rules (kvn may overturn; agents may not)
@@ -37,7 +41,7 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 ### DN-01: How does Learn stay portable to R26? (needed by 13 Oct; R-01 on 14 Oct)
 - Options: **B** config-driven base plus `VITE_SUVANA`-gated account code, files identical except `suvana.config.json`, `vercel.json`, lockfile (R-01). **A** keep the couplings and add a three-way-merge port command. **C** manual copy each milestone.
 - Pros/cons: B makes ports a plain copy and removes most guards, but R26 carries dormant Suvana account code. A leaves R26 untouched but merges are conflict-prone. C is error-prone under time pressure.
-- Recommendation: **B**, verified with before/after renders of both builds. Status: open.
+- Recommendation: **B**, verified with before/after renders of both builds. Status: **decided 13 Oct: B (D-A11).**
 
 ### DN-02: Where is Recognize hosted for 18-22 Oct? (needed by 16 Oct; D-04 on 18 Oct)
 - Options: Railway Hobby (about $5/month plus usage, always on); HF Docker Space (PRO needed; sleeps); Fly.io (card); Cloud Run with min-instances=1 (billing); laptop + cloudflared only.
@@ -78,7 +82,7 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 ### DN-10: Game rules (needed by 14 Oct; L-12 15 Oct)
 - Options: as specified (stars 60/85 plus Recall >= 60; unit pass = all signs >= 2 stars; daily goal 10 attempts); stricter; looser.
 - Note: match scores do not separate correct from incorrect strongly (74.6% vs 65.4%), so stars reward similarity to the reference, not proven correctness; UI and thesis say "match".
-- Recommendation: **as specified** (safe to assume). Status: open.
+- Recommendation: **as specified** (safe to assume). Status: **decided 13 Oct: looser; exact values to be proposed by L-12 for kvn's approval (D-A14).**
 
 ### DN-11: Where is learner progress stored? (needed by 14 Oct)
 - Options: per browser (IndexedDB) with reset and a demo profile; sync to the Communicate account in MongoDB.
@@ -108,11 +112,11 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 
 ### DN-17: Per-finger feedback form (needed by 13 Oct; L-01)
 - Options: qualitative on/close/off from measured deviation; measured deviation numbers labelled "deviation".
-- Recommendation: **qualitative** (safe to assume). Status: open.
+- Recommendation: **qualitative** (safe to assume). Status: **decided 13 Oct: qualitative, labelled Correct / Almost / Wrong (D-A12).**
 
 ### DN-18: Take Lahiru's 12-Oct recognition commits? (needed by 13 Oct; I-04 14 Oct)
 - Options: code and tests only (skip 4 `.h5`, PNGs, `demo_sentences.py`, training scripts, notebooks, `model_comparison.json`); everything; nothing until Lahiru answers.
-- Recommendation: **code and tests only**; latency verified in I-08; never quote 98.78%. Status: open.
+- Recommendation: **code and tests only**; latency verified in I-08; never quote 98.78%. Status: **decided 13 Oct: code and tests only (D-A13).**
 
 ### DN-19: Build a third scenario from corpus signs? (needed by 16 Oct, after L-09's coverage table; L-31)
 - Options: yes, one scenario whose turns are all existing references, English context written by kvn, no hints; no (O3 stays at 2 of 5 and the thesis says so).

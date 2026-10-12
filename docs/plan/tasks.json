@@ -1040,7 +1040,7 @@
   },
   {
     "id": "L-01",
-    "title": "Replace invented per-finger percentages with measured on/close/off states; one label scale",
+    "title": "Replace invented per-finger percentages with measured Correct/Almost/Wrong states (DN-17); one label scale",
     "owner": "claude-code",
     "day": "2026-10-13",
     "size": "S",
@@ -1063,7 +1063,7 @@
       "apps/learn/src/components/views.css"
     ],
     "acceptance": [
-      "fingerStates.ts derives on/close/off per finger from HandScore.perLandmark grouped by LANDMARK_FINGER; off > 0.1 (HINT_MIN_DEVIATION), close > 0.05; the 0.05 cut-off is documented as an untuned UI constant; tested",
+      "fingerStates.ts derives Correct/Almost/Wrong per finger (DN-17 wording) from HandScore.perLandmark grouped by LANDMARK_FINGER; Wrong > 0.1 (HINT_MIN_DEVIATION), Almost > 0.05, otherwise Correct; the 0.05 cut-off is documented as an untuned UI constant; tested",
       "No '%' is rendered next to any finger, in UI or SVG titles (grep check in the handoff)",
       "ScoreBadge no longer copies the overall score to every finger; Scenario results show no per-finger data unless real data is passed",
       "Only band() labels (85/60) remain; 'Master Execution' and 'Fluent Signing' tiers removed (Hero decorative cards untouched)",
