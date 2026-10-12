@@ -20,7 +20,10 @@ out/
 !.env.local.example
 .vercel/
 .vite/
-.claude/
+# .claude/ is local, except shared rules and launch configs
+.claude/*
+!.claude/rules/
+!.claude/launch.json
 
 # Datasets never enter this repo (see README provenance).
 # Root-anchored on purpose — a bare "dataset/" would swallow source folders

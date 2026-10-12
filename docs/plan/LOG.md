@@ -34,3 +34,11 @@ Rules:
 - Lane worktrees created (detached at main): Suvana-wt/claude, Suvana-wt/codex, Suvana-wt/antigravity. 08 §3 now says to skip the "first time" commands.
 - Next: each lane starts its 13 Oct tasks from BOARD.md.
 
+
+### 2026-10-13 01:28 | claude-code | Q-01
+- What: done (review). Per-module AGENTS.md + CLAUDE.md stubs for apps/learn and services/recognition; root AGENTS.md index and reconciled rules (9.3 KB); .claude/ narrowed; README links docs/plan. Rule-by-rule table vs the 10-Oct CLAUDE.md in handoffs/Q-01.md.
+- Branch @ sha: agent/claude/Q-01-agents-md (see git log)
+- Gates: sync guard ok (152 checks); no code changed
+- Screenshots: n/a
+- Needs kvn: none. Plan correction: AGENTS.md/CLAUDE.md said "worktree per task"; 08 says one worktree per lane. Both now match 08.
+- Next: L-02 keyboard, then L-01 finger states (stacked on L-02).
