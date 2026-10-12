@@ -24,13 +24,76 @@ Fresh-history monorepo bootstrapped **24 Aug 2026** from working-tree snapshots.
 
 | Path | Source | Commit |
 |---|---|---|
-| `apps/shell`, `tools/reference-converter` | `ChamaraIT22076816/R26-SE-019` → `learn-ssl-module/` | `7f6fc4f` |
-| `apps/learn` | `ChamaraIT22076816/R26-SE-019` → `learn-ssl-module/web/` | `2d85c78` (re-sync, 30 Aug 2026 — see below) |
-| `services/recognition` | `ChamaraIT22076816/R26-SE-019` → `sinhala_sign_language_recognition/` | `8a2ff2f` (partial re-sync, 26 Aug 2026 — see below) |
-| `apps/alerts`, `services/sound-awareness` | `ChamaraIT22076816/R26-SE-019` → `soundguard-karindra/` | `7f6fc4f` |
-| `apps/communicate` | [`lithiraMalkith/Sign-Detector`](https://github.com/lithiraMalkith/Sign-Detector) | `6fdfd04` ("Update #2", 16 Aug 2026) |
+| `apps/shell` | `ChamaraIT22076816/R26-SE-019` → `learn-ssl-module/` | `7f6fc4f` at bootstrap; Suvana's own since, no longer synced |
+| `tools/reference-converter` | `ChamaraIT22076816/R26-SE-019` → `learn-ssl-module/tools/` | `7f6fc4f` (+3 Suvana-side changes not yet in R26 — see below) |
+| `apps/learn` | `ChamaraIT22076816/R26-SE-019` → `learn-ssl-module/web/` | `334beba` (re-sync, 10 Oct 2026 — see below) |
+| `services/recognition` | `ChamaraIT22076816/R26-SE-019` → `sinhala_sign_language_recognition/` | `334beba` (re-sync, 10 Oct 2026 — see below) |
+| `apps/alerts`, `services/sound-awareness` | `ChamaraIT22076816/R26-SE-019` → `soundguard-karindra/` | `7f6fc4f` (nothing newer upstream as of 10 Oct 2026) |
+| `apps/communicate` | [`lithiraMalkith/Sign-Detector`](https://github.com/lithiraMalkith/Sign-Detector) | `48ab8cb` (re-sync, 10 Oct 2026 — see below) |
+
+The machine-readable version of this table — plus every file Suvana changes on
+purpose, and why — is `tools/sync/upstreams.json`. `node tools/sync/sync.mjs
+status` compares it with the upstreams; `tools/sync/README.md` is the procedure.
 
 ### Re-sync log
+
+**10 Oct 2026 — all components checked; `apps/learn` and `apps/communicate` merged.**
+
+*`apps/learn`, `2d85c78` → `334beba` (merge).* 31 commits of kvn's Learn work
+(31 Aug – 10 Oct): the Progress dashboard, Record phases A–E, Scenario polish,
+a Practice studio overhaul, and a new `AppNavBar` that replaced the old header.
+Every non-coupling file is now byte-identical to upstream. The four couplings
+survived; `App.tsx` conflicted because the header moved, so Suvana's account
+link was rebuilt for the new bar:
+
+- It is now a **round 32 px button** (initial when signed in, gold dot for an
+  admin; person icon when signed out), in `src/app/AccountButton.tsx`. A
+  straight port of the old text link overflowed phones — a 490 px page on a
+  390 px screen — and shifted the centred tabs whenever a name loaded.
+- On phones it takes the place of the "On-Device AI" dot, and below 380 px the
+  button gaps close slightly; both rules apply only when an account is present.
+  Measured: no overflow at 390 or 360 px, and the tabs sit in the same place
+  in every sign-in state.
+- `AppNavBar` gained an optional `account` slot. The same 6-line change is
+  prepared in R26 so the file stays identical in both repos; until R26 commits
+  it, `upstreams.json` lists it as a temporary coupling.
+
+138 tests pass (129 at the last sync; the opt-in `evaluation.export.test.ts`
+is skipped unless `EVAL_EXPORT=1`), lint has two warnings that are upstream's
+own, build clean.
+
+*`services/recognition`, checked at `334beba`.* The only new commit, Lahiru's
+`c2a401f`, appended "(Unit Testing)" to the README's pytest command, which
+would no longer run if pasted. Taken as a `# Unit testing` comment above the
+unchanged command. Backend, model and tests: unchanged since 30 Aug.
+
+*`apps/communicate`, `6fdfd04` → `48ab8cb` (merge).* Taken: `3aaa7b0`
+(multi-word Sinhala glosses — greedy longest-phrase matching) and `48ab8cb`
+(avatar oversized on first load). **Not taken, deliberately: `7948c4a`**, which
+closes registration. Lithira closed it because friends he gave accounts to for
+collecting audio samples might have recorded inappropriate audio; they have no
+Suvana access, Suvana's shared-content writes are already admin-only
+(`3e07d2f`), and Communicate is the whole platform's sign-up. Its Navbar half
+merges cleanly, so a sync guard now protects the Sign-up button.
+
+*Found by the new sync guards, fixed here:* `SignAvatar.tsx` and
+`SignDictionaryWorkbench.tsx` fetched `/api/animations/fetch` without
+`apiPath()`. Under the `/communicate` base path that request reaches the shell,
+which has no such route — a 404 whenever an animation needed the server-side
+fetch. Lint and production build clean.
+
+*Unchanged upstream:* `apps/alerts`, `services/sound-awareness` (both still
+`7f6fc4f`).
+
+*Still open:*
+
+- `tools/reference-converter` carries three Suvana-side changes from 26 Aug
+  (`31c2d49`, the `.mov` fix; `d3432eb`, `dde167d`, docs) that R26 never
+  received. `sync.mjs status` keeps flagging them until they are ported.
+- `services/recognition/requirements.txt` pins fastapi 0.103.2, uvicorn 0.23.2
+  and websockets 11.0.3 (`8ecb443`, no reason recorded), while upstream and
+  Lahiru's own venv run 0.141.1 / 0.52.1 / 16.1.1. Verify the Docker build
+  before converging.
 
 **30 Aug 2026 — `apps/learn`, `7f6fc4f` → `2d85c78` (merge, not copy).**
 
