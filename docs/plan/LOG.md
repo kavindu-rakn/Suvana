@@ -34,3 +34,11 @@ Rules:
 - Lane worktrees created (detached at main): Suvana-wt/claude, Suvana-wt/codex, Suvana-wt/antigravity. 08 §3 now says to skip the "first time" commands.
 - Next: each lane starts its 13 Oct tasks from BOARD.md.
 
+
+### 2026-10-13 01:36 | claude-code | L-02
+- What: done (review). Esc no longer exits Practice mid-countdown or mid-take; Enter/Space on a focused button do what the button does; shortcut listener registered once in the capture phase.
+- Branch @ sha: agent/claude/L-02-keyboard (see git log)
+- Gates: guard ok; lint 1 warning (was 2); tests 137 passed + 7 skipped; build ok 142.83 kB gzip
+- Screenshots: n/a (manual check written in handoffs/L-02.md)
+- Needs kvn: none. Plan correction: test baseline in lane worktrees is 133 + 7 skipped (no corpus), not 138 + 2.
+- Next: L-01 finger states, stacked on this branch.

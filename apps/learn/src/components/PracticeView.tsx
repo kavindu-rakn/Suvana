@@ -40,6 +40,7 @@ import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
 import type { HandAccuracyInfo } from './ScoreBadge'
 import { CategorySignNavigator } from './CategorySignNavigator'
+import { shortcutBlockedByTarget } from '../app/keyboard'
 
 const COUNTDOWN_S = 3
 
@@ -314,6 +315,15 @@ export function PracticeView({
     setPhase('idle')
   }
 
+  /** Esc while recording: discard the take unscored and stay on this sign. */
+  function cancelRecording() {
+    framesRef.current = []
+    startTsRef.current = null
+    lastFrameAtRef.current = null
+    setElapsedMs(0)
+    setPhase('idle')
+  }
+
   function finishRecording() {
     if (phaseRef.current !== 'recording') return
     const currentRef = referenceRef.current
@@ -465,66 +475,77 @@ export function PracticeView({
     }
   }, [selected, references])
 
-  // Global keyboard shortcuts
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+  // Global keyboard shortcuts. The handler is rebuilt every render (it reads
+  // fresh state) but registered once, through a ref, so the listener does not
+  // churn with the tracking object. It listens in the capture phase so that
+  // its preventDefault reaches AppNavBar's window listener (registered earlier,
+  // bubble phase) before that one sends Esc to the Hero.
+  const keyHandlerRef = useRef<(e: KeyboardEvent) => void>(() => {})
+  keyHandlerRef.current = (e: KeyboardEvent) => {
+    const key = e.code === 'Space' ? ' ' : e.key
+    // A focused button or link keeps Enter/Space; text fields keep every key.
+    if (shortcutBlockedByTarget(key, e.target)) return
 
-      if (e.code === 'Space') {
-        if (phaseRef.current === 'idle' && !isBrowsing && referenceRef.current && tracking.status === 'running') {
-          e.preventDefault()
-          beginCountdown()
-        } else if (phaseRef.current === 'recording') {
-          e.preventDefault()
-          finishRecording()
-        } else if (phaseRef.current === 'result') {
-          e.preventDefault()
-          if (tracking.status === 'running') beginCountdown()
-          else void tracking.start()
-        }
-      } else if (e.key === 'ArrowLeft') {
-        if (phaseRef.current === 'result') {
-          e.preventDefault()
-          if (tracking.status === 'running') beginCountdown()
-          else void tracking.start()
-        }
-      } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
-        if (phaseRef.current === 'result') {
-          e.preventDefault()
-          handleNextSign()
-        }
-      } else if (e.key === 'Escape') {
-        if (phaseRef.current === 'countdown') {
-          e.preventDefault()
-          cancelCountdown()
-        } else if (phaseRef.current === 'result') {
-          e.preventDefault()
-          leaveResult()
-          setIsBrowsing(true)
-        } else if (phaseRef.current === 'idle' && !isBrowsing) {
-          e.preventDefault()
-          setIsBrowsing(true)
-        }
-      } else if (e.key === 'm' || e.key === 'M') {
-        if (!isBrowsing && phaseRef.current !== 'result') {
-          e.preventDefault()
-          setGhostActive((prev) => !prev)
-        }
-      } else if (e.key === '[') {
-        if (!isBrowsing && phaseRef.current === 'idle') {
-          e.preventDefault()
-          handlePrevSign()
-        }
-      } else if (e.key === ']') {
-        if (!isBrowsing && phaseRef.current === 'idle') {
-          e.preventDefault()
-          handleNextSign()
-        }
+    if (key === ' ') {
+      if (phaseRef.current === 'idle' && !isBrowsing && referenceRef.current && tracking.status === 'running') {
+        e.preventDefault()
+        beginCountdown()
+      } else if (phaseRef.current === 'recording') {
+        e.preventDefault()
+        finishRecording()
+      } else if (phaseRef.current === 'result') {
+        e.preventDefault()
+        if (tracking.status === 'running') beginCountdown()
+        else void tracking.start()
+      }
+    } else if (e.key === 'ArrowLeft') {
+      if (phaseRef.current === 'result') {
+        e.preventDefault()
+        if (tracking.status === 'running') beginCountdown()
+        else void tracking.start()
+      }
+    } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
+      if (phaseRef.current === 'result') {
+        e.preventDefault()
+        handleNextSign()
+      }
+    } else if (e.key === 'Escape') {
+      if (phaseRef.current === 'countdown') {
+        e.preventDefault()
+        cancelCountdown()
+      } else if (phaseRef.current === 'recording') {
+        e.preventDefault()
+        cancelRecording()
+      } else if (phaseRef.current === 'result') {
+        e.preventDefault()
+        leaveResult()
+        setIsBrowsing(true)
+      } else if (phaseRef.current === 'idle' && !isBrowsing) {
+        e.preventDefault()
+        setIsBrowsing(true)
+      }
+    } else if (e.key === 'm' || e.key === 'M') {
+      if (!isBrowsing && phaseRef.current !== 'result') {
+        e.preventDefault()
+        setGhostActive((prev) => !prev)
+      }
+    } else if (e.key === '[') {
+      if (!isBrowsing && phaseRef.current === 'idle') {
+        e.preventDefault()
+        handlePrevSign()
+      }
+    } else if (e.key === ']') {
+      if (!isBrowsing && phaseRef.current === 'idle') {
+        e.preventDefault()
+        handleNextSign()
       }
     }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isBrowsing, tracking, handleNextSign, handlePrevSign])
+  }
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => keyHandlerRef.current(e)
+    window.addEventListener('keydown', onKeyDown, { capture: true })
+    return () => window.removeEventListener('keydown', onKeyDown, { capture: true })
+  }, [])
 
   // Iconized Action Buttons with ArrowLeft / ArrowRight Key Badges
   const resultActions = (
