@@ -1,7 +1,8 @@
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers, models
 import numpy as np
+
+layers = tf.keras.layers
+models = tf.keras.models
 
 class CNNModel:
     def __init__(self, config):

@@ -42,6 +42,13 @@ import tensorflow as tf  # noqa: E402
 
 print(f"Loading model from {config['model']['model_path']}")
 model = tf.keras.models.load_model(config['model']['model_path'])
+try:
+    from model.inference_engine import FastInferenceEngine
+    fast_engine = FastInferenceEngine(model, "models/saved_models/best_model.tflite")
+    print(f"FastInferenceEngine ready (backend: {fast_engine.backend})")
+except Exception as e:
+    print(f"Inference engine fallback to Keras ({e})")
+    fast_engine = model
 feature_extractor = FrameExtractor(config)
 
 labels_path = Path(config['dataset']['processed_path']) / "labels.npy"
@@ -180,7 +187,7 @@ def speak(text: str):
 @app.websocket("/ws/recognize")
 async def ws_recognize(websocket: WebSocket):
     await websocket.accept()
-    recognizer = StreamRecognizer(config, model, feature_extractor)
+    recognizer = StreamRecognizer(config, fast_engine, feature_extractor)
 
     try:
         while True:

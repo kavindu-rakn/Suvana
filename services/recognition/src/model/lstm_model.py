@@ -1,6 +1,8 @@
 import tensorflow as tf
-from tensorflow.keras import layers, models
 import numpy as np
+
+layers = tf.keras.layers
+models = tf.keras.models
 
 class LSTMRecognizer:
     def __init__(self, config):
@@ -55,28 +57,20 @@ class LSTMRecognizer:
             layers.Input(shape=(self.sequence_length, self.num_features)),
             
             # Bidirectional LSTM layers
-            layers.Bidirectional(layers.LSTM(256, return_sequences=True,
-                                            recurrent_dropout=0.3,
-                                            dropout=0.3)),
+            layers.Bidirectional(layers.LSTM(128, return_sequences=True, dropout=0.3)),
             layers.BatchNormalization(),
             
-            layers.Bidirectional(layers.LSTM(128, return_sequences=True,
-                                            recurrent_dropout=0.3,
-                                            dropout=0.3)),
-            layers.BatchNormalization(),
-            
-            layers.Bidirectional(layers.LSTM(64, recurrent_dropout=0.3,
-                                            dropout=0.3)),
+            layers.Bidirectional(layers.LSTM(64, dropout=0.3)),
             layers.BatchNormalization(),
             
             # Dense layers
             layers.Dense(256, activation='relu'),
             layers.BatchNormalization(),
-            layers.Dropout(0.5),
+            layers.Dropout(0.4),
             
             layers.Dense(128, activation='relu'),
             layers.BatchNormalization(),
-            layers.Dropout(0.5),
+            layers.Dropout(0.4),
             
             layers.Dense(self.num_classes, activation='softmax')
         ])

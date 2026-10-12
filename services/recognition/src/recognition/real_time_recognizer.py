@@ -25,8 +25,14 @@ class RealTimeRecognizer:
         self.prediction_buffer = deque(maxlen=self.smoothing_window)
         self.current_prediction = None
         
-        # Load model
+        # Load model and accelerated inference engine
         self.model = self.load_model()
+        try:
+            from model.inference_engine import FastInferenceEngine
+            self.engine = FastInferenceEngine(self.model)
+        except Exception as e:
+            print(f"FastInferenceEngine init warning: {e}")
+            self.engine = None
         
         # Initialize feature extractor
         from data_preprocessing.frame_extractor import FrameExtractor
@@ -115,21 +121,22 @@ class RealTimeRecognizer:
         return features, detection_results
     
     def predict_gesture(self, features):
-        """Predict gesture from features"""
+        """Predict gesture from features using accelerated engine"""
         if len(self.frame_buffer) < self.sequence_length:
             return None, 0.0
         
-        # Prepare input for model
-        input_sequence = np.array(self.frame_buffer).reshape(1, self.sequence_length, -1)
+        input_sequence = np.array(self.frame_buffer, dtype=np.float32).reshape(1, self.sequence_length, -1)
         
-        # Make prediction. Measured on the web app's identical model/config:
-        # calling the model directly (model(x)) runs eagerly and was ~5x
-        # slower than model.predict(), whose compiled tf.function is cached
-        # and reused across calls -- keep .predict() here too.
+        if self.engine is not None:
+            try:
+                return self.engine.predict_class(input_sequence, self.confidence_threshold)
+            except Exception as e:
+                print(f"Accelerated prediction error ({e}), falling back to Keras.")
+        
         try:
             predictions = self.model.predict(input_sequence, verbose=0)
-            predicted_class = np.argmax(predictions[0])
-            confidence = np.max(predictions[0])
+            predicted_class = int(np.argmax(predictions[0]))
+            confidence = float(np.max(predictions[0]))
             
             if confidence >= self.confidence_threshold:
                 return predicted_class, confidence
