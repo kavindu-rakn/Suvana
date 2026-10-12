@@ -168,7 +168,7 @@ public class ${SERVICE_CLASS} extends Service {
             return START_NOT_STICKY;
         }
 
-        String title = "SoundGuard is listening";
+        String title = "Suvana Alerts is listening";
         String body = "Monitoring your surroundings. Audio never leaves this phone.";
         if (intent != null) {
             String extraTitle = intent.getStringExtra(EXTRA_TITLE);
@@ -246,7 +246,7 @@ public class ${SERVICE_CLASS} extends Service {
                         "Background monitoring",
                         NotificationManager.IMPORTANCE_LOW);
         channel.setDescription(
-                "The quiet notice Android requires while SoundGuard listens in the background. "
+                "The quiet notice Android requires while Suvana Alerts listens in the background. "
                         + "Alerts themselves arrive on their own channels.");
         channel.setShowBadge(false);
         channel.enableVibration(false);

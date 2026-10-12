@@ -201,7 +201,7 @@ export function Onboarding() {
           <View style={styles.brandMark}>
             <Ionicons name="pulse" size={15} color={c.primary} />
           </View>
-          <Text style={styles.brandText}>SOUNDGUARD</Text>
+          <Text style={styles.brandText}>SUVANA ALERTS</Text>
         </View>
         {!isLast ? (
           <Pressable onPress={skip} accessibilityRole="button" accessibilityLabel="Skip introduction" hitSlop={10}>
