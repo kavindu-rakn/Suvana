@@ -3,6 +3,7 @@
 // off the initial chunk — a learner who never starts the camera never pays it.
 import type { HandLandmarker } from '@mediapipe/tasks-vision'
 import { withCpuFallback } from './cameraLifecycle'
+import { withAssetVersion } from '../app/assetVersion'
 
 // Both the WASM runtime and the model are served from our own origin
 // (scripts/copy-wasm.mjs fills public/wasm on install; the model lives in
@@ -11,7 +12,7 @@ import { withCpuFallback } from './cameraLifecycle'
 // the Suvana domain, and Vite's `base` does not rewrite string literals.
 // BASE_URL always ends in a slash.
 const WASM_DIR = `${import.meta.env.BASE_URL}wasm`
-const MODEL_PATH = `${import.meta.env.BASE_URL}models/hand_landmarker.task`
+const MODEL_PATH = withAssetVersion(`${import.meta.env.BASE_URL}models/hand_landmarker.task`)
 
 let cached: Promise<HandLandmarker> | null = null
 
@@ -33,7 +34,14 @@ export function getHandLandmarker(): Promise<HandLandmarker> {
 
 async function createHandLandmarker(): Promise<HandLandmarker> {
   const { FilesetResolver, HandLandmarker } = await import('@mediapipe/tasks-vision')
-  const fileset = await FilesetResolver.forVisionTasks(WASM_DIR)
+  const resolved = await FilesetResolver.forVisionTasks(WASM_DIR)
+  // The resolver appends filenames to WASM_DIR. Version the resolved files,
+  // not the directory, or the filenames would become part of the query string.
+  const fileset = {
+    ...resolved,
+    wasmLoaderPath: withAssetVersion(resolved.wasmLoaderPath),
+    wasmBinaryPath: withAssetVersion(resolved.wasmBinaryPath),
+  }
   return withCpuFallback((delegate) => HandLandmarker.createFromOptions(fileset, {
     baseOptions: {
       modelAssetPath: MODEL_PATH,
