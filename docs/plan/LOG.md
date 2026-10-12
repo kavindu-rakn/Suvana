@@ -35,6 +35,7 @@ Rules:
 - Next: each lane starts its 13 Oct tasks from BOARD.md.
 
 
+<<<<<<< HEAD
 ### 2026-10-13 01:28 | claude-code | Q-01
 - What: done (review). Per-module AGENTS.md + CLAUDE.md stubs for apps/learn and services/recognition; root AGENTS.md index and reconciled rules (9.3 KB); .claude/ narrowed; README links docs/plan. Rule-by-rule table vs the 10-Oct CLAUDE.md in handoffs/Q-01.md.
 - Branch @ sha: agent/claude/Q-01-agents-md (see git log)
@@ -97,4 +98,12 @@ Rules:
 - Not merged: Q-00 (changes requested: build breaks with L-01's ScoreBadge; three fixture glosses are not real signs; invented coaching text), I-01 (screenshots show only the intro counter; re-shoot), L-05 (screenshots wait for Q-00).
 - Plan corrections applied: lane-worktree test baseline (08 section 9), M0 commit wording (07 section 4), L-17 re-derives HINT_MIN_DEVIATION.
 - Tomorrow first: antigravity reworks Q-00, then re-shoots I-01; kvn merges Q-00 at midday so codex can shoot L-05.
+
+### 2026-10-13 02:10 | antigravity | I-01
+- What: done: Removed 'SoundGuard Ecosystem' sub-brand tag from pipeline section, updated recognize example URL to recognize.suvana.help, injected VITE_RECOGNIZE_URL into data-service-url at build time while keeping localhost fallback.
+- Branch @ sha: agent/antigravity/I-01-shell-brand@c11fc7f
+- Gates: guard ok (152 checks passed) | shell tests 44 passed | shell build 180.47 kB gzip main bundle | VITE_RECOGNIZE_URL injection verified
+- Screenshots: C:/Users/User/Documents/Suvana-wt/antigravity/.agent-local/screens/I-01/index.html
+- Needs kvn: none
+- Next: I-02 (Alerts: user-visible strings say Suvana)
 
