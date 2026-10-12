@@ -13,10 +13,12 @@ import { scoreTurn } from '../scenario/rubric'
 import type { TurnScore } from '../scenario/rubric'
 import type { Scenario, ScenarioTurn } from '../scenario/types'
 import { SCENARIOS } from '../data/scenarios'
+import { ArrowRight, Circle, Lightbulb, Square, X } from 'lucide-react'
 import { glossLabel, translationOf } from '../data/translations'
 import { CameraStage } from './CameraStage'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
+import { band } from '../scoring/band'
 
 type Stage = 'hub' | 'intro' | 'playing' | 'summary'
 
@@ -91,10 +93,21 @@ export function ScenarioView() {
       const scoreStartAt = performance.now()
       const score = scoreTurn(attempt, reference, scenarioVocabulary)
       const scoreEndAt = performance.now()
+
+      // A take the tracker never saw a hand in is a capture failure, not a turn
+      // score — don't let it into the outcomes (the summary average) or the log.
+      const noHands =
+        score.detail.hands.length > 0 && score.detail.hands.every((h) => h.missing)
+
       setRevealArmed(false)
       setCurrent(score)
       setCurrentAttempt(attempt)
-      setOutcomes((prev) => [...prev.filter((o) => o.turn.id !== turn.id), { turn, score, attempt }])
+      if (!noHands) {
+        setOutcomes((prev) => [
+          ...prev.filter((o) => o.turn.id !== turn.id),
+          { turn, score, attempt },
+        ])
+      }
 
       if (take.lastFrameAt !== null) {
         latency.arm(
@@ -110,14 +123,16 @@ export function ScenarioView() {
         requestAnimationFrame(() => setRevealArmed(true))
       }
 
-      addAttempt({
-        id: attempt.id,
-        gloss: turn.gloss,
-        referenceId: reference.id,
-        score: score.detail.score,
-        worstFingers: topFingers(score.detail),
-        createdAt: attempt.createdAt,
-      }).catch((e: unknown) => console.error('Failed to log scenario attempt', e))
+      if (!noHands) {
+        addAttempt({
+          id: attempt.id,
+          gloss: turn.gloss,
+          referenceId: reference.id,
+          score: score.detail.score,
+          worstFingers: topFingers(score.detail),
+          createdAt: attempt.createdAt,
+        }).catch((e: unknown) => console.error('Failed to log scenario attempt', e))
+      }
     },
     [turn, reference, scenarioVocabulary, latency],
   )
@@ -299,42 +314,62 @@ export function ScenarioView() {
         <div className="briefing-main-grid">
           <div className="briefing-script-container">
             <div className="briefing-section-header">
-              <h2>Conversation Sequence</h2>
-              <span className="section-meta">{playable.length} of {scenario.turns.length} Signs Available</span>
+              <h2>The signs you'll practise</h2>
+              <span className="section-meta">{playable.length} of {scenario.turns.length} ready</span>
             </div>
 
             {loading ? (
               <p className="empty-state">Loading signs and references...</p>
             ) : (
-              <ol className="briefing-flow-list">
-                {scenario.turns.map((t, i) => {
-                  const hasRef = references.has(t.gloss)
-                  return (
-                    <li key={t.id} className={`briefing-flow-item ${hasRef ? 'ready' : 'pending'}`}>
-                      <div className="flow-num-col">
-                        <span className="flow-step">Turn {i + 1}</span>
-                        <span className={`flow-badge ${hasRef ? 'badge-ready' : 'badge-pending'}`}>
-                          {hasRef ? 'Ready' : 'Pending'}
-                        </span>
-                      </div>
+              <>
+                <div className="briefing-vocab">
+                  {[...new Set(scenario.turns.map((t) => t.gloss))].map((g) => {
+                    const meaning = translationOf(g)
+                    return (
+                      <span
+                        key={g}
+                        className={`briefing-vocab-chip ${references.has(g) ? '' : 'pending'}`}
+                      >
+                        {g}
+                        {meaning && <em>{meaning}</em>}
+                      </span>
+                    )
+                  })}
+                </div>
 
-                      <div className="flow-content-col">
-                        <p className="flow-partner-line">"{t.partnerLine}"</p>
-                        <div className="flow-sign-row">
-                          <span className="flow-sign-tag">Sign to produce:</span>
-                          <strong className="flow-sign-gloss" title={translationOf(t.gloss)}>
-                            {glossLabel(t.gloss)}
-                          </strong>
-                          {translationOf(t.gloss) && (
-                            <span className="flow-sign-trans">({translationOf(t.gloss)})</span>
-                          )}
-                        </div>
-                        <p className="flow-prompt-text">{t.prompt}</p>
-                      </div>
-                    </li>
-                  )
-                })}
-              </ol>
+                {/* The script is a spoiler for a "one sign at a time" roleplay —
+                    reveal it only on request. */}
+                <details className="briefing-script">
+                  <summary>Preview the full script ({scenario.turns.length} turns)</summary>
+                  <ol className="briefing-flow-list">
+                    {scenario.turns.map((t, i) => {
+                      const hasRef = references.has(t.gloss)
+                      return (
+                        <li key={t.id} className={`briefing-flow-item ${hasRef ? 'ready' : 'pending'}`}>
+                          <div className="flow-num-col">
+                            <span className="flow-step">Turn {i + 1}</span>
+                            <span className={`flow-badge ${hasRef ? 'badge-ready' : 'badge-pending'}`}>
+                              {hasRef ? 'Ready' : 'Pending'}
+                            </span>
+                          </div>
+
+                          <div className="flow-content-col">
+                            <p className="flow-partner-line">"{t.partnerLine}"</p>
+                            <div className="flow-sign-row">
+                              <span className="flow-sign-tag">Sign to produce:</span>
+                              <strong className="flow-sign-gloss">{t.gloss}</strong>
+                              {translationOf(t.gloss) && (
+                                <span className="flow-sign-trans">({translationOf(t.gloss)})</span>
+                              )}
+                            </div>
+                            <p className="flow-prompt-text">{t.prompt}</p>
+                          </div>
+                        </li>
+                      )
+                    })}
+                  </ol>
+                </details>
+              </>
             )}
           </div>
 
@@ -390,7 +425,7 @@ export function ScenarioView() {
 
     return (
       <section className="aww-scenario-hub">
-        <div className="briefing-hero-card theme-restaurant" style={{ marginBottom: '32px' }}>
+        <div className={`briefing-hero-card theme-${scenario.id}`} style={{ marginBottom: '32px' }}>
           <div className="briefing-hero-overlay">
             <div className="briefing-nav-row">
               <button className="aww-back-btn" onClick={() => setStage('hub')}>
@@ -422,9 +457,9 @@ export function ScenarioView() {
                   </div>
                   <span className="mastery-pct">{o.score.rubric.total}</span>
                   <span className="mastery-meta">
-                    {o.score.bestMatchGloss !== o.turn.gloss
-                      ? `closest match: ${o.score.bestMatchGloss}`
-                      : 'correct sign'}
+                    {band(o.score.rubric.total).label}
+                    {o.score.bestMatchGloss !== o.turn.gloss &&
+                      ` · closer to ${o.score.bestMatchGloss}`}
                   </span>
                 </li>
               ))}
@@ -433,7 +468,7 @@ export function ScenarioView() {
 
           <aside className="briefing-action-card">
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
-              <ScoreBadge score={total} />
+              <ScoreBadge score={total} hideDelta />
               {weakest && (
                 <p style={{ marginTop: '16px', textAlign: 'center', fontSize: '0.95rem' }}>
                   Weakest sign: <strong>{weakest.turn.gloss}</strong> ({weakest.score.rubric.total}/100)
@@ -489,32 +524,37 @@ export function ScenarioView() {
     <div className="aww-practice-env aww-scenario-env" data-phase={capture.phase}>
       <span className="sr-only" aria-live="polite">{liveMessage}</span>
 
-      {/* Top Floating Leave Button */}
-      <button className="aww-leave-btn" onClick={() => setStage('hub')}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        Leave Scenario
-      </button>
+      {/* Teleprompter strip across the top — the prompt belongs over "you", not
+          over the reference skeleton it used to float across. */}
+      <div className="aww-scenario-topbar">
+        <button className="aww-leave-btn" onClick={() => setStage('hub')}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          Leave
+        </button>
 
-      {/* Top Floating Cinematic Dialogue Subtitle Bar */}
-      {!current && (
-        <div className="aww-scenario-dialogue-bar">
-          <div className="dialogue-meta-row">
-            <span className="dialogue-turn-tag">Turn {index + 1} of {playable.length}</span>
-            <span className="dialogue-scenario-tag">{scenario.title}</span>
+        {!current && (
+          <div className="aww-scenario-dialogue">
+            <div className="dialogue-meta-row">
+              <span className="dialogue-turn-tag">Turn {index + 1} of {playable.length}</span>
+              <span className="dialogue-scenario-tag">{scenario.title}</span>
+            </div>
+            {turn.partnerLine && (
+              <p className="dialogue-partner-line">"{turn.partnerLine}"</p>
+            )}
+            <p className="dialogue-prompt-line">
+              Sign: <strong>{glossLabel(turn.gloss)}</strong> &mdash; {turn.prompt}
+            </p>
+            {turn.hint && (
+              <span className="dialogue-hint-pill">
+                <Lightbulb size={13} aria-hidden="true" />
+                {turn.hint}
+              </span>
+            )}
           </div>
-          {turn.partnerLine && (
-            <p className="dialogue-partner-line">"{turn.partnerLine}"</p>
-          )}
-          <p className="dialogue-prompt-line">
-            Sign: <strong>{glossLabel(turn.gloss)}</strong> &mdash; {turn.prompt}
-          </p>
-          {turn.hint && (
-            <span className="dialogue-hint-pill">💡 {turn.hint}</span>
-          )}
-        </div>
-      )}
+        )}
+      </div>
 
       {/* The 50/50 Split Screen */}
       <div className="aww-split-screen">
@@ -530,12 +570,13 @@ export function ScenarioView() {
               frames={reference.frames}
               videoWidth={reference.videoWidth}
               videoHeight={reference.videoHeight}
+              colorOverride="#e6eeec"
             />
           </div>
         </div>
 
         {/* Right Pane: User Camera / Replay */}
-        <div className="aww-pane aww-pane-right">
+        <div className="aww-pane aww-pane-right" data-camera-status={capture.tracking.status}>
           <div className="aww-pane-header">
             <p className="aww-pane-label">You</p>
           </div>
@@ -548,10 +589,55 @@ export function ScenarioView() {
               status={capture.tracking.status}
               error={capture.tracking.error}
               onStart={() => void capture.tracking.start()}
-              idleHint="Start camera to join the conversation"
+              idleHint=""
               inferring={capture.tracking.inferring}
+              intro={
+                <div className="aww-camera-intro">
+                  <p className="aww-camera-intro-lead">Join the conversation.</p>
+                  <p className="aww-camera-intro-note">
+                    Hand tracking runs entirely in your browser. No video is uploaded or
+                    recorded.
+                  </p>
+                  <button className="btn massive" onClick={() => void capture.tracking.start()}>
+                    Turn on camera
+                  </button>
+                </div>
+              }
             />
           </div>
+
+          {/* Camera controls, anchored to this pane. One action at a time. */}
+          {!current && capture.tracking.status === 'running' && (
+            <>
+              {capture.phase === 'countdown' && (
+                <div className="aww-cam-countdown" aria-hidden="true">{capture.count}</div>
+              )}
+              {capture.phase === 'recording' && (
+                <div className="aww-cam-rec">
+                  <span className="aww-rec-dot" aria-hidden="true" />
+                  REC {(capture.elapsedMs / 1000).toFixed(1)}s
+                </div>
+              )}
+              <div className="aww-cam-action">
+                {capture.phase === 'countdown' ? (
+                  <button className="aww-cam-btn aww-cam-btn-ghost" onClick={capture.cancel}>
+                    <X size={16} aria-hidden="true" />
+                    Cancel
+                  </button>
+                ) : capture.phase === 'recording' ? (
+                  <button className="aww-cam-btn aww-cam-btn-stop" onClick={capture.finish}>
+                    <Square size={13} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+                    Stop &amp; Score
+                  </button>
+                ) : (
+                  <button className="aww-cam-btn" onClick={() => capture.begin(captureMs)}>
+                    <Circle size={15} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+                    Record attempt
+                  </button>
+                )}
+              </div>
+            </>
+          )}
 
           {/* Replay Overlay on Scored Turn */}
           {current && currentAttempt && (
@@ -566,85 +652,61 @@ export function ScenarioView() {
         </div>
       </div>
 
-      {/* Bottom HUD (Heads-Up Display) */}
-      {!current && (
-        <div className="aww-hud">
-          {capture.tracking.status !== 'running' ? (
-            <div className="aww-hud-idle">
-              <button className="btn massive ghost" onClick={() => void capture.tracking.start()}>
-                Turn on Camera
-              </button>
-              <p>Tracking runs entirely in your browser.</p>
-            </div>
-          ) : capture.phase === 'countdown' ? (
-            <div className="aww-hud-countdown">
-              <span>{capture.count}</span>
-              <button className="btn ghost massive" onClick={capture.cancel}>Cancel</button>
-            </div>
-          ) : capture.phase === 'recording' ? (
-            <div className="aww-hud-recording">
-              <div className="rec-badge">● REC {(capture.elapsedMs / 1000).toFixed(1)} s</div>
-              <button
-                className="btn massive"
-                style={{ background: 'var(--p-coral-500)' }}
-                onClick={capture.finish}
-              >
-                Stop & Score
-              </button>
-            </div>
-          ) : (
-            <button
-              className="btn massive"
-              onClick={() => capture.begin(captureMs)}
-            >
-              Sign It
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Central Score & Grading Overlay */}
-      {current && (
-        <div className="aww-result-overlay" data-reveal={revealArmed ? 'on' : undefined}>
-          <div className="aww-result-center">
-            <ScoreBadge score={current.rubric.total} />
-
-            <div className="aww-result-feedback">
-              {current.rubric.total === 100 ? (
-                <p className="perfect-hint">Flawless match! Perfect execution.</p>
-              ) : (
-                <ul className="hint-list" style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {current.bestMatchGloss !== turn.gloss && (
-                    <li>
-                      That looked closer to <strong>{current.bestMatchGloss}</strong> than to {turn.gloss}.
-                    </li>
-                  )}
-                  {current.detail.hints.map((h, i) => (
-                    <li key={i}>{h}</li>
-                  ))}
-                </ul>
-              )}
-
-              <div className="aww-result-actions" style={{ marginTop: '24px', display: 'flex', gap: '16px', justifyContent: 'center' }}>
-                <button
-                  className="btn massive"
-                  onClick={() => {
-                    setCurrent(null)
-                    setCurrentAttempt(null)
-                    setRevealArmed(false)
-                    capture.begin(captureMs)
-                  }}
-                >
-                  Try again
-                </button>
-                <button className="btn ghost massive" onClick={nextTurn}>
-                  {index + 1 >= playable.length ? 'See summary' : 'Next turn →'}
-                </button>
+      {/* Centre result — one panel, capture-failure kept separate from a score. */}
+      {current && (() => {
+        const noHands =
+          current.detail.hands.length > 0 && current.detail.hands.every((h) => h.missing)
+        const retry = () => {
+          setCurrent(null)
+          setCurrentAttempt(null)
+          setRevealArmed(false)
+          capture.begin(captureMs)
+        }
+        const nextLabel = index + 1 >= playable.length ? 'See summary' : 'Next turn'
+        return (
+          <div className="aww-result-overlay" data-reveal={revealArmed ? 'on' : undefined}>
+            {noHands ? (
+              <div className="aww-result-panel aww-result-nohands">
+                <p className="pane-label">Couldn't see your hands</p>
+                <p className="aww-result-lead">The tracker didn't pick up a hand in that take.</p>
+                <p>Move back so your hands and shoulders are in frame, and make sure the room is well lit.</p>
+                <div className="aww-result-actions">
+                  <button className="btn massive" onClick={retry}>Try again</button>
+                  <button className="btn ghost massive" onClick={nextTurn}>Skip this turn</button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="aww-result-panel">
+                <ScoreBadge score={current.rubric.total} hideDelta />
+                <div className="aww-result-feedback">
+                  {current.rubric.total === 100 ? (
+                    <p className="perfect-hint">Flawless match. Perfect execution.</p>
+                  ) : (
+                    <>
+                      {current.bestMatchGloss !== turn.gloss && (
+                        <p>
+                          That looked closer to <strong>{current.bestMatchGloss}</strong> than to{' '}
+                          {turn.gloss}.
+                        </p>
+                      )}
+                      {current.detail.hints.map((h, i) => (
+                        <p key={i}>{h}</p>
+                      ))}
+                    </>
+                  )}
+                  <div className="aww-result-actions">
+                    <button className="btn massive" onClick={retry}>Try again</button>
+                    <button className="btn ghost massive" onClick={nextTurn}>
+                      {nextLabel}
+                      {nextLabel === 'Next turn' && <ArrowRight size={16} aria-hidden="true" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        )
+      })()}
     </div>
   )
 }

@@ -191,13 +191,19 @@ function buildHints(
 ): string[] {
   const hints: string[] = []
 
-  for (const hand of hands) {
-    if (!hand.missing) continue
-    hints.push(
-      twoHanded
-        ? `Use your ${hand.handedness.toLowerCase()} hand too — this sign is two-handed.`
-        : 'No hand was tracked in your attempt — check your framing and lighting.',
-    )
+  // One line, not one per missing hand — a two-handed sign with both hands
+  // missing used to produce two near-identical "use your X hand too" lines.
+  const missing = hands.filter((h) => h.missing)
+  if (missing.length > 0) {
+    if (twoHanded) {
+      hints.push(
+        missing.length >= hands.length
+          ? 'This sign is two-handed — use both hands.'
+          : `Use your ${missing[0].handedness.toLowerCase()} hand too — this sign is two-handed.`,
+      )
+    } else {
+      hints.push('No hand was tracked in your attempt — check your framing and lighting.')
+    }
   }
 
   // Group the worst joints by finger so we don't repeat "index finger" 4 times,

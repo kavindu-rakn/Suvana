@@ -1,6 +1,32 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  ArrowLeft,
+  ArrowRight,
+  Binary,
+  Calendar,
+  CalendarDays,
+  Car,
+  FolderPlus,
+  Hash,
+  MapPin,
+  MessageCircle,
+  Navigation,
+  Package,
+  Palette,
+  Plus,
+  Search,
+  Shapes,
+  Sparkles,
+  TrendingUp,
+  Type,
+  Users,
+  Utensils,
+  Wind,
+  X,
+  Zap,
+} from 'lucide-react'
 import type { RecordingMeta } from '../vision/types'
-import { categoriesIn, categoryOf, orderSigns } from '../data/categories'
+import { categoryOf, foldedCategoryOf, groupForPicker, orderSigns } from '../data/categories'
 import { matchesSearch, translationOf } from '../data/translations'
 
 export interface CategorySignNavigatorProps {
@@ -8,13 +34,53 @@ export interface CategorySignNavigatorProps {
   suggested?: string | null
   selectedId?: string | null
   mode?: 'practice' | 'record'
-  isModal?: boolean
   onSelect: (sign: RecordingMeta) => void
   onCreateCustom?: (gloss: string) => void
-  onClose?: () => void
-  /** Fired as the pointer / focus moves over a sign card, for a live preview.
-   *  Null when nothing is hovered. */
+  /** Fired as the pointer / focus moves over a sign card, for a live preview. */
   onPreview?: (sign: RecordingMeta | null) => void
+}
+
+function getCategoryLucideIcon(cat: string) {
+  switch (cat) {
+    case 'A-Z':
+      return <Type size={16} />
+    case 'Numbers':
+      return <Binary size={16} />
+    case '20-99':
+      return <Hash size={16} />
+    case '100-1 million':
+      return <TrendingUp size={16} />
+    case 'Days':
+      return <Calendar size={16} />
+    case 'Months':
+      return <CalendarDays size={16} />
+    case 'Greetings':
+      return <MessageCircle size={16} />
+    case 'People':
+      return <Users size={16} />
+    case 'Places':
+      return <MapPin size={16} />
+    case 'Verbs':
+      return <Zap size={16} />
+    case 'Nouns':
+      return <Package size={16} />
+    case 'Adjectives':
+      return <Sparkles size={16} />
+    case 'Adverb':
+      return <Wind size={16} />
+    case 'Preposition':
+      return <Navigation size={16} />
+    case 'Colors':
+      return <Palette size={16} />
+    case 'Vehicles':
+      return <Car size={16} />
+    case 'Food':
+      return <Utensils size={16} />
+    case 'Additional words':
+      return <FolderPlus size={16} />
+    default:
+      return <Shapes size={16} />
+  }
 }
 
 export function CategorySignNavigator({
@@ -22,36 +88,35 @@ export function CategorySignNavigator({
   suggested = null,
   selectedId = null,
   mode = 'practice',
-  isModal = false,
   onSelect,
   onCreateCustom,
-  onClose,
   onPreview,
 }: CategorySignNavigatorProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [globalQuery, setGlobalQuery] = useState('')
   const [categoryQuery, setCategoryQuery] = useState('')
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
-  // Unique categories list
-  const categories = useMemo(() => categoriesIn(references), [references])
-
-  // Signs grouped by category for quick lookup
-  const signsByCategory = useMemo(() => {
-    const map = new Map<string, RecordingMeta[]>()
-    for (const cat of categories) {
-      map.set(cat, [])
-    }
-    for (const ref of references) {
-      const cat = categoryOf(ref)
-      const list = map.get(cat)
-      if (list) {
-        list.push(ref)
-      } else {
-        map.set(cat, [ref])
+  // Keyboard shortcut '/' to instantly focus search
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement !== searchInputRef.current) {
+        const target = e.target as HTMLElement
+        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+          e.preventDefault()
+          searchInputRef.current?.focus()
+        }
       }
     }
-    return map
-  }, [categories, references])
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [])
+
+  // Display order and buckets in one pass
+  const { order: categories, byCategory: signsByCategory } = useMemo(
+    () => groupForPicker(references),
+    [references],
+  )
 
   // Global search results across all categories
   const globalSearchResults = useMemo(() => {
@@ -78,8 +143,8 @@ export function CategorySignNavigator({
   const isSearchingGlobal = globalQuery.trim().length > 0
 
   return (
-    <div className={`cs-nav-container ${isModal ? 'cs-nav-modal' : 'cs-nav-pane'}`}>
-      {/* Header / Topbar */}
+    <div className="cs-nav-container cs-nav-pane">
+      {/* Luxury Suvana Header */}
       <div className="cs-nav-header">
         <div className="cs-nav-header-left">
           {selectedCategory && !isSearchingGlobal ? (
@@ -92,50 +157,52 @@ export function CategorySignNavigator({
                   setCategoryQuery('')
                 }}
                 aria-label="Back to all categories"
+                title="Back to all categories"
               >
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M19 12H5M12 19l-7-7 7-7" />
-                </svg>
+                <ArrowLeft size={14} />
                 <span>Categories</span>
               </button>
               <span className="cs-crumb-sep">/</span>
-              <span className="cs-crumb-current">
-                <strong>{selectedCategory}</strong>
-                <span className="cs-crumb-count">
-                  ({signsByCategory.get(selectedCategory)?.length ?? 0})
+              <div className="cs-crumb-current-wrap">
+                <span className="cs-crumb-icon">{getCategoryLucideIcon(selectedCategory)}</span>
+                <span className="cs-crumb-name">{selectedCategory}</span>
+                <span className="cs-crumb-badge">
+                  {signsByCategory.get(selectedCategory)?.length ?? 0}
                 </span>
-              </span>
+              </div>
             </div>
           ) : (
             <div className="cs-nav-title-group">
+              <div className="cs-nav-eyebrow-row">
+                <span className="cs-nav-eyebrow">
+                  <span className="cs-nav-eyebrow-dot" />
+                  CORPUS EXPLORER
+                </span>
+              </div>
               <h2 className="cs-nav-title">
                 {mode === 'record' ? 'Select Sign' : 'Categories'}
               </h2>
-              <p className="cs-nav-subtitle">
-                {references.length} signs in {categories.length} categories
-              </p>
+              <div className="cs-nav-meta-row">
+                <span className="cs-nav-stat">
+                  <strong>{references.length}</strong> signs
+                </span>
+                <span className="cs-nav-dot-sep">•</span>
+                <span className="cs-nav-stat">
+                  <strong>{categories.length}</strong> categories
+                </span>
+              </div>
             </div>
           )}
         </div>
-
-        {isModal && onClose && (
-          <button type="button" className="btn btn-ghost cs-close-btn" onClick={onClose} aria-label="Close dialog">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          </button>
-        )}
       </div>
 
-      {/* Search Bar */}
+      {/* Luxury Search Capsule */}
       <div className="cs-search-row">
         {selectedCategory && !isSearchingGlobal ? (
           <div className="cs-search-input-wrap">
-            <svg className="cs-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="7" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+            <Search className="cs-search-icon" size={15} />
             <input
+              ref={searchInputRef}
               type="text"
               className="cs-search-input"
               value={categoryQuery}
@@ -144,45 +211,45 @@ export function CategorySignNavigator({
               autoComplete="off"
               spellCheck={false}
             />
-            {categoryQuery && (
+            {categoryQuery ? (
               <button
                 type="button"
                 className="cs-search-clear"
                 onClick={() => setCategoryQuery('')}
                 aria-label="Clear filter"
+                title="Clear"
               >
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-                  <path d="M6 6l12 12M18 6L6 18" />
-                </svg>
+                <X size={13} />
               </button>
+            ) : (
+              <kbd className="cs-search-kbd" title="Press / to search">/</kbd>
             )}
           </div>
         ) : (
           <div className="cs-search-input-wrap">
-            <svg className="cs-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="7" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+            <Search className="cs-search-icon" size={15} />
             <input
+              ref={searchInputRef}
               type="text"
               className="cs-search-input"
               value={globalQuery}
               onChange={(e) => setGlobalQuery(e.target.value)}
-              placeholder={`Search ${references.length} signs...`}
+              placeholder={`Search ${references.length} signs (e.g. Ayubowan, Numbers)...`}
               autoComplete="off"
               spellCheck={false}
             />
-            {globalQuery && (
+            {globalQuery ? (
               <button
                 type="button"
                 className="cs-search-clear"
                 onClick={() => setGlobalQuery('')}
                 aria-label="Clear search"
+                title="Clear"
               >
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-                  <path d="M6 6l12 12M18 6L6 18" />
-                </svg>
+                <X size={13} />
               </button>
+            ) : (
+              <kbd className="cs-search-kbd" title="Press / to search">/</kbd>
             )}
           </div>
         )}
@@ -193,43 +260,54 @@ export function CategorySignNavigator({
         <div className="cs-category-view">
           {/* Suggested Sign Quick-Pick Banner */}
           {suggestedRec && mode === 'practice' && (
-            <div className="cs-suggested-banner" onClick={() => onSelect(suggestedRec)} role="button" tabIndex={0}>
+            <div
+              className="cs-suggested-banner"
+              onClick={() => onSelect(suggestedRec)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') onSelect(suggestedRec)
+              }}
+            >
               <div className="cs-suggested-left">
-                <span className="cs-suggested-tag">SUGGESTED</span>
-                <h3 className="cs-suggested-gloss">{suggestedRec.gloss}</h3>
-                {translationOf(suggestedRec.gloss) && (
-                  <span className="cs-suggested-sub">"{translationOf(suggestedRec.gloss)}"</span>
-                )}
+                <div className="cs-suggested-tag-row">
+                  <span className="cs-suggested-tag">
+                    <span className="cs-suggested-dot" />
+                    DAILY RECOMMENDATION
+                  </span>
+                  <span className="cs-suggested-cat">{categoryOf(suggestedRec)}</span>
+                </div>
+                <div className="cs-suggested-title-row">
+                  <h3 className="cs-suggested-gloss">{suggestedRec.gloss}</h3>
+                  {translationOf(suggestedRec.gloss) && (
+                    <span className="cs-suggested-sub" lang="si">
+                      {translationOf(suggestedRec.gloss)}
+                    </span>
+                  )}
+                </div>
               </div>
               <button type="button" className="btn small cs-suggested-btn">
-                Select
+                <span>Practise</span>
+                <ArrowRight size={13} />
               </button>
             </div>
           )}
 
-          {/* Admin Custom Mode Action Card */}
+          {/* Author-only custom gloss card */}
           {mode === 'record' && onCreateCustom && (
             <div className="cs-custom-gloss-card">
               <div className="cs-custom-info">
-                <h4>Custom Sign</h4>
-                <p>Record a new sign not in the corpus.</p>
+                <h4>Not in the corpus?</h4>
+                <p>Record a sign that has no reference yet.</p>
               </div>
-              <button
-                type="button"
-                className="btn small"
-                onClick={() => {
-                  const input = window.prompt('Enter new uppercase gloss name (e.g., HELLO_WORLD):')
-                  if (input && input.trim()) {
-                    onCreateCustom(input.trim().toUpperCase())
-                  }
-                }}
-              >
-                + New Sign
+              <button type="button" className="btn small" onClick={() => onCreateCustom('')}>
+                <Plus size={14} />
+                Record a new sign
               </button>
             </div>
           )}
 
-          {/* Categories Grid (Clean compact tiles) */}
+          {/* Categories Grid */}
           <div className="cs-categories-grid">
             {categories.map((catName) => {
               const catSigns = signsByCategory.get(catName) ?? []
@@ -250,8 +328,13 @@ export function CategorySignNavigator({
                     }
                   }}
                 >
-                  <span className="cs-cat-name" title={catName}>{catName}</span>
-                  <span className="cs-cat-badge">{catSigns.length}</span>
+                  <div className="cs-cat-icon-wrap">
+                    {getCategoryLucideIcon(catName)}
+                  </div>
+                  <div className="cs-cat-card-inner">
+                    <span className="cs-cat-name" title={catName}>{catName}</span>
+                    <span className="cs-cat-badge">{catSigns.length}</span>
+                  </div>
                 </div>
               )
             })}
@@ -276,7 +359,8 @@ export function CategorySignNavigator({
                   style={{ marginTop: '12px' }}
                   onClick={() => onCreateCustom(globalQuery.trim().toUpperCase())}
                 >
-                  + Record "{globalQuery.trim().toUpperCase()}"
+                  <Plus size={14} />
+                  Record "{globalQuery.trim().toUpperCase()}"
                 </button>
               )}
             </div>
@@ -306,7 +390,9 @@ export function CategorySignNavigator({
                     </div>
 
                     <h4 className="cs-sign-gloss">{r.gloss}</h4>
-                    {meaning && <p className="cs-sign-meaning">"{meaning}"</p>}
+                    {meaning && (
+                      <p className="cs-sign-meaning" lang="si">{meaning}</p>
+                    )}
                   </div>
                 )
               })}
@@ -349,8 +435,13 @@ export function CategorySignNavigator({
                     }}
                   >
                     <div className="cs-sign-main">
+                      {foldedCategoryOf(r) && foldedCategoryOf(r) !== selectedCategory && (
+                        <span className="cs-sign-cat-tag">{foldedCategoryOf(r)}</span>
+                      )}
                       <h4 className="cs-sign-gloss">{r.gloss}</h4>
-                      {meaning && <p className="cs-sign-meaning">"{meaning}"</p>}
+                      {meaning && (
+                        <p className="cs-sign-meaning" lang="si">{meaning}</p>
+                      )}
                     </div>
 
                     {(isSuggested || r.source === 'team-recording') && (

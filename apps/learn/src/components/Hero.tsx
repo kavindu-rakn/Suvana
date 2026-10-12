@@ -242,16 +242,16 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
                     <div className="skeleton-hand-anim" aria-hidden="true">
                       <svg className="skeleton-hand-svg" viewBox="0 0 140 140" fill="none">
                         <g
-                          stroke="#20b2aa"
+                          className="skeleton-hand-bones"
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          opacity="0.75"
+                          opacity="0.8"
                         >
                           <path d="M70 126 L48 96 M70 126 L54 78 M70 126 L70 72 M70 126 L86 76 M70 126 L98 88" />
                           <path d="M48 96 L33 84 L24 72 M54 78 L50 56 L46 38 M70 72 L69 48 L68 28 M86 76 L89 54 L92 36 M98 88 L104 70 L110 56" />
                         </g>
-                        <g fill="#20b2aa">
+                        <g className="skeleton-hand-joints">
                           <circle cx="54" cy="78" r="3" />
                           <circle cx="70" cy="72" r="3" />
                           <circle cx="86" cy="76" r="3" />
@@ -268,7 +268,7 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
                           <circle cx="110" cy="56" r="2.4" />
                           <circle cx="24" cy="72" r="2.4" />
                         </g>
-                        <circle cx="70" cy="126" r="4.5" fill="#daa520" />
+                        <circle className="skeleton-hand-root" cx="70" cy="126" r="4.5" />
                       </svg>
                       <div className="scan-line" />
                     </div>

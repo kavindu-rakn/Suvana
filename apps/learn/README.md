@@ -242,13 +242,14 @@ The distance→score anchors are **fitted to measured data**, not guessed. The
 corpus records many takes of each sign by one signer, which labels itself: two
 takes of one sign are a correct rendition performed twice, takes of different
 signs are a wrong-sign attempt. `src/scoring/calibration.test.ts` measures both
-distributions over 557 takes of 33 signs and regenerates
-[`calibration-report.md`](calibration-report.md) on every run.
+distributions over 557 takes of 32 signs and regenerates
+[`calibration-report.md`](calibration-report.md) on every run. (33 signs are on
+disk; one has a single take, and a positive pair needs two.)
 
 | pair | p10 | median | p90 |
 |---|---|---|---|
-| same sign, another take | 0.220 | **0.474** | 0.788 |
-| a different sign | 0.396 | 0.661 | 0.949 |
+| same sign, another take | 0.222 | **0.459** | 0.767 |
+| a different sign | 0.405 | 0.662 | 0.954 |
 
 `D_PERFECT`/`D_ZERO` are set to the correct-rendition p10/p90, so the best tenth
 of correct renditions score 100 and the worst tenth score 0. **The previous
@@ -256,8 +257,10 @@ values (0.05/0.35) were far too tight — `D_ZERO` sat below the median correct
 rendition, so a genuinely correct attempt scored zero.**
 
 > **This grades; it does not classify.** Best achievable separation between the
-> two distributions is **73.8%**, and measured cross-sign distances start at
-> 0.134 (`30` vs `40`) — some distinct signs are closer together than two takes
+> two distributions is **74.6%** — against a **65.4% majority-class baseline**
+> (524 positive pairs against 992 negative), so quote the two together or not at
+> all; ROC AUC is **0.744**. Measured cross-sign distances start at
+> 0.135 (`30` vs `40`) — some distinct signs are closer together than two takes
 > of one sign typically are. A high score means *this target sign was performed
 > well*, not *this was the right sign*. Appropriateness (`rubric.ts`) therefore
 > compares only within a scenario's small vocabulary, never all 490 references.

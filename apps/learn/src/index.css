@@ -44,7 +44,7 @@
   --surface-2: var(--p-teal-700); /* inset rows, fields */
   --surface-hover: #223836; /* interactive tile / row hover, a step up from --surface-2 */
   --stage: var(--p-void); /* camera + canvas letterbox */
-  --app-bar-h: 61px; /* .app-bar height — the fixed practice/scenario surfaces sit below it */
+  --app-bar-h: 64px; /* .app-bar height — the fixed practice/scenario surfaces sit below it */
 
   --text: var(--p-sage-050);
   --text-dim: var(--p-sage-300);
@@ -133,6 +133,12 @@
      screen-designed serif present on every desktop OS — a system-ui fallback
      would swap the whole page between serif and sans on a slow font load. */
   --sans: 'Noto Serif', Georgia, 'Times New Roman', serif;
+  /* Same family as --sans today — the brand pairs one serif voice across both
+     scripts — but named separately so display headings (page titles, hub
+     titles, the mission briefing) carry their own token. Several rules in
+     views.css already reference var(--serif); without this they were resolving
+     by inheritance from body alone. */
+  --serif: var(--sans);
   /* Left as it was on purpose: inserting another family ahead of Consolas
      changes the glyph metrics, and the live readouts (fps, inference ms,
      elapsed seconds) are sized against these. ui-monospace already picks
@@ -186,44 +192,33 @@
   --bg: #fdfdfd;
   --surface: #ffffff;
   --surface-rgb: 255, 255, 255;
-  --surface-2: #f0f5f4;
-  --surface-hover: #e7efed;
+  --surface-2: #faf8f5;
+  --surface-hover: #f3efe6;
 
-  --text: #333333;
-  --text-dim: #5a6b68;
-  /* Accent is dark in this theme, so its foreground is paper, not ink. */
+  --text: #262118;
+  --text-dim: #6e6454;
   --on-accent: #ffffff;
 
-  /* Measured, as in the dark block above. The hairline is 1.25:1 on white,
-     which is decorative and allowed; the interactive border is 3.68:1 on
-     --surface and 3.34:1 on --surface-2, both clearing the 3:1 WCAG 2.1
-     SC 1.4.11 asks of a control boundary. */
-  --border-subtle: #dfe8e6;
-  --border-interactive: #6f8b86;
+  --border-subtle: #e8e2d5;
+  --border-interactive: #9e855a;
 
-  /* 5.46:1 on --surface, and the same in reverse for --on-accent on a filled
-     accent button. */
-  --accent: #00776a;
-  --accent-soft: #00a693;
-  /* Lime and amber are invisible on white; these are the same hues taken
-     dark enough to read as text (4.99:1 and 5.37:1 on --surface). */
-  --success: #4d7c0f;
-  --caution: #8a6410;
-  --integrity: #8a6410;
+  /* Goldenrod / Gold primary accent for Light Mode */
+  --accent: #b45309;
+  --accent-soft: #d97706;
+  --success: #15803d;
+  --caution: #b45309;
+  --integrity: #b45309;
   --danger: #b91c1c;
   --recording: #dc2626;
   --recording-strong: #b91c1c;
 
-  /* Washes: a dark page tints with light, a light page tints with colour. */
-  --glow-accent: rgb(0 166 147 / 0.07);
-  --glow-success: rgb(77 124 15 / 0.05);
-  --glow-stage: rgb(0 166 147 / 0.06);
+  --glow-accent: rgb(218 165 32 / 0.08);
+  --glow-success: rgb(21 128 61 / 0.05);
+  --glow-stage: rgb(218 165 32 / 0.06);
 
-  /* Elevation on white comes from shadow alone — there is no lit top edge to
-     simulate, and the dark-theme inset highlight reads as a scratch. */
-  --elev-1: 0 1px 2px rgb(15 31 28 / 0.08);
-  --elev-2: 0 6px 20px rgb(15 31 28 / 0.1);
-  --elev-3: 0 16px 40px rgb(15 31 28 / 0.14);
+  --elev-1: 0 1px 2px rgb(38 33 24 / 0.06);
+  --elev-2: 0 6px 20px rgb(38 33 24 / 0.09);
+  --elev-3: 0 16px 40px rgb(38 33 24 / 0.12);
   --edge-lit: none;
 
   color-scheme: light;
@@ -315,13 +310,17 @@ body::before {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+
+  /* How wide the whole shell runs — app bar, main and footer all read it, so
+     they stay aligned with each other across all tabs. */
+  --shell-max: 1400px;
 }
 
 .app > main,
 .app-footer,
 .mode-banner-wrap {
   width: 100%;
-  max-width: 1000px;
+  max-width: var(--shell-max);
   margin: 0 auto;
   padding-inline: var(--s-5);
 }
@@ -330,6 +329,10 @@ body::before {
   display: flex;
   flex-direction: column;
   gap: var(--s-6);
+  /* Grow to fill the viewport so a short page (e.g. Progress with coverage
+     collapsed) still puts the footer at the bottom, not floating mid-screen.
+     .app is already `min-height: 100dvh` + column; this completes the pattern. */
+  flex: 1;
   /* --nav-offset clears the fixed mobile tab bar; it is 0 on desktop. */
   padding-block: var(--s-8) calc(var(--s-12) + var(--nav-offset));
 }
@@ -360,7 +363,7 @@ body::before {
   justify-content: space-between;
   gap: var(--s-4);
   width: 100%;
-  max-width: 1000px;
+  max-width: var(--shell-max);
   margin: 0 auto;
   padding: var(--s-3) var(--s-5);
 }
@@ -553,9 +556,9 @@ body::before {
    composites the whole strip every frame, and on the Practice tab it would sit
    directly over a live camera feed on exactly the devices least able to afford
    it. */
-@media (max-width: 760px) {
+@media (max-width: 860px) {
   :root {
-    --nav-offset: calc(64px + env(safe-area-inset-bottom, 0px));
+    --nav-offset: calc(76px + env(safe-area-inset-bottom, 0px));
   }
 
   .tabs {
@@ -668,6 +671,17 @@ body::before {
 .btn:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+/* A size modifier, not a colour one. `.btn.small` was previously defined only
+   under `.aww-topbar`, where it is an inverted hero-topbar variant — so every
+   other `className="btn small"` in the app silently rendered at full size.
+   The topbar rule still wins there on specificity. Touch targets are unaffected:
+   the `pointer: coarse` block keeps `.btn` at a 44px minimum. */
+.btn.small {
+  font-size: var(--fs-sm);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-xs);
 }
 
 .btn-ghost {
@@ -923,50 +937,74 @@ body::before {
 
 /* ---- account, in the app bar ----
    Identity is platform-wide (it lives in the Communicate module) but Learn
-   never gates on it — see src/app/session.ts for why. */
+   never gates on it — see src/app/session.ts for why. AccountButton fills
+   AppNavBar's optional `account` slot, after the theme toggle, sized to match
+   the author and theme buttons beside it. */
 .app-account {
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-  font-size: var(--fs-sm);
-}
-
-.app-account-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  max-width: 22ch;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
   color: var(--text-dim);
-  text-decoration: none;
-}
-
-.app-account-link:hover {
-  color: var(--text);
-}
-
-.app-account-role {
-  padding: 1px 7px;
-  border-radius: var(--r-full);
-  background: rgb(45 212 191 / 0.14);
-  color: var(--accent);
   font-family: var(--mono);
-  font-size: var(--fs-2xs);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
-/* The bar is brand + tabs + account; below 760px the tabs leave for the
-   bottom bar, so the account sits opposite the brand. */
-@media (max-width: 760px) {
-  .app-bar-inner {
-    justify-content: space-between;
-  }
+.app-account:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
-  .app-account-link {
-    max-width: 14ch;
+.app-account svg {
+  width: 15px;
+  height: 15px;
+}
+
+.app-account.is-pending {
+  visibility: hidden;
+}
+
+.app-account.is-signed-in {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+
+/* Admin marker: a dot on the avatar's edge, ringed in the page colour so it
+   reads as separate from the circle. */
+.app-account-admin {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--caution);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+
+/* Phones: the bar has no room for a fifth item, so the account takes the
+   place of the On-Device AI marker, which below 1100px is already reduced to
+   a bare dot. Scoped with :has() so a bar without an account is untouched. */
+@media (max-width: 860px) {
+  .aww-app-actions:has(.app-account) .aww-telemetry-pill {
+    display: none;
+  }
+}
+
+/* 360px-class phones: even then the bar runs ~5px over, so close the gaps
+   between the round buttons a little. */
+@media (max-width: 380px) {
+  .aww-app-actions:has(.app-account) {
+    gap: 6px;
   }
 }
 

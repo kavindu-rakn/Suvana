@@ -4,12 +4,23 @@ import { currentStreak, dailyActivity } from '../learner/activity'
 import type { DayBucket } from '../learner/activity'
 import { practiceNeed, summarizeAll } from '../learner/mastery'
 import type { GlossMastery, MasteryLevel } from '../learner/mastery'
-import { glossLabel } from '../data/translations'
+import { buildSession } from '../learner/session'
+import { translationOf } from '../data/translations'
 import { listRecordings } from '../storage/recordingStore'
 import { loadReferenceIndex } from '../storage/bundledReferences'
+import { pickReferenceList } from '../storage/references'
+import { toMeta } from '../vision/types'
 import { categoryOf, categoriesIn } from '../data/categories'
 
 const ACTIVITY_DAYS = 14
+// The full catalogue is Practice's job. Progress shows only what the learner
+// model rates as most worth doing now, plus a breadth read on the categories.
+const FOCUS_COUNT = 6
+const REVIEW_COUNT = 5
+// A practised sign needs real outstanding work before it earns a Review slot —
+// otherwise a sign drilled yesterday shows up asking to be redone.
+const REVIEW_NEED_MIN = 0.3
+const CATEGORY_PREVIEW = 8
 
 const LEVEL_LABEL: Record<MasteryLevel, string> = {
   new: 'New',
@@ -26,47 +37,94 @@ function relativeDay(iso: string | null): string {
   return `${days} days ago`
 }
 
-function Sparkline({ scores }: { scores: number[] }) {
-  if (scores.length < 2) return null
-  const w = 72
-  const h = 24
-  const pad = 3
-  const step = (w - pad * 2) / (scores.length - 1)
-  const points = scores
-    .map(
-      (s, i) =>
-        `${(pad + i * step).toFixed(1)},${(h - pad - (s / 100) * (h - pad * 2)).toFixed(1)}`,
-    )
-    .join(' ')
+/** Rank numerals read as 01…06, matching the hero's numbered steps. */
+function rankLabel(i: number): string {
+  return String(i + 1).padStart(2, '0')
+}
+
+/**
+ * One row of "Practise next" / "Review": rank, gloss + meaning, a mastery
+ * meter, the level chip, and the single action that opens Practice on it.
+ */
+function SignRow({
+  s,
+  rank,
+  animate,
+  onPractise,
+}: {
+  s: GlossMastery
+  rank: number
+  animate: boolean
+  onPractise?: (gloss?: string) => void
+}) {
+  const meaning = translationOf(s.gloss)
+  const pct = Math.round(s.mastery * 100)
+  const meta =
+    s.attempts === 0
+      ? 'Not practised yet'
+      : `${s.attempts} attempt${s.attempts === 1 ? '' : 's'} · ${relativeDay(s.lastPracticedAt)}`
+
   return (
-    <svg
-      className="sparkline"
-      viewBox={`0 0 ${w} ${h}`}
-      width={w}
-      height={h}
-      role="img"
-      aria-label={`Recent scores: ${scores.join(', ')}`}
-    >
-      <title>{`Recent scores: ${scores.join(' → ')}`}</title>
-      <polyline points={points} />
-    </svg>
+    <li className="pg-row" style={animate ? ({ '--i': rank } as React.CSSProperties) : undefined}>
+      <span className="pg-rank" aria-hidden="true">
+        {rankLabel(rank)}
+      </span>
+
+      <div className="pg-row-id">
+        <p className="pg-row-title">
+          <span className="pg-gloss">{s.gloss}</span>
+          {meaning && <span className="pg-meaning">{meaning}</span>}
+        </p>
+        <p className="pg-row-meta">{meta}</p>
+      </div>
+
+      <div className="pg-row-meter">
+        <div className={`pg-meter is-${s.level}`} aria-hidden="true">
+          <div className="pg-meter-fill" style={{ width: `${pct}%` }} />
+        </div>
+        <span className="pg-meter-val">{pct}%</span>
+      </div>
+
+      <span className={`pg-chip is-${s.level}`}>{LEVEL_LABEL[s.level]}</span>
+
+      {onPractise && (
+        <button type="button" className="pg-go" onClick={() => onPractise(s.gloss)}>
+          Practise
+          <span className="sr-only"> {s.gloss}</span>
+        </button>
+      )}
+    </li>
   )
 }
 
-export function ProgressView() {
+export function ProgressView({
+  onPractise,
+}: {
+  /** Open the Practice tab. With a gloss, land straight on that sign; without
+   *  one, just switch tabs. */
+  onPractise?: (gloss?: string) => void
+}) {
   const [summaries, setSummaries] = useState<GlossMastery[]>([])
   const [categoryMap, setCategoryMap] = useState<Map<string, string>>(new Map())
   const [availableCategories, setAvailableCategories] = useState<string[]>([])
-  
+
   const [attemptCount, setAttemptCount] = useState(0)
   const [avgRecent, setAvgRecent] = useState<number | null>(null)
   const [activity, setActivity] = useState<DayBucket[]>([])
   const [streak, setStreak] = useState(0)
   const [loading, setLoading] = useState(true)
-  
-  // Search and Filter State
-  const [searchQuery, setSearchQuery] = useState('')
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
+
+  const [showAllCategories, setShowAllCategories] = useState(false)
+
+  // Gate the row stagger the way Hero.tsx does — the token layer already
+  // collapses durations under reduced motion, but this drops the transform
+  // offset entirely so nothing sits off its mark waiting for a delay to clear.
+  const [animate] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
 
   useEffect(() => {
     void (async () => {
@@ -75,15 +133,17 @@ export function ProgressView() {
         loadReferenceIndex(),
         listAttempts(),
       ])
-      const allRefs = [...loc, ...bun]
-      const glosses = allRefs.map((r) => r.gloss)
-      
+      // The same one-per-gloss list Practice builds, so the totals here and
+      // there can never disagree (see hero-copy-must-match-build).
+      const refs = pickReferenceList([...loc.map(toMeta), ...bun])
+      const glosses = refs.map((r) => r.gloss)
+
       const cMap = new Map<string, string>()
-      for (const r of allRefs) {
-          cMap.set(r.gloss, categoryOf(r))
+      for (const r of refs) {
+        cMap.set(r.gloss, categoryOf(r))
       }
       setCategoryMap(cMap)
-      setAvailableCategories(categoriesIn(allRefs))
+      setAvailableCategories(categoriesIn(refs))
 
       const now = new Date()
       setSummaries(
@@ -104,211 +164,317 @@ export function ProgressView() {
 
   const practised = summaries.filter((s) => s.attempts > 0).length
   const mastered = summaries.filter((s) => s.level === 'mastered').length
-  const overallMastery = summaries.length > 0 ? (practised / summaries.length) * 100 : 0
-  const cScore = Math.max(0, 100 - overallMastery)
+  const total = summaries.length
 
-  // Filter summaries based on search query
-  const filteredSummaries = useMemo(() => {
-    if (!searchQuery) return summaries
-    const lowerQ = searchQuery.toLowerCase()
-    return summaries.filter(s => glossLabel(s.gloss).toLowerCase().includes(lowerQ))
-  }, [summaries, searchQuery])
+  // The same policy PracticeView uses to fill a session — practiceNeed ranking,
+  // with the category-aware tie-break that keeps a fresh learner off a run of
+  // "1, 100, 1000, …". So this list is literally what "Practise" would queue.
+  const focus = useMemo(() => {
+    if (summaries.length === 0) return []
+    const byGloss = new Map(summaries.map((s) => [s.gloss, s]))
+    return buildSession(summaries, FOCUS_COUNT, new Date(), (g) => categoryMap.get(g) ?? 'Other')
+      .map((g) => byGloss.get(g))
+      .filter((s): s is GlossMastery => s !== undefined)
+  }, [summaries, categoryMap])
 
-  // Group by category
-  const summariesByCategory = useMemo(() => {
-    const grouped = new Map<string, GlossMastery[]>()
-    for (const cat of availableCategories) {
-        grouped.set(cat, [])
-    }
-    grouped.set('Other', [])
-    
-    for (const s of filteredSummaries) {
-        const cat = categoryMap.get(s.gloss) || 'Other'
-        if (grouped.has(cat)) {
-            grouped.get(cat)!.push(s)
-        } else {
-            grouped.set(cat, [s])
+  // Signs already tried that the model still rates as needing work — the strand
+  // "Practise next" leaves out while it is busy introducing new vocabulary.
+  const review = useMemo(() => {
+    const now = new Date()
+    const inFocus = new Set(focus.map((s) => s.gloss))
+    return summaries
+      .filter(
+        (s) => s.attempts > 0 && !inFocus.has(s.gloss) && practiceNeed(s, now) >= REVIEW_NEED_MIN,
+      )
+      .sort((a, b) => practiceNeed(b, now) - practiceNeed(a, now))
+      .slice(0, REVIEW_COUNT)
+  }, [summaries, focus])
+
+  // One breadth row per category, most-worked first.
+  const coverage = useMemo(() => {
+    return availableCategories
+      .map((cat) => {
+        const inCat = summaries.filter((s) => (categoryMap.get(s.gloss) ?? 'Other') === cat)
+        return {
+          cat,
+          done: inCat.filter((s) => s.attempts > 0).length,
+          total: inCat.length,
         }
-    }
-    return grouped
-  }, [filteredSummaries, availableCategories, categoryMap])
+      })
+      .filter((r) => r.total > 0)
+      .sort((a, b) => b.done - a.done || b.total - a.total || a.cat.localeCompare(b.cat))
+  }, [summaries, availableCategories, categoryMap])
+
+  const visibleCoverage = showAllCategories ? coverage : coverage.slice(0, CATEGORY_PREVIEW)
+  const peak = Math.max(...activity.map((d) => d.attempts), 1)
+  const week = activity.slice(-7)
+
+  if (loading) {
+    return (
+      <section className="pg">
+        <header className="pg-masthead">
+          <div className="pg-masthead-lead">
+            <p className="pg-kicker">Learner dashboard</p>
+            <h1 className="pg-title">Your Progress</h1>
+          </div>
+        </header>
+        <div className="pg-skeleton" aria-hidden="true">
+          <div className="sk sk-band" />
+          <div className="sk sk-panel" />
+          <div className="sk sk-panel sk-short" />
+        </div>
+      </section>
+    )
+  }
+
+  if (total === 0) {
+    return (
+      <section className="pg">
+        <header className="pg-masthead">
+          <div className="pg-masthead-lead">
+            <p className="pg-kicker">Learner dashboard</p>
+            <h1 className="pg-title">Your Progress</h1>
+          </div>
+        </header>
+        <div className="pg-notice">
+          <h2>No sign data loaded.</h2>
+          <p>
+            The reference recordings did not load, so there is nothing to track yet. A reload
+            usually fixes it.
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  const started = attemptCount > 0
 
   return (
-    <section className="aww-progress-view">
-      <div className="aww-progress-header">
-        <h1 className="aww-progress-title">Your Progress</h1>
-      </div>
+    <section className="pg">
+      <header className="pg-masthead">
+        <div className="pg-masthead-lead">
+          <p className="pg-kicker">Learner dashboard</p>
+          <h1 className="pg-title">Your Progress</h1>
+          <p className="pg-sub">
+            Every attempt is scored against a real-signer recording and logged in this browser.
+          </p>
+        </div>
+        {/* No CTA here on purpose: the per-row "Practise" buttons below are the
+            page's action, and "See all signs" already covers the untargeted
+            trip to Practice. A third control doing the same thing is noise. */}
+      </header>
 
-      {loading ? (
-        <p className="empty-state">Loading…</p>
-      ) : summaries.length === 0 ? (
-        <p className="empty-state">
-          No vocabulary yet — record reference signs in the <strong>Record</strong> tab first.
-        </p>
+      {started ? (
+        <div className="pg-stats">
+          <div className="pg-stat">
+            <span className="pg-stat-val">
+              {practised}
+              <span className="pg-stat-of">/{total}</span>
+            </span>
+            <span className="pg-stat-lbl">Signs practised</span>
+            <div className="pg-stat-track" aria-hidden="true">
+              <div className="pg-stat-fill" style={{ width: `${(practised / total) * 100}%` }} />
+            </div>
+          </div>
+
+          <div className="pg-stat">
+            <span className="pg-stat-val">
+              {mastered}
+              <span className="pg-stat-of">/{total}</span>
+            </span>
+            <span className="pg-stat-lbl">Fully mastered</span>
+            <div className="pg-stat-track" aria-hidden="true">
+              <div className="pg-stat-fill" style={{ width: `${(mastered / total) * 100}%` }} />
+            </div>
+          </div>
+
+          <div className="pg-stat">
+            <span className="pg-stat-val">
+              {streak}
+              <span className="pg-stat-of">{streak === 1 ? 'day' : 'days'}</span>
+            </span>
+            <span className="pg-stat-lbl">Current streak</span>
+            <div className="pg-week" aria-hidden="true">
+              {week.map((d) => (
+                <span
+                  key={d.date}
+                  className={d.attempts > 0 ? 'pg-week-dot is-on' : 'pg-week-dot'}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="pg-stat">
+            <span className="pg-stat-val">
+              {avgRecent ?? '—'}
+              <span className="pg-stat-of">/100</span>
+            </span>
+            <span className="pg-stat-lbl">Recent average</span>
+            <div className="pg-stat-track" aria-hidden="true">
+              <div className="pg-stat-fill" style={{ width: `${avgRecent ?? 0}%` }} />
+            </div>
+          </div>
+        </div>
       ) : (
-        <div className="aww-progress-content">
-          
-          {/* 1. Bento Box Analytics Header */}
-          <div className="aww-bento-grid">
-            
-            {/* Mastery Ring */}
-            <div className="aww-bento-card aww-bento-mastery">
-              <h3>Overall Mastery</h3>
-              <div className="aww-radial-progress" style={{ '--progress': `${overallMastery}%` } as React.CSSProperties}>
-                 <svg viewBox="0 0 120 120">
-                   <circle cx="60" cy="60" r="54" className="bg" />
-                   <circle cx="60" cy="60" r="54" className="fg" strokeDasharray="339.29" strokeDashoffset={339.29 * (cScore / 100)} />
-                 </svg>
-                 <div className="aww-radial-content">
-                   <span className="val">{practised}</span>
-                   <span className="lbl">/ {summaries.length}</span>
-                 </div>
-              </div>
-              <p>{mastered} signs fully mastered</p>
-            </div>
-
-            {/* Stats Column */}
-            <div className="aww-bento-stats-col">
-               <div className="aww-bento-card aww-bento-streak">
-                 <h3>Current Streak</h3>
-                 <div className="aww-streak-display">
-                    <span className="streak-fire">🔥</span>
-                    <span className="streak-val">{streak}</span>
-                    <span className="streak-lbl">Days</span>
-                 </div>
-               </div>
-               
-               <div className="aww-bento-card aww-bento-avg">
-                 <h3>Recent Average</h3>
-                 <div className="aww-avg-display">
-                    <span className="avg-val">{avgRecent ?? '—'}</span>
-                    <span className="avg-lbl">/ 100</span>
-                 </div>
-                 <p className="stat-sub">Based on last 10 attempts</p>
-               </div>
-            </div>
-
-            {/* Activity Heatmap */}
-            {attemptCount > 0 && (
-                <div className="aww-bento-card aww-bento-activity">
-                  <div className="activity-header-flex">
-                    <h3>Activity Heatmap</h3>
-                    <span className="activity-total">{activity.reduce((n, d) => n + d.attempts, 0)} attempts</span>
-                  </div>
-                  <p className="stat-sub" style={{marginBottom: '16px'}}>Last {ACTIVITY_DAYS} days</p>
-                  
-                  <div className="aww-heatmap" role="img" aria-label="Activity heatmap">
-                    {activity.map((d) => {
-                      const peak = Math.max(...activity.map((x) => x.attempts), 1)
-                      const intensity = d.attempts > 0 ? 0.2 + (0.8 * (d.attempts / peak)) : 0
-                      return (
-                        <div
-                          key={d.date}
-                          className="aww-heatmap-day"
-                          style={{ '--intensity': intensity } as React.CSSProperties}
-                          title={
-                            d.attempts === 0
-                              ? `${d.date}: no practice`
-                              : `${d.date}: ${d.attempts} attempt${d.attempts === 1 ? '' : 's'}, avg ${d.avgScore}`
-                          }
-                        />
-                      )
-                    })}
-                  </div>
-                </div>
-            )}
-          </div>
-
-          {/* 2. The Command Center (Sign Browser) */}
-          <div className="aww-command-center">
-            <div className="aww-command-header">
-               <h2>Sign Library</h2>
-               <div className="aww-search-bar">
-                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                 <input 
-                   type="text" 
-                   placeholder="Search 490 signs..." 
-                   value={searchQuery}
-                   onChange={e => setSearchQuery(e.target.value)}
-                 />
-               </div>
-            </div>
-
-            {/* Accordions */}
-            <div className="aww-accordions">
-               {availableCategories.map(cat => {
-                   const items = summariesByCategory.get(cat) || []
-                   if (items.length === 0) return null
-                   
-                   const isExpanded = expandedCategory === cat || (searchQuery !== '' && items.length > 0)
-                   
-                   const categoryPractised = items.filter(s => s.attempts > 0).length
-                   const categoryProgress = (categoryPractised / items.length) * 100
-                   
-                   return (
-                     <div className={`aww-accordion ${isExpanded ? 'expanded' : ''}`} key={cat}>
-                       <button className="aww-accordion-header" onClick={() => setExpandedCategory(isExpanded ? null : cat)}>
-                         <div className="cat-info">
-                            <h3>{cat}</h3>
-                            <span className="cat-count">{categoryPractised} / {items.length} practised</span>
-                         </div>
-                         <div className="cat-progress-bar">
-                            <div className="cat-progress-fill" style={{width: `${categoryProgress}%`}}></div>
-                         </div>
-                         <svg className="chevron" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
-                       </button>
-                       
-                       {isExpanded && (
-                         <div className="aww-accordion-content">
-                            <div className="aww-sign-grid">
-                              {items.map(s => (
-                                <div className={`aww-sign-card ${s.level}`} key={s.gloss}>
-                                  <div className="sign-card-header">
-                                    <h4>{glossLabel(s.gloss)}</h4>
-                                    <span className={`level-chip ${s.level}`}>{LEVEL_LABEL[s.level]}</span>
-                                  </div>
-                                  
-                                  <div className="sign-card-body">
-                                    <div className="progress-ring-mini" style={{'--pct': `${s.mastery * 100}%`} as React.CSSProperties}>
-                                      <svg viewBox="0 0 36 36">
-                                        <circle cx="18" cy="18" r="16" className="bg" />
-                                        <circle cx="18" cy="18" r="16" className="fg" strokeDasharray="100.53" strokeDashoffset={100.53 * (1 - s.mastery)} />
-                                      </svg>
-                                      <span>{Math.round(s.mastery * 100)}%</span>
-                                    </div>
-                                    
-                                    <div className="sign-card-stats">
-                                      <span className="attempts-text">
-                                        {s.attempts === 0 ? 'Not started' : `${s.attempts} attempt${s.attempts === 1 ? '' : 's'}`}
-                                      </span>
-                                      <span className="last-practised">
-                                        {s.attempts === 0 ? '' : `Last: ${relativeDay(s.lastPracticedAt)}`}
-                                      </span>
-                                    </div>
-                                    
-                                    <div className="spark-wrap">
-                                      <Sparkline scores={s.recentScores} />
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                         </div>
-                       )}
-                     </div>
-                   )
-               })}
-               
-               {filteredSummaries.length === 0 && (
-                   <div className="aww-no-results">
-                      <p>No signs found matching "{searchQuery}"</p>
-                   </div>
-               )}
-            </div>
-          </div>
-          
+        <div className="pg-notice pg-notice-inline">
+          <h2>Nothing logged yet.</h2>
+          <p>
+            Practise a sign and this page fills in — a mastery estimate for every sign, a daily
+            streak, and an activity record.
+          </p>
         </div>
       )}
+
+      <div className="pg-grid">
+        <div className="pg-col-main">
+          <section className="pg-panel" aria-labelledby="pg-focus-h">
+            <div className="pg-panel-head">
+              <div>
+                <p className="pg-kicker">Ranked by the learner model</p>
+                <h2 id="pg-focus-h">Practise next</h2>
+              </div>
+              {onPractise && (
+                <button type="button" className="pg-link" onClick={() => onPractise()}>
+                  See all signs
+                </button>
+              )}
+            </div>
+            <ol className={`pg-rows${animate ? ' is-animated' : ''}`}>
+              {focus.map((s, i) => (
+                <SignRow key={s.gloss} s={s} rank={i} animate={animate} onPractise={onPractise} />
+              ))}
+            </ol>
+          </section>
+
+          {review.length > 0 && (
+            <section className="pg-panel" aria-labelledby="pg-review-h">
+              <div className="pg-panel-head">
+                <div>
+                  <p className="pg-kicker">Started, still needs work</p>
+                  <h2 id="pg-review-h">Review</h2>
+                </div>
+              </div>
+              <ol className={`pg-rows${animate ? ' is-animated' : ''}`}>
+                {review.map((s, i) => (
+                  <SignRow key={s.gloss} s={s} rank={i} animate={animate} onPractise={onPractise} />
+                ))}
+              </ol>
+            </section>
+          )}
+        </div>
+
+        <aside className="pg-col-rail">
+          {started && (
+            <section className="pg-panel" aria-labelledby="pg-activity-h">
+              <div className="pg-panel-head">
+                <div>
+                  <p className="pg-kicker">Last {ACTIVITY_DAYS} days</p>
+                  <h2 id="pg-activity-h">Activity</h2>
+                </div>
+                <span className="pg-panel-figure">
+                  {activity.reduce((n, d) => n + d.attempts, 0)}
+                  <span> attempts</span>
+                </span>
+              </div>
+
+              <div
+                className="pg-heat"
+                role="img"
+                aria-label={`Practice activity over the last ${ACTIVITY_DAYS} days`}
+              >
+                {activity.map((d) => {
+                  const intensity = d.attempts > 0 ? 0.25 + 0.75 * (d.attempts / peak) : 0
+                  return (
+                    <div
+                      key={d.date}
+                      className="pg-heat-day"
+                      style={{ '--intensity': intensity } as React.CSSProperties}
+                      title={
+                        d.attempts === 0
+                          ? `${d.date}: no practice`
+                          : `${d.date}: ${d.attempts} attempt${d.attempts === 1 ? '' : 's'}, avg ${d.avgScore}`
+                      }
+                    />
+                  )
+                })}
+              </div>
+
+              <div className="pg-heat-key" aria-hidden="true">
+                <span>Less</span>
+                <i style={{ '--intensity': 0 } as React.CSSProperties} />
+                <i style={{ '--intensity': 0.35 } as React.CSSProperties} />
+                <i style={{ '--intensity': 0.7 } as React.CSSProperties} />
+                <i style={{ '--intensity': 1 } as React.CSSProperties} />
+                <span>More</span>
+              </div>
+
+              {/* role="img" makes the grid opaque to a screen reader; this is the
+                  same 14 days in a form it can read. The wrapper div (not the
+                  table) carries .sr-only — clipping a bare table is unreliable. */}
+              <div className="sr-only">
+                <table>
+                  <caption>Practice attempts per day, last {ACTIVITY_DAYS} days</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">Attempts</th>
+                      <th scope="col">Average score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activity.map((d) => (
+                      <tr key={d.date}>
+                        <td>{d.date}</td>
+                        <td>{d.attempts}</td>
+                        <td>{d.avgScore ?? '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+
+          {started && coverage.length > 0 && (
+            <section className="pg-panel" aria-labelledby="pg-coverage-h">
+              <div className="pg-panel-head">
+                <div>
+                  <p className="pg-kicker">Breadth across the corpus</p>
+                  <h2 id="pg-coverage-h">Coverage</h2>
+                </div>
+              </div>
+
+              <ul className="pg-cov">
+                {visibleCoverage.map((r) => (
+                  <li className="pg-cov-row" key={r.cat}>
+                    <span className="pg-cov-name">{r.cat}</span>
+                    <span className="pg-cov-count">
+                      {r.done}
+                      <span>/{r.total}</span>
+                    </span>
+                    <div className="pg-cov-track" aria-hidden="true">
+                      <div
+                        className="pg-cov-fill"
+                        style={{ width: `${(r.done / r.total) * 100}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              {coverage.length > CATEGORY_PREVIEW && (
+                <button
+                  type="button"
+                  className="pg-link pg-cov-more"
+                  onClick={() => setShowAllCategories((v) => !v)}
+                >
+                  {showAllCategories ? 'Show fewer' : `Show all ${coverage.length} categories`}
+                </button>
+              )}
+            </section>
+          )}
+        </aside>
+      </div>
     </section>
   )
 }

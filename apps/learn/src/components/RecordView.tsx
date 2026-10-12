@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { ChevronLeft, Circle, Square, X } from 'lucide-react'
 import { useHandTracking } from '../vision/useHandTracking'
 import { handCoverage } from '../vision/types'
 import type { HandFrame, RecordingMeta, SignRecording } from '../vision/types'
@@ -6,7 +7,7 @@ import { toMeta } from '../vision/types'
 import { listRecordings, saveRecording } from '../storage/recordingStore'
 import { loadReferenceFrames, loadReferenceIndex } from '../storage/bundledReferences'
 import { pickReferenceList } from '../storage/references'
-import { glossLabel, translationOf } from '../data/translations'
+import { glossLabel } from '../data/translations'
 import { CameraStage } from './CameraStage'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { CategorySignNavigator } from './CategorySignNavigator'
@@ -39,16 +40,29 @@ export function RecordView() {
 
   const [isCustomMode, setIsCustomMode] = useState(false)
   const [customGloss, setCustomGloss] = useState('')
-  const [signer, setSigner] = useState(() => localStorage.getItem(SIGNER_KEY) ?? 'Dev Team')
+  /**
+   * Who performed the take. This is written into every saved recording's
+   * provenance, so it must never be a placeholder nobody chose: it starts
+   * empty rather than at "Dev Team", and the record button stays disabled
+   * until it is filled. It persists on edit, not only on save, so the name is
+   * genuinely remembered on the next visit.
+   */
+  const [signer, setSigner] = useState(() => localStorage.getItem(SIGNER_KEY) ?? '')
+
+  function updateSigner(next: string) {
+    setSigner(next)
+    try {
+      localStorage.setItem(SIGNER_KEY, next)
+    } catch {
+      /* Private-mode Safari throws; the field still works for this session. */
+    }
+  }
 
   const [count, setCount] = useState(COUNTDOWN_S)
   const [elapsedMs, setElapsedMs] = useState(0)
   const [review, setReview] = useState<SignRecording | null>(null)
   const [justSaved, setJustSaved] = useState(false)
   const [saveError, setSaveError] = useState('')
-
-  // Sign Picker State
-  const [pickerOpen, setPickerOpen] = useState(false)
 
   const framesRef = useRef<HandFrame[]>([])
   const startTsRef = useRef<number | null>(null)
@@ -201,7 +215,6 @@ export function RecordView() {
       return
     }
     setSaveError('')
-    localStorage.setItem(SIGNER_KEY, signerRef.current)
     setReview(null)
     setPhase('idle')
     setJustSaved(true)
@@ -220,60 +233,7 @@ export function RecordView() {
   const coverage = review ? handCoverage(review.frames) : 0
 
   return (
-    <div className="aww-practice-env aww-studio-env" data-phase={phase} data-picker-open={pickerOpen}>
-      {/* Studio Header Toolbar */}
-      <div className="aww-studio-toolbar">
-        <div className="studio-tool-left">
-          <span className="studio-badge">MOCAP STUDIO</span>
-          <button
-            className="btn ghost studio-sign-btn"
-            onClick={() => setPickerOpen(true)}
-          >
-            <span className="studio-sign-label">Active Sign:</span>
-            <strong>{activeGloss ? glossLabel(activeGloss) : 'Select a Sign...'}</strong>
-            {translationOf(activeGloss) && (
-              <span className="studio-sign-sub">({translationOf(activeGloss)})</span>
-            )}
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M6 9l6 6 6-6" />
-            </svg>
-          </button>
-          <button
-            className={`btn ghost ${isBrowsing ? 'active' : ''}`}
-            onClick={() => {
-              setIsBrowsing(true)
-            }}
-          >
-            {isBrowsing ? 'Categories Menu' : '← Browse Categories'}
-          </button>
-          <button
-            className={`btn ghost ${isCustomMode && !isBrowsing ? 'active' : ''}`}
-            onClick={() => {
-              setIsCustomMode(true)
-              setSelected(null)
-              setIsBrowsing(false)
-            }}
-          >
-            + Custom Sign
-          </button>
-        </div>
-
-        <div className="studio-tool-right">
-          <div className="studio-signer-input-wrap">
-            <span className="signer-label">Signer:</span>
-            <input
-              type="text"
-              className="studio-signer-input"
-              value={signer}
-              onChange={(e) => setSigner(e.target.value)}
-              placeholder="Performer name..."
-              disabled={phase === 'countdown' || phase === 'recording'}
-            />
-          </div>
-          {justSaved && <span className="studio-saved-pill">✓ Saved Take</span>}
-        </div>
-      </div>
-
+    <div className="aww-practice-env aww-studio-env" data-phase={phase}>
       {/* The 50/50 Dual Studio View */}
       <div className="aww-split-screen">
         {/* Left Pane: Target Reference Benchmark or In-Pane Category & Sign Browser */}
@@ -297,38 +257,50 @@ export function RecordView() {
             />
           ) : (
             <>
-              <div className="aww-pane-header">
-                <div>
-                  <p className="aww-pane-label">Benchmark Reference</p>
+              {/* One back affordance, same as Practice: the round chevron. It
+                  replaces the old toolbar's "Active Sign" / "Browse Categories"
+                  buttons and the header's "← Categories" button, which all ran
+                  the same setIsBrowsing(true). */}
+              <div className="aww-pane-header aww-ref-header">
+                {phase !== 'recording' && phase !== 'countdown' && (
+                  <button
+                    className="aww-back-round"
+                    onClick={() => setIsBrowsing(true)}
+                    aria-label="Choose a different sign"
+                  >
+                    <ChevronLeft size={20} aria-hidden="true" />
+                  </button>
+                )}
+                <div className="aww-ref-heading">
+                  {/* "Reference", not "Benchmark Reference": the pill below
+                      already says which kind, and Practice's pane uses the
+                      same one-word kicker. */}
+                  <p className="aww-pane-label">Reference</p>
                   <h2 className="aww-pane-title">
-                    {isCustomMode ? (
-                      <span style={{ fontStyle: 'italic' }}>New Vocabulary</span>
-                    ) : selected ? (
-                      glossLabel(selected.gloss)
-                    ) : (
-                      'Choose a sign'
-                    )}
+                    {isCustomMode ? 'New sign' : selected ? glossLabel(selected.gloss) : 'Choose a sign'}
                   </h2>
-                  {selected && (
+                  {/* No separate meaning line: glossLabel() already renders
+                      "GLOSS (meaning)". The old toolbar printed both and read
+                      "ADINAWA (pull) (pull)". */}
+                  {!isCustomMode && selected && (
                     <div className="studio-ref-meta">
-                      <span className="studio-ref-pill">
-                        {selected.source === 'team-recording' ? 'Team Provisional' : 'Dataset Reference'}
-                      </span>
+                      {selected.source === 'team-recording' ? (
+                        <span className="studio-ref-pill provisional">Team provisional</span>
+                      ) : (
+                        <span className="studio-ref-pill">Dataset</span>
+                      )}
                       <span className="studio-ref-pill">{(selected.durationMs / 1000).toFixed(1)}s</span>
                     </div>
                   )}
                 </div>
-                {phase !== 'recording' && phase !== 'countdown' && (
-                  <button className="btn ghost" onClick={() => setIsBrowsing(true)}>
-                    ← Categories
-                  </button>
-                )}
               </div>
 
               <div className="aww-pane-content">
                 {isCustomMode ? (
                   <div className="studio-custom-prompt">
-                    <p className="studio-prompt-title">Creating a New Reference</p>
+                    {/* No heading here — the pane header above already says
+                        "New sign". The two used to sit 60px apart saying the
+                        same thing, and overlapped at wider gloss lengths. */}
                     <p className="studio-prompt-desc">
                       Enter a unique gloss name below. Once recorded and saved, this sign will immediately become part of your local reference library.
                     </p>
@@ -337,7 +309,9 @@ export function RecordView() {
                       className="studio-custom-input"
                       value={customGloss}
                       onChange={(e) => setCustomGloss(e.target.value.toUpperCase())}
-                      placeholder="e.g. MORNING, WATER, TEACHER"
+                      /* One example, not three: the field is centred, uppercase
+                         and 20px, so a longer placeholder clipped mid-word. */
+                      placeholder="e.g. MORNING"
                       autoFocus
                       disabled={phase === 'countdown' || phase === 'recording'}
                     />
@@ -347,6 +321,11 @@ export function RecordView() {
                     frames={reference.frames}
                     videoWidth={reference.videoWidth}
                     videoHeight={reference.videoHeight}
+                    /* One neutral colour, as Practice does it: the benchmark is
+                       a diagram to copy, and the default two-tone left/right
+                       hand coding says nothing about the sign. The take replay
+                       below keeps the coding, so it matches the live overlay. */
+                    colorOverride="#e6eeec"
                   />
                 ) : selected && refFailed ? (
                   <p className="camera-error">Could not load benchmark reference.</p>
@@ -363,14 +342,48 @@ export function RecordView() {
         {/* Right Pane: Live Capture Stage / Review Replay */}
         <div className="aww-pane aww-pane-right" data-camera-status={tracking.status}>
           <div className="aww-pane-header">
-            <p className="aww-pane-label">{phase === 'review' ? 'Take Review' : 'Live Motion Capture'}</p>
-            {tracking.stats && phase !== 'review' && (
-              <div className="studio-telemetry-row">
-                <span className="telemetry-pill">{tracking.stats.fps.toFixed(0)} FPS</span>
-                <span className="telemetry-pill">{tracking.stats.inferenceMs.toFixed(1)} ms</span>
-                <span className="telemetry-pill">{tracking.stats.width}×{tracking.stats.height}</span>
+            <div>
+              <p className="aww-pane-label">{phase === 'review' ? 'Take Review' : 'Live Motion Capture'}</p>
+              {/* One labelled line, not three bare numbers. It stays visible
+                  whenever the camera runs rather than only while recording:
+                  a low frame rate has to be caught while framing the shot,
+                  not discovered after a take is already spoiled. */}
+              {tracking.stats && phase !== 'review' && (
+                <span
+                  className="studio-telemetry"
+                  data-rate={tracking.stats.fps < 15 ? 'low' : undefined}
+                >
+                  {tracking.stats.fps.toFixed(0)} fps &middot;{' '}
+                  {tracking.stats.inferenceMs.toFixed(1)} ms tracking &middot;{' '}
+                  {tracking.stats.width}&times;{tracking.stats.height}
+                </span>
+              )}
+            </div>
+
+            {/* Who is performing the take. It is written into every saved
+                recording's provenance, so it belongs beside the camera it
+                describes rather than in a toolbar across the top. */}
+            <div className="studio-tool-right">
+              <div className="studio-signer-input-wrap">
+                <label className="signer-label" htmlFor="studio-signer">
+                  Signer
+                </label>
+                <input
+                  id="studio-signer"
+                  type="text"
+                  className="studio-signer-input"
+                  value={signer}
+                  onChange={(e) => updateSigner(e.target.value)}
+                  placeholder="Your name"
+                  disabled={phase === 'countdown' || phase === 'recording'}
+                />
               </div>
-            )}
+              {/* Shown on focus only — a permanent caption over the camera feed
+                  would be clutter, but the field's persistence is worth stating
+                  the moment someone types in it. */}
+              <span className="signer-hint">Saved in this browser</span>
+              {justSaved && <span className="studio-saved-pill">Saved take</span>}
+            </div>
           </div>
 
           {/* Live Camera View */}
@@ -381,10 +394,84 @@ export function RecordView() {
               status={tracking.status}
               error={tracking.error}
               onStart={() => void tracking.start()}
-              idleHint="Turn on camera to begin recording reference data"
+              idleHint=""
               inferring={tracking.inferring}
+              intro={
+                <div className="aww-camera-intro">
+                  <p className="aww-camera-intro-lead">Record a reference take.</p>
+                  <p className="aww-camera-intro-note">
+                    Hand tracking runs entirely in your browser. No video is uploaded or
+                    recorded.
+                  </p>
+                  <svg
+                    className="aww-camera-intro-guide"
+                    viewBox="0 0 120 96"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <rect x="4" y="4" width="112" height="88" rx="10" opacity="0.35" />
+                    <circle cx="60" cy="34" r="12" />
+                    <path d="M38 74c4-13 13-20 22-20s18 7 22 20" />
+                    <path d="M26 60h10M84 60h10" opacity="0.5" />
+                  </svg>
+                  <button className="btn massive" onClick={() => void tracking.start()}>
+                    Turn on camera
+                  </button>
+                </div>
+              }
             />
           </div>
+
+          {/* Capture controls, anchored to this pane — one action at a time,
+              matching Practice: action bottom-left, timer top-right, the
+              countdown centred over the video. */}
+          {phase !== 'review' && tracking.status === 'running' && (
+            <>
+              {phase === 'countdown' && (
+                <div className="aww-cam-countdown" aria-hidden="true">
+                  {count}
+                </div>
+              )}
+              {phase === 'recording' && (
+                <div className="aww-cam-rec">
+                  <span className="aww-rec-dot" aria-hidden="true" />
+                  REC {(elapsedMs / 1000).toFixed(1)}s
+                </div>
+              )}
+              <div className="aww-cam-action">
+                {phase === 'idle' && (
+                  <button
+                    className="aww-cam-btn"
+                    onClick={beginCountdown}
+                    disabled={!activeGloss.trim() || !signer.trim()}
+                  >
+                    <Circle size={15} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+                    {!activeGloss.trim()
+                      ? 'Select a sign first'
+                      : !signer.trim()
+                        ? 'Add signer name'
+                        : 'Record take'}
+                  </button>
+                )}
+                {phase === 'countdown' && (
+                  <button className="aww-cam-btn aww-cam-btn-ghost" onClick={cancelCountdown}>
+                    <X size={16} aria-hidden="true" />
+                    Cancel
+                  </button>
+                )}
+                {phase === 'recording' && (
+                  <button className="aww-cam-btn aww-cam-btn-stop" onClick={finishRecording}>
+                    <Square size={13} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+                    Stop &amp; review
+                  </button>
+                )}
+              </div>
+            </>
+          )}
 
           {/* Review Replay */}
           {phase === 'review' && review && (
@@ -399,48 +486,8 @@ export function RecordView() {
         </div>
       </div>
 
-      {/* Bottom HUD Controls */}
-      {phase !== 'review' ? (
-        <div className="aww-hud">
-          {tracking.status !== 'running' ? (
-            <div className="aww-hud-idle">
-              <button className="btn massive ghost" onClick={() => void tracking.start()}>
-                Turn on Camera
-              </button>
-              <p>Motion capture tracks 21 hand landmarks frame-by-frame.</p>
-            </div>
-          ) : phase === 'idle' ? (
-            <button
-              className="btn massive"
-              onClick={beginCountdown}
-              disabled={!activeGloss.trim() || !signer.trim()}
-            >
-              {!activeGloss.trim()
-                ? 'Select or Enter a Sign First'
-                : !signer.trim()
-                  ? 'Enter Signer Name First'
-                  : `Record Take: ${activeGloss}`}
-            </button>
-          ) : phase === 'countdown' ? (
-            <div className="aww-hud-countdown">
-              <span>{count}</span>
-              <button className="btn ghost massive" onClick={cancelCountdown}>Cancel</button>
-            </div>
-          ) : phase === 'recording' ? (
-            <div className="aww-hud-recording">
-              <div className="rec-badge">● REC {(elapsedMs / 1000).toFixed(1)} s</div>
-              <button
-                className="btn massive"
-                style={{ background: 'var(--p-coral-500)' }}
-                onClick={finishRecording}
-              >
-                Stop & Review
-              </button>
-            </div>
-          ) : null}
-        </div>
-      ) : (
-        /* Review Take Overlay Bar */
+      {/* Review Take Overlay Bar */}
+      {phase === 'review' &&
         review && (
           <div className="aww-studio-review-bar">
             <div className="review-metrics">
@@ -468,7 +515,7 @@ export function RecordView() {
 
             <div className="review-actions">
               <button className="btn massive" onClick={() => void save()}>
-                Save to Library ✓
+                Save to library
               </button>
               <button className="btn ghost massive" onClick={beginCountdown}>
                 Re-record
@@ -480,37 +527,12 @@ export function RecordView() {
                   setPhase('idle')
                 }}
               >
-                Discard Take
+                Discard take
               </button>
             </div>
           </div>
-        )
-      )}
+        )}
 
-      {/* Command Palette Sign Search Modal */}
-      <div className={`aww-picker-modal ${pickerOpen ? 'open' : ''}`}>
-        <div className="aww-picker-backdrop" onClick={() => setPickerOpen(false)} />
-        <div className="aww-picker-content">
-          <CategorySignNavigator
-            references={references}
-            selectedId={selected?.id}
-            mode="record"
-            isModal={true}
-            onSelect={(rec) => {
-              setSelected(rec)
-              setIsCustomMode(false)
-              setPickerOpen(false)
-            }}
-            onCreateCustom={(gloss) => {
-              setCustomGloss(gloss)
-              setIsCustomMode(true)
-              setSelected(null)
-              setPickerOpen(false)
-            }}
-            onClose={() => setPickerOpen(false)}
-          />
-        </div>
-      </div>
     </div>
   )
 }

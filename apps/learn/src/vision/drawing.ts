@@ -180,7 +180,7 @@ export function drawHands(
 
     ctx.fillStyle = color
     ctx.strokeStyle = JOINT_OUTLINE
-    ctx.lineWidth = Math.max(1, bone * 0.2)
+    ctx.lineWidth = Math.max(1, bone * 0.25)
     for (const p of pts) {
       // 1 nearest, 0 furthest → radius spans 0.8×–1.2× of the base. Kept
       // narrow for the same reason the joints are small: on a closed hand a
