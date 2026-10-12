@@ -8,10 +8,10 @@ import type { SuvanaUser } from './session'
  * buttons, and a text link of variable width pushed the centred tabs about
  * and overflowed the bar on phones. The full name lives in the tooltip.
  *
- * Suvana-only (like session.ts): the team repo's standalone Learn passes no
- * account, so nothing renders there.
+ * Shared with R26; inactive unless the build config enables Suvana.
  */
 export function AccountButton({ user }: { user: SuvanaUser | null | undefined }) {
+  if (import.meta.env.VITE_SUVANA !== '1') return null
   // Unknown yet: hold the space without showing anything, so neither a
   // "Sign in" flash nor the tabs jumping sideways greets someone signed in.
   if (user === undefined) return <span className="app-account is-pending" aria-hidden="true" />

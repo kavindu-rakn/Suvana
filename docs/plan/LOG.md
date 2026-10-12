@@ -35,7 +35,6 @@ Rules:
 - Next: each lane starts its 13 Oct tasks from BOARD.md.
 
 
-<<<<<<< HEAD
 ### 2026-10-13 01:28 | claude-code | Q-01
 - What: done (review). Per-module AGENTS.md + CLAUDE.md stubs for apps/learn and services/recognition; root AGENTS.md index and reconciled rules (9.3 KB); .claude/ narrowed; README links docs/plan. Rule-by-rule table vs the 10-Oct CLAUDE.md in handoffs/Q-01.md.
 - Branch @ sha: agent/claude/Q-01-agents-md (see git log)
@@ -107,6 +106,7 @@ Rules:
 - Plan corrections applied: lane-worktree test baseline (08 section 9), M0 commit wording (07 section 4), L-17 re-derives HINT_MIN_DEVIATION.
 - Tomorrow first: antigravity reworks Q-00, then re-shoots I-01; kvn merges Q-00 at midday so codex can shoot L-05.
 
+<<<<<<< HEAD
 ### 2026-10-13 02:58 | antigravity | Q-00 rework
 - What: done: Reworked Q-00 dev fixtures to align with merged L-01 ScoreBadge props (hands: HandFeedback[], no per-finger accuracy), replaced fixture glosses with real references from public/reference-index.json (DAKINAWA, AHANAWA, AYUBOWAN, KANAWA), used real scorer hint strings (or none), and re-shot after screens.
 - Branch @ sha: agent/antigravity/Q-00-screens (rebased on main @ 2fd433a)
@@ -115,3 +115,13 @@ Rules:
 - Needs kvn: review and merge so Codex can shoot L-05 storage screens
 - Next: re-shoot I-01 after waiting for the landing intro animation to finish
 
+
+
+### 2026-10-13 02:50 | codex | R-01 (14 Oct work requested early)
+- What: Portability implemented; config-absent standalone build removes platform paths/session calls. Visual acceptance pending Q-00.
+- Branch @ sha: agent/codex/R-01-portability @ task HEAD (see branch log and handoffs/R-01.md).
+- Gates: npm 10 clean ci; lint 0 warnings; 161 passed / 9 skipped; Suvana build 142.34 kB gzip, standalone 141.89; config and standalone bundle assertions; guard 155; diff check passed.
+- Screenshots: pending Q-00 merge (changes requested, not on main 2fd433a); L-05 also remains pending.
+- Needs kvn: merge corrected Q-00, then visual review before R-01 adoption; later mirror from merged main.
+- Plan correction: no rendered/byte-identical R26 claim; standalone paths validated, mirror and renders still separate gates.
+- Next: I-04 from main as a sibling branch (R-01 is a leaf UI branch).

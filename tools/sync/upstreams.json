@@ -19,43 +19,68 @@
       "to": "apps/learn",
       "synced": "334beba05e201acd4ecb2e64b75b915cac3cf8be",
       "recorded": "2026-10-10",
-      "policy": "Take everything, then re-apply the couplings below. Learn is developed in both repos (decided 2026-10-10), so `status` also flags Suvana-side edits that still need porting back to R26.",
+      "policy": "Learn is developed in Suvana and mirrored to R26 after milestones. All source files are shared; only suvana.config.json, vercel.json and package-lock.json differ. Source changes remain undeclared until ported; record learn only after the mirror gates pass.",
       "couplings": {
-        "vite.config.ts": "base '/learn/', outDir dist/learn, port 5174 — served under /learn/ on the Suvana domain",
-        "vercel.json": "/learn/-prefixed cache headers, to match the base path",
-        "src/App.tsx": "fetches the platform session and passes <AccountButton> into AppNavBar's account slot",
-        "src/components/Hero.tsx": "brand links and the 'Back to Home' button go to the Suvana landing (/)",
-        "src/index.css": "account-button styles; on phones the account takes the On-Device AI dot's place",
-        "src/components/AppNavBar.tsx": "TEMPORARY: the optional `account` slot, also prepared in R26's working tree. Once R26 commits it, run `record learn` and delete this line",
-        "package-lock.json": "npm 10 output (CI's npm) — regenerate with `npx -y npm@10 install` if upstream changes package.json; never copy upstream's"
+        "package-lock.json": "npm 10 output local to each repo; regenerate when package.json changes, never copy between repos"
       },
       "suvanaOnly": {
-        "src/app/session.ts": "reads the one Suvana account from Communicate, same-origin",
-        "src/app/AccountButton.tsx": "the round account button in the app bar"
+        "suvana.config.json": "Enables the /learn/ base, dist/learn output, Suvana account/home navigation and port 5174; absent in R26, which uses standalone defaults",
+        "vercel.json": "Suvana-only /learn/ headers and root redirect; never port to R26, which owns its standalone hosting config"
       },
       "guards": [
         {
+          "file": "suvana.config.json",
+          "has": [
+            "\"base\": \"/learn/\"",
+            "\"suvana\": true",
+            "\"port\": 5174"
+          ],
+          "why": "The Suvana build uses its platform config"
+        },
+        {
           "file": "vite.config.ts",
           "has": [
-            "base: '/learn/'",
-            "outDir: 'dist/learn'"
+            "suvana.config.json",
+            "base: '/'",
+            "suvana: false",
+            "port: 5173",
+            "base: platform.base",
+            "platform.suvana ? 'dist/learn' : 'dist'",
+            "'import.meta.env.VITE_SUVANA'",
+            "platform.suvana ? '1' : ''",
+            "port: platform.port"
           ],
-          "why": "Learn must build for /learn/"
+          "why": "One optional config selects platform or standalone defaults"
         },
         {
           "file": "vercel.json",
           "has": [
             "/learn/"
           ],
-          "why": "cache headers must match the base path"
+          "why": "Suvana cache headers and redirect match the base path"
         },
         {
           "file": "src/App.tsx",
           "has": [
             "fetchSession",
-            "<AccountButton"
+            "if (import.meta.env.VITE_SUVANA !== '1') return",
+            "account={import.meta.env.VITE_SUVANA === '1' ? <AccountButton"
           ],
-          "why": "platform sign-in state in the app bar"
+          "why": "Only platform builds request a session or render the account slot"
+        },
+        {
+          "file": "src/app/session.ts",
+          "has": [
+            "if (import.meta.env.VITE_SUVANA !== '1') return null"
+          ],
+          "why": "Standalone Learn never requests Communicate"
+        },
+        {
+          "file": "src/app/AccountButton.tsx",
+          "has": [
+            "if (import.meta.env.VITE_SUVANA !== '1') return null"
+          ],
+          "why": "Account navigation is disabled in standalone builds"
         },
         {
           "file": "src/components/AppNavBar.tsx",
@@ -64,14 +89,6 @@
             "{account}"
           ],
           "why": "the slot the account button renders into"
-        },
-        {
-          "file": "src/components/Hero.tsx",
-          "has": [
-            "href=\"/\"",
-            "Back to Home"
-          ],
-          "why": "Learn links back to the Suvana landing"
         },
         {
           "file": "src/index.css",
@@ -89,6 +106,17 @@
             "SoundGuard"
           ],
           "why": "no sub-brand names inside Suvana"
+        },
+        {
+          "file": "src/components/Hero.tsx",
+          "has": [
+            "import.meta.env.VITE_SUVANA === '1' ? (",
+            "import.meta.env.VITE_SUVANA === '1' && (",
+            "href=\"/\"",
+            "<div className=\"nav-left brand\">",
+            "Back to Home"
+          ],
+          "why": "Platform-only home links; standalone brand has no dead shell link"
         }
       ]
     },

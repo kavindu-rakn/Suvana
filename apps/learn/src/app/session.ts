@@ -32,6 +32,7 @@ export const ACCOUNT_URL = `${COMMUNICATE}/dashboard`
  * module they were not trying to use.
  */
 export async function fetchSession(signal?: AbortSignal): Promise<SuvanaUser | null> {
+  if (import.meta.env.VITE_SUVANA !== '1') return null
   try {
     const res = await fetch(`${COMMUNICATE}/api/auth/session`, {
       headers: { accept: 'application/json' },
