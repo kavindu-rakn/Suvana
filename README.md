@@ -231,6 +231,8 @@ Reference corpora in `apps/learn`: `kaggle_*` files are CC0; `yohan_*` files are
 
 ## Near-term work
 
+The 12–22 Oct 2026 plan, task board and handoff log are in [`docs/plan/README.md`](docs/plan/README.md); agent rules are in [`AGENTS.md`](AGENTS.md).
+
 1. ~~Branding pass~~ and ~~one-domain topology~~ — done. All four modules are
    reachable from the landing, and no sub-brand name remains in UI copy.
 2. Extract `services/speech` from the notebooks and point `apps/communicate` at a persistent URL (a DB config write — no code change). Until then Communicate transcription is UI-only.
