@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useHandTracking } from './useHandTracking'
 import type { HandFrame } from './types'
+import { captureDeadline } from './cameraLifecycle'
 
 export type CapturePhase = 'idle' | 'countdown' | 'recording'
 
@@ -116,6 +117,17 @@ export function useSignCapture(onCaptured: (take: CapturedTake) => void, countdo
   }, [status])
 
   useEffect(() => () => window.clearInterval(countdownRef.current), [])
+
+  useEffect(() => {
+    if (phase !== 'recording') return
+    return captureDeadline(maxMsRef.current, () => finishRef.current())
+  }, [phase])
+
+  useEffect(() => {
+    const abandon = () => { if (document.hidden) cancel() }
+    document.addEventListener('visibilitychange', abandon)
+    return () => document.removeEventListener('visibilitychange', abandon)
+  }, [cancel])
 
   return { tracking, phase, count, elapsedMs, begin, finish, cancel }
 }

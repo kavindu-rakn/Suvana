@@ -11,6 +11,7 @@ import { glossLabel } from '../data/translations'
 import { CameraStage } from './CameraStage'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { CategorySignNavigator } from './CategorySignNavigator'
+import { captureDeadline } from '../vision/cameraLifecycle'
 
 const COUNTDOWN_S = 3
 const MAX_MS = 8000
@@ -68,6 +69,7 @@ export function RecordView() {
   const startTsRef = useRef<number | null>(null)
   const countdownRef = useRef(0)
   const savedFlashRef = useRef(0)
+  const finishRef = useRef<() => void>(() => {})
 
   // Active gloss string
   const activeGloss = isCustomMode ? customGloss.trim().toUpperCase() : (selected?.gloss ?? '')
@@ -127,6 +129,7 @@ export function RecordView() {
       (phaseRef.current === 'countdown' || phaseRef.current === 'recording')
     ) {
       window.clearInterval(countdownRef.current)
+      framesRef.current = []
       setPhase('idle')
     }
   }, [tracking.status])
@@ -144,6 +147,22 @@ export function RecordView() {
     if (phase === 'review') pauseTracking()
     else resumeTracking()
   }, [phase, pauseTracking, resumeTracking])
+
+  useEffect(() => {
+    if (phase !== 'recording') return
+    return captureDeadline(captureMs, () => finishRef.current())
+  }, [phase, captureMs])
+
+  useEffect(() => {
+    const abandon = () => {
+      if (!document.hidden || (phaseRef.current !== 'countdown' && phaseRef.current !== 'recording')) return
+      window.clearInterval(countdownRef.current)
+      framesRef.current = []
+      setPhase('idle')
+    }
+    document.addEventListener('visibilitychange', abandon)
+    return () => document.removeEventListener('visibilitychange', abandon)
+  }, [])
 
   function beginCountdown() {
     if (tracking.status !== 'running' || !activeGloss.trim() || !signer.trim()) return
@@ -195,6 +214,7 @@ export function RecordView() {
     })
     setPhase('review')
   }
+  finishRef.current = finishRecording
 
   async function save() {
     if (!review) return

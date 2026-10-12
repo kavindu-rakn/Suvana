@@ -34,3 +34,12 @@ Rules:
 - Lane worktrees created (detached at main): Suvana-wt/claude, Suvana-wt/codex, Suvana-wt/antigravity. 08 §3 now says to skip the "first time" commands.
 - Next: each lane starts its 13 Oct tasks from BOARD.md.
 
+### 2026-10-13 01:36 | codex | L-04
+- What: Camera lifecycle, GPU-to-CPU fallback and wall-clock capture safeguards ready for review; no real-device verification claimed.
+- Branch @ sha: agent/codex/L-04-camera-lifecycle @ task HEAD (see handoffs/L-04.md and git log -1 on branch).
+- Gates: guard 152; lint 1 existing PracticeView warning, 0 new; tests 137 passed / 7 skipped; build 143.21 kB gzip; diff check passed.
+- Screenshots: n/a (logic-only).
+- Needs kvn: review/merge; real-camera and phone checks at Q-06a/Q-06; R-00 port after merge.
+- Plan correction: clean lane lacks untracked calibration data; baseline 138/2 does not apply here, calibration/weight-fit and opt-in evaluation tests skip (7 total). No data generated or committed.
+- Next: L-05 storage on a leaf stacked on this logic-only branch, then L-06 from L-04.
+
