@@ -206,3 +206,11 @@ Rules:
 
 ### 2026-10-13 12:45 | kvn | UI approvals for integration/2026-10-13b
 - Approved from before/after renders (desktop + phone): I-01 (pipeline tag says Alerts), L-03 (not-scored notice above Record), L-07 (3-step How it works guide; Record waits for Hands in frame). R-01 was approved earlier; I-04 has no UI.
+
+### 2026-10-13 14:02 | antigravity | I-03
+- What: done: Fixed stale integration docs across DEMO.md (Status table and tracked labels section), DEPLOYMENT.md (resolved shell env vars contradiction, updated container host notes for Railway Hobby / HF PRO, removed labels.npy blocker row), and TODO-PP2.md:109 (marked shell rewrites 100% complete). Verified Communicate lint and build pass with NEXT_PUBLIC_BASE_PATH=/communicate; proposed README REPLACE-WITH diff in handoff.
+- Branch @ sha: agent/antigravity/I-03-stale-docs (stacked on: origin/main @ d9a6aaf)
+- Gates: guard ok (164 checks passed) | communicate lint passed | communicate build passed | shell build and tests passed | learn build and tests passed
+- Screenshots: n/a (documentation task)
+- Needs kvn: review and merge; CX can take the proposed README diff
+- Next: L-10 (Reference metadata: hands, motion, duration, licence, hasMeaning in the generated index)

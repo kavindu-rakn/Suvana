@@ -106,7 +106,7 @@ proposal targets are unmeasured, and no amount of further building moves them.
 | Speech service extracted from the Colab notebook | 100 | Runs as a Docker container. |
 | Recognition module rebranded and wired | 90 | Runs on its own origin — WebSocket, so it cannot sit behind a Vercel rewrite. |
 | **Deploy Learn, Communicate, then shell** | 0 | Order matters. |
-| **Fill the shell rewrites** | 0 | `apps/shell/vercel.json` still has `REPLACE-WITH-LEARN-DEPLOYMENT` and `REPLACE-WITH-COMMUNICATE-DEPLOYMENT`. |
+| **Fill the shell rewrites** | 100 | Done: `apps/shell/vercel.json` maps `/learn/*` to `https://suvana-learn.vercel.app` and `/communicate/*` to `https://suvana-communicate.vercel.app`. |
 | Speech service on a persistent host | 0 | Extraction done; still ngrok-backed. Repointing is a DB config write, not a code change. |
 | Communicate production secrets | 20 | `.env.local` exists locally; production needs its own MongoDB Atlas, Cloudinary and Auth.js secrets, plus gloss animations re-seeded from Lithira's Cloudinary. |
 | Recognition deployed on its own origin/subdomain | 0 | See `services/recognition/DEPLOY-SUVANA.md`. |
