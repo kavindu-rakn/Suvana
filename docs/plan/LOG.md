@@ -258,3 +258,12 @@ Rules:
 - Screenshots: C:\Users\User\Documents\Suvana-wt\claude\.agent-local\screens\R-00\index.html
 - Needs kvn: commit in R26 with the blocks in handoffs/R-00.md, push, D-06 redeploy; decide whether AGENTS.md/CLAUDE.md belong in R26 (R-02 must match).
 - Next: L-08 playback (15 Oct), from main.
+
+### 2026-10-13 15:10 | claude-code (integration prep, 08 section 12) | integration/2026-10-13c
+- What: merged with --no-ff onto main d9a6aaf, bottom first: Q-02 (.gitattributes), I-03 (stale docs), L-10 (reference metadata), L-09 (curriculum, stacked on L-10), L-22a (sentence inventory, converter), L-08 (playback, UI), R-00 (handoff only; the port lives in the R26 working tree). No conflicts; LOG.md kept all 30 entries (union).
+- Gates on the merged tree: Learn npm@10 ci, lint 0 warnings, tests 191 passed + 9 skipped, build 144.76 kB gzip; Shell tests 44 passed, build ok; converter unittest 12 passed; sync guard 164; git diff --check clean; `git add --renormalize .` changes 0 files under Q-02's .gitattributes. Communicate and recognition untouched (gates not run).
+- Content checks: all 490 unique signs in L-09's curriculum.ts are real corpus glosses; its English cues match translations.ts; curriculum.ts and L-10's new index fields are not yet used by any UI. No data, binaries, build output or secrets in the diff.
+- Board: Q-02, I-03, L-10, L-09, L-22a, L-08 and R-00 set to done.
+- Needs kvn: (1) approve L-08 from .agent-local/review/2026-10-13c/L-08/index.html before merging (if rejected, revert merge e13aba8 and set L-08 back to review); (2) R-00: commit the R26 working tree with the blocks in handoffs/R-00.md, push, D-06; decide AGENTS.md/CLAUDE.md in R26; (3) K-05: L-09's units are 'proposed'; some descriptions overclaim ("ordered by hand configuration difficulty", "Basic counting handshapes") while the order is by hands, motion and duration; (4) Scenario's KANAWA coaching line describes movement and location (for L-19).
+- Plan corrections recorded in handoffs: L-10 also edited src/vision/types.ts (optional RecordingMeta fields) and its test lives at src/storage/referenceIndex.test.ts, not src/data/; 07 section 4 is superseded by the post-R-01 port rule; R26's lockfile was out of sync and was regenerated with npm 10.
+- Next: kvn merges integration/2026-10-13c into main and pushes. Nothing pushed or merged by the agent.

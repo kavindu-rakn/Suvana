@@ -46,7 +46,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | D-10 | Final R26 commit and learn-ssl-module redeploy | kvn | 2026-10-21 | S | R-05 | todo | `n/a (R26)` | no | no | - |
 | Q-00 | Screenshot tooling: Playwright shooter, contact sheet, fake-camera clips, dev-only fixtures page | antigravity | 2026-10-13 | M | K-01 | done | `agent/antigravity/Q-00-screens` | no | no | - |
 | Q-01 | Agent instruction files: root AGENTS.md as single source, slim CLAUDE.md, per-module AGENTS.md | claude-code | 2026-10-13 | M | K-01 | done | `agent/claude/Q-01-agents-md` | no | no | DN-12 |
-| Q-02 | .gitattributes for line endings and a union merge for LOG.md | antigravity | 2026-10-14 | S | K-01 | todo | `agent/antigravity/Q-02-gitattributes` | no | no | - |
+| Q-02 | .gitattributes for line endings and a union merge for LOG.md | antigravity | 2026-10-14 | S | K-01 | done | `agent/antigravity/Q-02-gitattributes` | no | no | - |
 | Q-03 | Close CI gaps: concurrency, Docker build, R26-form Learn build, dist smoke, extended brand grep | codex | 2026-10-20 | M | R-01, I-01, I-02 | todo | `agent/codex/Q-03-ci` | no | no | - |
 | Q-04 | Playwright smoke for Learn (keyboard, storage failure, onboarding) | antigravity | 2026-10-15 | M | Q-00, L-02, L-05, L-07 | todo | `agent/antigravity/Q-04-e2e` | no | no | - |
 | Q-05 | DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check | antigravity | 2026-10-20 | S | D-03, D-04 | todo | `agent/antigravity/Q-05-demo` | no | no | - |
@@ -62,9 +62,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | L-05 | Storage resilience: safeLoad, guarded localStorage, top-level ErrorBoundary | codex | 2026-10-13 | S | - | done | `agent/codex/L-05-storage` | yes | yes | - |
 | L-06 | Cache headers, standalone root redirect, asset-version rule | codex | 2026-10-13 | S | - | done | `agent/codex/L-06-cache-headers` | yes | no | - |
 | L-07 | First-run onboarding, hands-in-frame gate, longer capture window with learner-take trimming | claude-code | 2026-10-14 | M | L-03 | done | `agent/claude/L-07-onboarding` | yes | yes | - |
-| L-08 | Learner playback: 0.5x start, speed control, mirror label, raw-framing view with frame outline, sized wrist-anchored ghost | claude-code | 2026-10-15 | M | L-07 | todo | `agent/claude/L-08-playback` | yes | yes | - |
-| L-09 | Curriculum report, data-derived units and scenario coverage table | antigravity | 2026-10-14 | M | L-10 | todo | `agent/antigravity/L-09-curriculum` | yes | no | - |
-| L-10 | Reference metadata: hands, motion, duration, licence, hasMeaning in the generated index | antigravity | 2026-10-14 | S | - | todo | `agent/antigravity/L-10-ref-meta` | yes | no | - |
+| L-08 | Learner playback: 0.5x start, speed control, mirror label, raw-framing view with frame outline, sized wrist-anchored ghost | claude-code | 2026-10-15 | M | L-07 | done | `agent/claude/L-08-playback` | yes | yes | - |
+| L-09 | Curriculum report, data-derived units and scenario coverage table | antigravity | 2026-10-14 | M | L-10 | done | `agent/antigravity/L-09-curriculum` | yes | no | - |
+| L-10 | Reference metadata: hands, motion, duration, licence, hasMeaning in the generated index | antigravity | 2026-10-14 | S | - | done | `agent/antigravity/L-10-ref-meta` | yes | no | - |
 | L-11 | Path view: units, stars, locks, unit detail, nav entry, 'Why this sign?' chip | claude-code | 2026-10-16 | M | L-12, K-05 | todo | `agent/claude/L-11-path` | yes | yes | - |
 | L-12 | Game logic: stars, unit state, unlocks, daily goal, streak, XP | codex | 2026-10-15 | M | L-09 | todo | `agent/codex/L-12-game-logic` | yes | no | DN-10, DN-11 |
 | L-13 | Adaptation fix: review/new interleave, reachable sessions, reasons, ADAPTATION.md | codex | 2026-10-16 | M | L-12 | todo | `agent/codex/L-13-adaptation` | yes | no | - |
@@ -78,7 +78,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | L-19 | Scenario cleanup: previews, author-only tips and hints, playable counts, recall variant | antigravity | 2026-10-17 | M | L-05 | todo | `agent/antigravity/L-19-scenarios` | yes | yes | - |
 | L-20 | Licence mode (VITE_CONTENT=cc0) and an attribution panel | codex | 2026-10-18 | M | L-10 | todo | `agent/codex/L-20-licence-mode` | yes | yes | DN-04 |
 | L-21 | Feedback UI: side-by-side synced replay, typed hints, fading hints | claude-code | 2026-10-19 | M | L-16b, L-17, L-18 | todo | `agent/claude/L-21-replay` | yes | yes | - |
-| L-22a | List the Kaggle sentence labels and prepare the converter command | codex | 2026-10-15 | S | - | todo | `agent/codex/L-22a-sentence-labels` | yes | no | - |
+| L-22a | List the Kaggle sentence labels and prepare the converter command | codex | 2026-10-15 | S | - | done | `agent/codex/L-22a-sentence-labels` | yes | no | - |
 | L-22b | Sentence data, exclusion from single-sign flows, long-sequence perf test | codex | 2026-10-18 | S | K-07 | todo | `agent/codex/L-22b-sentences` | yes | no | DN-08 |
 | L-23a | Demo profile and reset at the storage layer | codex | 2026-10-17 | S | - | todo | `agent/codex/L-23a-profile` | yes | no | - |
 | L-23 | Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI | antigravity | 2026-10-18 | M | L-23a, L-12, L-13 | todo | `agent/antigravity/L-23-progress` | yes | yes | - |
@@ -89,7 +89,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | L-28 | Learn docs match what shipped | claude-code-thesis | 2026-10-20 | S | L-26 | todo | `agent/claude/L-28-learn-docs` | yes | no | - |
 | L-31 | Third scenario from corpus signs (optional, only if kvn approves DN-19) | antigravity | backlog (earliest 2026-10-19) | M | K-05 | todo | `agent/antigravity/L-31-scenario3` | yes | yes | DN-19 |
 | L-32 | Sequence-from-memory level (only if Lithira's mapper supplies an order) | codex | backlog | M | K-03 | todo | `agent/codex/L-32-sequence` | yes | yes | DN-08 |
-| R-00 | M0: manual port of the merged blocker fixes into the R26 working tree | claude-code | 2026-10-14 | S | L-01, L-02, L-04, L-05, L-06, K-01 | todo | `none (R26 working tree; never commit)` | no | yes | - |
+| R-00 | M0: manual port of the merged blocker fixes into the R26 working tree | claude-code | 2026-10-14 | S | L-01, L-02, L-04, L-05, L-06, K-01 | done | `none (R26 working tree; never commit)` | no | yes | - |
 | R-01 | Portability refactor: base and Suvana-only code driven by suvana.config.json | codex | 2026-10-14 | M | L-06 | done | `agent/codex/R-01-portability` | yes | yes | DN-01 |
 | R-02 | sync.mjs `port learn --to <R26>` with --check | codex | 2026-10-16 | S | R-01 | todo | `agent/codex/R-02-port-command` | no | no | - |
 | R-03 | M1: port Learn into the R26 working tree | claude-code | 2026-10-17 | S | R-02 | todo | `none (R26 working tree)` | no | yes | - |
@@ -97,7 +97,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | R-05 | Final Learn port to R26 for the demo | claude-code | 2026-10-21 | S | R-04, L-26, L-27, Q-08 | todo | `none (R26 working tree)` | no | no | - |
 | I-01 | Shell: remove the 'SoundGuard Ecosystem' sub-brand, configurable Recognize URL, fix the stale example | antigravity | 2026-10-13 | S | - | done | `agent/antigravity/I-01-shell-brand` | no | yes | - |
 | I-02 | Alerts: user-visible strings say Suvana | antigravity | 2026-10-13 | S | - | done | `agent/antigravity/I-02-alerts-strings` | no | yes | - |
-| I-03 | Fix stale integration docs and record the Communicate gate | antigravity | 2026-10-14 | S | - | todo | `agent/antigravity/I-03-stale-docs` | no | no | - |
+| I-03 | Fix stale integration docs and record the Communicate gate | antigravity | 2026-10-14 | S | - | done | `agent/antigravity/I-03-stale-docs` | no | no | - |
 | I-04 | Recognition re-sync of Lahiru's 656f371..ec2604a (code and tests only) | codex | 2026-10-14 | M | K-01 | done | `agent/codex/I-04-recognition-sync` | no | no | DN-18 |
 | I-05 | Reference-converter: take kvn's port 5909a56 and declare the 3 undeclared diffs | codex | 2026-10-16 | S | I-04 | todo | `agent/codex/I-05-converter-port` | yes | no | - |
 | I-06 | Shell: Privacy, Terms, Contact and Pricing/business-model pages | antigravity | 2026-10-18 | M | I-01 | todo | `agent/antigravity/I-06-shell-pages` | no | yes | DN-04, DN-15 |

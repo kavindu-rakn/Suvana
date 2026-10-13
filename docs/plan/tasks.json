@@ -821,7 +821,7 @@
     "deps": [
       "K-01"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/antigravity/Q-02-gitattributes",
     "r26_port": "no",
     "screenshots": "no",
@@ -1249,7 +1249,7 @@
     "deps": [
       "L-07"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/claude/L-08-playback",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1280,7 +1280,7 @@
     "deps": [
       "L-10"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/antigravity/L-09-curriculum",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1305,7 +1305,7 @@
     "day": "2026-10-14",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/antigravity/L-10-ref-meta",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1719,7 +1719,7 @@
     "day": "2026-10-15",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-22a-sentence-labels",
     "r26_port": "yes",
     "screenshots": "no",
@@ -2028,7 +2028,7 @@
       "L-06",
       "K-01"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "none (R26 working tree; never commit)",
     "r26_port": "no",
     "screenshots": "yes",
@@ -2236,7 +2236,7 @@
     "day": "2026-10-14",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/antigravity/I-03-stale-docs",
     "r26_port": "no",
     "screenshots": "no",
