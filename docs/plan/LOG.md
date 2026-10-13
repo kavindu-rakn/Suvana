@@ -306,3 +306,10 @@ Rules:
 - Seen on the phone: the reference transport overflowing left and the grey scrubber box; both already fixed by L-08 on main, live after R-03.
 - New bug (not in 04-bugs.md; proposed id S6): `handednessesIn()` (apps/learn/src/scoring/normalize.ts:96) counts a reference hand that appears in even one frame, so 75 of 501 references that L-10 classes as one-handed (two hands together in < 20% of tracked frames) are scored and shown as two-handed: 42 with the stray hand in < 10% of tracked frames, 26 at 10-30%, 7 at >= 30% (likely the same hand relabelled). Effect: two hand cards with one missing, a missing-hand hint, and a small score drag. Proposed fix (scoring change, kvn decides): count a reference hand only above a minimum share of tracked frames, re-running calibration to show separation does not drop. Measured from public/references by claude-code, 13 Oct.
 - Next: kvn decides whether both fixes become codex tasks.
+### 2026-10-13 18:38 | codex | L-12 part 1
+- What: partial: concrete looser thresholds and rendered comparison mock only; no game implementation. Proposed Try 50/70, unrevealed Recall 50 after two stars, every sign >=1 star to pass, 5 attempts/day, goal-day streak, XP=sum of best stars.
+- Branch @ sha: agent/codex/L-12-game-logic @ task HEAD (base bca1688; final SHA in branch log).
+- Gates: npm 10 ci; lint 0 warnings; 191 passed / 9 skipped; build 144.76 kB gzip; guard 164; diff check passed.
+- Screenshots: .agent-local/screens/L-12/index.html; desktop/phone draft comparison, proposal and rule details. Hypothetical mock, no app UI adopted.
+- Needs kvn: approve or replace numbers and edge rules in handoffs/L-12.md in chat. D-A14 supersedes draft acceptance values; DN-05=no video (skip L-15a), DN-11=per-browser IndexedDB/reset/demo confirmed.
+- Next: R-02 then I-05; L-12 implementation waits for approval; L-13 follows approved L-12.
