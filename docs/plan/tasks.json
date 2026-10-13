@@ -748,7 +748,7 @@
     "deps": [
       "K-01"
     ],
-    "status": "changes requested",
+    "status": "done",
     "branch": "agent/antigravity/Q-00-screens",
     "r26_port": "no",
     "screenshots": "no",
@@ -1104,7 +1104,7 @@
     "day": "2026-10-14",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/claude/L-03-capture-robustness",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1157,7 +1157,7 @@
     "day": "2026-10-13",
     "size": "S",
     "deps": [],
-    "status": "blocked on Q-00 screenshots",
+    "status": "done",
     "branch": "agent/codex/L-05-storage",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1218,7 +1218,7 @@
     "deps": [
       "L-03"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/claude/L-07-onboarding",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1267,7 +1267,8 @@
       "Default view is raw framing (fitToFrame=false) inside a plain rectangle labelled 'position in the original video frame'; a 'Zoom to hands' toggle restores the per-clip fit",
       "NO body or head silhouette is drawn (references contain no pose; a body outline would imply a location the data does not contain)",
       "Ghost canvas width/height = video.videoWidth/Height; ghost translated so its wrist sits on the learner's tracked wrist",
-      "Before/after screenshots (desktop and phone) for a one-handed and a two-handed sign"
+      "Before/after screenshots (desktop and phone) for a one-handed and a two-handed sign",
+      "Update the Practice guide's step 2 (Onboarding, from L-07) to describe the 0.5x start once it exists"
     ]
   },
   {
@@ -1528,7 +1529,8 @@
       "Try works as today; attempts logged with stage 'try' and sessionId",
       "Stars change and the L-13 next-exercise suggestion show on the result card",
       "performance.mark('suvana:capture-end') and ('suvana:result-shown') emitted for Q-09",
-      "Keyboard flows from L-02 hold; before/after screenshots of each stage (desktop and phone)"
+      "Keyboard flows from L-02 hold; before/after screenshots of each stage (desktop and phone)",
+      "Update the Practice guide's step 2 to describe the 'My turn' button once it exists"
     ]
   },
   {
@@ -2051,7 +2053,7 @@
     "deps": [
       "L-06"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/R-01-portability",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -2183,7 +2185,7 @@
     "day": "2026-10-13",
     "size": "S",
     "deps": [],
-    "status": "changes requested",
+    "status": "done",
     "branch": "agent/antigravity/I-01-shell-brand",
     "r26_port": "no",
     "screenshots": "yes",
@@ -2259,7 +2261,7 @@
     "deps": [
       "K-01"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/I-04-recognition-sync",
     "r26_port": "no",
     "screenshots": "no",

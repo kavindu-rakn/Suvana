@@ -1,0 +1,2 @@
+# Keep every agent's appended entry when branches merge (no conflict markers).
+docs/plan/LOG.md merge=union

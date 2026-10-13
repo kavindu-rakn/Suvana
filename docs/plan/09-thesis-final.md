@@ -87,3 +87,7 @@ In the thesis only if the template has a section; otherwise for the presentation
 | 20 Oct | T-03 (Ch6/7/8) after Q-09; L-28 Learn docs |
 | 21 Oct | Q-08 gate output and sha into 5.5; T-05 figures and checks; kvn's own-words pass on new text |
 | 22 Oct | T-08 Turnitin and PDF; K-12 submit |
+
+## Added 13 Oct (from L-07)
+
+- The capture method changed after the draft: a longer capture window, learner takes trimmed the same way as references, and Record waits for hands in frame. The 85/60 score bands were **not** recalibrated for this; the final thesis must say so wherever the bands or the capture procedure are described (4.4.4, 4.2.3, 7.5).

@@ -34,7 +34,6 @@ Rules:
 - Lane worktrees created (detached at main): Suvana-wt/claude, Suvana-wt/codex, Suvana-wt/antigravity. 08 §3 now says to skip the "first time" commands.
 - Next: each lane starts its 13 Oct tasks from BOARD.md.
 
-
 ### 2026-10-13 01:28 | claude-code | Q-01
 - What: done (review). Per-module AGENTS.md + CLAUDE.md stubs for apps/learn and services/recognition; root AGENTS.md index and reconciled rules (9.3 KB); .claude/ narrowed; README links docs/plan. Rule-by-rule table vs the 10-Oct CLAUDE.md in handoffs/Q-01.md.
 - Branch @ sha: agent/claude/Q-01-agents-md (see git log)
@@ -106,8 +105,6 @@ Rules:
 - Plan corrections applied: lane-worktree test baseline (08 section 9), M0 commit wording (07 section 4), L-17 re-derives HINT_MIN_DEVIATION.
 - Tomorrow first: antigravity reworks Q-00, then re-shoots I-01; kvn merges Q-00 at midday so codex can shoot L-05.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ### 2026-10-13 02:58 | antigravity | Q-00 rework
 - What: done: Reworked Q-00 dev fixtures to align with merged L-01 ScoreBadge props (hands: HandFeedback[], no per-finger accuracy), replaced fixture glosses with real references from public/reference-index.json (DAKINAWA, AHANAWA, AYUBOWAN, KANAWA), used real scorer hint strings (or none), and re-shot after screens.
 - Branch @ sha: agent/antigravity/Q-00-screens (rebased on main @ 2fd433a)
@@ -116,7 +113,6 @@ Rules:
 - Needs kvn: review and merge so Codex can shoot L-05 storage screens
 - Next: re-shoot I-01 after waiting for the landing intro animation to finish
 
-<<<<<<< HEAD
 ### 2026-10-13 01:42 | codex | L-05
 - What: Storage resilience implemented; partial pending required screenshots and kvn UI adoption. Safe loads preserve bundled references; guarded fields and render-error Reload fallback added.
 - Branch @ sha: agent/codex/L-05-storage @ task HEAD, stacked on L-04 e9fa2bc (merge L-04 first).
@@ -124,7 +120,6 @@ Rules:
 - Screenshots: pending because Q-00 remains absent from origin/main dd92377; no browser captures. Details and before-state instructions in handoffs/L-05.md.
 - Needs kvn: review screenshots after Q-00 merges; adopt/merge only after visual review; port in R-00 M0 after merge.
 - Next: L-06 from L-04 (L-05 stays a leaf; nothing stacked on it).
-
 
 ### 2026-10-13 10:49 | codex | L-05 screenshot follow-up
 - What: Q-00 verified on main 26a20e5; L-05 rebased and 24 before/after images captured. Record's new notice now fits phone width; Reload recovery checked at both sizes. Ready for visual review.
@@ -142,8 +137,6 @@ Rules:
 - Gates: documentation-only approval record; required Learn and sync checks rerun before commit, results in handoff.
 - Needs kvn: merge the approved branch; port from merged main later. Inherited broader layout work remains documented.
 - Next: both UI approvals recorded. No agent merge/push/deploy authorized.
-
-
 
 ### 2026-10-13 02:50 | codex | R-01 (14 Oct work requested early)
 - What: Portability implemented; config-absent standalone build removes platform paths/session calls. Visual acceptance pending Q-00.
@@ -170,7 +163,6 @@ Rules:
 - Needs kvn: merge the approved branch; actual R26 mirror and deployment remain separate.
 - Next: record L-05's approval on its own branch. No agent merge/push/deploy authorized.
 
-
 ### 2026-10-13 03:00 | codex | I-04 (14 Oct work requested early)
 - What: Applied ten upstream recognition source/test files, skipped 23 assets/reports/out-of-bound paths, recorded ec2604a; runtime model/config/labels unchanged. Ready for review.
 - Branch @ sha: agent/codex/I-04-recognition-sync @ task HEAD (see branch log and handoffs/I-04.md).
@@ -188,7 +180,6 @@ Rules:
 - Needs kvn: review and merge for single-brand shell
 - Next: I-01 ready for review
 
-
 ### 2026-10-13 10:05 | claude-code | L-03
 - What: done (review). Practice capture backstop (captureMs + 500), allSettled initial load, no logging of takes with no compared hand, delta by attempt id, abandon-with-notice on tracking error or hidden tab.
 - Branch @ sha: agent/claude/L-03-capture-robustness (on main 2fd433a; see git log)
@@ -204,3 +195,11 @@ Rules:
 - Screenshots: C:\Users\User\Documents\Suvana-wt\claude\.agent-local\screens\L-07\index.html (ready state rendered with a forced flag, labelled FORCED)
 - Needs kvn: adopt/reject from the renders; thesis must say the capture protocol changed and the bands were not recalibrated. Plan correction: 03 section 6 step 2 names 0.5x start and 'My turn', which arrive with L-08/L-16a; copy describes today's controls.
 - Next: R-00 is blocked on L-05 (not merged; it waits for Q-00). L-08 tomorrow stacks on L-07.
+
+### 2026-10-13 12:30 | kvn (K-10 midday, prepared by the planning session) | merge 2
+- Merged into main via integration/2026-10-13b: R-01 (config switch, UI adopted by kvn), I-04 (recognition code and tests only, DN-18), I-01 (shell brand, re-shot), L-03 (capture robustness), L-07 (guide, hands-in-frame gate, longer trimmed takes). Gates on the merged tree: Learn 181 passed + 9 skipped, lint clean, Learn and Shell builds ok, sync guard 164.
+- Q-00 (rework) and L-05 were merged earlier by kvn; their GitHub Desktop merges left conflict markers in this file. Removed here, every entry kept. New `.gitattributes` line `docs/plan/LOG.md merge=union` stops this; Q-02 extends `.gitattributes` for line endings.
+- R-00 can run now as ONE port: L-04, L-05 and L-06 are all on main (Claude's wait-or-port-twice question no longer applies).
+- Plan correction (claude, L-07): the guide's step 2 describes today's controls (speed button, Record or Space, 3-second countdown); L-08 (0.5x start) and L-16a ("My turn") must update that step when they land.
+- Thesis note (claude, L-07): the capture method changed (longer window, trimmed learner takes, Record waits for hands) but the 85/60 bands were not recalibrated for it; the final thesis must say so (09-thesis-final).
+

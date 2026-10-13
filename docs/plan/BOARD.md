@@ -44,7 +44,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | D-08 | Commit the R26 M2 port and redeploy learn-ssl-module | kvn | 2026-10-19 | S | R-04 | todo | `n/a (R26)` | no | no | - |
 | D-09 | Attach suvana.help to suvana-shell and re-run the smoke | kvn | 2026-10-20 | S | K-08 | todo | `n/a` | no | no | - |
 | D-10 | Final R26 commit and learn-ssl-module redeploy | kvn | 2026-10-21 | S | R-05 | todo | `n/a (R26)` | no | no | - |
-| Q-00 | Screenshot tooling: Playwright shooter, contact sheet, fake-camera clips, dev-only fixtures page | antigravity | 2026-10-13 | M | K-01 | changes requested | `agent/antigravity/Q-00-screens` | no | no | - |
+| Q-00 | Screenshot tooling: Playwright shooter, contact sheet, fake-camera clips, dev-only fixtures page | antigravity | 2026-10-13 | M | K-01 | done | `agent/antigravity/Q-00-screens` | no | no | - |
 | Q-01 | Agent instruction files: root AGENTS.md as single source, slim CLAUDE.md, per-module AGENTS.md | claude-code | 2026-10-13 | M | K-01 | done | `agent/claude/Q-01-agents-md` | no | no | DN-12 |
 | Q-02 | .gitattributes for line endings and a union merge for LOG.md | antigravity | 2026-10-14 | S | K-01 | todo | `agent/antigravity/Q-02-gitattributes` | no | no | - |
 | Q-03 | Close CI gaps: concurrency, Docker build, R26-form Learn build, dist smoke, extended brand grep | codex | 2026-10-20 | M | R-01, I-01, I-02 | todo | `agent/codex/Q-03-ci` | no | no | - |
@@ -57,11 +57,11 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | Q-09 | Measure end-to-end feedback latency (capture end to result shown) | codex | 2026-10-19 | S | L-16a, Q-00, K-13 | todo | `agent/codex/Q-09-latency` | no | no | - |
 | L-01 | Replace invented per-finger percentages with measured Correct/Almost/Wrong states (DN-17); one label scale | claude-code | 2026-10-13 | S | L-02 | done | `agent/claude/L-01-finger-states` | yes | yes | DN-17 |
 | L-02 | Keyboard: Esc no longer exits to the Hero; Enter/Space respect the focused control | claude-code | 2026-10-13 | S | - | done | `agent/claude/L-02-keyboard` | yes | no | - |
-| L-03 | Practice capture robustness: wall-clock backstop, safe initial load, no empty-reference logging | claude-code | 2026-10-14 | S | - | todo | `agent/claude/L-03-capture-robustness` | yes | no | - |
+| L-03 | Practice capture robustness: wall-clock backstop, safe initial load, no empty-reference logging | claude-code | 2026-10-14 | S | - | done | `agent/claude/L-03-capture-robustness` | yes | no | - |
 | L-04 | Camera lifecycle: lost track, frame-loop errors, insecure origin, GPU-to-CPU fallback, resume | codex | 2026-10-13 | M | - | done | `agent/codex/L-04-camera-lifecycle` | yes | no | - |
-| L-05 | Storage resilience: safeLoad, guarded localStorage, top-level ErrorBoundary | codex | 2026-10-13 | S | - | blocked on Q-00 screenshots | `agent/codex/L-05-storage` | yes | yes | - |
+| L-05 | Storage resilience: safeLoad, guarded localStorage, top-level ErrorBoundary | codex | 2026-10-13 | S | - | done | `agent/codex/L-05-storage` | yes | yes | - |
 | L-06 | Cache headers, standalone root redirect, asset-version rule | codex | 2026-10-13 | S | - | done | `agent/codex/L-06-cache-headers` | yes | no | - |
-| L-07 | First-run onboarding, hands-in-frame gate, longer capture window with learner-take trimming | claude-code | 2026-10-14 | M | L-03 | todo | `agent/claude/L-07-onboarding` | yes | yes | - |
+| L-07 | First-run onboarding, hands-in-frame gate, longer capture window with learner-take trimming | claude-code | 2026-10-14 | M | L-03 | done | `agent/claude/L-07-onboarding` | yes | yes | - |
 | L-08 | Learner playback: 0.5x start, speed control, mirror label, raw-framing view with frame outline, sized wrist-anchored ghost | claude-code | 2026-10-15 | M | L-07 | todo | `agent/claude/L-08-playback` | yes | yes | - |
 | L-09 | Curriculum report, data-derived units and scenario coverage table | antigravity | 2026-10-14 | M | L-10 | todo | `agent/antigravity/L-09-curriculum` | yes | no | - |
 | L-10 | Reference metadata: hands, motion, duration, licence, hasMeaning in the generated index | antigravity | 2026-10-14 | S | - | todo | `agent/antigravity/L-10-ref-meta` | yes | no | - |
@@ -90,15 +90,15 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | L-31 | Third scenario from corpus signs (optional, only if kvn approves DN-19) | antigravity | backlog (earliest 2026-10-19) | M | K-05 | todo | `agent/antigravity/L-31-scenario3` | yes | yes | DN-19 |
 | L-32 | Sequence-from-memory level (only if Lithira's mapper supplies an order) | codex | backlog | M | K-03 | todo | `agent/codex/L-32-sequence` | yes | yes | DN-08 |
 | R-00 | M0: manual port of the merged blocker fixes into the R26 working tree | claude-code | 2026-10-14 | S | L-01, L-02, L-04, L-05, L-06, K-01 | todo | `none (R26 working tree; never commit)` | no | yes | - |
-| R-01 | Portability refactor: base and Suvana-only code driven by suvana.config.json | codex | 2026-10-14 | M | L-06 | todo | `agent/codex/R-01-portability` | yes | yes | DN-01 |
+| R-01 | Portability refactor: base and Suvana-only code driven by suvana.config.json | codex | 2026-10-14 | M | L-06 | done | `agent/codex/R-01-portability` | yes | yes | DN-01 |
 | R-02 | sync.mjs `port learn --to <R26>` with --check | codex | 2026-10-16 | S | R-01 | todo | `agent/codex/R-02-port-command` | no | no | - |
 | R-03 | M1: port Learn into the R26 working tree | claude-code | 2026-10-17 | S | R-02 | todo | `none (R26 working tree)` | no | yes | - |
 | R-04 | M2: port Learn into the R26 working tree | claude-code | 2026-10-19 | S | R-03 | todo | `none (R26 working tree)` | no | yes | - |
 | R-05 | Final Learn port to R26 for the demo | claude-code | 2026-10-21 | S | R-04, L-26, L-27, Q-08 | todo | `none (R26 working tree)` | no | no | - |
-| I-01 | Shell: remove the 'SoundGuard Ecosystem' sub-brand, configurable Recognize URL, fix the stale example | antigravity | 2026-10-13 | S | - | changes requested | `agent/antigravity/I-01-shell-brand` | no | yes | - |
+| I-01 | Shell: remove the 'SoundGuard Ecosystem' sub-brand, configurable Recognize URL, fix the stale example | antigravity | 2026-10-13 | S | - | done | `agent/antigravity/I-01-shell-brand` | no | yes | - |
 | I-02 | Alerts: user-visible strings say Suvana | antigravity | 2026-10-13 | S | - | done | `agent/antigravity/I-02-alerts-strings` | no | yes | - |
 | I-03 | Fix stale integration docs and record the Communicate gate | antigravity | 2026-10-14 | S | - | todo | `agent/antigravity/I-03-stale-docs` | no | no | - |
-| I-04 | Recognition re-sync of Lahiru's 656f371..ec2604a (code and tests only) | codex | 2026-10-14 | M | K-01 | todo | `agent/codex/I-04-recognition-sync` | no | no | DN-18 |
+| I-04 | Recognition re-sync of Lahiru's 656f371..ec2604a (code and tests only) | codex | 2026-10-14 | M | K-01 | done | `agent/codex/I-04-recognition-sync` | no | no | DN-18 |
 | I-05 | Reference-converter: take kvn's port 5909a56 and declare the 3 undeclared diffs | codex | 2026-10-16 | S | I-04 | todo | `agent/codex/I-05-converter-port` | yes | no | - |
 | I-06 | Shell: Privacy, Terms, Contact and Pricing/business-model pages | antigravity | 2026-10-18 | M | I-01 | todo | `agent/antigravity/I-06-shell-pages` | no | yes | DN-04, DN-15 |
 | I-07 | Communicate own instance: placeholder-seed guard, gloss import script, env example | antigravity | 2026-10-16 | S | - | todo | `agent/antigravity/I-07-communicate-scripts` | no | no | - |
@@ -736,6 +736,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
   - [ ] NO body or head silhouette is drawn (references contain no pose; a body outline would imply a location the data does not contain)
   - [ ] Ghost canvas width/height = video.videoWidth/Height; ghost translated so its wrist sits on the learner's tracked wrist
   - [ ] Before/after screenshots (desktop and phone) for a one-handed and a two-handed sign
+  - [ ] Update the Practice guide's step 2 (Onboarding, from L-07) to describe the 0.5x start once it exists
 
 ### L-09: Curriculum report, data-derived units and scenario coverage table
 
@@ -860,6 +861,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
   - [ ] Stars change and the L-13 next-exercise suggestion show on the result card
   - [ ] performance.mark('suvana:capture-end') and ('suvana:result-shown') emitted for Q-09
   - [ ] Keyboard flows from L-02 hold; before/after screenshots of each stage (desktop and phone)
+  - [ ] Update the Practice guide's step 2 to describe the 'My turn' button once it exists
 
 ### L-16b: Recall stage: hidden reference, cue, reveal costs the third star
 
