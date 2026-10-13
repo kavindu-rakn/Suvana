@@ -99,6 +99,32 @@ export function handednessesIn(frames: HandFrame[]): Array<'Left' | 'Right'> {
   return [...seen]
 }
 
+// Untuned classification rule shared by contract with build-reference-index.mjs.
+// score.test.ts asserts that both sides use exactly 0.2 (L-10 / L-30).
+export const TWO_HAND_FRAME_THRESHOLD = 0.2
+
+/** Match the index's reference-hand rule, not incidental tracker labels.
+ * For one-handed references, count each label at most once per frame and use
+ * the label present in the most frames. Ties keep first appearance. Attempts
+ * still retain both labels so left-dominant/mirrored signing can be compared. */
+export function referenceHandednessesIn(frames: HandFrame[]): Array<'Left' | 'Right'> {
+  const seen = handednessesIn(frames)
+  if (!seen.length) return []
+  const twoHandFrames = frames.filter((frame) => frame.hands.length >= 2).length
+  if (twoHandFrames / frames.length >= TWO_HAND_FRAME_THRESHOLD) return seen
+  const counts = new Map(seen.map((hand) => [hand, 0]))
+  for (const frame of frames) {
+    for (const hand of new Set(frame.hands.map((tracked) => tracked.handedness))) {
+      counts.set(hand, counts.get(hand)! + 1)
+    }
+  }
+  let dominant = seen[0]
+  for (const hand of seen) {
+    if (counts.get(hand)! > counts.get(dominant)!) dominant = hand
+  }
+  return [dominant]
+}
+
 /**
  * Build the feature sequence for one hand across a recording. Only frames
  * where that hand is tracked contribute; the resulting sequence may be

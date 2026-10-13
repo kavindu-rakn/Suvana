@@ -1,4 +1,9 @@
 import { describe, expect, it } from 'vitest'
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { join } from 'node:path'
+import type { SignRecording } from '../vision/types'
+import { handednessesIn, referenceHandednessesIn, TWO_HAND_FRAME_THRESHOLD } from './normalize'
 import { scoreAttempt } from './score'
 import {
   buildRecording,
@@ -10,6 +15,150 @@ import {
   withoutHands,
   zoom,
 } from './testFixtures'
+
+const L30_EVIDENCE = join(process.cwd(), '..', '..', '.agent-local', 'evidence', 'L-30')
+const numericResult = (result: ReturnType<typeof scoreAttempt>) => JSON.parse(JSON.stringify({
+  score: result.score, normalizedDistance: result.normalizedDistance, hands: result.hands,
+  worstJoints: result.worstJoints, mirrored: result.mirrored, twoHanded: result.twoHanded,
+}))
+
+/** Opt-in measurement with the existing calibration.test.ts sampling. Writes
+ * derived metrics only, never recordings; no corpus file is moved or changed. */
+it.skipIf(!process.env.L30_MEASURE_PHASE)('L-30 calibration: measured before/after stop gate', () => {
+  const phase = process.env.L30_MEASURE_PHASE
+  expect(['before', 'after']).toContain(phase)
+  const dir = join(process.cwd(), 'calibration')
+  const names = readdirSync(dir).filter((name) => name.endsWith('.json')).sort()
+  const hash = createHash('sha256')
+  const byGloss = new Map<string, SignRecording[]>()
+  for (const name of names) {
+    const raw = readFileSync(join(dir, name))
+    hash.update(name).update('\0').update(raw)
+    const recording = JSON.parse(raw.toString('utf8')) as SignRecording
+    byGloss.set(recording.gloss, [...(byGloss.get(recording.gloss) ?? []), recording])
+  }
+  const usable = [...byGloss.entries()].filter(([, takes]) => takes.length >= 2)
+  const positive: number[] = []
+  const negative: number[] = []
+  for (const [gloss, takes] of usable) {
+    for (let i = 1; i < takes.length; i++) positive.push(scoreAttempt(takes[i], takes[0]).normalizedDistance)
+    for (const [otherGloss, other] of usable) {
+      if (otherGloss !== gloss) negative.push(scoreAttempt(takes[0], other[0]).normalizedDistance)
+    }
+  }
+  const pos = positive.filter(Number.isFinite)
+  const neg = negative.filter(Number.isFinite)
+  let correct = 0
+  let bestCut = 0
+  for (const cut of [...pos, ...neg].sort((a, b) => a - b)) {
+    const count = pos.filter((d) => d <= cut).length + neg.filter((d) => d > cut).length
+    if (count > correct) { correct = count; bestCut = cut }
+  }
+  const total = pos.length + neg.length
+  const sourceHash = createHash('sha256').update(readFileSync(join(process.cwd(), 'src/scoring/score.ts')))
+    .update(readFileSync(join(process.cwd(), 'src/scoring/normalize.ts'))).digest('hex')
+  const metrics = { phase, takes: names.length, signs: byGloss.size, usableSigns: usable.length,
+    sameSignPairs: pos.length, differentSignPairs: neg.length, separationPercent: correct / total * 100,
+    majorityBaselinePercent: Math.max(pos.length, neg.length) / total * 100,
+    bestCut, corpusSha256: hash.digest('hex'), sourceSha256: sourceHash }
+  mkdirSync(L30_EVIDENCE, { recursive: true })
+  writeFileSync(join(L30_EVIDENCE, `${phase}.json`), JSON.stringify(metrics, null, 2))
+  console.info(JSON.stringify(metrics))
+
+  // Snapshot actual non-self comparisons for every shipped reference. Numeric
+  // parent outputs let the post-change test prove two-handed results unchanged.
+  if (phase === 'before') {
+    const index = JSON.parse(readFileSync(join(process.cwd(), 'public/reference-index.json'), 'utf8')) as {
+      recordings: Array<{ file: string; hands: 1 | 2 }>
+    }
+    const refs = index.recordings.map((meta) => JSON.parse(readFileSync(join(process.cwd(), 'public/references', meta.file), 'utf8')) as SignRecording)
+    const outputs = index.recordings.map((meta, i) => ({ file: meta.file, indexHands: meta.hands,
+      result: numericResult(scoreAttempt(refs[(i + 1) % refs.length], refs[i])) }))
+    writeFileSync(join(L30_EVIDENCE, 'reference-baseline.json'), JSON.stringify(outputs))
+  } else {
+    const before = JSON.parse(readFileSync(join(L30_EVIDENCE, 'before.json'), 'utf8')) as typeof metrics
+    expect(metrics.corpusSha256).toBe(before.corpusSha256)
+    expect(metrics.sameSignPairs).toBe(before.sameSignPairs)
+    expect(metrics.differentSignPairs).toBe(before.differentSignPairs)
+  }
+  expect(metrics.majorityBaselinePercent.toFixed(1)).toBe('65.4')
+  expect(metrics.separationPercent, 'STOP: separation below 74.6% with 65.4% majority baseline').toBeGreaterThanOrEqual(74.6)
+}, 120_000)
+
+describe('L-30 reference-hand classification', () => {
+  it('uses the exact 0.2 threshold from the generated index builder', () => {
+    const builder = readFileSync(join(process.cwd(), 'scripts/build-reference-index.mjs'), 'utf8')
+    const match = builder.match(/const TWO_HAND_FRAME_THRESHOLD = ([\d.]+)/)
+    expect(match).not.toBeNull()
+    expect(TWO_HAND_FRAME_THRESHOLD).toBe(0.2)
+    expect(Number(match![1])).toBe(TWO_HAND_FRAME_THRESHOLD)
+  })
+  it('ignores a stray second label below 20%, retaining the dominant hand', () => {
+    const ref = buildRecording({ frameCount: 10 })
+    const noisy = { ...ref, frames: structuredClone(ref.frames) }
+    noisy.frames[0].hands.push({ ...noisy.frames[0].hands[0], handedness: 'Left' })
+    const result = scoreAttempt(ref, noisy)
+    expect(result.hands.map((hand) => hand.handedness)).toEqual(['Right'])
+    expect(result.twoHanded).toBe(false)
+    expect(result.score).toBe(100)
+    expect(result.hints.some((hint) => hint.includes('two-handed'))).toBe(false)
+    noisy.frames[1].hands.push({ ...noisy.frames[1].hands[0], handedness: 'Left' })
+    expect(scoreAttempt(ref, noisy).twoHanded).toBe(true) // Exactly 20% is two-handed.
+  })
+  it('uses label presence across frames, not first appearance, and preserves mirroring', () => {
+    const right = buildRecording({ frameCount: 10 })
+    const left = mirrorRecording(right)
+    const noisy = { ...left, frames: structuredClone(left.frames) }
+    noisy.frames[0].hands.unshift({ ...right.frames[0].hands[0] })
+    expect(referenceHandednessesIn(noisy.frames)).toEqual(['Left'])
+    expect(scoreAttempt(left, noisy).score).toBe(100)
+    expect(scoreAttempt(right, noisy)).toMatchObject({ score: 100, mirrored: true, twoHanded: false })
+    expect(referenceHandednessesIn([])).toEqual([])
+    const alternating = [right.frames[0], left.frames[0]]
+    expect(referenceHandednessesIn(alternating)).toEqual(['Right']) // Stable tie.
+  })
+  it('keeps a real mirrored hand comparison when both one-handed scores saturate at zero', () => {
+    const reference = buildRecording()
+    const attempt = mirrorRecording(buildRecording({ pose: rotatedHand() }))
+    const result = scoreAttempt(attempt, reference)
+    expect(result.score).toBe(0)
+    expect(result.mirrored).toBe(true)
+    expect(result.hands[0].missing).toBe(false)
+    expect(Number.isFinite(result.normalizedDistance)).toBe(true)
+  })
+  it('matches every shipped one-handed index entry and preserves two-handed numeric parent results', () => {
+    const index = JSON.parse(readFileSync(join(process.cwd(), 'public/reference-index.json'), 'utf8')) as {
+      recordings: Array<{ file: string; hands: 1 | 2 }>
+    }
+    const refs = index.recordings.map((meta) => JSON.parse(readFileSync(join(process.cwd(), 'public/references', meta.file), 'utf8')) as SignRecording)
+    const path = join(L30_EVIDENCE, 'reference-baseline.json')
+    const baseline = existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) as Array<{
+      file: string; indexHands: number; result: ReturnType<typeof numericResult>
+    }> : undefined
+    let one = 0, two = 0, corrected = 0
+    for (let i = 0; i < refs.length; i++) {
+      const meta = index.recordings[i]
+      const ref = refs[i]
+      const result = scoreAttempt(refs[(i + 1) % refs.length], ref)
+      if (meta.hands === 1) {
+        one++
+        expect(result.hands, meta.file).toHaveLength(1)
+        expect(result.twoHanded, meta.file).toBe(false)
+        if (handednessesIn(ref.frames).length > 1) corrected++
+      } else {
+        two++
+        expect(referenceHandednessesIn(ref.frames), meta.file).toEqual(handednessesIn(ref.frames))
+        if (baseline) {
+          expect(baseline[i].file).toBe(meta.file)
+          expect(numericResult(result), meta.file).toEqual(baseline[i].result)
+        }
+      }
+    }
+    console.info(`L-30 index contract: ${one} one-handed, ${two} two-handed, ${corrected} stray-hand references corrected; ${baseline ? 'numeric parent snapshot compared' : 'numeric snapshot absent in CI; hand-selection identity asserted'}`)
+    expect(corrected).toBe(78)
+    expect(one + two).toBe(501)
+  }, 120_000)
+})
 
 describe('scoreAttempt — invariances (the key correctness properties)', () => {
   it('scores a recording against itself as a perfect 100', () => {
