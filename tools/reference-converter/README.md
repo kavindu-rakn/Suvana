@@ -9,6 +9,21 @@ Two corpora are in use, under **different licences**. See
 
 ## Corpus 2 — Yohan Abhishek (CC BY-NC-SA 4.0)
 
+### Sync note (I-05, 13 Oct 2026)
+
+R26 commit `5909a56` ports Suvana's case-insensitive `.mov`/`.MOV` enumeration
+fix. Both nested takes and flat isolated clips still use `video_files()`;
+L-22a's sentence selector is preserved separately. No corpus was reprocessed
+and no reference file changed in this reconciliation.
+
+The sync manifest declares the remaining differences: this expanded history
+and sentence documentation; the converter's Suvana monorepo model/output
+defaults plus sentence preparation; `missing_signs.txt` (a **historical scoped
+re-run allow-list**, not today's missing-sign report); and the converter tests
+added with L-22a/I-05. The sentence features and tests can be backported to
+R26 explicitly, retaining R26's `web/public` defaults. Never use a clean sync
+status as a claim that those improvements have already been ported to R26.
+
 | | |
 |---|---|
 | Contents | **383 signs** in 16 grammatical categories. **360 converted** — see the `.mov` bug below for the rest |

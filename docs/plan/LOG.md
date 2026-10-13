@@ -329,3 +329,11 @@ Rules:
 - Proposed diff: `scripts/importGlosses.ts` in Communicate's `suvanaOnly` in `tools/sync/upstreams.json` (handoff).
 - Needs kvn: review and merge branch.
 - Next: D-01 (Deployment smoke script and DEPLOYMENT.md refresh).
+### 2026-10-13 18:52 | codex | I-05
+- What: done for review: reconciled 5909a56 without losing L-22a sentence behavior; declared all four converter differences and added guards plus two format-enumeration tests. No reference generation, video export or R26 writes.
+- Branch @ sha: agent/codex/I-05-converter-port @ task HEAD (base bca1688; final SHA in branch log).
+- Gates: converter 14 passed; npm 10 ci; Learn lint 0 warnings, 191 passed / 9 skipped, build 144.76 kB gzip; guard 168; reference-converter status clean at 5909a56; diff check passed.
+- Screenshots: n/a.
+- Needs kvn: review/merge; root README provenance/sync-log proposed diff is in handoff for hot-file owner.
+- Plan correction: fourth undeclared difference is merged L-22a's test file. Clean status means declared divergence, not a completed tools backport. ASSET_VERSION unchanged because references unchanged.
+- Next: L-12 implementation still waits for chat approval; optional L-17 calibration work next.
