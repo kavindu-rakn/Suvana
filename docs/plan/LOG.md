@@ -270,3 +270,10 @@ Rules:
 
 ### 2026-10-13 15:20 | kvn | UI approval for integration/2026-10-13c
 - Approved in chat from the before/after renders (desktop + phone, .agent-local/review/2026-10-13c/L-08/): L-08 (0.5x start then 1x, 0.25/0.5/0.75/1 speed buttons, raw framing with "Position in the original video frame" and Zoom to hands, "Mirrored: copy it like a mirror", wrist-anchored ghost, one-row phone transport). Recorded by claude-code.
+
+### 2026-10-13 15:40 | kvn (recorded by claude-code) | R-00 committed in R26; AGENTS.md decision
+- What: kvn committed and pushed the M0 port to R26 as 761ec32 ("Learn: port Suvana Learn (M0) from Suvana d9a6aaf", 54 files). R26 tree clean; gates re-run on 761ec32: npm@10 ci ok, tests 188 passed + 2 skipped, build 143.82 kB gzip, no '/learn/' in dist.
+- Decision (kvn, chat): apps/learn/AGENTS.md and apps/learn/CLAUDE.md stay out of R26.
+- Plan correction for R-02: the port command excludes AGENTS.md and CLAUDE.md as well as suvana.config.json, vercel.json and package-lock.json, and `--check` ignores them (07 section 5).
+- Found: learn-ssl-module has no Git auto-deploy (no deployment followed the push); D-06 is the CLI redeploy in 07 section 6.
+- Next: kvn runs D-06 (deploy preview, check, promote) and logs the deployment id.
