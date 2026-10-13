@@ -41,8 +41,16 @@ import { ScoreBadge } from './ScoreBadge'
 import type { HandFeedback } from './ScoreBadge'
 import { CategorySignNavigator } from './CategorySignNavigator'
 import { shortcutBlockedByTarget } from '../app/keyboard'
+import { captureDeadline } from '../vision/cameraLifecycle'
+import { progressAgainstEarlier, shouldLogAttempt } from '../learner/attemptProgress'
 
 const COUNTDOWN_S = 3
+/**
+ * Slack after the capture window before the wall-clock backstop finishes the
+ * take: frames normally end it at captureMs, so this only fires when frames
+ * stop arriving. Untuned.
+ */
+const BACKSTOP_SLACK_MS = 500
 
 type Phase = 'idle' | 'countdown' | 'recording' | 'result'
 
@@ -68,6 +76,8 @@ export function PracticeView({
   const [suggested, setSuggested] = useState<string | null>(null)
   const [session, setSession] = useState<PracticeSession | null>(() => loadSession())
   const [isBrowsing, setIsBrowsing] = useState(true)
+  // Why the last countdown or take was abandoned, shown until the next one.
+  const [captureNotice, setCaptureNotice] = useState<string | null>(null)
 
   // Ghost Mode State (Overlay reference skeleton onto live webcam)
   const [ghostActive, setGhostActive] = useState(false)
@@ -93,6 +103,7 @@ export function PracticeView({
   const retryRef = useRef<HTMLButtonElement>(null)
   const completeRef = useRef<HTMLHeadingElement>(null)
   const lastFrameAtRef = useRef<number | null>(null)
+  const finishRef = useRef<() => void>(() => {})
 
   const [revealArmed, setRevealArmed] = useState(false)
   const latency = useFeedbackLatency('practice', () => setRevealArmed(true))
@@ -111,11 +122,19 @@ export function PracticeView({
 
   useEffect(() => {
     void (async () => {
-      const [loc, index, log] = await Promise.all([
-        listRecordings(),
+      // allSettled: a failed IndexedDB (blocked site storage) must not blank
+      // the bundled signs. Each store that fails contributes nothing.
+      const [locR, indexR, logR] = await Promise.allSettled([
+        Promise.resolve().then(listRecordings),
         loadReferenceIndex(),
-        listAttempts(),
+        Promise.resolve().then(listAttempts),
       ])
+      const loc = locR.status === 'fulfilled' ? locR.value : []
+      const index = indexR.status === 'fulfilled' ? indexR.value : []
+      const log = logR.status === 'fulfilled' ? logR.value : []
+      for (const r of [locR, indexR, logR]) {
+        if (r.status === 'rejected') console.error('Practice could not load a store', r.reason)
+      }
       setLocalRecs(loc)
       setReferences(pickReferenceList([...loc.map(toMeta), ...index]))
       setEntries(log)
@@ -234,16 +253,43 @@ export function PracticeView({
     }
   }, [ghostActive, reference, tracking.status, phase])
 
-  // Cancel countdown if camera turns off
+  // Abandon the countdown or take if the camera stops. An error (lost camera,
+  // failed tracker) says so; the learner's own Stop needs no message.
   useEffect(() => {
     if (
       tracking.status !== 'running' &&
       (phaseRef.current === 'countdown' || phaseRef.current === 'recording')
     ) {
       window.clearInterval(countdownRef.current)
+      framesRef.current = []
       setPhase('idle')
+      if (tracking.status === 'error') {
+        setCaptureNotice('The camera stopped, so that take was not scored. Try again.')
+      }
     }
   }, [tracking.status])
+
+  // Wall-clock backstop: frames normally finish the take at captureMs, but if
+  // they stop arriving the take still ends instead of recording forever.
+  useEffect(() => {
+    if (phase !== 'recording') return
+    return captureDeadline(captureMs + BACKSTOP_SLACK_MS, () => finishRef.current())
+  }, [phase, captureMs])
+
+  // Tracking pauses while the tab is hidden, so a take running then would be
+  // scored on a gap. Abandon it instead.
+  useEffect(() => {
+    const abandon = () => {
+      if (!document.hidden) return
+      if (phaseRef.current !== 'countdown' && phaseRef.current !== 'recording') return
+      window.clearInterval(countdownRef.current)
+      framesRef.current = []
+      setPhase('idle')
+      setCaptureNotice('You left the page, so that take was not scored. Try again.')
+    }
+    document.addEventListener('visibilitychange', abandon)
+    return () => document.removeEventListener('visibilitychange', abandon)
+  }, [])
 
   useEffect(() => () => window.clearInterval(countdownRef.current), [])
 
@@ -258,6 +304,9 @@ export function PracticeView({
     else clearSession()
   }, [session])
 
+  // A notice belongs to the sign it happened on.
+  useEffect(() => setCaptureNotice(null), [selected])
+
   function leaveResult() {
     setResult(null)
     setAttempt(null)
@@ -270,13 +319,14 @@ export function PracticeView({
   const liveMessage = useMemo(() => {
     if (phase === 'countdown') return `Get ready. Recording starts in ${COUNTDOWN_S} seconds.`
     if (phase === 'recording') return 'Recording. Sign now.'
+    if (phase === 'idle' && captureNotice) return captureNotice
     if (phase === 'result' && result) {
       const bandLabel = band(result.score).label
       const hint = result.hints[0] ? ` ${result.hints[0]}` : ''
       return `${selectedRef.current?.gloss ?? 'Sign'} scored ${result.score} out of 100. ${bandLabel}.${hint}`
     }
     return ''
-  }, [phase, result])
+  }, [phase, result, captureNotice])
 
   useEffect(() => {
     if (phase === 'result') retryRef.current?.focus({ preventScroll: true })
@@ -288,6 +338,7 @@ export function PracticeView({
 
   function beginCountdown() {
     if (tracking.status !== 'running' || !referenceRef.current) return
+    setCaptureNotice(null)
     setResult(null)
     setAttempt(null)
     setRevealArmed(false)
@@ -368,7 +419,7 @@ export function PracticeView({
       requestAnimationFrame(() => setRevealArmed(true))
     }
 
-    if (scored.hands.length > 0 && scored.hands.every((h) => h.missing)) return
+    if (!shouldLogAttempt(scored)) return
 
     setSession((prev) => (prev ? markAttempted(prev, currentRef.gloss) : prev))
 
@@ -386,6 +437,7 @@ export function PracticeView({
     })
     setEntries((prev) => [...prev, entry])
   }
+  finishRef.current = finishRecording
 
   const noAttemptHands =
     result != null && result.hands.length > 0 && result.hands.every((h) => h.missing)
@@ -407,14 +459,9 @@ export function PracticeView({
   const fingerFocus = result ? topFingers(result) : []
 
   const progress = useMemo(() => {
-    if (!result || !selected) return { delta: null as number | null, best: false }
-    const forGloss = entries.filter((e) => e.gloss === selected.gloss)
-    const earlier = forGloss.slice(0, -1)
-    if (earlier.length === 0) return { delta: null as number | null, best: false }
-    const previous = earlier[earlier.length - 1].score
-    const bestBefore = Math.max(...earlier.map((e) => e.score))
-    return { delta: result.score - previous, best: result.score > bestBefore }
-  }, [entries, result, selected])
+    if (!result || !selected || !attempt) return { delta: null, best: false }
+    return progressAgainstEarlier(entries, selected.gloss, attempt.id, result.score)
+  }, [entries, result, selected, attempt])
 
   useEffect(() => {
     if (selected) setIsBrowsing(false)
@@ -714,6 +761,10 @@ export function PracticeView({
               }
             />
           </div>
+
+          {!browsing && phase === 'idle' && captureNotice && (
+            <p className="aww-cam-notice">{captureNotice}</p>
+          )}
 
           {/* Camera controls */}
           {!browsing && phase !== 'result' && tracking.status === 'running' && (

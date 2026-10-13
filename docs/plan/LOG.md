@@ -98,3 +98,11 @@ Rules:
 - Plan corrections applied: lane-worktree test baseline (08 section 9), M0 commit wording (07 section 4), L-17 re-derives HINT_MIN_DEVIATION.
 - Tomorrow first: antigravity reworks Q-00, then re-shoots I-01; kvn merges Q-00 at midday so codex can shoot L-05.
 
+
+### 2026-10-13 10:05 | claude-code | L-03
+- What: done (review). Practice capture backstop (captureMs + 500), allSettled initial load, no logging of takes with no compared hand, delta by attempt id, abandon-with-notice on tracking error or hidden tab.
+- Branch @ sha: agent/claude/L-03-capture-robustness (on main 2fd433a; see git log)
+- Gates: guard 152 ok; lint 0 warnings; tests 162 passed + 9 skipped; build ok 142.61 kB gzip
+- Screenshots: not required; reference renders of the new notice at .agent-local/screens/L-03/after-{desktop,phone}-abandoned.png
+- Needs kvn: adopt/reject the notice wording and position. L-05 not merged, so Practice uses allSettled directly (switch to safeLoad later).
+- Next: L-07 onboarding, stacked on this branch. R-00 waits for L-05 to merge (dependency).
