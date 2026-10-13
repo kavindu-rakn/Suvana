@@ -293,3 +293,12 @@ Rules:
   - DN-14: ask Karindra (K-03) with a 15 Oct deadline; on no reply, rebuild under kvn's EAS with package help.suvana.alerts (I-12a, 16 Oct).
 - Needs kvn: copy these into DECISIONS.md and mark L-15a, L-15b and K-06 cancelled on the board (agents do not edit either).
 - Next: codex starts with the L-12 threshold proposal; antigravity skips L-15b and I-12a for now.
+
+### 2026-10-13 19:15 | codex | L-23a
+- What: done for review: default/demo database isolation, guarded persisted selection, explicit-profile progress reset; old default data preserved. No profile UI or real browser reset.
+- Branch @ sha: agent/codex/L-23a-profile @ task HEAD (base bca1688; final SHA in branch log).
+- Gates: npm 10 ci; lint 0 warnings; 199 passed / 9 skipped; build 144.76 kB gzip without new warnings; guard 164; diff check passed; eight fake IndexedDB tests and native Chromium integration passed.
+- Screenshots: n/a (storage layer only).
+- Needs kvn: review/merge. L-23 owner must confirm reset, clear current session and refresh derived UI after switching; integration rules in handoff.
+- Plan correction: mastery is derived from attempts, not a stored table; no schema bump required. Native tests used an isolated browser context, preserving kvn's real data.
+- Next: L-12 implementation and L-13 await approved L-12 numbers. L-15a skipped per DN-05. R-02, I-05, L-17 and L-23a each remain independent review branches; no push or merge.
