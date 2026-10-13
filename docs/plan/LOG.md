@@ -251,3 +251,10 @@ Rules:
 - Screenshots: C:\Users\User\Documents\Suvana-wt\claude\.agent-local\screens\L-08\index.html (one-hand, two-hand, zoomed, ghost, Scenario)
 - Needs kvn: adopt/reject from renders; phone transport is one row (restart/step hidden; they were off-screen before). Note: Scenario/Library/Record take the new player defaults; Scenario's KANAWA coaching line describes movement/location (for L-19).
 - Next: R-00 waits for kvn's R26 commit + D-06. Next claude-code board tasks (L-11, L-16a, L-24...) depend on L-12/K-05/L-13, not yet on main.
+### 2026-10-13 13:55 | claude-code | R-00
+- What: done (review). One port of Learn from Suvana main d9a6aaf into the R26 working tree (all files except suvana.config.json, vercel.json, package-lock.json, and AGENTS.md/CLAUDE.md); R26-form vercel.json (1-day cache + SWR, no redirect); R26's out-of-sync lockfile regenerated with npm 10. Nothing committed in R26.
+- Branch @ sha: agent/claude/R-00-m0-port (handoff only); R26 working tree at ec2604a + 20 modified / 30 new paths
+- Gates (R26 web): npm@10 ci ok; tests 188 passed + 2 skipped; lint 0 warnings; build 143.82 kB gzip; '/learn/' in dist = 0; assets 200 at base /
+- Screenshots: C:\Users\User\Documents\Suvana-wt\claude\.agent-local\screens\R-00\index.html
+- Needs kvn: commit in R26 with the blocks in handoffs/R-00.md, push, D-06 redeploy; decide whether AGENTS.md/CLAUDE.md belong in R26 (R-02 must match).
+- Next: L-08 playback (15 Oct), from main.
