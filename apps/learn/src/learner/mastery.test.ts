@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { AttemptLogEntry } from './attemptLog'
-import { practiceNeed, suggestNext, summarizeAll, summarizeGloss } from './mastery'
+import { isDueReview, practiceNeed, recommendNext, recommendationFor, suggestNext, summarizeAll, summarizeGloss } from './mastery'
 
 let n = 0
 function attempt(gloss: string, score: number, createdAt: string): AttemptLogEntry {
@@ -64,6 +64,39 @@ describe('summarizeGloss', () => {
 })
 
 describe('practice selection', () => {
+  it('resurfaces a score-30 due review before an unseen sign with numeric need 1', () => {
+    const summaries = summarizeAll(['STRUGGLING_FIXTURE', 'UNSEEN_FIXTURE'], [attempt('STRUGGLING_FIXTURE', 30, daysAgo(0))])
+    expect(practiceNeed(summaries[0], NOW)).toBeCloseTo(0.525)
+    expect(practiceNeed(summaries[1], NOW)).toBe(1)
+    expect(suggestNext(summaries, NOW)).toBe('STRUGGLING_FIXTURE')
+    expect(recommendNext(summaries, NOW)).toEqual({ gloss: 'STRUGGLING_FIXTURE', kind: 'review', reason: 'review: low match score' })
+  })
+  it('ranks due reviews by need and only introduces new signs when none are due', () => {
+    const summaries = summarizeAll(['A_FIXTURE', 'B_FIXTURE', 'C_FIXTURE'],
+      [attempt('A_FIXTURE', 30, daysAgo(0)), attempt('B_FIXTURE', 0, daysAgo(0))])
+    expect(recommendNext(summaries, NOW)?.gloss).toBe('B_FIXTURE')
+    expect(recommendNext(summaries.filter((s) => s.gloss !== 'B_FIXTURE'), NOW)?.gloss).toBe('A_FIXTURE')
+    expect(recommendNext(summaries.filter((s) => s.attempts === 0), NOW)?.kind).toBe('new')
+  })
+  it('uses a strict >0.5 due threshold and preserves the explicit unit order', () => {
+    const boundary = summarizeGloss('BOUNDARY_FIXTURE', [attempt('BOUNDARY_FIXTURE', 50, daysAgo(2.5))])
+    expect(practiceNeed(boundary, NOW)).toBe(0.5)
+    expect(isDueReview(boundary, NOW)).toBe(false)
+    const summaries = [boundary, ...summarizeAll(['A_FIXTURE', 'Z_FIXTURE', 'OUTSIDE_FIXTURE'], [])]
+    expect(recommendNext(summaries, NOW, ['Z_FIXTURE', 'A_FIXTURE'])?.gloss).toBe('Z_FIXTURE')
+    expect(recommendNext(summaries, NOW, ['BOUNDARY_FIXTURE'])?.gloss).toBe('BOUNDARY_FIXTURE')
+    expect(recommendNext(summaries, NOW, [])).toBeNull()
+    expect(recommendNext(summaries.slice(1), NOW, [])).toBeNull()
+  })
+  it('explains an actual drop or staleness without inventing a prior score', () => {
+    const dropped = summarizeGloss('DROP_FIXTURE', [attempt('DROP_FIXTURE', 90, daysAgo(1)),
+      attempt('DROP_FIXTURE', 10, daysAgo(0, 0)), attempt('DROP_FIXTURE', 0, daysAgo(0, 1))])
+    expect(recommendationFor(dropped, NOW).reason).toBe('review: score dropped')
+    const stale = summarizeGloss('STALE_FIXTURE', [attempt('STALE_FIXTURE', 50, daysAgo(7))])
+    expect(recommendationFor(stale, NOW).reason).toBe('review: not practised for 7 days')
+    const fresh = summarizeGloss('FRESH_FIXTURE', [attempt('FRESH_FIXTURE', 90, daysAgo(0))])
+    expect(recommendationFor(fresh, NOW).kind).toBe('practice')
+  })
   it('suggests a never-attempted sign over practiced ones', () => {
     const entries = [attempt('ME', 40, daysAgo(0, 0))]
     const next = suggestNext(summarizeAll(['ME', 'YOU'], entries), NOW)

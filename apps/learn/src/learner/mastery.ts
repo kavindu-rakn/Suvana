@@ -1,23 +1,24 @@
 import type { AttemptLogEntry } from './attemptLog'
 
-// Learner model v1 — a deliberately simple, explainable heuristic. It will be
-// replaced by BKT + RL-driven curriculum in the final phase (Sep–Oct); the
-// attempt log it reads from stays the same, so that swap is contained here.
+// Rule-based by design. BKT/learned adaptation needs real learner data and
+// teacher judgments first; no learned model or learning gains are claimed.
 
 // Recency-weighted average: each new attempt counts for half the estimate.
 // A high alpha matters with short histories — it guarantees that improving
 // over time ([0,100,100]) scores higher than declining ([100,100,0]).
-const EWMA_ALPHA = 0.5
+export const EWMA_ALPHA = 0.5
 
 // "Mastered" needs consistency, not one lucky attempt.
-const MASTERED_MIN_ATTEMPTS = 3
-const MASTERED_THRESHOLD = 0.85
-const IMPROVING_THRESHOLD = 0.6
+export const MASTERED_MIN_ATTEMPTS = 3
+export const MASTERED_THRESHOLD = 0.85
+export const IMPROVING_THRESHOLD = 0.6
 
 // practice-need blend: how weak the sign is vs. how long since it was drilled.
-const W_WEAKNESS = 0.75
-const W_STALENESS = 0.25
-const STALENESS_FULL_DAYS = 5
+export const W_WEAKNESS = 0.75
+export const W_STALENESS = 0.25
+export const STALENESS_FULL_DAYS = 5
+// Untuned scheduling threshold; it is not a correctness/accuracy boundary.
+export const DUE_REVIEW_THRESHOLD = 0.5
 
 export type MasteryLevel = 'new' | 'learning' | 'improving' | 'mastered'
 
@@ -81,9 +82,8 @@ export function summarizeAll(glosses: string[], entries: AttemptLogEntry[]): Glo
 
 /**
  * How much a sign wants practice right now, 0–1. Never-attempted signs get
- * maximum need (introduce new vocabulary first — breadth before depth);
- * attempted ones blend weakness with staleness so mastered signs resurface
- * for revision after a few days.
+ * maximum numeric need, but selection explicitly partitions due reviews first.
+ * Attempted signs blend weakness with staleness so they can resurface later.
  */
 export function practiceNeed(summary: GlossMastery, now: Date): number {
   if (summary.attempts === 0) return 1
@@ -95,11 +95,49 @@ export function practiceNeed(summary: GlossMastery, now: Date): number {
   return (1 - summary.mastery) * W_WEAKNESS + staleness * W_STALENESS
 }
 
-/** The gloss to practise next (highest need, ties alphabetical), or null. */
+export interface PracticeRecommendation {
+  gloss: string
+  kind: 'review' | 'new' | 'practice'
+  reason: string
+}
+
+export function isDueReview(summary: GlossMastery, now: Date): boolean {
+  return summary.attempts > 0 && practiceNeed(summary, now) > DUE_REVIEW_THRESHOLD
+}
+
+/** Explain the actual selection rule without calling a first low score a drop. */
+export function recommendationFor(summary: GlossMastery, now: Date): PracticeRecommendation {
+  if (summary.attempts === 0) return { gloss: summary.gloss, kind: 'new', reason: 'new: next in unit' }
+  if (!isDueReview(summary, now)) return { gloss: summary.gloss, kind: 'practice', reason: 'practice: refresh this sign' }
+  const scores = summary.recentScores
+  if (scores.length >= 2 && scores[scores.length - 1] < scores[scores.length - 2]) {
+    return { gloss: summary.gloss, kind: 'review', reason: 'review: score dropped' }
+  }
+  const days = Math.max(0, Math.floor((now.getTime() - new Date(summary.lastPracticedAt!).getTime()) / 86_400_000))
+  return { gloss: summary.gloss, kind: 'review', reason: days >= 1
+    ? `review: not practised for ${days} days` : 'review: low match score' }
+}
+
+/** Strict policy for a single Next: due review, then a new sign in unit order,
+ * then the highest-need already-attempted sign. No mutation of summaries. */
+export function recommendNext(
+  summaries: readonly GlossMastery[], now: Date = new Date(), newOrder?: readonly string[],
+): PracticeRecommendation | null {
+  const rank = (a: GlossMastery, b: GlossMastery) =>
+    practiceNeed(b, now) - practiceNeed(a, now) || a.gloss.localeCompare(b.gloss)
+  const due = summaries.filter((summary) => isDueReview(summary, now)).sort(rank)
+  if (due.length) return recommendationFor(due[0], now)
+  const unseen = summaries.filter((summary) => summary.attempts === 0
+    && (newOrder === undefined || newOrder.includes(summary.gloss)))
+    .sort((a, b) => newOrder === undefined ? a.gloss.localeCompare(b.gloss)
+      : newOrder.indexOf(a.gloss) - newOrder.indexOf(b.gloss))
+  if (unseen.length) return recommendationFor(unseen[0], now)
+  const attempted = summaries.filter((summary) => summary.attempts > 0
+    && (newOrder === undefined || newOrder.includes(summary.gloss))).sort(rank)
+  return attempted.length ? recommendationFor(attempted[0], now) : null
+}
+
+/** Backwards-compatible gloss API; existing Practice now benefits from due-first selection. */
 export function suggestNext(summaries: GlossMastery[], now: Date = new Date()): string | null {
-  if (summaries.length === 0) return null
-  const ranked = [...summaries].sort(
-    (a, b) => practiceNeed(b, now) - practiceNeed(a, now) || a.gloss.localeCompare(b.gloss),
-  )
-  return ranked[0].gloss
+  return recommendNext(summaries, now)?.gloss ?? null
 }

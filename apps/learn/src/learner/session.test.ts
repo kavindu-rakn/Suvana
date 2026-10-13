@@ -1,13 +1,22 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { summarizeAll, suggestNext } from './mastery'
 import type { AttemptLogEntry } from './attemptLog'
 import {
   buildSession,
+  buildSessionPlan,
+  clearSession,
   currentGloss,
+  currentRecommendation,
   isComplete,
+  loadSession,
   markAttempted,
   startSession,
+  startUnitSession,
+  saveSession,
 } from './session'
+import type { CurriculumUnit } from '../data/curriculum'
+
+afterEach(() => vi.unstubAllGlobals())
 
 const NOW = new Date('2026-08-18T10:00:00.000Z')
 
@@ -164,5 +173,72 @@ describe('session progress', () => {
     expect(markAttempted(s, 'NOT_IN_SESSION')).toBe(s)
     const once = markAttempted(s, s.glosses[0])
     expect(markAttempted(once, s.glosses[0])).toBe(once)
+  })
+})
+
+describe('finite review/new mix and Path API', () => {
+  const vocab = ['R1_FIXTURE', 'R2_FIXTURE', 'R3_FIXTURE', 'R4_FIXTURE', 'N1_FIXTURE', 'N2_FIXTURE', 'OTHER_FIXTURE']
+  const log = [attempt('R1_FIXTURE', 0), attempt('R2_FIXTURE', 10), attempt('R3_FIXTURE', 20), attempt('R4_FIXTURE', 30)]
+  const summaries = summarizeAll(vocab, log)
+  it('makes the existing Practice one-item selection revisit score 30 before a new sign', () => {
+    const all = summarizeAll(['WEAK_FIXTURE', 'NEW_FIXTURE'], [attempt('WEAK_FIXTURE', 30)])
+    expect(buildSession(all, 1, NOW, () => 'Other')).toEqual(['WEAK_FIXTURE'])
+  })
+  it('interleaves two distinct due reviews with one new sign and captures reasons', () => {
+    const plan = buildSessionPlan(summaries, 6, NOW, undefined, ['N2_FIXTURE', 'N1_FIXTURE'])
+    expect(plan.map((item) => item.kind)).toEqual(['review', 'review', 'new', 'review', 'review', 'new'])
+    expect(plan.map((item) => item.gloss)).toEqual(['R1_FIXTURE', 'R2_FIXTURE', 'N2_FIXTURE', 'R3_FIXTURE', 'R4_FIXTURE', 'N1_FIXTURE'])
+    expect(plan[0].reason).toBe('review: low match score')
+    expect(plan[2].reason).toBe('new: next in unit')
+  })
+  it('drains available queues without repeats, then fills with attempted non-due practice', () => {
+    const all = summarizeAll(['R_FIXTURE', 'NEW_FIXTURE', 'FRESH_FIXTURE'],
+      [attempt('R_FIXTURE', 30), attempt('FRESH_FIXTURE', 95)])
+    expect(buildSessionPlan([...all, all[0]], 8, NOW).map((item) => item.kind)).toEqual(['review', 'new', 'practice'])
+    expect(buildSession(all, 8, NOW)).toHaveLength(3)
+    expect(buildSession([], 8, NOW)).toEqual([])
+    for (const size of [0, -1, NaN, Infinity]) expect(buildSession(all, size, NOW)).toEqual([])
+    expect(buildSession(all, 1.5, NOW)).toHaveLength(1)
+  })
+  it('preserves curriculum new-sign order even when category preferences would reorder it', () => {
+    const all = summarizeAll(['1', 'WORD_FIXTURE'], [])
+    expect(buildSession(all, 2, NOW, (gloss) => gloss === '1' ? 'Numbers' : 'Other', ['1', 'WORD_FIXTURE']))
+      .toEqual(['1', 'WORD_FIXTURE'])
+    const practised = summarizeAll(['UNIT_FIXTURE', 'OUTSIDE_FIXTURE'],
+      [attempt('UNIT_FIXTURE', 95), attempt('OUTSIDE_FIXTURE', 80)])
+    expect(buildSession(practised, 8, NOW, undefined, ['UNIT_FIXTURE'])).toEqual(['UNIT_FIXTURE'])
+  })
+  it('starts a review-aware unit session only for approved, available curriculum', () => {
+    const unit: CurriculumUnit = { id: 'fixture-unit', title: 'Fixture', description: 'Control fixture only',
+      status: 'approved', signs: ['N2_FIXTURE', 'N1_FIXTURE'] }
+    const session = startUnitSession(unit, summaries, NOW)
+    expect(session.unitId).toBe(unit.id)
+    expect(session.glosses).not.toContain('OTHER_FIXTURE')
+    expect(currentRecommendation(session)).toMatchObject({ gloss: session.glosses[0], kind: 'review' })
+    expect(Object.keys(session.startMastery).sort()).toEqual([...session.glosses].sort())
+    expect(() => startUnitSession({ ...unit, status: 'proposed' }, summaries, NOW)).toThrow('approval')
+    expect(() => startUnitSession({ ...unit, signs: [] }, summaries, NOW)).toThrow('needs signs')
+    expect(() => startUnitSession(unit, summaries, NOW, 0)).toThrow('positive size')
+    expect(() => startUnitSession({ ...unit, signs: ['MISSING_FIXTURE'] }, summaries, NOW)).toThrow('not loaded')
+    const old = { ...session, recommendations: undefined }
+    expect(currentRecommendation(old)).toBeNull()
+    expect(currentRecommendation({ ...session, done: [...session.glosses] })).toBeNull()
+  })
+  it('round-trips new recommendation metadata and older saved sessions safely', () => {
+    const storage = new Map<string, string>()
+    vi.stubGlobal('window', { sessionStorage: { getItem: (key: string) => storage.get(key) ?? null,
+      setItem: (key: string, value: string) => storage.set(key, value), removeItem: (key: string) => storage.delete(key) } })
+    expect(loadSession()).toBeNull()
+    const session = startSession(summaries, 3, NOW)
+    saveSession(session)
+    expect(loadSession()).toEqual(session)
+    saveSession({ ...session, recommendations: undefined })
+    expect(loadSession()?.recommendations).toBeUndefined()
+    storage.set('ssl-learn-session', '{bad json')
+    expect(loadSession()).toBeNull()
+    storage.set('ssl-learn-session', JSON.stringify({ ...session, recommendations: [{ kind: 'bad' }] }))
+    expect(loadSession()).toBeNull()
+    clearSession()
+    expect(storage.size).toBe(0)
   })
 })

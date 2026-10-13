@@ -1,6 +1,7 @@
-import { practiceNeed } from './mastery'
-import type { GlossMastery } from './mastery'
+import { isDueReview, practiceNeed, recommendationFor } from './mastery'
+import type { GlossMastery, PracticeRecommendation } from './mastery'
 import { isSymbolLabel } from '../data/categories'
+import type { CurriculumUnit } from '../data/curriculum'
 
 /**
  * A practice session: a small, finite set of signs with a completion state.
@@ -14,20 +15,21 @@ import { isSymbolLabel } from '../data/categories'
  * gain after 10 sessions", and *session* was undefined inside the product a
  * participant actually uses. This gives that construct a referent.
  *
- * Built entirely on the existing learner model — no new scoring, no invented
- * data. The set is `suggestNext` generalised from one sign to N, so the same
- * policy that picked the suggestion picks the session.
+ * Built on the existing learner model — no new scoring or invented data.
+ * One-off Next is strictly due-first; finite sessions mix reviews with new
+ * signs. The reasons stored here explain that planned sequence to the learner.
  *
  * DESIGN BOUNDS, deliberately enforced here rather than left to the UI. This is
- * a research instrument used with human participants, so the motivation has to
- * be honest — competence and progress, never manufactured pressure:
+ * intended for learning, with no participant results or learning gains claimed.
+ * Sessions support competence and progress, never manufactured pressure:
  *
  *  - A session is ALWAYS finishable. A sign is done after one scored attempt,
  *    whatever the score. Gating completion on reaching 85 would trap a beginner
  *    in an unfinishable loop, which is the opposite of self-efficacy, and would
  *    bias the study toward participants who happen to score well early.
  *  - Nothing is ever withheld. The full vocabulary stays reachable at all times.
- *  - Nothing is time-gated, and there is no streak to lose.
+ *  - No session is time-gated. Goal-day streaks in game.ts are separate and
+ *    never prevent practice or completing a session.
  */
 export interface PracticeSession {
   /**
@@ -45,9 +47,14 @@ export interface PracticeSession {
    * can report a real before→after change rather than re-deriving history.
    */
   startMastery: Record<string, number>
+  /** Optional for older saved sessions; reasons are captured at session start. */
+  recommendations?: PracticeRecommendation[]
+  unitId?: string
 }
 
 export const SESSION_SIZE = 5
+export const UNIT_SESSION_SIZE = 8
+export const REVIEWS_PER_NEW = 2
 const KEY = 'ssl-learn-session'
 
 /**
@@ -55,67 +62,65 @@ const KEY = 'ssl-learn-session'
  * separate them. Small on purpose: variety may break a near-tie, never override
  * a real difference in what the learner actually needs to practise.
  */
-const TIE_EPSILON = 0.05
+const TIE_EPSILON = 0.05 // Untuned category-variety tolerance, not a score boundary.
 
 /**
- * The N signs most in need of practice, highest need first.
- *
- * Without `categoryOf` this is exactly `suggestNext` generalised from one sign
- * to N — same ranking, same alphabetical tie-break — which session.test.ts pins.
- *
- * `categoryOf` changes *ties only*, and exists because the ranking is degenerate
- * for a learner with no history: every sign scores 1.0, so something arbitrary
- * decides. Alphabetically that is "1, 100, 100 METERS, 1000, 10000" — the
- * corpus's earliest labels are numerals. Among signs of near-equal need this
- * prefers a word over a fingerspelled letter or a numeral, and then a category
- * not yet in the session. It claims only "vocabulary before symbols"; the order
- * within either group is untouched.
- *
- * Practice need always wins. Variety and word-preference can separate signs the
- * model rates the same; they can never promote a sign the learner needs less.
+ * Finite-session policy: up to two distinct due reviews, then one new sign.
+ * The single-Next policy in mastery.ts is strictly due-first; the session mix
+ * is the plan's explicit 2:1 interleave. If a queue runs out, use the other;
+ * only after both run out use attempted signs that are not due.
+ * Category variety breaks near-ties inside a queue, never review/new priority.
+ * Explicit unit order wins over category/word preferences for new signs.
  */
-export function buildSession(
-  summaries: GlossMastery[],
+export function buildSessionPlan(
+  summaries: readonly GlossMastery[],
   size: number = SESSION_SIZE,
   now: Date = new Date(),
   categoryOf?: (gloss: string) => string,
-): string[] {
-  const ranked = [...summaries].sort(
-    (a, b) => practiceNeed(b, now) - practiceNeed(a, now) || a.gloss.localeCompare(b.gloss),
-  )
-  if (!categoryOf) return ranked.slice(0, size).map((s) => s.gloss)
-
-  const remaining = [...ranked]
-  const picked: GlossMastery[] = []
+  newOrder?: readonly string[],
+): PracticeRecommendation[] {
+  if (!Number.isFinite(size) || size < 1) return []
+  const limit = Math.floor(size)
+  const unique = [...new Map(summaries.map((summary) => [summary.gloss, summary])).values()]
+  const rank = (a: GlossMastery, b: GlossMastery) =>
+    practiceNeed(b, now) - practiceNeed(a, now) || a.gloss.localeCompare(b.gloss)
+  const reviews = unique.filter((summary) => isDueReview(summary, now)).sort(rank)
+  const unseen = unique.filter((summary) => summary.attempts === 0
+    && (newOrder === undefined || newOrder.includes(summary.gloss))).sort((a, b) =>
+    newOrder === undefined ? a.gloss.localeCompare(b.gloss) : newOrder.indexOf(a.gloss) - newOrder.indexOf(b.gloss))
+  const other = unique.filter((summary) => summary.attempts > 0 && !isDueReview(summary, now)
+    && (newOrder === undefined || newOrder.includes(summary.gloss))).sort(rank)
+  const picked: PracticeRecommendation[] = []
   const usedCategories = new Set<string>()
-
-  while (picked.length < size && remaining.length > 0) {
-    // Only signs the model rates within a hair of the best remaining are
-    // eligible to be re-ordered.
-    const bestNeed = practiceNeed(remaining[0], now)
-    const bandEnd = remaining.findIndex((s) => practiceNeed(s, now) < bestNeed - TIE_EPSILON)
-    const band = bandEnd === -1 ? remaining : remaining.slice(0, bandEnd)
-
+  const take = (queue: GlossMastery[], preserveOrder = false) => {
+    if (!queue.length || picked.length >= limit) return
     let choice = 0
-    let bestScore = -1
-    for (let i = 0; i < band.length; i++) {
-      const gloss = band[i].gloss
-      const category = categoryOf(gloss)
-      // A word outranks a fresh category; both outrank neither.
-      const score =
-        (isSymbolLabel(gloss, category) ? 0 : 2) + (usedCategories.has(category) ? 0 : 1)
-      if (score > bestScore) {
-        bestScore = score
-        choice = i
+    if (categoryOf && !preserveOrder) {
+      const bestNeed = practiceNeed(queue[0], now)
+      let bestScore = -1
+      for (let i = 0; i < queue.length && practiceNeed(queue[i], now) >= bestNeed - TIE_EPSILON; i++) {
+        const category = categoryOf(queue[i].gloss)
+        const score = (isSymbolLabel(queue[i].gloss, category) ? 0 : 2) + (usedCategories.has(category) ? 0 : 1)
+        if (score > bestScore) { bestScore = score; choice = i }
       }
     }
-
-    const [chosen] = remaining.splice(choice, 1)
-    picked.push(chosen)
-    usedCategories.add(categoryOf(chosen.gloss))
+    const [chosen] = queue.splice(choice, 1)
+    picked.push(recommendationFor(chosen, now))
+    if (categoryOf) usedCategories.add(categoryOf(chosen.gloss))
   }
+  while (picked.length < limit && (reviews.length || unseen.length || other.length)) {
+    for (let i = 0; i < REVIEWS_PER_NEW; i++) take(reviews)
+    take(unseen, newOrder !== undefined)
+    if (!reviews.length && !unseen.length) take(other)
+  }
+  return picked
+}
 
-  return picked.map((s) => s.gloss)
+export function buildSession(
+  summaries: GlossMastery[], size = SESSION_SIZE, now: Date = new Date(),
+  categoryOf?: (gloss: string) => string, newOrder?: readonly string[],
+): string[] {
+  return buildSessionPlan(summaries, size, now, categoryOf, newOrder).map((item) => item.gloss)
 }
 
 export function startSession(
@@ -123,13 +128,32 @@ export function startSession(
   size: number = SESSION_SIZE,
   now: Date = new Date(),
   categoryOf?: (gloss: string) => string,
+  newOrder?: readonly string[],
 ): PracticeSession {
-  const glosses = buildSession(summaries, size, now, categoryOf)
+  const recommendations = buildSessionPlan(summaries, size, now, categoryOf, newOrder)
+  const glosses = recommendations.map((item) => item.gloss)
   const startMastery: Record<string, number> = {}
   for (const s of summaries) {
     if (glosses.includes(s.gloss)) startMastery[s.gloss] = s.mastery
   }
-  return { id: crypto.randomUUID(), glosses, done: [], startedAt: now.toISOString(), startMastery }
+  return { id: crypto.randomUUID(), glosses, done: [], startedAt: now.toISOString(), startMastery, recommendations }
+}
+
+/** L-11's Path entry: approve curriculum first, load summaries, start/save this
+ * session, then mount Practice on currentGloss(session). No UI ownership here. */
+export function startUnitSession(
+  unit: CurriculumUnit, summaries: GlossMastery[], now: Date = new Date(), size = UNIT_SESSION_SIZE,
+): PracticeSession {
+  if (unit.status !== 'approved') throw new Error('Unit needs curriculum approval before starting')
+  if (!unit.signs.length || !Number.isInteger(size) || size < 1) throw new Error('Unit session needs signs and a positive size')
+  const available = new Set(summaries.map((summary) => summary.gloss))
+  if (!unit.signs.every((gloss) => available.has(gloss))) throw new Error('Unit references are not loaded')
+  return { ...startSession(summaries, size, now, undefined, unit.signs), unitId: unit.id }
+}
+
+export function currentRecommendation(session: PracticeSession): PracticeRecommendation | null {
+  const gloss = currentGloss(session)
+  return session.recommendations?.find((item) => item.gloss === gloss) ?? null
 }
 
 /** The sign being worked on: the first one without a scored attempt yet. */
@@ -196,5 +220,9 @@ function isSession(value: unknown): value is PracticeSession {
     typeof s.startedAt === 'string' &&
     !!s.startMastery &&
     typeof s.startMastery === 'object'
+    && (s.unitId === undefined || typeof s.unitId === 'string')
+    && (s.recommendations === undefined || (Array.isArray(s.recommendations)
+      && s.recommendations.every((item) => !!item && typeof item.gloss === 'string'
+        && typeof item.reason === 'string' && ['new', 'review', 'practice'].includes(item.kind))))
   )
 }
