@@ -392,3 +392,10 @@ Rules:
 - Gates: npm 10 ci, lint 0 warnings, 215 passed / 4 skipped, build 145.31 kB gzip, guard 164. Opt-in after measurement passed separately; no screenshots required. HINT_MIN_DEVIATION re-derived as experimental 2.00; finger corrections/states remain hidden.
 - Plan correction: a missing-hand/direct versus actual-hand/mirrored zero-score tie initially removed five positives from calibration. Prefer the real comparison for one-handed ties, preserving score zero and the original cohort; two-handed behavior unchanged.
 - Needs kvn: review/merge bottom-up; documentation owner records the new scorer result separately from the historical figure. No push, merge, deployment, R26 edit or device check performed.
+### 2026-10-13 20:26 | codex | L-29
+- What: done for review: preserve running-camera intent through background loss; one automatic full restart on return; live-stream resume, explicit off and visible-disconnect behavior preserved. No PracticeView edit.
+- Branch @ sha: agent/codex/L-29-ios-camera-resume @ task HEAD (base 8dfb949; final SHA in branch log).
+- Gates: npm 10 ci; lint clean; 201 passed / 2 skipped with corpus present; build 144.97 kB gzip; guard 164; pure lifecycle tests and eight actual-hook fake-webcam browser scenarios passed; diff check passed.
+- Screenshots: n/a; no device check claimed.
+- Needs kvn: review/merge and repeat iPhone Q-06a after the next deploy, including abandoned countdown/take and explicit off. No automatic deployment by codex.
+- Next: L-30 stacked on L-17, with before/after calibration and the 74.6% separation stop gate, each result reported with the 65.4% baseline. Calibration directory stays ignored and in place.

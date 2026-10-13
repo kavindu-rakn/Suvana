@@ -3,7 +3,7 @@ import { getHandLandmarker } from './handTracker'
 import { drawHands } from './drawing'
 import { toHandFrame } from './types'
 import type { HandFrame, TrackedHand } from './types'
-import { releaseStream, watchStream } from './cameraLifecycle'
+import { cameraRestoreAction, releaseStream, watchStream } from './cameraLifecycle'
 
 export type TrackingStatus = 'idle' | 'starting' | 'running' | 'error'
 
@@ -51,6 +51,9 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
   const loopRef = useRef(0)
   const inferenceWantedRef = useRef(false)
   const restoreRef = useRef(false)
+  const cameraRunningRef = useRef(false)
+  const startingRef = useRef(false)
+  const restoringRef = useRef(false)
   const lastVideoTimeRef = useRef(-1)
   const emaRef = useRef({ fps: 0, inferenceMs: 0, lastFrameAt: 0, lastUiPush: 0 })
   const onFrameRef = useRef(onFrame)
@@ -67,6 +70,8 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
     generationRef.current++
     loopRef.current++
     activeRef.current = false
+    cameraRunningRef.current = false
+    startingRef.current = false
     cancelAnimationFrame(rafRef.current)
     releaseStream(streamRef.current)
     streamRef.current = null
@@ -150,6 +155,7 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
     restoreRef.current = false
     inferenceWantedRef.current = true
     const generation = generationRef.current
+    startingRef.current = true
     setStatus('starting')
     setError('')
     setInferring(false)
@@ -173,7 +179,19 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
           throw new Error('Camera start cancelled.')
         }
         streamRef.current = stream
-        watchStream(stream, () => fail('Camera disconnected'))
+        watchStream(stream, () => {
+          if (document.hidden && cameraRunningRef.current) {
+            // iOS may mute/end before the visibility listener runs. Capture
+            // running intent BEFORE release clears the stream and running flag.
+            restoreRef.current = true
+            release()
+            setInferring(false)
+            setStats(null)
+            setHands([])
+            setError('')
+            setStatus('starting')
+          } else fail('Camera disconnected')
+        })
         return stream
       })
       const [stream] = await Promise.all([streamPromise, getHandLandmarker()])
@@ -188,11 +206,14 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
       lastVideoTimeRef.current = -1
       emaRef.current = { fps: 0, inferenceMs: 0, lastFrameAt: 0, lastUiPush: 0 }
       setStatus('running')
+      cameraRunningRef.current = true
       activeRef.current = !document.hidden && inferenceWantedRef.current
       setInferring(activeRef.current)
       if (activeRef.current) rafRef.current = requestAnimationFrame(() => void processFrame())
     } catch (e) {
       if (generation === generationRef.current) fail(describeError(e))
+    } finally {
+      if (generation === generationRef.current) startingRef.current = false
     }
   }, [processFrame, release, fail])
 
@@ -262,27 +283,46 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
 
   // Safari may pause video on app switches or restore an ended stream from bfcache.
   useEffect(() => {
+    const restart = () => {
+      const wanted = inferenceWantedRef.current
+      const request = start()
+      // start() normally enables inference for a manual Try again. Automatic
+      // recovery must preserve a result/browse pause; later UI intent wins.
+      inferenceWantedRef.current = wanted
+      return request
+    }
     const restore = () => {
-      if (document.hidden) return
       const stream = streamRef.current
-      if (!stream && !restoreRef.current) return
-      if (!stream || stream.getVideoTracks().some((track) => track.readyState === 'ended')) {
-        void start()
+      const tracks = stream?.getVideoTracks() ?? []
+      const action = cameraRestoreAction({ hidden: document.hidden,
+        wasRunningWhenHidden: restoreRef.current,
+        streamUsable: tracks.length > 0 && tracks.every((track) => track.readyState === 'live' && !track.muted),
+        starting: startingRef.current, restoring: restoringRef.current })
+      if (action === 'none') return
+      const wasRunning = restoreRef.current
+      restoreRef.current = false // Consume BEFORE async work: at most one retry.
+      restoringRef.current = true
+      if (action === 'restart') {
+        void restart().finally(() => { restoringRef.current = false })
         return
       }
       const generation = generationRef.current
       const video = videoRef.current
-      if (!video) return
+      if (!video) { restoringRef.current = false; return }
       video.srcObject = stream
       void video.play().then(() => {
         if (generation === generationRef.current && inferenceWantedRef.current) resume()
       }).catch((e) => {
-        if (generation === generationRef.current) fail(describeError(e))
-      })
+        if (generation !== generationRef.current) return
+        // A live-looking iOS stream can still fail to play. Use the same one
+        // full restart as Try again; only that attempt's failure is surfaced.
+        if (wasRunning) return restart()
+        fail(describeError(e))
+      }).finally(() => { restoringRef.current = false })
     }
     const visibility = () => {
       if (!document.hidden) return restore()
-      restoreRef.current = !!streamRef.current
+      restoreRef.current = restoreRef.current || cameraRunningRef.current
       loopRef.current++
       activeRef.current = false
       cancelAnimationFrame(rafRef.current)

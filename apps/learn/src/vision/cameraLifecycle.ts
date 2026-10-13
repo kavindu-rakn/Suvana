@@ -14,6 +14,22 @@ export function watchStream(stream: MediaStream, disconnected: () => void) {
   })
 }
 
+export interface CameraRestoreState {
+  hidden: boolean
+  wasRunningWhenHidden: boolean
+  streamUsable: boolean
+  starting: boolean
+  restoring: boolean
+}
+
+/** One visibility/page-show recovery decision. A consumed/cleared intent does
+ * not restart an off or failed camera. Live Android streams only resume play. */
+export function cameraRestoreAction(state: CameraRestoreState): 'none' | 'play' | 'restart' {
+  if (state.hidden || state.starting || state.restoring) return 'none'
+  if (state.streamUsable) return 'play'
+  return state.wasRunningWhenHidden ? 'restart' : 'none'
+}
+
 /** A failed GPU setup gets exactly one CPU attempt. */
 export async function withCpuFallback<T>(create: (delegate: 'GPU' | 'CPU') => Promise<T>) {
   try {
