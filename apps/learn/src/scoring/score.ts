@@ -1,6 +1,6 @@
 import type { SignRecording } from '../vision/types'
 import { dtw } from './dtw'
-import { extractHandFeatures, handednessesIn, mirrorHandFeatures } from './normalize'
+import { extractHandFeatures, referenceHandednessesIn, mirrorHandFeatures } from './normalize'
 import type { FrameFeature, HandFeatureSequence } from './normalize'
 import { LANDMARK_FINGER, NUM_LANDMARKS } from './landmarks'
 import type { Finger } from './landmarks'
@@ -65,12 +65,13 @@ export const D_ZERO = 0.77
 // A hand the reference expects but the learner never showed: heavy penalty.
 const MISSING_HAND_SCORE = 0
 
-// L-17, hints.calibration.test.ts: ceil-to-0.01 of same-sign worst-joint p95
-// 2.2251505 (557 takes / 33 signs, one signer). At this candidate only 14.5%
+// L-30 re-run of hints.calibration.test.ts after reference-hand selection:
+// ceil-to-0.01 of same-sign worst-joint p95 1.9948173 (557 takes / 33 signs,
+// one signer). At this candidate only 17.2%
 // of different-sign fingers exceed it: NOT a validated corrective threshold.
 // Exported for future fingerStates integration; finger corrections and states
 // remain hidden (D-A15). This does not affect score anchors or match bands.
-export const HINT_MIN_DEVIATION = 2.23
+export const HINT_MIN_DEVIATION = 2.0
 
 export interface JointDeviation {
   landmark: number
@@ -237,7 +238,7 @@ export function scoreAttempt(
   reference: SignRecording,
   weights: DistanceWeights = DEFAULT_WEIGHTS,
 ): ScoreResult {
-  const refSeqs = handednessesIn(reference.frames)
+  const refSeqs = referenceHandednessesIn(reference.frames)
     .map((h) =>
       extractHandFeatures(reference.frames, h, reference.videoWidth, reference.videoHeight),
     )
@@ -263,7 +264,11 @@ export function scoreAttempt(
   const direct = evaluate(refSeqs, attemptSeqs, weights)
   const flipped = evaluate(refSeqs, attemptSeqs.map(mirrorHandFeatures), weights)
 
-  const mirrored = flipped.score > direct.score
+  // With one reference hand, both orientations can saturate at zero even
+  // though only the mirrored one actually tracked a hand. Prefer that real
+  // comparison to a missing-hand branch; retain the old tie rule for two hands.
+  const mirrored = flipped.score > direct.score || (!twoHanded && flipped.score === direct.score
+    && direct.hands[0].missing && !flipped.hands[0].missing)
   const { hands, score } = mirrored ? flipped : direct
 
   // Collect per-joint deviations across the hands we actually scored, worst first.

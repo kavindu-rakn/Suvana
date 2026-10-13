@@ -314,3 +314,11 @@ Rules:
 - Needs kvn: review/merge and wording adoption; no finger-state revival. HINT_MIN_DEVIATION candidate 2.23 is derived from same-sign p95, but wrong-sign detection remains weak; no correctness claim.
 - Plan correction: preserve legacy strings for current consumers; L-21 consumes typedHints. fingerStates comment-only correction proposed in handoff due to task boundary. No Q-04 e2e script yet.
 - Next: L-23a profiles. L-12/L-13 still wait for L-12 chat approval; L-15a skipped per DN-05=no video.
+
+### 2026-10-13 20:45 | codex | L-30
+- What: done for review. Score reference hands by L-10's >=20% two-hand rule, otherwise dominant label. All 501 checked: 78 stray-label references corrected; 341 two-handed numeric results unchanged against the parent snapshot. Scores change for affected references; 85/60 bands were not recalibrated.
+- Branch @ sha: agent/codex/L-30-stray-hands @ task HEAD (final SHA in branch log), explicitly stacked on agent/codex/L-17-hints @ 39b69ab, rebased onto main 8dfb949. Merge L-17 first; L-29 is independent.
+- Calibration: before 74.6% separation with 65.4% majority baseline; after 75.7% separation with 65.4% majority baseline. Same 1,516 pairs and corpus hash; 557 takes / 33 signs, one signer. Stop gate passed; no learner-accuracy claim. Corpus read in place, never moved or committed.
+- Gates: npm 10 ci, lint 0 warnings, 215 passed / 4 skipped, build 145.31 kB gzip, guard 164. Opt-in after measurement passed separately; no screenshots required. HINT_MIN_DEVIATION re-derived as experimental 2.00; finger corrections/states remain hidden.
+- Plan correction: a missing-hand/direct versus actual-hand/mirrored zero-score tie initially removed five positives from calibration. Prefer the real comparison for one-handed ties, preserving score zero and the original cohort; two-handed behavior unchanged.
+- Needs kvn: review/merge bottom-up; documentation owner records the new scorer result separately from the historical figure. No push, merge, deployment, R26 edit or device check performed.
