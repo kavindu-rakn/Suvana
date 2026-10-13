@@ -60,6 +60,19 @@ function assistantDevApi(apiKey: string | undefined): Plugin {
   };
 }
 
+function recognizeUrlPlugin(url: string | undefined): Plugin {
+  return {
+    name: "suvana-recognize-url",
+    transformIndexHtml(html) {
+      const targetUrl = url?.trim() || "";
+      return html.replace(
+        /data-service-url="[^"]*"/,
+        `data-service-url="${targetUrl}"`,
+      );
+    },
+  };
+}
+
 // The shell is plain HTML and TypeScript — no framework. Vite is here for two
 // reasons only: a dev server whose proxy mirrors the production rewrites, so
 // http://localhost:5173/learn and /communicate behave exactly as they will on
@@ -68,10 +81,12 @@ export default defineConfig(({ mode }) => {
   // Empty prefix so unprefixed names load too. This object stays in the Node
   // process — nothing here is injected into client code.
   const env = loadEnv(mode, fileURLToPath(new URL(".", import.meta.url)), "");
+  const recognizeUrl = env.VITE_RECOGNIZE_URL || process.env.VITE_RECOGNIZE_URL || "";
 
   return {
     plugins: [
       assistantDevApi(env.GEMINI_API_KEY || process.env.GEMINI_API_KEY),
+      recognizeUrlPlugin(recognizeUrl),
     ],
     build: {
       rollupOptions: {
