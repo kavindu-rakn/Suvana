@@ -20,6 +20,10 @@ Only kvn (or a planner session he starts) edits this file, on `main`. If kvn ans
 | D-A13 | 13 Oct | DN-18: from Lahiru's 12-Oct recognition commits take **code and tests only**; skip the 4 `.h5` models, PNGs, notebooks, training scripts, `demo_sentences.py` and `model_comparison.json`; never quote 98.78%. | kvn |
 | D-A14 | 13 Oct | DN-10: game rules **looser** than the draft (stars 60/85 + Recall >= 60, unit pass = all signs >= 2 stars, daily goal 10). kvn gave no numbers: L-12's owner proposes concrete looser thresholds with a rendered mock for kvn's approval before building; nothing is built on guessed values. | kvn |
 | D-A15 | 13 Oct | DN-17 amended (kvn in chat during L-01): **per-finger states are hidden for now.** The result shows the measured overall score, each hand's measured score for a two-handed sign, and the 'Focus on' worst-finger chips; no per-finger state, no hand diagram, no percentage. Reason (measured, `fingerStates.calibration.test.ts`): fixed cut-offs on per-finger deviation cannot tell a correct take from a wrong sign (99.7% of fingers in correct takes exceed 0.1). States return only if L-17 derives cut-offs that separate correct from wrong on the corpus. Supersedes D-A12's display. | kvn |
+| D-A16 | 13 Oct | DN-05: **no corpus video** before the demo (option a). Learn ships with the improved skeleton; L-15a, L-15b and K-06 are cancelled. | kvn |
+| D-A17 | 13 Oct | DN-06: not needed (no video). | kvn |
+| D-A18 | 13 Oct | DN-11: learner progress stays **per browser** (IndexedDB), with reset and a demo profile. | kvn |
+| D-A19 | 13 Oct | DN-14: ask Karindra (K-03) with a **15 Oct** deadline; on no reply, rebuild under kvn's EAS with package `help.suvana.alerts` (I-12a, 16 Oct). | kvn |
 | D-A10 | 10 Oct | Upstream changes that alter product behaviour go to kvn before they are taken (e.g. Lithira closing registration was not taken). UI changes are decided from rendered before/after screenshots, desktop and phone. | Suvana CLAUDE.md |
 
 ## B. Plan defaults forced by hard rules (kvn may overturn; agents may not)
@@ -63,11 +67,11 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 - Facts: the Kaggle dataset is CC0, but its own description says the clips come from "public YouTube videos and private interviews" (`tools/reference-converter/README.md:130`). The uploader's CC0 cannot license third-party footage or signers' likeness. The repo currently states no video frames are redistributed. Whether kvn has Yohan's source videos locally is unknown; Yohan video is NC and share-alike.
 - Options: (a) no corpus video before the demo (skeleton only, improved); (b) only Kaggle clips identifiable as the uploader's own "private interviews" recordings, with credit and a takedown contact, on every deployment; (c) Kaggle clips (all) only on the non-commercial academic deployments, with credit and takedown note, none in a commercial edition; (d) (c) plus Yohan clips in the NC edition only, if kvn has them.
 - Pros/cons: (a) zero risk, weaker learnability. (b) lowest-risk video, but may be few clips and needs kvn to identify them. (c)/(d) best learnability, real provenance risk.
-- Recommendation: **(b) if kvn can identify own-recorded clips by 14 Oct; otherwise (a)**. Do not choose (c)/(d) without reading the dataset page's terms. Status: open. Default if undecided: (a).
+- Recommendation: **(b) if kvn can identify own-recorded clips by 14 Oct; otherwise (a)**. Do not choose (c)/(d) without reading the dataset page's terms. Status: decided 13 Oct (D-A16). Default if undecided: (a).
 
 ### DN-06: Where are permitted clips hosted, and may R26 use them? (needed by 14 Oct)
 - Options: kvn's Cloudinary with the manifest shared by both repos; Vercel Blob; Cloudinary with video only when `VITE_SUVANA === '1'` (R26 without video).
-- Recommendation: **Cloudinary, manifest shared** (only matters if DN-05 allows video). Status: open.
+- Recommendation: **Cloudinary, manifest shared** (only matters if DN-05 allows video). Status: decided 13 Oct (D-A17).
 
 ### DN-07: merged into K-05 (curriculum approval). Closed.
 
@@ -87,7 +91,7 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 
 ### DN-11: Where is learner progress stored? (needed by 14 Oct)
 - Options: per browser (IndexedDB) with reset and a demo profile; sync to the Communicate account in MongoDB.
-- Recommendation: **per browser** for 22 Oct (safe to assume). Status: open.
+- Recommendation: **per browser** for 22 Oct (safe to assume). Status: decided 13 Oct (D-A18).
 
 ### DN-12: Root AGENTS.md as single source for all three tools? (needed by 12 Oct night; Q-01 13 Oct)
 - Options: AGENTS.md is the source and CLAUDE.md = `@AGENTS.md` + Claude notes; duplicate CLAUDE.md into AGENTS.md; keep CLAUDE.md only.
@@ -101,7 +105,7 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 ### DN-14: How is the Alerts APK produced? (needed by 15 Oct; I-12a 16 Oct)
 - Options: Karindra builds a signed preview APK **from Suvana's `apps/alerts`**; Karindra adds kvn to his EAS project; rebuild under kvn's EAS with package `help.suvana.alerts` if no reply by 15 Oct.
 - Pros/cons: an APK from Karindra's own tree still says SoundGuard and carries his package id, so it is not acceptable under one brand. A rebuild gives brand control but changes the package id and needs an EAS build and install time.
-- Recommendation: **ask (K-03), deadline 15 Oct, then rebuild.** Status: open.
+- Recommendation: **ask (K-03), deadline 15 Oct, then rebuild.** Status: decided 13 Oct (D-A19).
 
 ### DN-15: Pricing/business-model page content (needed by 16 Oct; I-06 18 Oct)
 - Options: open-core model page with no prices; with indicative prices supplied by kvn; no pricing page.

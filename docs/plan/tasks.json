@@ -132,7 +132,7 @@
       "L-15a",
       "K-04"
     ],
-    "status": "todo",
+    "status": "cancelled",
     "branch": "n/a",
     "r26_port": "no",
     "screenshots": "no",
@@ -644,7 +644,7 @@
     "deps": [
       "R-00"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a (R26: kvn commits)",
     "r26_port": "no",
     "screenshots": "no",
@@ -1451,7 +1451,7 @@
     "day": "2026-10-15",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "cancelled",
     "branch": "agent/codex/L-15a-export-clips",
     "r26_port": "no",
     "screenshots": "no",
@@ -1476,7 +1476,7 @@
     "day": "2026-10-16",
     "size": "M",
     "deps": [],
-    "status": "todo",
+    "status": "cancelled",
     "branch": "agent/antigravity/L-15b-signvideo",
     "r26_port": "yes",
     "screenshots": "yes",

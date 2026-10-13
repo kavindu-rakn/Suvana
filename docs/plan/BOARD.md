@@ -18,7 +18,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | K-03 | Send the teammate asks to Lithira, Lahiru and Karindra | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
 | K-04 | Create accounts and secrets: three Vercel projects, Atlas M0, Cloudinary, NEXTAUTH_SECRET, optional Gemini key | kvn | 2026-10-13 to 2026-10-14 | M | K-01 | todo | `n/a` | no | no | - |
 | K-05 | Approve the starter curriculum, verify a batch of meanings, decide a third scenario | kvn | 2026-10-15 | M | L-09 | todo | `kvn's own branch, or tell an agent` | yes | no | DN-19 |
-| K-06 | Export the permitted Kaggle clips and upload them to Cloudinary (only if DN-05 allows video) | kvn | 2026-10-16 | M | L-15a, K-04 | todo | `n/a` | no | no | DN-05, DN-06 |
+| K-06 | Export the permitted Kaggle clips and upload them to Cloudinary (only if DN-05 allows video) | kvn | 2026-10-16 | M | L-15a, K-04 | cancelled | `n/a` | no | no | DN-05, DN-06 |
 | K-07 | Convert the Kaggle 'SSL Sentences' clips into references | kvn | 2026-10-16 | S | L-22a | todo | `n/a (files handed to the L-22b branch)` | yes | no | DN-08 |
 | K-08 | Buy suvana.help | kvn | 2026-10-20 | S | D-03, D-04 | todo | `n/a` | no | no | - |
 | K-09 | Ask the supervisor whether any informal usability check is allowed without ethics approval | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
@@ -39,7 +39,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | D-03 | Deploy suvana-communicate, then suvana-shell | kvn | 2026-10-17 | M | D-02, I-01, I-07, K-04 | todo | `n/a` | no | no | DN-13 |
 | D-04 | Host Recognize on the chosen platform with an uptime ping | kvn | 2026-10-18 | M | I-08 | todo | `n/a` | no | no | DN-02 |
 | D-05 | Speech service: laptop-only by default; host only if DN-03 says so | kvn | 2026-10-19 | S | I-09 | todo | `n/a` | no | no | DN-03 |
-| D-06 | Commit the R26 M0 port and redeploy learn-ssl-module.vercel.app | kvn | 2026-10-14 | S | R-00 | todo | `n/a (R26: kvn commits)` | no | no | - |
+| D-06 | Commit the R26 M0 port and redeploy learn-ssl-module.vercel.app | kvn | 2026-10-14 | S | R-00 | done | `n/a (R26: kvn commits)` | no | no | - |
 | D-07 | Commit the R26 M1 port and redeploy learn-ssl-module | kvn | 2026-10-17 | S | R-03 | todo | `n/a (R26)` | no | no | - |
 | D-08 | Commit the R26 M2 port and redeploy learn-ssl-module | kvn | 2026-10-19 | S | R-04 | todo | `n/a (R26)` | no | no | - |
 | D-09 | Attach suvana.help to suvana-shell and re-run the smoke | kvn | 2026-10-20 | S | K-08 | todo | `n/a` | no | no | - |
@@ -69,8 +69,8 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | L-12 | Game logic: stars, unit state, unlocks, daily goal, streak, XP | codex | 2026-10-15 | M | L-09 | todo | `agent/codex/L-12-game-logic` | yes | no | DN-10, DN-11 |
 | L-13 | Adaptation fix: review/new interleave, reachable sessions, reasons, ADAPTATION.md | codex | 2026-10-16 | M | L-12 | todo | `agent/codex/L-13-adaptation` | yes | no | - |
 | L-14 | Meaning coverage: verified-first browse and a 'meaning not yet verified' chip | antigravity | 2026-10-15 | S | L-10 | todo | `agent/antigravity/L-14-meaning-coverage` | yes | yes | - |
-| L-15a | Clip export script (only if DN-05 allows video) | codex | 2026-10-15 | S | - | todo | `agent/codex/L-15a-export-clips` | no | no | DN-05 |
-| L-15b | SignVideo component and video manifest (only if DN-05 allows video) | antigravity | 2026-10-16 | M | - | todo | `agent/antigravity/L-15b-signvideo` | yes | yes | DN-05, DN-06 |
+| L-15a | Clip export script (only if DN-05 allows video) | codex | 2026-10-15 | S | - | cancelled | `agent/codex/L-15a-export-clips` | no | no | DN-05 |
+| L-15b | SignVideo component and video manifest (only if DN-05 allows video) | antigravity | 2026-10-16 | M | - | cancelled | `agent/antigravity/L-15b-signvideo` | yes | yes | DN-05, DN-06 |
 | L-16a | Practice stage machine: Watch then Try, with performance marks | claude-code | 2026-10-17 | M | L-11, L-12, L-13 | todo | `agent/claude/L-16a-watch-try` | yes | yes | - |
 | L-16b | Recall stage: hidden reference, cue, reveal costs the third star | claude-code | 2026-10-18 | M | L-16a | todo | `agent/claude/L-16b-recall` | yes | yes | DN-09 |
 | L-17 | Feedback engine: gated 'Close match', timing and path hints, mirrored hand label, typed hints | codex | 2026-10-17 | M | - | todo | `agent/codex/L-17-hints` | yes | no | - |
