@@ -19,6 +19,39 @@ converter = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(converter)
 
 
+class VideoEnumerationTests(unittest.TestCase):
+    def test_formats_are_case_insensitive_and_direct_files_only(self):
+        # Empty files test enumeration only; none are SSL recordings.
+        with tempfile.TemporaryDirectory() as temp:
+            folder = Path(temp)
+            names = ["clip1.mp4", "clip2.MOV", "clip3.MP4", "clip4.m4v", "clip5.AVI", "clip6.MkV"]
+            for name in names:
+                (folder / name).touch()
+            (folder / "notes.txt").touch()
+            (folder / "folder.mov").mkdir()
+            (folder / "folder.mov" / "nested.mp4").touch()
+            self.assertEqual({p.name for p in converter.video_files(folder)}, set(names))
+
+    def test_nested_and_flat_isolated_clips_reach_conversion(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            category = root / "dataset" / "fixture-category"
+            nested = category / "fixture-item"
+            nested.mkdir(parents=True)
+            clips = [nested / "take.MOV", category / "fixture-flat.MP4"]
+            for clip in clips:
+                clip.touch()
+            model = root / "model.task"
+            model.touch()
+            with patch.object(sys, "argv", ["converter", "--dataset", str(category.parent),
+                                           "--category", category.name, "--model", str(model),
+                                           "--out", str(root / "out"), "--dry-run"]), \
+                    patch.object(converter, "convert_one", return_value=None) as convert, \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(converter.main(), 0)
+            self.assertEqual({call.args[0] for call in convert.call_args_list}, set(clips))
+
+
 class SentenceConverterTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

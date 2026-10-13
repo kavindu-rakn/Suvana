@@ -251,9 +251,45 @@
       "upstream": "r26",
       "from": "learn-ssl-module/tools",
       "to": "tools/reference-converter",
-      "synced": "7f6fc4f446b63249ad02385ca60d8aa4c3e6969d",
-      "recorded": "2026-08-24",
-      "policy": "Take everything. Its three differences are Suvana-side work (31c2d49, d3432eb, dde167d) not yet ported to R26 — deliberately left undeclared so `status` keeps flagging them until they are."
+      "synced": "5909a561dcf716d9205d3bcbf4792ed70c6895f4",
+      "recorded": "2026-10-13",
+      "policy": "5909a56's case-insensitive video enumeration is present. Preserve the declared monorepo defaults, historical converter notes and merged L-22a sentence preparation/tests. Shared improvements remain candidates for an explicit R26 tools backport; no generated references change in I-05.",
+      "couplings": {
+        "README.md": "Suvana's corrected conversion/coverage history (31c2d49, d3432eb, dde167d) and L-22a sentence staging instructions; backport the useful docs separately rather than discarding them during sync.",
+        "convert_references.py": "Suvana monorepo defaults point at apps/learn/public, plus merged L-22a sentence inventory/namespace protections; keep 5909a56 video_files enumeration for both nested and flat isolated clips. Backport sentence improvements to R26 with layout-specific defaults."
+      },
+      "suvanaOnly": {
+        "missing_signs.txt": "Historical scoped Yohan conversion allow-list from 31c2d49, retained as an audit artifact; not a current coverage report and not safe input for an automatic corpus regeneration.",
+        "test_convert_references.py": "L-22a sentence/control-flow regression tests, extended by I-05 for case-insensitive isolated video enumeration. Backport together with the corresponding converter features."
+      },
+      "guards": [
+        {
+          "file": "convert_references.py",
+          "has": [
+            "parents[2]",
+            "REPO_ROOT / \"apps\" / \"learn\"",
+            "p.suffix.lower() in VIDEO_SUFFIXES",
+            "sorted(video_files(sign_dir))",
+            "sentence_video_files(category) if sentence_run else video_files(category)",
+            "SENTENCE_PREFIX = \"kaggle_sent_\""
+          ],
+          "lacks": [
+            "sign_dir.glob(\"*.mp4\")",
+            "category.glob(\"*.mp4\")",
+            "<<<<<<< suvana",
+            ">>>>>>> upstream"
+          ],
+          "why": "Preserve Suvana paths, upstream 5909a56 format coverage and merged sentence isolation without conflict markers"
+        },
+        {
+          "file": "test_convert_references.py",
+          "has": [
+            "class SentenceConverterTests",
+            "class VideoEnumerationTests"
+          ],
+          "why": "Keep tests for the declared sentence and isolated-clip converter behaviors"
+        }
+      ]
     },
     {
       "id": "communicate",
