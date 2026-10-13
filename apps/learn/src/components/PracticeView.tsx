@@ -34,7 +34,8 @@ import type { ScoreResult } from '../scoring/score'
 import { FINGER_LABEL } from '../scoring/landmarks'
 import { band } from '../scoring/band'
 import { useFeedbackLatency } from '../metrics/useFeedbackLatency'
-import { drawHands, fitFor } from '../vision/drawing'
+import { drawHands, wristAnchorFit } from '../vision/drawing'
+import type { Fit } from '../vision/drawing'
 import { CameraStage } from './CameraStage'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
@@ -93,6 +94,8 @@ export function PracticeView({
   // Ghost Mode State (Overlay reference skeleton onto live webcam)
   const [ghostActive, setGhostActive] = useState(false)
   const ghostCanvasRef = useRef<HTMLCanvasElement | null>(null)
+  // The learner's hands in the latest tracked frame, for anchoring the ghost.
+  const liveHandsRef = useRef<HandFrame['hands']>([])
   const ghostRafRef = useRef(0)
 
   // While browsing, the right pane previews a sign instead of sitting empty
@@ -136,6 +139,7 @@ export function PracticeView({
   }
 
   const tracking = useHandTracking((frame) => {
+    liveHandsRef.current = frame.hands
     handStreakRef.current = frame.hands.length > 0 ? handStreakRef.current + 1 : 0
     setReady(handStreakRef.current >= READY_STREAK)
     if (phaseRef.current !== 'recording') return
@@ -252,12 +256,35 @@ export function PracticeView({
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    const fit = fitFor(reference.frames, 0.85)
+    const video = tracking.videoRef.current
     const duration = Math.max(reference.durationMs, 1000)
-    let startTime = performance.now()
+    const startTime = performance.now()
+    // The reference's first tracked hands are its anchor; references are
+    // trimmed, so this is normally frame 0.
+    const anchorHands = reference.frames.find((f) => f.hands.length > 0)?.hands ?? []
+    let fit: Fit | undefined
+    let anchoredLoop = -1
 
     const loop = () => {
-      const elapsed = (performance.now() - startTime) % duration
+      // Draw in the camera's own pixel space: the ghost canvas sits on the
+      // video with the same object-fit and mirroring, so a landmark lands where
+      // the same point of the video is. Re-checked each frame in case the
+      // camera changes resolution.
+      if (video?.videoWidth && (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight)) {
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+      }
+      const total = performance.now() - startTime
+      const loopIndex = Math.floor(total / duration)
+      const elapsed = total % duration
+      // Anchor once per loop, so the reference's own movement still shows; and
+      // as soon as the learner's hand appears, if it was missing at loop start.
+      if (loopIndex !== anchoredLoop || (fit === undefined && liveHandsRef.current.length > 0)) {
+        anchoredLoop = loopIndex
+        fit = liveHandsRef.current.length > 0
+          ? wristAnchorFit(anchorHands, liveHandsRef.current)
+          : undefined
+      }
       let idx = 0
       while (idx + 1 < reference.frames.length && reference.frames[idx + 1].timestampMs <= elapsed) {
         idx++
@@ -278,7 +305,7 @@ export function PracticeView({
         c?.clearRect(0, 0, canvas.width, canvas.height)
       }
     }
-  }, [ghostActive, reference, tracking.status, phase])
+  }, [ghostActive, reference, tracking.status, tracking.videoRef, phase])
 
   // Readiness is about the frames arriving now: start over whenever they stop.
   useEffect(() => {
@@ -908,6 +935,7 @@ export function PracticeView({
                 frames={attempt.frames}
                 videoWidth={attempt.videoWidth}
                 videoHeight={attempt.videoHeight}
+                slowStart={false}
               />
             </div>
           )}

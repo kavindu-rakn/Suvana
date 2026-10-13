@@ -206,3 +206,11 @@ Rules:
 
 ### 2026-10-13 12:45 | kvn | UI approvals for integration/2026-10-13b
 - Approved from before/after renders (desktop + phone): I-01 (pipeline tag says Alerts), L-03 (not-scored notice above Record), L-07 (3-step How it works guide; Record waits for Hands in frame). R-01 was approved earlier; I-04 has no UI.
+
+### 2026-10-13 14:45 | claude-code | L-08
+- What: done (review, UI). 0.5x for 2 loops then 1x with a 4-button speed group; raw framing by default with caption + Zoom to hands; mirror label; ghost sized to the camera and wrist-anchored (A12); HUD overflow and touch scrubber fixed; guide step 2 updated.
+- Branch @ sha: agent/claude/L-08-playback (on main d9a6aaf; see git log)
+- Gates: guard 164 ok; lint 0 warnings; tests 185 passed + 9 skipped; build ok 144.76 kB gzip
+- Screenshots: C:\Users\User\Documents\Suvana-wt\claude\.agent-local\screens\L-08\index.html (one-hand, two-hand, zoomed, ghost, Scenario)
+- Needs kvn: adopt/reject from renders; phone transport is one row (restart/step hidden; they were off-screen before). Note: Scenario/Library/Record take the new player defaults; Scenario's KANAWA coaching line describes movement/location (for L-19).
+- Next: R-00 waits for kvn's R26 commit + D-06. Next claude-code board tasks (L-11, L-16a, L-24...) depend on L-12/K-05/L-13, not yet on main.
