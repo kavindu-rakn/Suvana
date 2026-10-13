@@ -95,3 +95,21 @@ For UI testing of isolated components (`ScoreBadge`, result card, diagnostics, f
 - Navigate to: `http://localhost:5174/learn/fixtures.html` or `/fixtures.html`
 - JSON fixtures live in `apps/learn/src/dev/fixtures/*.json`.
 - The fixtures page is excluded from `npm run build` production bundles.
+
+---
+
+## 7. End-to-end smoke tests (`npm run e2e`)
+
+Playwright smoke tests cover critical user flows that are not tested by unit tests:
+- Onboarding modal shows on first run and persists dismissed state
+- Escape key during practice countdown cancels countdown and stays in PracticeView (without navigating back to Hero)
+- Enter key on focused Retry button triggers attempt retry without navigating
+- Blocked IndexedDB (simulated storage security error) still renders the bundled reference list with a non-blocking `StorageNotice`
+
+To run:
+```bash
+npm run e2e
+```
+Playwright runs headless against `vite preview` on port 5194, with fake camera media stream flags enabled (and K-13 `.y4m` fixtures if present).
+Later UI tasks can add their own `.spec.ts` files under `tools/screens/e2e/`.
+

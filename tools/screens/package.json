@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "shoot": "node shoot.mjs",
-    "contact-sheet": "node contact-sheet.mjs"
+    "contact-sheet": "node contact-sheet.mjs",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@playwright/test": "^1.49.1",
