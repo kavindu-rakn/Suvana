@@ -206,3 +206,11 @@ Rules:
 
 ### 2026-10-13 12:45 | kvn | UI approvals for integration/2026-10-13b
 - Approved from before/after renders (desktop + phone): I-01 (pipeline tag says Alerts), L-03 (not-scored notice above Record), L-07 (3-step How it works guide; Record waits for Hands in frame). R-01 was approved earlier; I-04 has no UI.
+
+### 2026-10-13 13:55 | claude-code | R-00
+- What: done (review). One port of Learn from Suvana main d9a6aaf into the R26 working tree (all files except suvana.config.json, vercel.json, package-lock.json, and AGENTS.md/CLAUDE.md); R26-form vercel.json (1-day cache + SWR, no redirect); R26's out-of-sync lockfile regenerated with npm 10. Nothing committed in R26.
+- Branch @ sha: agent/claude/R-00-m0-port (handoff only); R26 working tree at ec2604a + 20 modified / 30 new paths
+- Gates (R26 web): npm@10 ci ok; tests 188 passed + 2 skipped; lint 0 warnings; build 143.82 kB gzip; '/learn/' in dist = 0; assets 200 at base /
+- Screenshots: C:\Users\User\Documents\Suvana-wt\claude\.agent-local\screens\R-00\index.html
+- Needs kvn: commit in R26 with the blocks in handoffs/R-00.md, push, D-06 redeploy; decide whether AGENTS.md/CLAUDE.md belong in R26 (R-02 must match).
+- Next: L-08 playback (15 Oct), from main.
