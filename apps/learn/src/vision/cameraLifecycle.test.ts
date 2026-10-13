@@ -1,9 +1,25 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { captureDeadline, releaseStream, watchStream, withCpuFallback } from './cameraLifecycle'
+import { cameraRestoreAction, captureDeadline, releaseStream, watchStream, withCpuFallback } from './cameraLifecycle'
 
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals() })
 
 describe('camera lifecycle', () => {
+  it('restarts a background-lost camera once when it returns to a visible page', () => {
+    const state = { hidden: false, wasRunningWhenHidden: true, streamUsable: false, starting: false, restoring: false }
+    expect(cameraRestoreAction(state)).toBe('restart')
+    expect(cameraRestoreAction({ ...state, restoring: true })).toBe('none')
+    expect(cameraRestoreAction({ ...state, starting: true })).toBe('none')
+    expect(cameraRestoreAction({ ...state, wasRunningWhenHidden: false })).toBe('none')
+    expect(cameraRestoreAction({ ...state, hidden: true })).toBe('none')
+  })
+  it('plays a still-live Android stream without reopening a camera', () => {
+    expect(cameraRestoreAction({ hidden: false, wasRunningWhenHidden: true,
+      streamUsable: true, starting: false, restoring: false })).toBe('play')
+  })
+  it('keeps an explicitly stopped or visibly lost camera off on page show', () => {
+    expect(cameraRestoreAction({ hidden: false, wasRunningWhenHidden: false,
+      streamUsable: false, starting: false, restoring: false })).toBe('none')
+  })
   it('falls back once after GPU failure', async () => {
     const create = vi.fn().mockRejectedValueOnce(new Error('WebGL lost')).mockResolvedValue('cpu')
     expect(await withCpuFallback(create)).toBe('cpu')

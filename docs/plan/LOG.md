@@ -306,3 +306,11 @@ Rules:
 - Seen on the phone: the reference transport overflowing left and the grey scrubber box; both already fixed by L-08 on main, live after R-03.
 - New bug (not in 04-bugs.md; proposed id S6): `handednessesIn()` (apps/learn/src/scoring/normalize.ts:96) counts a reference hand that appears in even one frame, so 75 of 501 references that L-10 classes as one-handed (two hands together in < 20% of tracked frames) are scored and shown as two-handed: 42 with the stray hand in < 10% of tracked frames, 26 at 10-30%, 7 at >= 30% (likely the same hand relabelled). Effect: two hand cards with one missing, a missing-hand hint, and a small score drag. Proposed fix (scoring change, kvn decides): count a reference hand only above a minimum share of tracked frames, re-running calibration to show separation does not drop. Measured from public/references by claude-code, 13 Oct.
 - Next: kvn decides whether both fixes become codex tasks.
+
+### 2026-10-13 20:26 | codex | L-29
+- What: done for review: preserve running-camera intent through background loss; one automatic full restart on return; live-stream resume, explicit off and visible-disconnect behavior preserved. No PracticeView edit.
+- Branch @ sha: agent/codex/L-29-ios-camera-resume @ task HEAD (base 8dfb949; final SHA in branch log).
+- Gates: npm 10 ci; lint clean; 201 passed / 2 skipped with corpus present; build 144.97 kB gzip; guard 164; pure lifecycle tests and eight actual-hook fake-webcam browser scenarios passed; diff check passed.
+- Screenshots: n/a; no device check claimed.
+- Needs kvn: review/merge and repeat iPhone Q-06a after the next deploy, including abandoned countdown/take and explicit off. No automatic deployment by codex.
+- Next: L-30 stacked on L-17, with before/after calibration and the 74.6% separation stop gate, each result reported with the 65.4% baseline. Calibration directory stays ignored and in place.
