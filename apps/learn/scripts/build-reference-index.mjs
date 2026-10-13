@@ -20,6 +20,99 @@ import { fileURLToPath } from 'node:url'
 const here = dirname(fileURLToPath(import.meta.url))
 const refDir = join(here, '..', 'public', 'references')
 const outPath = join(here, '..', 'public', 'reference-index.json')
+const translationsPath = join(here, '..', 'src', 'data', 'translations.ts')
+
+/** Verified Sinhala-to-English gloss meanings from translations.ts */
+const verifiedGlosses = new Set()
+try {
+  const translationsSrc = readFileSync(translationsPath, 'utf8')
+  const blockMatch = translationsSrc.match(/export const GLOSS_TRANSLATIONS[^{]*\{([\s\S]*?)\n\}/)
+  if (blockMatch) {
+    for (const line of blockMatch[1].split('\n')) {
+      const m = line.match(/^\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z0-9_-]+))\s*:\s*['"]([^'"]+)['"]/)
+      if (m) {
+        const k = m[1] || m[2] || m[3]
+        const v = m[4]
+        if (k && v && v.trim().length > 0) verifiedGlosses.add(k.trim())
+      }
+    }
+  }
+} catch (e) {
+  console.warn(`build-reference-index: could not read ${translationsPath}: ${e.message}`)
+}
+
+/**
+ * Untuned constants documented per 03-learn-spec.md and ADAPTATION.md.
+ *
+ * - TWO_HAND_FRAME_THRESHOLD: fraction of frames requiring 2 hands tracked to
+ *   classify a recording as two-handed. MediaPipe frequently introduces spurious
+ *   second hands in 1-5% of frames on one-handed signs. References where >= 20%
+ *   of frames track >= 2 hands are classified as 2, else 1.
+ * - MOTION_PATH_THRESHOLD: normalised wrist path length threshold separating
+ *   'still' from 'moving' signs. The wrist path is the sum of consecutive frame
+ *   wrist displacements divided by the sequence median hand scale (wrist-to-MCP
+ *   distance). Signs with path length < 5.0 hand-size units are classified as 'still'.
+ */
+const TWO_HAND_FRAME_THRESHOLD = 0.2
+const MOTION_PATH_THRESHOLD = 5.0
+
+function analyzeFrames(rec) {
+  const frames = Array.isArray(rec.frames) ? rec.frames : []
+  const videoWidth = rec.videoWidth || 1280
+  const videoHeight = rec.videoHeight || 720
+  const aspect = videoHeight > 0 ? videoWidth / videoHeight : 1
+
+  let twoHandFrames = 0
+  const leftWrists = []
+  const rightWrists = []
+  const scales = []
+
+  for (const fr of frames) {
+    const hands = Array.isArray(fr.hands) ? fr.hands : []
+    if (hands.length >= 2) twoHandFrames++
+    for (const h of hands) {
+      if (!h.landmarks || h.landmarks.length < 21) continue
+      // Landmarks: 0 is WRIST, 9 is MIDDLE_FINGER_MCP
+      const w0 = h.landmarks[0]
+      const m9 = h.landmarks[9]
+      const wrist = {
+        x: w0.x * aspect,
+        y: w0.y,
+        z: (w0.z || 0) * aspect,
+      }
+      const mid = {
+        x: m9.x * aspect,
+        y: m9.y,
+        z: (m9.z || 0) * aspect,
+      }
+      const scale = Math.hypot(mid.x - wrist.x, mid.y - wrist.y, mid.z - wrist.z)
+      if (scale > 1e-4) scales.push(scale)
+
+      if (h.handedness === 'Left') leftWrists.push(wrist)
+      else rightWrists.push(wrist)
+    }
+  }
+
+  const twoHandRatio = frames.length > 0 ? twoHandFrames / frames.length : 0
+  const hands = twoHandRatio >= TWO_HAND_FRAME_THRESHOLD ? 2 : 1
+
+  scales.sort((a, b) => a - b)
+  const seqScale = scales.length > 0 ? scales[Math.floor(scales.length / 2)] : 1
+  const wrists = rightWrists.length >= leftWrists.length ? rightWrists : leftWrists
+
+  let pathLen = 0
+  for (let i = 1; i < wrists.length; i++) {
+    pathLen += Math.hypot(
+      wrists[i].x - wrists[i - 1].x,
+      wrists[i].y - wrists[i - 1].y,
+      wrists[i].z - wrists[i - 1].z,
+    )
+  }
+  const normPath = wrists.length > 1 ? pathLen / seqScale : 0
+  const motion = normPath < MOTION_PATH_THRESHOLD ? 'still' : 'moving'
+
+  return { hands, motion }
+}
 
 const manifestPath = join(refDir, 'manifest.json')
 let manifest
@@ -94,7 +187,31 @@ for (const file of files) {
     // Only if it stays a valid, still-ordered timestamp.
     if (!Number.isNaN(Date.parse(trimmed))) meta.createdAt = trimmed
   }
-  entries.push({ ...meta, frameCount: Array.isArray(frames) ? frames.length : 0, file })
+  // Derive per-reference facts from data (L-10)
+  const { hands, motion } = analyzeFrames(rec)
+  const durationMs =
+    typeof meta.durationMs === 'number'
+      ? meta.durationMs
+      : Array.isArray(frames) && frames.length > 1
+        ? (frames[frames.length - 1].timestampMs || 0) - (frames[0].timestampMs || 0)
+        : 0
+  const licence =
+    meta.licence ??
+    (file.startsWith('kaggle') || meta.id?.startsWith('kaggle')
+      ? 'CC0-1.0'
+      : 'CC-BY-NC-SA-4.0')
+  const hasMeaning = verifiedGlosses.has(meta.gloss)
+
+  entries.push({
+    ...meta,
+    durationMs,
+    licence,
+    hands,
+    motion,
+    hasMeaning,
+    frameCount: Array.isArray(frames) ? frames.length : 0,
+    file,
+  })
 }
 
 if (missing.length > 0) {

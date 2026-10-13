@@ -221,3 +221,9 @@ Rules:
 - Screenshots: n/a (documentation task)
 - Needs kvn: review and merge; CX can take the proposed README diff
 - Next: L-10 (Reference metadata: hands, motion, duration, licence, hasMeaning in the generated index)
+### 2026-10-13 16:15 | antigravity | L-10 review
+- Branch agent/antigravity/L-10-ref-meta @ HEAD; handoff: docs/plan/handoffs/L-10.md.
+- Added data-derived reference metadata: hands (1|2), motion ('still'|'moving'), durationMs, licence, hasMeaning.
+- Thresholds documented as untuned UI constants: TWO_HAND_FRAME_THRESHOLD = 0.20, MOTION_PATH_THRESHOLD = 5.0 hand-size units.
+- Gates: Learn lint 0 warnings/errors, Learn tests 183 passed + 9 skipped (10 passed in referenceIndex.test.ts), build clean (bundle 144.27 kB gzip), index size 46.09 B/ref (budget 50 B), sync guard 164 passed.
+- Next: L-09 (curriculum report, data-derived units, scenario coverage) stacked on this branch.
