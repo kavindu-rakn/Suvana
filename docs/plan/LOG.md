@@ -106,3 +106,11 @@ Rules:
 - Screenshots: not required; reference renders of the new notice at .agent-local/screens/L-03/after-{desktop,phone}-abandoned.png
 - Needs kvn: adopt/reject the notice wording and position. L-05 not merged, so Practice uses allSettled directly (switch to safeLoad later).
 - Next: L-07 onboarding, stacked on this branch. R-00 waits for L-05 to merge (dependency).
+
+### 2026-10-13 10:55 | claude-code | L-07
+- What: done (review, UI). First-run 3-step guide (native dialog, reopened from "How it works"), hands-in-frame pill gating Record on 5 tracked frames, window max(2 x dur, dur + 3000), learner take trimmed like convert_references.py.
+- Branch @ sha: agent/claude/L-07-onboarding (stacked on agent/claude/L-03-capture-robustness; see git log)
+- Gates: guard 152 ok; lint 0 warnings; tests 170 passed + 9 skipped; build ok 143.97 kB gzip
+- Screenshots: C:\Users\User\Documents\Suvana-wt\claude\.agent-local\screens\L-07\index.html (ready state rendered with a forced flag, labelled FORCED)
+- Needs kvn: adopt/reject from the renders; thesis must say the capture protocol changed and the bands were not recalibrated. Plan correction: 03 section 6 step 2 names 0.5x start and 'My turn', which arrive with L-08/L-16a; copy describes today's controls.
+- Next: R-00 is blocked on L-05 (not merged; it waits for Q-00). L-08 tomorrow stacks on L-07.

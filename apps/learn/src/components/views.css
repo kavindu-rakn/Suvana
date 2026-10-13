@@ -2866,6 +2866,11 @@
     bottom: 66px;
     max-width: calc(100% - 24px);
   }
+  .aww-practice-env:not(.aww-browse) .aww-how-link {
+    border-color: var(--border-interactive);
+    background: var(--surface);
+    color: var(--text);
+  }
   .aww-cam-rec {
     top: 12px;
     right: 12px;
@@ -3207,12 +3212,63 @@
   opacity: 0.8;
 }
 
-/* Action button, bottom-left of the camera view. */
+/* Action button, bottom-left of the camera view, with the hands-in-frame pill. */
 .aww-cam-action {
   position: absolute;
   left: 20px;
   bottom: 20px;
   z-index: 50;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Live readiness: Record unlocks once hands are tracked (L-07). */
+.aww-hands-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font: 600 0.8rem var(--sans);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.aww-hands-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--p-gold-400, #e0b341);
+}
+.aww-hands-pill[data-ready='yes'] .aww-hands-dot {
+  background: var(--p-lime-400, #9bd35a);
+}
+
+/* "How it works", beside the You label: reopens the Practice guide (Onboarding.tsx). */
+.aww-you-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.aww-you-row .aww-pane-label {
+  margin-bottom: 0;
+}
+.aww-how-link {
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font: 600 0.8rem var(--sans);
+  text-shadow: none;
+  cursor: pointer;
+}
+.aww-how-link:hover {
+  background: rgba(0, 0, 0, 0.65);
 }
 
 /* Why the last take was abandoned, just above the action button. */

@@ -1,0 +1,125 @@
+/* First-run guide for Practice (Onboarding.tsx): a native modal <dialog>. */
+
+.onb {
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 22px 24px 20px;
+  overflow: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+}
+
+.onb::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.onb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.onb-count {
+  margin: 0;
+  font: 600 12px var(--mono);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.onb-close {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: -6px -8px -6px 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.onb-close:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.onb-title {
+  margin: 10px 0 8px;
+  font: 600 1.4rem var(--serif);
+}
+
+.onb-body p {
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.onb-bands {
+  display: grid;
+  gap: 6px;
+  margin: 4px 0 12px;
+  padding: 0;
+  list-style: none;
+}
+.onb-bands li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.onb-band {
+  min-width: 108px;
+  padding: 3px 10px;
+  border-left: 3px solid currentColor;
+  border-radius: 4px;
+  background: var(--surface-2);
+  font: 600 0.85rem var(--sans);
+}
+.onb-band-good {
+  color: var(--success);
+}
+.onb-band-ok {
+  color: var(--caution);
+}
+.onb-band-low {
+  color: var(--danger);
+}
+
+.onb-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 6px 0 14px;
+}
+.onb-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--border-subtle);
+}
+.onb-dots span.is-current {
+  background: var(--accent);
+}
+
+.onb-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .onb[open] {
+    animation: onb-in 160ms ease-out;
+  }
+  @keyframes onb-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+}

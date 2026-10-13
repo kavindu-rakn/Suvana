@@ -40,6 +40,9 @@ import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
 import type { HandFeedback } from './ScoreBadge'
 import { CategorySignNavigator } from './CategorySignNavigator'
+import { Onboarding } from './Onboarding'
+import { onboardingSeen } from './onboardingFlag'
+import { trimTake } from '../scoring/trimTake'
 import { shortcutBlockedByTarget } from '../app/keyboard'
 import { captureDeadline } from '../vision/cameraLifecycle'
 import { progressAgainstEarlier, shouldLogAttempt } from '../learner/attemptProgress'
@@ -51,6 +54,8 @@ const COUNTDOWN_S = 3
  * stop arriving. Untuned.
  */
 const BACKSTOP_SLACK_MS = 500
+/** Consecutive tracked frames with a hand before Record unlocks (spec L-07). */
+const READY_STREAK = 5
 
 type Phase = 'idle' | 'countdown' | 'recording' | 'result'
 
@@ -78,6 +83,12 @@ export function PracticeView({
   const [isBrowsing, setIsBrowsing] = useState(true)
   // Why the last countdown or take was abandoned, shown until the next one.
   const [captureNotice, setCaptureNotice] = useState<string | null>(null)
+  const [onboardingOpen, setOnboardingOpen] = useState(false)
+  const firstRunCheckedRef = useRef(false)
+  // Hands seen in READY_STREAK consecutive frames; a frame without one resets it.
+  const [handsReady, setHandsReady] = useState(false)
+  const handsReadyRef = useRef(false)
+  const handStreakRef = useRef(0)
 
   // Ghost Mode State (Overlay reference skeleton onto live webcam)
   const [ghostActive, setGhostActive] = useState(false)
@@ -108,9 +119,25 @@ export function PracticeView({
   const [revealArmed, setRevealArmed] = useState(false)
   const latency = useFeedbackLatency('practice', () => setRevealArmed(true))
 
-  const captureMs = selected ? Math.max(selected.durationMs + 1500, 2500) : 3500
+  // Long enough for a hesitant start; the take is trimmed to its tracked span
+  // before scoring, so the extra hands-down time does not count against it.
+  const captureMs = selected
+    ? Math.max(2 * selected.durationMs, selected.durationMs + 3000)
+    : 3500
+
+  const setReady = (ready: boolean) => {
+    if (ready === handsReadyRef.current) return
+    handsReadyRef.current = ready
+    setHandsReady(ready)
+  }
+  const resetReady = () => {
+    handStreakRef.current = 0
+    setReady(false)
+  }
 
   const tracking = useHandTracking((frame) => {
+    handStreakRef.current = frame.hands.length > 0 ? handStreakRef.current + 1 : 0
+    setReady(handStreakRef.current >= READY_STREAK)
     if (phaseRef.current !== 'recording') return
     if (startTsRef.current === null) startTsRef.current = frame.timestampMs
     const rel = frame.timestampMs - startTsRef.current
@@ -253,6 +280,11 @@ export function PracticeView({
     }
   }, [ghostActive, reference, tracking.status, phase])
 
+  // Readiness is about the frames arriving now: start over whenever they stop.
+  useEffect(() => {
+    if (tracking.status !== 'running') resetReady()
+  }, [tracking.status])
+
   // Abandon the countdown or take if the camera stops. An error (lost camera,
   // failed tracker) says so; the learner's own Stop needs no message.
   useEffect(() => {
@@ -295,8 +327,10 @@ export function PracticeView({
 
   const { pause: pauseTracking, resume: resumeTracking } = tracking
   useEffect(() => {
-    if (phase === 'result' || isBrowsing || !selected) pauseTracking()
-    else resumeTracking()
+    if (phase === 'result' || isBrowsing || !selected) {
+      pauseTracking()
+      resetReady()
+    } else resumeTracking()
   }, [phase, isBrowsing, selected, pauseTracking, resumeTracking])
 
   useEffect(() => {
@@ -360,6 +394,12 @@ export function PracticeView({
     }, 1000)
   }
 
+  /** Record (button or Space) from idle: only once the learner's hands are tracked. */
+  function recordFromIdle() {
+    if (!handsReadyRef.current) return
+    beginCountdown()
+  }
+
   function cancelCountdown() {
     window.clearInterval(countdownRef.current)
     setPhase('idle')
@@ -377,8 +417,12 @@ export function PracticeView({
   function finishRecording() {
     if (phaseRef.current !== 'recording') return
     const currentRef = referenceRef.current
-    const frames = framesRef.current
+    const captured = framesRef.current
     framesRef.current = []
+    // Score the tracked span only, as references are built (see trimTake).
+    // A take with no hand at all keeps its frames: nothing to trim to.
+    const trimmed = trimTake(captured)
+    const frames = trimmed.length > 0 ? trimmed : captured
     if (!currentRef) {
       setPhase('idle')
       return
@@ -467,6 +511,15 @@ export function PracticeView({
     if (selected) setIsBrowsing(false)
   }, [selected])
 
+  // First run: the guide opens on the learner's first sign, once.
+  useEffect(() => {
+    if (isBrowsing || !selected || firstRunCheckedRef.current) return
+    firstRunCheckedRef.current = true
+    if (!onboardingSeen()) setOnboardingOpen(true)
+  }, [isBrowsing, selected])
+
+  const closeOnboarding = useCallback(() => setOnboardingOpen(false), [])
+
   const browsing = isBrowsing || !selected
 
   // Cycle to next sign (suggested or next in category list)
@@ -518,6 +571,15 @@ export function PracticeView({
   // bubble phase) before that one sends Esc to the Hero.
   const keyHandlerRef = useRef<(e: KeyboardEvent) => void>(() => {})
   keyHandlerRef.current = (e: KeyboardEvent) => {
+    // The guide is modal: no Practice shortcut runs behind it. Esc is taken
+    // here (so AppNavBar does not send it to the Hero) and closes the guide.
+    if (onboardingOpen) {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        setOnboardingOpen(false)
+      }
+      return
+    }
     const key = e.code === 'Space' ? ' ' : e.key
     // A focused button or link keeps Enter/Space; text fields keep every key.
     if (shortcutBlockedByTarget(key, e.target)) return
@@ -525,7 +587,7 @@ export function PracticeView({
     if (key === ' ') {
       if (phaseRef.current === 'idle' && !isBrowsing && referenceRef.current && tracking.status === 'running') {
         e.preventDefault()
-        beginCountdown()
+        recordFromIdle()
       } else if (phaseRef.current === 'recording') {
         e.preventDefault()
         finishRecording()
@@ -707,7 +769,18 @@ export function PracticeView({
         <div className="aww-pane aww-pane-right" data-camera-status={tracking.status}>
           <div className="aww-pane-header">
             <div>
-              <p className="aww-pane-label">{browsing ? 'Preview' : 'You'}</p>
+              <div className="aww-you-row">
+                <p className="aww-pane-label">{browsing ? 'Preview' : 'You'}</p>
+                {!browsing && (
+                  <button
+                    type="button"
+                    className="aww-how-link"
+                    onClick={() => setOnboardingOpen(true)}
+                  >
+                    How it works
+                  </button>
+                )}
+              </div>
               {browsing && previewRec && (
                 <h2 className="aww-pane-title">{glossLabel(previewRec.gloss)}</h2>
               )}
@@ -780,16 +853,27 @@ export function PracticeView({
               )}
               <div className="aww-cam-action">
                 {phase === 'idle' && (
-                  <button
-                    className="aww-cam-btn"
-                    onClick={beginCountdown}
-                    disabled={!reference}
-                    aria-label="Record attempt (Space)"
-                  >
-                    <Circle size={14} fill="currentColor" strokeWidth={0} aria-hidden="true" />
-                    <span>{reference ? 'Record' : 'Loading…'}</span>
-                    <span className="aww-key-badge-sm">Space</span>
-                  </button>
+                  <>
+                    <button
+                      className="aww-cam-btn"
+                      onClick={recordFromIdle}
+                      disabled={!reference || !handsReady}
+                      aria-label="Record attempt (Space)"
+                      aria-describedby="aww-hands-pill"
+                    >
+                      <Circle size={14} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+                      <span>{reference ? 'Record' : 'Loading…'}</span>
+                      <span className="aww-key-badge-sm">Space</span>
+                    </button>
+                    <span
+                      id="aww-hands-pill"
+                      className="aww-hands-pill"
+                      data-ready={handsReady ? 'yes' : 'no'}
+                    >
+                      <span className="aww-hands-dot" aria-hidden="true" />
+                      {handsReady ? 'Hands in frame' : 'Show your hands'}
+                    </span>
+                  </>
                 )}
                 {phase === 'countdown' && (
                   <button
@@ -903,6 +987,7 @@ export function PracticeView({
       </div>
 
       <p className="sr-only" role="status">{liveMessage}</p>
+      <Onboarding open={onboardingOpen} onClose={closeOnboarding} />
     </div>
   )
 }
