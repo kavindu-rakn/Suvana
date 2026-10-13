@@ -1,6 +1,8 @@
 import type { Finger } from '../scoring/landmarks'
 import { ATTEMPTS_STORE, withStore } from '../storage/db'
 
+export type AttemptStage = 'try' | 'recall' | 'sentence'
+
 /**
  * One scored practice attempt. Deliberately slim — no landmark frames — so
  * thousands of attempts stay cheap to store and query. `worstFingers` keeps
@@ -14,6 +16,10 @@ export interface AttemptLogEntry {
   referenceId: string
   /** Overall DTW match score, 0–100. */
   score: number
+  /** Absent in older logs: interpret as Try. Match rewards, not correctness. */
+  stage?: AttemptStage
+  /** Recall earns its third star only when explicitly false. */
+  revealed?: boolean
   /** Fingers most deviant in this attempt, worst first (may be empty). */
   worstFingers: Finger[]
   /**
