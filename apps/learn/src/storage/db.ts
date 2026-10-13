@@ -1,16 +1,55 @@
 // Single owner of the IndexedDB connection and schema. Bump DB_VERSION when
 // adding a store; onupgradeneeded creates whatever is missing, so both fresh
 // installs and upgrades from any older version end up with the same schema.
-const DB_NAME = 'ssl-learn'
 const DB_VERSION = 3
+
+/** DN-11: progress stays in this browser; demo has its own database. */
+export type ProgressProfile = 'default' | 'demo'
+export const PROFILE_STORAGE_KEY = 'suvana.learn.profile'
+let activeProfile: ProgressProfile | undefined
+
+function assertProfile(profile: string): asserts profile is ProgressProfile {
+  if (profile !== 'default' && profile !== 'demo') throw new Error('Unknown progress profile')
+}
+
+/** Preserve the original name and every existing learner's progress. */
+export function profileDatabaseName(profile: ProgressProfile): string {
+  assertProfile(profile)
+  return profile === 'default' ? 'ssl-learn' : 'ssl-learn-demo'
+}
+
+export function getActiveProfile(): ProgressProfile {
+  if (activeProfile) return activeProfile
+  try {
+    activeProfile = localStorage.getItem(PROFILE_STORAGE_KEY) === 'demo' ? 'demo' : 'default'
+  } catch {
+    activeProfile = 'default'
+  }
+  return activeProfile
+}
+
+/** False means selected for this page, but not persisted. The profile UI must
+ * refresh derived state after switching and report blocked persistence.
+ * Other tabs pick up the persisted selection on their next load.
+ */
+export function setActiveProfile(profile: ProgressProfile): boolean {
+  assertProfile(profile)
+  activeProfile = profile
+  try {
+    localStorage.setItem(PROFILE_STORAGE_KEY, profile)
+    return true
+  } catch {
+    return false
+  }
+}
 
 export const RECORDINGS_STORE = 'recordings' // reference recordings (keyPath: id)
 export const ATTEMPTS_STORE = 'attempts' // scored practice attempts (keyPath: id)
 export const LATENCY_STORE = 'latency' // feedback-latency samples (keyPath: id)
 
-function openDb(): Promise<IDBDatabase> {
+function openDb(profile: ProgressProfile): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION)
+    const req = indexedDB.open(profileDatabaseName(profile), DB_VERSION)
     req.onupgradeneeded = () => {
       for (const store of [RECORDINGS_STORE, ATTEMPTS_STORE, LATENCY_STORE]) {
         if (!req.result.objectStoreNames.contains(store)) {
@@ -35,8 +74,9 @@ export async function withStore<T>(
   storeName: string,
   mode: IDBTransactionMode,
   run: (store: IDBObjectStore) => IDBRequest<T>,
+  profile: ProgressProfile = getActiveProfile(),
 ): Promise<T> {
-  const db = await openDb()
+  const db = await openDb(profile)
   return new Promise<T>((resolve, reject) => {
     const tx = db.transaction(storeName, mode)
     const req = run(tx.objectStore(storeName))
