@@ -283,3 +283,13 @@ Rules:
 - Checks: live site 200 and serves the ported bundle (index-CkacNhbm.js); /references/* now `public, max-age=86400, stale-while-revalidate=604800` (was a year, immutable); preview checked before promotion; kvn checked the camera flow in the browser.
 - Found: the CLI needed `npx vercel login` first ("Not authorized" otherwise); deploys use `--scope kavindu-rakns-projects`. No Git auto-deploy on this project.
 - Next: D-06 can be marked done. R-03 (M1) ports the next Learn milestone.
+
+### 2026-10-13 17:40 | kvn (recorded by claude-code) | decisions DN-05, DN-06, DN-10, DN-11, DN-14
+- What: decision. kvn took the plan's recommendations, in chat:
+  - DN-05: no corpus video before the demo (option a). L-15a, L-15b and K-06 are cancelled; Learn ships with the improved skeleton.
+  - DN-06: not needed (no video).
+  - DN-10: as D-A14. Codex's L-12 proposes concrete looser thresholds with a rendered mock; kvn approves before anything is built.
+  - DN-11: learner progress stays per browser (IndexedDB), with reset and a demo profile.
+  - DN-14: ask Karindra (K-03) with a 15 Oct deadline; on no reply, rebuild under kvn's EAS with package help.suvana.alerts (I-12a, 16 Oct).
+- Needs kvn: copy these into DECISIONS.md and mark L-15a, L-15b and K-06 cancelled on the board (agents do not edit either).
+- Next: codex starts with the L-12 threshold proposal; antigravity skips L-15b and I-12a for now.
