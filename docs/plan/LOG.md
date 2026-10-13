@@ -306,3 +306,12 @@ Rules:
 - Seen on the phone: the reference transport overflowing left and the grey scrubber box; both already fixed by L-08 on main, live after R-03.
 - New bug (not in 04-bugs.md; proposed id S6): `handednessesIn()` (apps/learn/src/scoring/normalize.ts:96) counts a reference hand that appears in even one frame, so 75 of 501 references that L-10 classes as one-handed (two hands together in < 20% of tracked frames) are scored and shown as two-handed: 42 with the stray hand in < 10% of tracked frames, 26 at 10-30%, 7 at >= 30% (likely the same hand relabelled). Effect: two hand cards with one missing, a missing-hand hint, and a small score drag. Proposed fix (scoring change, kvn decides): count a reference hand only above a minimum share of tracked frames, re-running calibration to show separation does not drop. Measured from public/references by claude-code, 13 Oct.
 - Next: kvn decides whether both fixes become codex tasks.
+
+### 2026-10-13 22:05 | antigravity | I-07
+- What: done (review). Enforced --placeholder-dev-only requirement in scripts/seedGlosses.ts (prints warning banner and exits 1 if flag missing); created scripts/importGlosses.ts supporting dry-run by default, Cloudinary URL remapping (--remap-base), and MongoDB upsert (--write/--apply); documented ADMIN_EMAILS with example in .env.local.example.
+- Branch @ sha: agent/antigravity/I-07-communicate-scripts @ HEAD (see git log)
+- Gates: sync guard 164 checks passed; Communicate npm run lint clean (0 errors, 0 warnings); Communicate build passed with NEXT_PUBLIC_BASE_PATH=/communicate (27 routes generated); script execution verified (refusal on seedGlosses, dry-run and URL remapping on importGlosses).
+- Screenshots: n/a (backend/CLI scripts and environment documentation).
+- Proposed diff: `scripts/importGlosses.ts` in Communicate's `suvanaOnly` in `tools/sync/upstreams.json` (handoff).
+- Needs kvn: review and merge branch.
+- Next: D-01 (Deployment smoke script and DEPLOYMENT.md refresh).
