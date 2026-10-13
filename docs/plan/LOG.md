@@ -314,3 +314,10 @@ Rules:
 - Screenshots: n/a
 - Needs kvn: none
 - Next: L-14 (Meaning coverage: verified-first browse and a 'meaning not yet verified' chip)
+### 2026-10-13 22:15 | antigravity | D-01
+- What: done (review). Created tools/smoke/smoke.mjs implementing 06-deploy.md section 4 post-deployment checks (status codes and cache headers), tools/smoke/README.md, and refreshed DEPLOYMENT.md matching project table, env, deploy order, Hobby caveat, recognition container options, domain steps, and smoke verification.
+- Branch @ sha: agent/antigravity/D-01-smoke @ HEAD (see git log)
+- Gates: sync guard 164 checks passed; smoke CLI verified (--help, missing arg exits 1, network failure detection exits 1); DEPLOYMENT.md matches 06-deploy.md.
+- Screenshots: n/a (CLI tooling and documentation task).
+- Needs kvn: review and merge branch.
+- Next: L-19 (Scenario cleanup).
