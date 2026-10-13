@@ -2,6 +2,11 @@ from collections import deque, Counter
 
 import numpy as np
 
+try:
+    from model.inference_engine import FastInferenceEngine
+except ImportError:
+    from src.model.inference_engine import FastInferenceEngine
+
 
 class StreamRecognizer:
     """Per-connection sliding-window gesture recognizer for the web app.
@@ -13,7 +18,12 @@ class StreamRecognizer:
 
     def __init__(self, config, model, feature_extractor):
         self.config = config
-        self.model = model
+        if isinstance(model, FastInferenceEngine):
+            self.engine = model
+            self.model = model.keras_model
+        else:
+            self.engine = FastInferenceEngine(model)
+            self.model = model
         self.feature_extractor = feature_extractor
 
         self.frame_width = config['video']['frame_width']
@@ -76,18 +86,9 @@ class StreamRecognizer:
         if len(self.frame_buffer) < self.sequence_length:
             return None, 0.0
 
-        input_sequence = np.array(self.frame_buffer).reshape(1, self.sequence_length, -1)
+        input_sequence = np.array(self.frame_buffer, dtype=np.float32).reshape(1, self.sequence_length, -1)
         try:
-            # Measured: calling the model directly (model(x)) runs this
-            # LSTM eagerly and was ~5x slower in practice than model.predict(),
-            # whose internal compiled tf.function is cached and reused across
-            # calls here. Keep .predict() -- verified faster for this model.
-            predictions = self.model.predict(input_sequence, verbose=0)
-            predicted_class = int(np.argmax(predictions[0]))
-            confidence = float(np.max(predictions[0]))
-            if confidence >= self.confidence_threshold:
-                return predicted_class, confidence
-            return None, confidence
+            return self.engine.predict_class(input_sequence, self.confidence_threshold)
         except Exception as e:
             print(f"Prediction error: {e}")
             return None, 0.0
