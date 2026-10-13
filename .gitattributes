@@ -1,2 +1,69 @@
+# Auto-detect text files and normalize line endings to LF
+* text=auto eol=lf
+
+# Explicit source and text files
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+*.tex text eol=lf
+*.bib text eol=lf
+*.cls text eol=lf
+*.bst text eol=lf
+*.svg text eol=lf
+*.nvmrc text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.dockerignore text eol=lf
+
+# Windows scripts (if any)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary file types
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.pdf binary
+*.docx binary
+*.bin binary
+*.fbx binary
+*.npy binary
+*.npz binary
+*.h5 binary
+*.onnx binary
+*.tflite binary
+*.wasm binary
+*.zip binary
+*.tar binary
+*.gz binary
+*.mp4 binary
+*.mov binary
+*.webm binary
+*.y4m binary
+*.wav binary
+*.mp3 binary
+
+# Merge strategies
 # Keep every agent's appended entry when branches merge (no conflict markers).
 docs/plan/LOG.md merge=union

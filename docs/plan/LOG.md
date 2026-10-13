@@ -206,3 +206,11 @@ Rules:
 
 ### 2026-10-13 12:45 | kvn | UI approvals for integration/2026-10-13b
 - Approved from before/after renders (desktop + phone): I-01 (pipeline tag says Alerts), L-03 (not-scored notice above Record), L-07 (3-step How it works guide; Record waits for Hands in frame). R-01 was approved earlier; I-04 has no UI.
+
+### 2026-10-13 13:45 | antigravity | Q-02
+- What: done: Configured .gitattributes with `* text=auto eol=lf`, explicit text and source extensions, CRLF for Windows scripts, binary flags for media, models, documents and archives, while preserving `docs/plan/LOG.md merge=union`. Ran `git add --renormalize .` with 0 modified files (well below the 20-file limit).
+- Branch @ sha: agent/antigravity/Q-02-gitattributes (stacked on: origin/main @ d9a6aaf)
+- Gates: guard ok (164 checks passed) | learn lint 0 warnings, 0 errors | learn tests 181 passed, 9 skipped | learn build ok | shell build ok | shell tests 44 passed | renormalize 0 files changed
+- Screenshots: n/a (non-UI task)
+- Needs kvn: review and merge into main
+- Next: I-03 (Fix stale integration docs and record the Communicate gate) or L-10
