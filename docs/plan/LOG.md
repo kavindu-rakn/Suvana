@@ -293,3 +293,11 @@ Rules:
   - DN-14: ask Karindra (K-03) with a 15 Oct deadline; on no reply, rebuild under kvn's EAS with package help.suvana.alerts (I-12a, 16 Oct).
 - Needs kvn: copy these into DECISIONS.md and mark L-15a, L-15b and K-06 cancelled on the board (agents do not edit either).
 - Next: codex starts with the L-12 threshold proposal; antigravity skips L-15b and I-12a for now.
+
+### 2026-10-13 18:49 | codex | R-02
+- What: done for review: port learn --to <R26> [--check], five exclusions including Learn agent files, deletion mirroring and safety preflight. No real R26 port.
+- Branch @ sha: agent/codex/R-02-port-command @ task HEAD (base bca1688; final SHA in branch log).
+- Gates: 8 temporary-repo tests passed (including no writes to either Git tree in --check); guard 164; syntax/diff checks passed. Disposable sparse R26 copy: 3 add / 9 modify / 0 delete; check and apply agree.
+- Screenshots: n/a; CLI only.
+- Needs kvn: review/merge; older plan's three-file exclusion list needs the two agent-file exclusions per 13 Oct chat.
+- Next: I-05. L-12 remains proposal-only pending chat approval.

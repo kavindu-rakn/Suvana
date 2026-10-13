@@ -18,6 +18,8 @@
  *                     the manifest declares
  *   guard             offline; asserts the couplings are still present. CI runs
  *                     this, so a careless copy fails the build, not production
+ *   port learn --to <R26> [--check]  mirror merged Learn, preserving all five
+ *                     exclusions; never commits or deploys
  *
  * Upstreams are read from a blobless bare clone in tools/sync/.cache/ (git-
  * ignored; blobs download on demand). To use a clone you already have instead,
@@ -29,9 +31,9 @@
  */
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'node:fs'
+import { existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, unlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { dirname, join, resolve } from 'node:path'
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -403,13 +405,120 @@ function cmdGuard() {
   console.log(`✓ ${checks} sync guard check(s) passed.`)
 }
 
+// ---------------------------------------------------------------- Learn port
+
+// kvn, 13 Oct: agent instructions belong to Suvana, never the team mirror.
+const PORT_EXCLUDED = new Set(['suvana.config.json', 'vercel.json', 'package-lock.json', 'AGENTS.md', 'CLAUDE.md'])
+
+/** Only regular tracked files. NUL separators preserve spaces and Unicode. */
+function portFiles(repo, prefix) {
+  const entries = git(repo, ['ls-files', '--stage', '-z', '--', `${prefix}/`]).stdout.split('\0').filter(Boolean)
+  const files = new Set()
+  for (const entry of entries) {
+    const tab = entry.indexOf('\t')
+    const [mode, , stage] = entry.slice(0, tab).split(' ')
+    const name = entry.slice(tab + 1).slice(prefix.length + 1)
+    if (PORT_EXCLUDED.has(name)) continue
+    if (!['100644', '100755'].includes(mode) || stage !== '0') throw new Error(`Port refuses non-regular or unresolved file: ${prefix}/${name}`)
+    files.add(name)
+  }
+  return files
+}
+
+/** Validate every existing ancestor before any writes or deletes. */
+function portPath(repo, prefix, name) {
+  const root = realpathSync(repo)
+  const abs = resolve(root, prefix, name)
+  const rel = relative(root, abs)
+  if (!rel || rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) throw new Error(`Unsafe port path: ${name}`)
+  let current = root
+  for (const part of rel.split(sep)) {
+    current = join(current, part)
+    let stat
+    try { stat = lstatSync(current) } catch (err) { if (err.code === 'ENOENT') continue; throw err }
+    if (stat.isSymbolicLink()) throw new Error(`Port refuses symlink/junction: ${current}`)
+    if (current !== abs && !stat.isDirectory()) throw new Error(`Port parent is not a directory: ${current}`)
+    if (current === abs && !stat.isFile()) throw new Error(`Port target is not a regular file: ${current}`)
+  }
+  return abs
+}
+
+function cmdPort(args) {
+  const usage = 'usage: port learn --to <R26-repo-root> [--check]'
+  if (args[0] !== 'learn') throw new Error(usage)
+  let to
+  let check = false
+  for (let i = 1; i < args.length; i++) {
+    if (args[i] === '--to' && !to && args[i + 1] && !args[i + 1].startsWith('--')) to = args[++i]
+    else if (args[i] === '--check' && !check) check = true
+    else throw new Error(usage)
+  }
+  if (!to) throw new Error(usage)
+  const repo = realpathSync(resolve(to))
+  const top = realpathSync(git(repo, ['rev-parse', '--show-toplevel']).stdout.trim())
+  if (repo !== top || repo === realpathSync(ROOT)) throw new Error('--to must name a separate R26 repository root')
+  if (!existsSync(join(repo, 'learn-ssl-module'))) throw new Error('Target has no learn-ssl-module directory')
+  if (git(repo, ['symbolic-ref', '--quiet', '--short', 'HEAD'], { allowFail: true }).stdout.trim() !== 'main') {
+    throw new Error('R26 must be on main; ask kvn to switch to main and pull first')
+  }
+  const head = git(repo, ['rev-parse', 'HEAD']).stdout.trim()
+  if (head !== git(repo, ['rev-parse', 'origin/main']).stdout.trim()) throw new Error('R26 main differs from origin/main; ask kvn to pull first')
+  if (git(repo, ['--no-optional-locks', 'status', '--porcelain', '--untracked-files=all']).stdout.trim()) {
+    throw new Error('R26 tree is dirty; ask kvn to commit or stash it first')
+  }
+  const source = git(ROOT, ['rev-parse', 'origin/main']).stdout.trim()
+  if (git(ROOT, ['diff', '--quiet', 'origin/main', '--', 'apps/learn'], { allowFail: true }).status !== 0) {
+    throw new Error('Learn differs from origin/main; port only merged Learn milestones')
+  }
+  const prefix = 'learn-ssl-module/web'
+  const sources = portFiles(ROOT, 'apps/learn')
+  // Tracked but ignored source files must not enter the mirror.
+  const ignored = spawnSync('git', ['check-ignore', '--no-index', '-z', '--stdin'], {
+    cwd: ROOT, input: [...sources].map((p) => `apps/learn/${p}\0`).join(''), encoding: 'utf8', maxBuffer: 16 * 1024 * 1024,
+  })
+  if (ignored.error || ![0, 1].includes(ignored.status)) throw new Error('Could not check Learn ignore rules')
+  for (const p of ignored.stdout.split('\0').filter(Boolean)) sources.delete(p.slice('apps/learn/'.length))
+  const targets = portFiles(repo, prefix)
+  const changes = []
+  for (const name of new Set([...sources, ...targets])) {
+    const dest = portPath(repo, prefix, name)
+    if (!sources.has(name)) {
+      if (existsSync(dest)) changes.push({ kind: 'delete', name, dest })
+      continue
+    }
+    const src = portPath(ROOT, 'apps/learn', name)
+    const body = readFileSync(src)
+    // An ignored/untracked target can contain valuable local assets. Refuse
+    // collisions rather than silently overwriting files git cannot recover.
+    if (!targets.has(name) && existsSync(dest)) throw new Error(`Untracked/ignored target collision: ${name}`)
+    if (!existsSync(dest)) changes.push({ kind: 'add', name, dest, body })
+    else if (!same(body, readFileSync(dest))) changes.push({ kind: 'modify', name, dest, body })
+  }
+  const count = (kind) => changes.filter((c) => c.kind === kind).length
+  console.log(`Learn from merged Suvana ${source}: ${count('add')} add / ${count('modify')} modify / ${count('delete')} delete${check ? ' (check only)' : ''}`)
+  for (const c of changes) console.log(`  ${c.kind}: ${c.name}`)
+  if (changes.some((c) => c.name === 'package.json')) console.log('Lockfile reminder: run `npx -y npm@10 install` in learn-ssl-module/web; the lockfile is never copied.')
+  if (check) {
+    process.exitCode = changes.length ? 1 : 0
+    return
+  }
+  for (const c of changes) {
+    if (c.kind === 'delete') unlinkSync(c.dest)
+    else {
+      mkdirSync(dirname(c.dest), { recursive: true })
+      writeFileSync(c.dest, c.body)
+    }
+  }
+  console.log('Port complete. No commit made. Run R26 gates and screenshots, then hand kvn the commit blocks.')
+}
+
 // ---------------------------------------------------------------- main
 
 const [cmd, ...args] = process.argv.slice(2)
-const commands = { status: cmdStatus, apply: cmdApply, record: cmdRecord, guard: cmdGuard }
+const commands = { status: cmdStatus, apply: cmdApply, record: cmdRecord, guard: cmdGuard, port: cmdPort }
 try {
   if (!commands[cmd]) {
-    console.log('usage: node tools/sync/sync.mjs <status [id...] | apply <id> | record <id> [rev] | guard>')
+    console.log('usage: node tools/sync/sync.mjs <status [id...] | apply <id> | record <id> [rev] | guard | port learn --to <R26> [--check]>')
     process.exit(cmd ? 1 : 0)
   }
   commands[cmd](args)

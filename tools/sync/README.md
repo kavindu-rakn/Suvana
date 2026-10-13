@@ -45,6 +45,44 @@ developed in both repos (decided 10 Oct 2026), so this is the reminder that
 Suvana-side work still needs porting back to R26. Port it, or — if it really is
 Suvana-only — declare it. `record` refuses while any remain.
 
+## Port merged Learn milestones to R26
+
+From the Suvana root (kvn or an explicitly authorized port task):
+
+```bash
+MSYS_NO_PATHCONV=1 node tools/sync/sync.mjs port learn --to ../R26-SE-019 --check
+MSYS_NO_PATHCONV=1 node tools/sync/sync.mjs port learn --to ../R26-SE-019
+```
+
+Fetch Suvana and pull R26 first. `--to` names the repository root, not `web`.
+The command does not fetch, commit, push or deploy. It refuses a dirty R26
+tree (including untracked files), a checkout other than `main`, or `main`
+different from the local `origin/main` ref. It also refuses Learn edits
+relative to Suvana's `origin/main`, so only merged milestones are ported.
+
+It mirrors tracked, non-ignored `apps/learn` files into
+`learn-ssl-module/web`, including tracked deletions. Five files are excluded
+from copying **and deletion**: `suvana.config.json`, `vercel.json`,
+`package-lock.json`, `AGENTS.md` and `CLAUDE.md` (kvn, 13 Oct: agent files stay
+out of R26). Existing R26 versions are preserved. Ignored/untracked local
+assets are preserved; collisions and symlink/junction paths are refused
+before mutation. Text comparisons ignore CRLF versus LF; binaries compare
+byte for byte. Add/modify/delete counts and the source SHA are printed.
+
+`--check` writes nothing and exits 1 on differences (or invalid preconditions),
+0 when equal. After a write the target is deliberately dirty: review its
+diff and run gates before kvn commits, rather than rerunning the port on it.
+If `package.json` changes, the command reminds kvn to run
+`npx -y npm@10 install` in `learn-ssl-module/web`; lockfiles are never copied.
+Then run Learn lint/tests/build, verify the root-base R26 build and capture
+desktop/phone renders per `docs/plan/07-r26-mirror.md`. The port handoff must
+include the source SHA and two R26 commit-message blocks for kvn.
+
+Regression tests use disposable synthetic repositories only:
+`node --test tools/sync/port.test.mjs`. Never test this command against the
+real R26 working tree. R-02's five exclusions supersede the older three-file
+list in the plan; kvn updates the plan documents.
+
 ## Rules that are not mechanical
 
 A clean merge is not the same as a right merge. Two cases the script cannot
