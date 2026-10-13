@@ -105,6 +105,7 @@ function App() {
   // Who is signed in, platform-wide. Never blocks anything: practice works
   // signed out, and an unreachable Communicate deployment resolves to null.
   useEffect(() => {
+    if (import.meta.env.VITE_SUVANA !== '1') return
     const ac = new AbortController()
     void fetchSession(ac.signal).then(setUser)
     return () => ac.abort()
@@ -130,7 +131,7 @@ function App() {
         // One Suvana account, surfaced here but never required: progress
         // lives in this browser, so gating practice would promise a
         // portability that does not exist yet.
-        account={<AccountButton user={user} />}
+        account={import.meta.env.VITE_SUVANA === '1' ? <AccountButton user={user} /> : undefined}
       />
 
       {/* data-tab drives the shell width: Progress is a dashboard and takes

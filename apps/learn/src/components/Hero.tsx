@@ -32,6 +32,12 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
   const container = useRef<HTMLDivElement>(null)
   const marqueeRef = useRef<HTMLDivElement>(null)
   const stepRefs = useRef<(HTMLElement | null)[]>([])
+  const brand = (
+    <>
+      <img src={`${import.meta.env.BASE_URL}branding/suvana-mark.png`} alt="" className="mark" />
+      <span className="wordmark">SUVANA</span>
+    </>
+  )
 
   // Lenis smooth-scroll — a hero effect only. It lives here, not in main.tsx,
   // so it is torn down when the learner enters the tool: run globally it
@@ -151,14 +157,17 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
     <div className="aww-hero-wrapper" ref={container}>
       <header id="header" className="aww-topbar">
         <div className="nav">
-          {/* In Suvana the shell owns the domain root, so the mark goes home. */}
-          <a href="/" className="nav-left brand">
-            <img src={`${import.meta.env.BASE_URL}branding/suvana-mark.png`} alt="" className="mark" />
-            <span className="wordmark">SUVANA</span>
-          </a>
+          {/* Only the Suvana build has a shell home outside Learn. */}
+          {import.meta.env.VITE_SUVANA === '1' ? (
+            <a href="/" className="nav-left brand">{brand}</a>
+          ) : (
+            <div className="nav-left brand">{brand}</div>
+          )}
           <div className="nav-right">
             <ThemeToggle />
-            <a href="/" className="btn small">Back to Home</a>
+            {import.meta.env.VITE_SUVANA === '1' && (
+              <a href="/" className="btn small">Back to Home</a>
+            )}
           </div>
         </div>
       </header>

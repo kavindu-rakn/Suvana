@@ -76,7 +76,6 @@ Rules:
 - Plan correction: clean lane lacks untracked calibration data; baseline 138/2 does not apply here, calibration/weight-fit and opt-in evaluation tests skip (7 total). No data generated or committed.
 - Next: L-05 storage on a leaf stacked on this logic-only branch, then L-06 from L-04.
 
-<<<<<<< HEAD
 ### 2026-10-13 01:49 | codex | L-06
 - What: Cache headers, standalone root redirect and asset versioning ready for review; R26-only header instructions and version-bump rule in handoffs/L-06.md.
 - Branch @ sha: agent/codex/L-06-cache-headers @ task HEAD, stacked on L-04 e9fa2bc. L-05 52124ae stays a sibling leaf.
@@ -107,6 +106,7 @@ Rules:
 - Plan corrections applied: lane-worktree test baseline (08 section 9), M0 commit wording (07 section 4), L-17 re-derives HINT_MIN_DEVIATION.
 - Tomorrow first: antigravity reworks Q-00, then re-shoots I-01; kvn merges Q-00 at midday so codex can shoot L-05.
 
+<<<<<<< HEAD
 ### 2026-10-13 02:58 | antigravity | Q-00 rework
 - What: done: Reworked Q-00 dev fixtures to align with merged L-01 ScoreBadge props (hands: HandFeedback[], no per-finger accuracy), replaced fixture glosses with real references from public/reference-index.json (DAKINAWA, AHANAWA, AYUBOWAN, KANAWA), used real scorer hint strings (or none), and re-shot after screens.
 - Branch @ sha: agent/antigravity/Q-00-screens (rebased on main @ 2fd433a)
@@ -115,6 +115,7 @@ Rules:
 - Needs kvn: review and merge so Codex can shoot L-05 storage screens
 - Next: re-shoot I-01 after waiting for the landing intro animation to finish
 
+<<<<<<< HEAD
 ### 2026-10-13 01:42 | codex | L-05
 - What: Storage resilience implemented; partial pending required screenshots and kvn UI adoption. Safe loads preserve bundled references; guarded fields and render-error Reload fallback added.
 - Branch @ sha: agent/codex/L-05-storage @ task HEAD, stacked on L-04 e9fa2bc (merge L-04 first).
@@ -140,3 +141,30 @@ Rules:
 - Gates: documentation-only approval record; required Learn and sync checks rerun before commit, results in handoff.
 - Needs kvn: merge the approved branch; port from merged main later. Inherited broader layout work remains documented.
 - Next: both UI approvals recorded. No agent merge/push/deploy authorized.
+
+
+
+### 2026-10-13 02:50 | codex | R-01 (14 Oct work requested early)
+- What: Portability implemented; config-absent standalone build removes platform paths/session calls. Visual acceptance pending Q-00.
+- Branch @ sha: agent/codex/R-01-portability @ task HEAD (see branch log and handoffs/R-01.md).
+- Gates: npm 10 clean ci; lint 0 warnings; 161 passed / 9 skipped; Suvana build 142.34 kB gzip, standalone 141.89; config and standalone bundle assertions; guard 155; diff check passed.
+- Screenshots: pending Q-00 merge (changes requested, not on main 2fd433a); L-05 also remains pending.
+- Needs kvn: merge corrected Q-00, then visual review before R-01 adoption; later mirror from merged main.
+- Plan correction: no rendered/byte-identical R26 claim; standalone paths validated, mirror and renders still separate gates.
+- Next: I-04 from main as a sibling branch (R-01 is a leaf UI branch).
+
+### 2026-10-13 10:58 | codex | R-01 screenshot follow-up
+- What: R-01 rebased onto Q-00 main 26a20e5; 16 screenshots captured across both editions, views and viewports. No additional product change; ready for visual review.
+- Branch @ sha: agent/codex/R-01-portability @ task HEAD (rebased implementation 43c745c; final commit in branch log). L-05 final a34c228 is a sibling; I-04 remains f3bcd1b.
+- Gates: clean npm 10 ci; lint 0 warnings; 161 passed / 9 skipped; Suvana build 142.34 kB gzip, standalone 141.89; guard 156; standalone route/flag/fixture checks and 16 PNG assertions passed. Six image pairs byte-identical; remaining pairs differ at 4 and 7 pixels, inspected with no layout change.
+- Screenshots: C:/Users/User/Documents/Suvana-wt/codex/.agent-local/screens/R-01/index.html (Suvana before main 2fd433a; standalone before R26 ec2604a; after R-01 final source).
+- Needs kvn: adopt/reject renders and merge if accepted; actual R26 mirror/deploy stays separate.
+- Next: both pending screenshot handoffs complete; disable the quiet screenshot follow-up. No pushes, merges or deployments by Codex.
+
+### 2026-10-13 11:21 | kvn (in chat; recorded by codex) | R-01 UI approval
+- What: approved the reviewed R-01 UI: "I approve the UIs." Visual adoption gate satisfied.
+- Branch @ sha: agent/codex/R-01-portability; approved source eabf98e9e5d00166a253faab59a8309aa843aaa1. Approval-record commit follows in this branch.
+- Screenshots: C:/Users/User/Documents/Suvana-wt/codex/.agent-local/screens/R-01/index.html
+- Gates: documentation-only approval record; required Learn and sync checks rerun before commit, results in handoff.
+- Needs kvn: merge the approved branch; actual R26 mirror and deployment remain separate.
+- Next: record L-05's approval on its own branch. No agent merge/push/deploy authorized.
