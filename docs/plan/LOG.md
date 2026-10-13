@@ -133,3 +133,11 @@ Rules:
 - Screenshots: C:/Users/User/Documents/Suvana-wt/codex/.agent-local/screens/R-01/index.html (Suvana before main 2fd433a; standalone before R26 ec2604a; after R-01 final source).
 - Needs kvn: adopt/reject renders and merge if accepted; actual R26 mirror/deploy stays separate.
 - Next: both pending screenshot handoffs complete; disable the quiet screenshot follow-up. No pushes, merges or deployments by Codex.
+
+### 2026-10-13 11:21 | kvn (in chat; recorded by codex) | R-01 UI approval
+- What: approved the reviewed R-01 UI: "I approve the UIs." Visual adoption gate satisfied.
+- Branch @ sha: agent/codex/R-01-portability; approved source eabf98e9e5d00166a253faab59a8309aa843aaa1. Approval-record commit follows in this branch.
+- Screenshots: C:/Users/User/Documents/Suvana-wt/codex/.agent-local/screens/R-01/index.html
+- Gates: documentation-only approval record; required Learn and sync checks rerun before commit, results in handoff.
+- Needs kvn: merge the approved branch; actual R26 mirror and deployment remain separate.
+- Next: record L-05's approval on its own branch. No agent merge/push/deploy authorized.
