@@ -11,7 +11,7 @@ const OK = band(60).label
 const LOW = band(0).label
 
 // Generic practice guidance only: no sign content. Step 2 describes today's
-// controls (speed button, Record, Space); L-08/L-16a change them.
+// controls (0.5x start, speed buttons, Record, Space); L-16a ("My turn") changes them.
 const STEPS: { title: string; body: ReactNode }[] = [
   {
     title: 'Frame yourself',
@@ -33,8 +33,12 @@ const STEPS: { title: string; body: ReactNode }[] = [
     body: (
       <>
         <p>
-          Watch the reference first. The speed button under it slows it down; 0.5x is a good
-          start.
+          Watch the reference first. It plays at half speed for two loops, then at full speed;
+          the speed buttons under it change that.
+        </p>
+        <p>
+          The rectangle is the original video frame, so you see where the hands were and how far
+          they moved. <strong>Zoom to hands</strong> enlarges them.
         </p>
         <p>
           Press <strong>Record</strong> (or Space). After a 3-second countdown, sign; press Space

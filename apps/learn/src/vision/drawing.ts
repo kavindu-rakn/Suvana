@@ -193,3 +193,25 @@ export function drawHands(
     }
   }
 }
+
+/** A fit that moves a skeleton by (dx, dy) in normalised frame units, without zooming. */
+export function translateFit(dx: number, dy: number): Fit {
+  return { cx: 0.5 - dx, cy: 0.5 - dy, k: 1 }
+}
+
+/**
+ * The fit that puts a reference frame's wrist on the learner's tracked wrist,
+ * for the ghost overlay. The anchor is the reference's first hand; the learner
+ * hand is the one with the same handedness (the learner copies the mirrored
+ * reference with the same hand, as in a mirror), else any tracked hand. Both
+ * hands of a two-handed sign move by the same offset, so their spacing is kept.
+ * No zoom: only position changes. Identity when either side has no hand.
+ */
+export function wristAnchorFit(reference: TrackedHand[], live: TrackedHand[]): Fit {
+  const refWrist = reference[0]?.landmarks[0]
+  if (!refWrist) return IDENTITY
+  const match = live.find((h) => h.handedness === reference[0].handedness) ?? live[0]
+  const liveWrist = match?.landmarks[0]
+  if (!liveWrist) return IDENTITY
+  return translateFit(liveWrist.x - refWrist.x, liveWrist.y - refWrist.y)
+}

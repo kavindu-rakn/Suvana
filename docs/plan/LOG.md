@@ -244,3 +244,10 @@ Rules:
 - Plan correction: 21 inputs include one clip with no label; K-07 cannot promise 21 usable labelled references. --all now announces sentence exclusion; --sentences uses its own namespace. Exact labels and measured container durations are in handoffs/L-22a.md.
 - Needs kvn: review/merge L-22a; decide DN-08 before K-07. No game implementation until L-09 is merged and exact DN-10 values approved. L-15a follows DN-05's no-video default while undecided.
 - Next: L-12 after its dependency/decision gates; K-07 after DN-08. Screenshot automation already stopped; no new follow-up scheduled.
+### 2026-10-13 14:45 | claude-code | L-08
+- What: done (review, UI). 0.5x for 2 loops then 1x with a 4-button speed group; raw framing by default with caption + Zoom to hands; mirror label; ghost sized to the camera and wrist-anchored (A12); HUD overflow and touch scrubber fixed; guide step 2 updated.
+- Branch @ sha: agent/claude/L-08-playback (on main d9a6aaf; see git log)
+- Gates: guard 164 ok; lint 0 warnings; tests 185 passed + 9 skipped; build ok 144.76 kB gzip
+- Screenshots: C:\Users\User\Documents\Suvana-wt\claude\.agent-local\screens\L-08\index.html (one-hand, two-hand, zoomed, ghost, Scenario)
+- Needs kvn: adopt/reject from renders; phone transport is one row (restart/step hidden; they were off-screen before). Note: Scenario/Library/Record take the new player defaults; Scenario's KANAWA coaching line describes movement/location (for L-19).
+- Next: R-00 waits for kvn's R26 commit + D-06. Next claude-code board tasks (L-11, L-16a, L-24...) depend on L-12/K-05/L-13, not yet on main.

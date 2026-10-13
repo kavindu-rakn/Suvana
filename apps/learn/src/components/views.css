@@ -7147,3 +7147,180 @@
 }
 
 
+
+/* ==========================================================================
+   Reference playback (L-08): framing caption, Zoom to hands, mirror label,
+   speed control. Kept at the end so it wins over the HUD rules above.
+   ========================================================================== */
+
+.aww-player-meta {
+  position: absolute;
+  top: 14px;
+  left: 30px;
+  right: 30px;
+  z-index: 16;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.aww-player-labels {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.aww-frame-caption,
+.aww-mirror-chip {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font: 600 11px var(--sans);
+  white-space: nowrap;
+}
+
+.aww-zoom-toggle {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font: 600 12px var(--sans);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.aww-zoom-toggle:hover {
+  border-color: var(--accent);
+}
+.aww-zoom-toggle[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Raw framing: the canvas is the original video frame, drawn as a plain
+   rectangle so the hands' position and the movement's size read against it. */
+.skeleton-player canvas.is-raw {
+  outline: 1px solid rgba(230, 238, 236, 0.5);
+  outline-offset: -1px;
+}
+
+.aww-speed-group {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: rgba(var(--surface-rgb), 0.5);
+}
+.aww-speed-opt {
+  min-width: 40px;
+  height: 28px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-dim);
+  font: 700 11px var(--mono);
+  cursor: pointer;
+}
+.aww-speed-opt:hover {
+  color: var(--text);
+}
+.aww-speed-opt[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* The learner's own replay keeps its plain look. */
+.aww-practice-env .aww-replay-container .aww-player-meta,
+.aww-practice-env .aww-replay-container .aww-mirror-chip {
+  display: none;
+}
+
+/* The reference HUD is placed by left/right; the centring transform and fixed
+   width from .aww-player-controls pushed it off the pane's left edge. With the
+   speed buttons it may wrap to a second row on narrow panes. */
+.aww-practice-env .aww-pane-left .player-controls {
+  transform: none;
+  width: auto;
+  flex-wrap: wrap;
+}
+
+@media (pointer: coarse) {
+  /* The 44px touch height must not paint the whole box as the track. */
+  .aww-player-range {
+    background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)) center / 100% 4px no-repeat;
+  }
+  :root[data-theme='light'] .aww-player-range {
+    background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)) center / 100% 4px no-repeat;
+  }
+}
+
+@media (max-width: 860px) {
+  /* The phone reference frame is short: labels go in a row above it, not over it. */
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-skeleton-canvas-wrap {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-player-meta {
+    position: static;
+    order: -1;
+    align-items: center;
+    padding: 4px 12px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-player-labels {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0 8px;
+  }
+  /* One transport row on a phone: play, speeds, scrubber, time. Restart and
+     frame steps were off-screen here before (the HUD overflowed); the scrubber
+     does both jobs. */
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .player-controls {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-player-restart-btn,
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-player-step-btn {
+    display: none;
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-speed-opt {
+    min-width: 34px;
+    padding: 0 4px;
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-scrubber-wrap {
+    min-width: 40px;
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-frame-caption,
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-mirror-chip {
+    padding: 0;
+    background: none;
+    color: var(--text-dim);
+    font-size: 10.5px;
+    white-space: normal;
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-zoom-toggle {
+    border-color: var(--border-interactive);
+    background: var(--surface);
+    color: var(--text);
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-zoom-toggle[aria-pressed='true'] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .aww-practice-env:not(.aww-browse) .aww-pane-left .aww-skeleton-canvas-wrap canvas {
+    min-height: 0;
+    flex: 1;
+  }
+}
