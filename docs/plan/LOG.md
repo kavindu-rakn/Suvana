@@ -132,3 +132,11 @@ Rules:
 - Plan correction: phone dock overlap and author/pane overflow exist on baseline; phone states reached via shipped keyboard shortcuts. Wider layout fixes belong to phone-polish ownership. Practice storage rejection remains L-03's scope.
 - Needs kvn: adopt/reject renders, then merge if accepted; port from main later.
 - Next: R-01 portability screenshot handoff on its separate leaf branch.
+
+### 2026-10-13 11:23 | kvn (in chat; recorded by codex) | L-05 UI approval
+- What: approved the reviewed L-05 UI: "I approve the UIs." Visual adoption gate satisfied.
+- Branch @ sha: agent/codex/L-05-storage; approved source a34c228b81d0715dc42af2f57aabbc4fc040dd6f. Approval-record commit follows in this branch.
+- Screenshots: C:/Users/User/Documents/Suvana-wt/codex/.agent-local/screens/L-05/index.html
+- Gates: documentation-only approval record; required Learn and sync checks rerun before commit, results in handoff.
+- Needs kvn: merge the approved branch; port from merged main later. Inherited broader layout work remains documented.
+- Next: both UI approvals recorded. No agent merge/push/deploy authorized.
