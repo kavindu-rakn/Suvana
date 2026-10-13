@@ -1963,6 +1963,59 @@
     ]
   },
   {
+    "id": "L-29",
+    "title": "iPhone: restart the camera automatically after an app switch",
+    "owner": "codex",
+    "day": "2026-10-16",
+    "size": "S",
+    "deps": [
+      "L-04"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/L-29-ios-camera-resume",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Bug A19, found in Q-06a (kvn, 13 Oct): on an iPhone the camera stops while the learner is in another app; on return Learn shows 'Camera disconnected' and only 'Try again' brings it back. Android keeps working.",
+    "files": [
+      "apps/learn/src/vision/useHandTracking.ts",
+      "apps/learn/src/vision/cameraLifecycle.ts",
+      "apps/learn/src/vision/cameraLifecycle.test.ts"
+    ],
+    "acceptance": [
+      "When the page becomes visible again and the camera was running when it was hidden, the camera restarts by itself (one attempt, the same path as 'Try again'); 'Camera disconnected' shows only if that attempt fails",
+      "A camera the learner turned off stays off; a camera lost while the page is visible still shows L-04's error",
+      "A countdown or take in progress when the page was hidden stays abandoned with L-03's notice",
+      "The resume decision is a tested pure function in cameraLifecycle.ts; PracticeView.tsx is not changed (hot file: put any needed diff in the handoff)",
+      "kvn re-checks on the iPhone after the next deploy (Q-06a); the handoff does not claim a device check"
+    ]
+  },
+  {
+    "id": "L-30",
+    "title": "Score one-handed references as one-handed (ignore stray hand labels)",
+    "owner": "codex",
+    "day": "2026-10-16",
+    "size": "S",
+    "deps": [],
+    "status": "todo",
+    "branch": "agent/codex/L-30-stray-hands",
+    "r26_port": "yes",
+    "screenshots": "no",
+    "decisions": [],
+    "why": "Bug A20 (logged 13 Oct as S6): handednessesIn() (scoring/normalize.ts) counts a reference hand seen in even one frame, so 78 of 501 references that L-10 classes as one-handed are scored and shown as two-handed: a second 'missing' hand card, a missing-hand hint and a small score drag. kvn saw it in Practice.",
+    "files": [
+      "apps/learn/src/scoring/normalize.ts",
+      "apps/learn/src/scoring/score.ts",
+      "apps/learn/src/scoring/score.test.ts"
+    ],
+    "acceptance": [
+      "A reference is scored as two-handed only by L-10's rule (>= 2 hands tracked in >= 20% of its frames, TWO_HAND_FRAME_THRESHOLD in scripts/build-reference-index.mjs); otherwise only its dominant hand label (the label in most frames) is scored. One constant, or a test that both places use 0.2",
+      "A test over public/references: every reference the generated index marks hands = 1 scores with exactly one hand and twoHanded false (78 change today); references marked hands = 2 score exactly as before",
+      "Calibration re-run with the corpus present (copy the untracked apps/learn/calibration folder from C:/Users/User/Documents/Suvana into the lane worktree; never commit it): report separation before and after, each with the 65.4% majority baseline. If separation drops below 74.6%, stop and report instead of asking for a merge",
+      "The handoff says this changes scores for the affected references and that the 85/60 bands were not recalibrated"
+    ]
+  },
+  {
     "id": "L-31",
     "title": "Third scenario from corpus signs (optional, only if kvn approves DN-19)",
     "owner": "antigravity",

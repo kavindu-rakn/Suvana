@@ -7,7 +7,7 @@ Status values: `todo`, `in-progress`, `review` (handoff written, waiting for kvn
 Owners: `kvn`; `claude-code` (Claude Code, UI lane); `codex` (OpenAI Codex, logic and platform lane); `antigravity` (Google Antigravity, shell/Communicate/Alerts/tools lane); `claude-code-thesis` (a second Claude Code session for thesis and docs, subject to DN-20).
 Sizes: S < 2 h, M < half a day, L < 1 day. "r26_port: yes" means the change must reach R26 `learn-ssl-module/web` at the next milestone port (07-r26-mirror.md). "screenshots: yes" means desktop 1280x800 and phone 390x844 before/after renders are required, and kvn adopts or rejects from them before merge.
 
-Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 18, codex 22; total 97.
+Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 18, codex 24; total 99.
 
 ## Table
 
@@ -87,6 +87,8 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | L-26 | Phone, accessibility and polish pass across Learn | claude-code | 2026-10-20 | M | L-21, L-23, L-25 | todo | `agent/claude/L-26-polish` | yes | yes | - |
 | L-27 | Camera off while browsing or hidden; hover hint only on hover devices; GSAP restore | claude-code | 2026-10-20 | S | L-04, L-16b | todo | `agent/claude/L-27-camera-off` | yes | no | - |
 | L-28 | Learn docs match what shipped | claude-code-thesis | 2026-10-20 | S | L-26 | todo | `agent/claude/L-28-learn-docs` | yes | no | - |
+| L-29 | iPhone: restart the camera automatically after an app switch | codex | 2026-10-16 | S | L-04 | todo | `agent/codex/L-29-ios-camera-resume` | yes | no | - |
+| L-30 | Score one-handed references as one-handed (ignore stray hand labels) | codex | 2026-10-16 | S | - | todo | `agent/codex/L-30-stray-hands` | yes | no | - |
 | L-31 | Third scenario from corpus signs (optional, only if kvn approves DN-19) | antigravity | backlog (earliest 2026-10-19) | M | K-05 | todo | `agent/antigravity/L-31-scenario3` | yes | yes | DN-19 |
 | L-32 | Sequence-from-memory level (only if Lithira's mapper supplies an order) | codex | backlog | M | K-03 | todo | `agent/codex/L-32-sequence` | yes | yes | DN-08 |
 | R-00 | M0: manual port of the merged blocker fixes into the R26 working tree | claude-code | 2026-10-14 | S | L-01, L-02, L-04, L-05, L-06, K-01 | done | `none (R26 working tree; never commit)` | no | yes | - |
@@ -1064,6 +1066,33 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
   - [ ] README describes Path, stages, feedback, licence mode, video (if any) and sentence challenge exactly as merged, linking ADAPTATION.md
   - [ ] Plan-doc open items marked done or open with evidence
   - [ ] No figure without its source; 74.6% only with 65.4%
+
+### L-29: iPhone: restart the camera automatically after an app switch
+
+- **Owner / day / size:** codex / 2026-10-16 / S
+- **Depends on:** L-04
+- **Branch:** `agent/codex/L-29-ios-camera-resume` | **r26_port:** yes | **screenshots:** no
+- **Why:** Bug A19, found in Q-06a (kvn, 13 Oct): on an iPhone the camera stops while the learner is in another app; on return Learn shows 'Camera disconnected' and only 'Try again' brings it back. Android keeps working.
+- **Files:** `apps/learn/src/vision/useHandTracking.ts`, `apps/learn/src/vision/cameraLifecycle.ts`, `apps/learn/src/vision/cameraLifecycle.test.ts`
+- **Acceptance:**
+  - [ ] When the page becomes visible again and the camera was running when it was hidden, the camera restarts by itself (one attempt, the same path as 'Try again'); 'Camera disconnected' shows only if that attempt fails
+  - [ ] A camera the learner turned off stays off; a camera lost while the page is visible still shows L-04's error
+  - [ ] A countdown or take in progress when the page was hidden stays abandoned with L-03's notice
+  - [ ] The resume decision is a tested pure function in cameraLifecycle.ts; PracticeView.tsx is not changed (hot file: put any needed diff in the handoff)
+  - [ ] kvn re-checks on the iPhone after the next deploy (Q-06a); the handoff does not claim a device check
+
+### L-30: Score one-handed references as one-handed (ignore stray hand labels)
+
+- **Owner / day / size:** codex / 2026-10-16 / S
+- **Depends on:** nothing
+- **Branch:** `agent/codex/L-30-stray-hands` | **r26_port:** yes | **screenshots:** no
+- **Why:** Bug A20 (logged 13 Oct as S6): handednessesIn() (scoring/normalize.ts) counts a reference hand seen in even one frame, so 78 of 501 references that L-10 classes as one-handed are scored and shown as two-handed: a second 'missing' hand card, a missing-hand hint and a small score drag. kvn saw it in Practice.
+- **Files:** `apps/learn/src/scoring/normalize.ts`, `apps/learn/src/scoring/score.ts`, `apps/learn/src/scoring/score.test.ts`
+- **Acceptance:**
+  - [ ] A reference is scored as two-handed only by L-10's rule (>= 2 hands tracked in >= 20% of its frames, TWO_HAND_FRAME_THRESHOLD in scripts/build-reference-index.mjs); otherwise only its dominant hand label (the label in most frames) is scored. One constant, or a test that both places use 0.2
+  - [ ] A test over public/references: every reference the generated index marks hands = 1 scores with exactly one hand and twoHanded false (78 change today); references marked hands = 2 score exactly as before
+  - [ ] Calibration re-run with the corpus present (copy the untracked apps/learn/calibration folder from C:/Users/User/Documents/Suvana into the lane worktree; never commit it): report separation before and after, each with the 65.4% majority baseline. If separation drops below 74.6%, stop and report instead of asking for a merge
+  - [ ] The handoff says this changes scores for the affected references and that the 85/60 bands were not recalibrated
 
 ### L-31: Third scenario from corpus signs (optional, only if kvn approves DN-19)
 
