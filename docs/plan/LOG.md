@@ -293,3 +293,9 @@ Rules:
   - DN-14: ask Karindra (K-03) with a 15 Oct deadline; on no reply, rebuild under kvn's EAS with package help.suvana.alerts (I-12a, 16 Oct).
 - Needs kvn: copy these into DECISIONS.md and mark L-15a, L-15b and K-06 cancelled on the board (agents do not edit either).
 - Next: codex starts with the L-12 threshold proposal; antigravity skips L-15b and I-12a for now.
+
+### 2026-10-13 18:30 | kvn (recorded by claude-code) | T-01 and K-03
+- What: done. T-01: IT22552860_FINAL.docx created as a byte-identical copy (cp -p); IT22552860_DRAFT.docx and IT22552860_DRAFT-preview.pdf keep their 11 Oct modified times. Only FINAL is edited from now on.
+- K-03: messages sent on 13 Oct to Karindra (APK route a/b/c, Suvana strings, no server; deadline Thu 15 Oct, then rebuild per D-A19), Lithira (glosses export, animation URLs, emotion_clf.joblib, Whisper IDs, OK to show avatar under Suvana, sign-detector uptime, mapper on the 20 L-22a sentence labels; deadline Fri 16 Oct) and Lahiru (demo model and label order, .tflite, test split, venv versions, hosting OK; deadline Fri 16 Oct). Wording from 05-integration section 5.
+- K-09: supervisor message drafted, not yet sent.
+- Next: replies (or silence at each deadline) are logged as they arrive.
