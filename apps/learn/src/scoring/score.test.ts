@@ -69,6 +69,10 @@ describe('scoreAttempt — discrimination', () => {
     const wrongPath = buildRecording({ wristPath: (t) => ({ x: 0.5, y: 0.4 + 0.2 * t }) }) // ↓
     const matching = scoreAttempt(ref, ref).score
     expect(scoreAttempt(wrongPath, ref).score).toBeLessThan(matching)
+    const result = scoreAttempt(wrongPath, ref)
+    expect(result.typedHints).toContainEqual({ kind: 'path' })
+    const costs = result.hands[0].contributions!
+    expect(costs.shape + costs.traj).toBeCloseTo(result.hands[0].normalizedDistance, 10)
   })
 
   it('points feedback at the finger that actually deviates', () => {
@@ -80,6 +84,29 @@ describe('scoreAttempt — discrimination', () => {
     const attempt = buildRecording({ pose: bent })
     const worst = scoreAttempt(attempt, ref).worstJoints[0]
     expect(worst.finger).toBe('index')
+  })
+})
+
+describe('scoreAttempt — active duration and feedback compatibility', () => {
+  it('ignores leading/trailing empty tracking frames when deriving active duration', () => {
+    const ref = buildRecording()
+    const slow = { ...ref, frames: ref.frames.map((frame) => ({ ...frame, timestampMs: frame.timestampMs * 2 })) }
+    slow.frames.unshift({ timestampMs: -1000, hands: [] })
+    slow.frames.push({ timestampMs: 9000, hands: [] })
+    const result = scoreAttempt(slow, ref)
+    expect(result.score).toBe(100) // Timing feedback must never penalize DTW score.
+    expect(result.typedHints).toEqual([{ kind: 'timing', ratio: 2 }])
+    expect(result.hints[0]).toContain('2.0x')
+  })
+  it('never restores unvalidated corrective finger hints', () => {
+    const result = scoreAttempt(buildRecording({ pose: rotatedHand() }), buildRecording())
+    expect(result.hints.some((hint) => hint.startsWith('Check your '))).toBe(false)
+    expect(result.hints.some((hint) => hint.startsWith('Close match'))).toBe(false)
+  })
+  it('handles an empty reference with one typed compatibility hint', () => {
+    const result = scoreAttempt(buildRecording(), withoutHands(buildRecording()))
+    expect(result.typedHints).toEqual([{ kind: 'untracked-reference' }])
+    expect(result.hints).toEqual(['No hands were tracked in the reference.'])
   })
 })
 
@@ -109,6 +136,17 @@ describe('scoreAttempt — handedness', () => {
 })
 
 describe('scoreAttempt — two-handed signs', () => {
+  it('names the learner missing hand after choosing the mirrored alignment', () => {
+    const right = buildRecording({ handedness: 'Right' })
+    const left = buildRecording({ handedness: 'Left', pose: rotatedHand() })
+    const ref = { ...right, frames: right.frames.map((frame, i) => ({
+      ...frame, hands: [...frame.hands, ...left.frames[i].hands],
+    })) }
+    const result = scoreAttempt(mirrorRecording(right), ref)
+    expect(result.mirrored).toBe(true)
+    expect(result.typedHints).toContainEqual({ kind: 'missing-hand', hand: 'Right' })
+    expect(result.hints[0]).toContain('your right hand')
+  })
   it('penalises a one-handed attempt at a two-handed sign', () => {
     const ref = buildRecording()
     // Reference gains a left hand present in every frame.

@@ -306,3 +306,11 @@ Rules:
 - Seen on the phone: the reference transport overflowing left and the grey scrubber box; both already fixed by L-08 on main, live after R-03.
 - New bug (not in 04-bugs.md; proposed id S6): `handednessesIn()` (apps/learn/src/scoring/normalize.ts:96) counts a reference hand that appears in even one frame, so 75 of 501 references that L-10 classes as one-handed (two hands together in < 20% of tracked frames) are scored and shown as two-handed: 42 with the stray hand in < 10% of tracked frames, 26 at 10-30%, 7 at >= 30% (likely the same hand relabelled). Effect: two hand cards with one missing, a missing-hand hint, and a small score drag. Proposed fix (scoring change, kvn decides): count a reference hand only above a minimum share of tracked frames, re-running calibration to show separation does not drop. Measured from public/references by claude-code, 13 Oct.
 - Next: kvn decides whether both fixes become codex tasks.
+### 2026-10-13 19:04 | codex | L-17
+- What: done for review: typed hints plus string compatibility, Close match >=85, active-duration timing, real-pair-proven path hint, mirrored missing-hand wording, max two hints. Finger states/corrections stay hidden.
+- Branch @ sha: agent/codex/L-17-hints @ task HEAD (base bca1688; final SHA in branch log).
+- Gates: npm 10 ci; lint 0 warnings; 202 passed / 11 skipped; build 145.17 kB gzip; guard 164; read-only calibration and 314-pair exact numeric comparison passed; existing finger audit unchanged.
+- Screenshots: .agent-local/screens/L-17/index.html; before/after desktop and phone, isolated synthetic fixture using real ScoreBadge/styles. Needs kvn's wording decision.
+- Needs kvn: review/merge and wording adoption; no finger-state revival. HINT_MIN_DEVIATION candidate 2.23 is derived from same-sign p95, but wrong-sign detection remains weak; no correctness claim.
+- Plan correction: preserve legacy strings for current consumers; L-21 consumes typedHints. fingerStates comment-only correction proposed in handoff due to task boundary. No Q-04 e2e script yet.
+- Next: L-23a profiles. L-12/L-13 still wait for L-12 chat approval; L-15a skipped per DN-05=no video.
