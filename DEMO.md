@@ -85,28 +85,26 @@ Restaurant.
 |---|---|
 | Shell + assistant | **Working.** The assistant carries its own sign index and needs no service |
 | Learn | **Working.** 490 signs, 501 reference recordings |
-| Recognize | **Working.** 171 signs, Sinhala labels, speech output — with the two data files below |
+| Recognize | **Working.** 171 signs, Sinhala labels, speech output — labels and translations are tracked directly in the repo |
 | Communicate | **UI works.** Transcription needs the speech backend, which is a Colab/ngrok URL read from MongoDB |
 | Alerts | **Not demoable without a dev build.** Expo Go cannot load its native modules; `/alerts/` says so rather than offering a dead button |
 
 Say this up front rather than discovering it on the projector.
 
-## Two data files Recognize needs that are not in this repo
+## Recognize label files (tracked in repo)
 
-Both are gitignored derived data and must come from the team repo (or from
-Lahiru). Do not regenerate `labels.npy` from the Kaggle corpus: the label order
-has to match the trained model's output indices exactly, or every prediction is
-silently mislabelled.
+Both files (`services/recognition/data/processed/labels.npy` and
+`services/recognition/webapp/data/sinhala_labels.json`) are committed and
+tracked directly in this repository. They do not need to be manually copied.
 
-| File | Effect when missing |
+> **Hard rule:** Never regenerate `labels.npy` from the Kaggle corpus. The label order
+> has to match the trained model's output indices exactly, or every prediction is
+> silently mislabelled.
+
+| File | Purpose |
 |---|---|
-| `services/recognition/data/processed/labels.npy` | Every result reads `Gesture_0`…`Gesture_170` |
-| `services/recognition/webapp/data/sinhala_labels.json` | No Sinhala script, and the assistant *on that page* answers "0 signs" |
-
-```
-cp ../R26-SE-019/sinhala_sign_language_recognition/data/processed/labels.npy services/recognition/data/processed/
-cp ../R26-SE-019/sinhala_sign_language_recognition/webapp/data/sinhala_labels.json services/recognition/webapp/data/
-```
+| `services/recognition/data/processed/labels.npy` | 171 gesture class labels matching model output indices |
+| `services/recognition/webapp/data/sinhala_labels.json` | Sinhala translations and assistant sign knowledge on the recognition page |
 
 The shell's own assistant is unaffected — its knowledge base is committed at
 `apps/shell/public/data/signs.json`. Rebuild it after a retrain with:
@@ -123,7 +121,7 @@ python -X utf8 apps/shell/scripts/build-sign-index.py
 **The Recognize page is not Suvana-branded** — something else is on 8000,
 almost certainly the team repo's copy from another terminal. Stop it.
 
-**`Loaded 0 gesture labels`** — `labels.npy` is missing; see above.
+**`Loaded 0 gesture labels`** — check that `services/recognition/data/processed/labels.npy` exists and is readable; see above.
 
 **Communicate 500s in the shell** — it is not running on 3000. The landing
 degrades to "Sign in / Create account" and everything else still works.

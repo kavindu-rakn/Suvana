@@ -8,8 +8,8 @@ Five deployable units. Three are web apps on Vercel; two are Python services tha
 | `apps/shell` | Vercel — project **`suvana-shell`** | Static; owns the domain root and proxies the other two |
 | `apps/learn` | Vercel — project **`suvana-learn`** | Static SPA served under `/learn/` |
 | `apps/communicate` | Vercel — project **`suvana-communicate`** | Next.js full-stack, served under `/communicate` |
-| `services/recognition` | A container host (Hugging Face Docker Space, Render, Fly, Railway) | ~3 GB image with TensorFlow + MediaPipe, and it needs a **WebSocket**. Vercel functions cap at 250 MB and do not proxy WebSocket upgrades |
-| `services/speech` | A container host | ~3.5 GB of PyTorch/Whisper weights, same limits |
+| `services/recognition` | A container host (Railway Hobby recommended from 18 Oct, or Render/Fly) | ~3 GB image with TensorFlow + MediaPipe, and it needs a **WebSocket**. Vercel functions cap at 250 MB and do not proxy WebSocket upgrades |
+| `services/speech` | Laptop-only by default (DN-03), or container host | ~3.5 GB of PyTorch/Whisper weights, slow on CPU |
 | `apps/alerts` | EAS build → APK | Not a web deployment. Needs a dev build: the app has a custom native module, so Expo Go cannot run it |
 
 ## The project names are not cosmetic
@@ -32,26 +32,6 @@ No environment variables. Vite builds with `base: '/learn/'` into `dist/learn`,
 so the deployment serves `/learn/*` on its own domain too — which is what makes
 the shell's rewrite a straight pass-through with no path rewriting.
 
-### 1b. `suvana-shell` — one optional environment variable
-
-| Variable | Value |
-|---|---|
-| `GEMINI_API_KEY` | A Google AI Studio key. Set it in the Vercel project's environment variables (Production, and Preview if you want it there). |
-
-This is what lets the built-in assistant answer conversationally without every
-visitor bringing their own key. It is read only by the `api/assistant` Edge
-function and never reaches the browser — do not rename it to `VITE_*`, which
-would inline it into the client bundle and publish it.
-
-Leave it unset and the assistant still works: it falls back to its local
-retrieval engine over the committed sign index.
-
-**Keep billing disabled on the Google project.** The endpoint is public, so
-anyone who finds it can spend the quota. It is rate limited per client, but
-serverless instances are ephemeral so that cap is per-instance rather than
-global — the real backstop is Google's own per-project limit, which with
-billing off means a burned daily quota rather than an invoice.
-
 ### 2. `suvana-communicate` — Root Directory `apps/communicate`
 
 Environment variables (Production):
@@ -68,10 +48,26 @@ Environment variables (Production):
 
 ### 3. `suvana-shell` — Root Directory `apps/shell`
 
-No environment variables. Deploy this **last**: it proxies the other two, so
-until they exist `/learn` and `/communicate` return errors. Nothing breaks
-permanently — redeploying the shell is not required once they come up, because
-the rewrite targets are fixed hostnames rather than per-deployment URLs.
+Deploy this **last**: it proxies the other two, so until they exist `/learn` and
+`/communicate` return errors. Nothing breaks permanently — redeploying the shell
+is not required once they come up, because the rewrite targets are fixed hostnames
+rather than per-deployment URLs.
+
+Environment variables:
+
+| Variable | Value |
+|---|---|
+| `GEMINI_API_KEY` | Optional Google AI Studio key. Set it in the Vercel project's environment variables (Production, and Preview if desired). Read only by the `api/assistant` Edge function; never reaches the browser and must never be `VITE_`-prefixed. |
+| `VITE_RECOGNIZE_URL` | Optional origin for the deployed Recognize service (e.g. `https://recognize.suvana.help`), injected by Vite at build time. When unset, falls back to `http://localhost:8000` / `7860`. |
+
+Leave `GEMINI_API_KEY` unset and the assistant still works: it falls back to its local
+retrieval engine over the committed sign index.
+
+**Keep billing disabled on the Google project.** The endpoint is public, so
+anyone who finds it can spend the quota. It is rate limited per client, but
+serverless instances are ephemeral so that cap is per-instance rather than
+global — the real backstop is Google's own per-project limit, which with
+billing off means a burned daily quota rather than an invoice.
 
 ### Custom domain
 
@@ -92,8 +88,10 @@ docker build -t suvana-speech services/speech
 docker run -p 7860:7860 suvana-speech
 ```
 
-Both target port 7860 and a uid-1000 user, so either drops onto a Hugging Face
-Docker Space unchanged. See each service's `DEPLOY-SUVANA.md` / `README.md`.
+Both target port 7860 and a uid-1000 user. Note: Hugging Face Docker Spaces
+require a paid PRO subscription to prevent idle sleeping; Railway Hobby ($5/mo,
+always-on) is the recommended host for Recognize (DN-02), while Speech stays
+laptop-only by default (DN-03). See each service's `DEPLOY-SUVANA.md` / `README.md`.
 
 **Recognition runs on its own origin** (e.g. `recognize.<domain>`), not behind
 the shell, because Vercel cannot proxy its WebSocket. It serves its own page,
@@ -108,7 +106,6 @@ changes.
 
 | Blocker | Effect until resolved | Owner |
 |---|---|---|
-| `data/processed/labels.npy` | Recognition reports `Gesture_0…170` instead of sign names | Lahiru |
 | `emotion_clf.joblib` | Speech falls back to an English wav2vec2 model | Lithira |
 | Atlas + Cloudinary credentials, gloss-animation export | Communicate has no accounts and no sign animations | Lithira |
 
