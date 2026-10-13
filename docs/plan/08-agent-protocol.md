@@ -178,6 +178,14 @@ Then append to `docs/plan/LOG.md` (template inside it). For R26 port tasks the h
 
 ## 12. kvn's merge flow (K-10, evening)
 
+**Integration prep (claude-code lane, whenever kvn asks "prepare integration/<date>").** This is how the 13 Oct merges were done; it turns many merges into one for kvn.
+1. `git fetch origin`, then in a scratch worktree `git switch -c integration/<date> origin/main` (the `Suvana-wt/integration` worktree may be reused).
+2. Merge, with `--no-ff`, every agent branch whose handoff says `review` or `ready` and whose dependencies are on main or in this branch, bottom of each stack first. LOG.md merges by union (`.gitattributes`); stop on any other conflict and report it.
+3. Run every gate on the merged tree (Learn `npm ci`, `npm test`, lint, build; Shell build; Communicate lint and build when touched; recognition pytest when touched; sync guard). A branch that breaks the merged tree is left out and reported, even if it passed alone.
+4. For every UI branch (screenshots: yes), open its screenshots, reject unusable ones (blank, loading screens, wrong page), and put before/after comparison images in `.agent-local/review/<date>/`. Check that fixtures and screenshots contain no invented SSL content or figures.
+5. Add one commit with board statuses and a LOG entry (the only time an agent touches BOARD.md/tasks.json, on kvn's request), then tell kvn in plain English: what is in the branch, what needs his approval (with the images), what was left out and why.
+6. kvn approves, then merges `integration/<date>` into main in GitHub Desktop and pushes. Nothing is pushed or merged by the agent.
+
 1. Read today's LOG.md entries and each `handoffs/<ID>.md`.
 2. For UI tasks open `<lane worktree>\.agent-local\screens\<ID>\index.html`; decide adopt/reject; write the decision in LOG.md.
 3. In GitHub Desktop: merge adopted branches into `main` bottom-up (stacks from the bottom), resolving `LOG.md` by keeping both sides (automatic after Q-02).
