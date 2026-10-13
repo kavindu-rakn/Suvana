@@ -270,3 +270,26 @@ Rules:
 
 ### 2026-10-13 15:20 | kvn | UI approval for integration/2026-10-13c
 - Approved in chat from the before/after renders (desktop + phone, .agent-local/review/2026-10-13c/L-08/): L-08 (0.5x start then 1x, 0.25/0.5/0.75/1 speed buttons, raw framing with "Position in the original video frame" and Zoom to hands, "Mirrored: copy it like a mirror", wrist-anchored ghost, one-row phone transport). Recorded by claude-code.
+
+### 2026-10-13 15:40 | kvn (recorded by claude-code) | R-00 committed in R26; AGENTS.md decision
+- What: kvn committed and pushed the M0 port to R26 as 761ec32 ("Learn: port Suvana Learn (M0) from Suvana d9a6aaf", 54 files). R26 tree clean; gates re-run on 761ec32: npm@10 ci ok, tests 188 passed + 2 skipped, build 143.82 kB gzip, no '/learn/' in dist.
+- Decision (kvn, chat): apps/learn/AGENTS.md and apps/learn/CLAUDE.md stay out of R26.
+- Plan correction for R-02: the port command excludes AGENTS.md and CLAUDE.md as well as suvana.config.json, vercel.json and package-lock.json, and `--check` ignores them (07 section 5).
+- Found: learn-ssl-module has no Git auto-deploy (no deployment followed the push); D-06 is the CLI redeploy in 07 section 6.
+- Next: kvn runs D-06 (deploy preview, check, promote) and logs the deployment id.
+
+### 2026-10-13 17:15 | kvn (recorded by claude-code) | D-06 redeploy
+- What: deploy. learn-ssl-module.vercel.app promoted to dpl_6sS4P7JMYmYS6CzkYA7JB8qYNrPh (preview learn-ssl-module-c8kam2nxb), built from R26 761ec32, which ports Suvana d9a6aaf. Rollback target: dpl_4gfgnSdmCw8msd5dhc6nzMhknPLH (334beba).
+- Checks: live site 200 and serves the ported bundle (index-CkacNhbm.js); /references/* now `public, max-age=86400, stale-while-revalidate=604800` (was a year, immutable); preview checked before promotion; kvn checked the camera flow in the browser.
+- Found: the CLI needed `npx vercel login` first ("Not authorized" otherwise); deploys use `--scope kavindu-rakns-projects`. No Git auto-deploy on this project.
+- Next: D-06 can be marked done. R-03 (M1) ports the next Learn milestone.
+
+### 2026-10-13 17:40 | kvn (recorded by claude-code) | decisions DN-05, DN-06, DN-10, DN-11, DN-14
+- What: decision. kvn took the plan's recommendations, in chat:
+  - DN-05: no corpus video before the demo (option a). L-15a, L-15b and K-06 are cancelled; Learn ships with the improved skeleton.
+  - DN-06: not needed (no video).
+  - DN-10: as D-A14. Codex's L-12 proposes concrete looser thresholds with a rendered mock; kvn approves before anything is built.
+  - DN-11: learner progress stays per browser (IndexedDB), with reset and a demo profile.
+  - DN-14: ask Karindra (K-03) with a 15 Oct deadline; on no reply, rebuild under kvn's EAS with package help.suvana.alerts (I-12a, 16 Oct).
+- Needs kvn: copy these into DECISIONS.md and mark L-15a, L-15b and K-06 cancelled on the board (agents do not edit either).
+- Next: codex starts with the L-12 threshold proposal; antigravity skips L-15b and I-12a for now.
