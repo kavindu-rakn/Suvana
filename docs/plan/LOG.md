@@ -321,3 +321,12 @@ Rules:
 - Screenshots: .agent-local/screens/L-12/index.html, approved 60/70/60 mock states added; original proposal snapshots preserved.
 - Needs kvn: review/merge; thresholds already approved. Board/spec draft acceptance values need kvn's update; no agent edit to board/decisions.
 - Next: L-13 stacked on this logic branch, using Recall unlock 70. Path/Practice/Progress consumer UI stays with its assigned owners.
+
+### 2026-10-13 20:13 | codex | L-13
+- What: done for logic/API review: due-first single Next, 2:1 finite-session mix, truthful reasons, approved-unit start API, pure next-exercise rules and ADAPTATION.md. Recall unlock uses approved second-star threshold 70.
+- Branch @ sha: agent/codex/L-13-adaptation @ task HEAD, stacked on agent/codex/L-12-game-logic @ 890c082 (main base 8dfb949).
+- Gates: npm 10 ci; lint 0 warnings; 221 passed / 9 skipped; build 145.12 kB gzip; guard 164; diff check passed. Actual Practice one-item selector revisits score 30 before an unseen sign in regression coverage. Packages/lockfiles unchanged.
+- Screenshots: n/a (learner/session logic only). L-12 approved 60/70/60 mock already rendered.
+- Needs kvn: review/merge L-12 then L-13. K-05 curriculum approval and L-11/L-16 UI hooks still have their assigned owners; no new Path button claimed here.
+- Plan correction: strict no-new-while-due applies to single Next; finite sessions implement the specified 2:1 interleave. Fresh low scores receive an honest low-match reason, not a fictional score-drop reason. Details and exact hookup are in handoffs/L-13.md and learner/ADAPTATION.md.
+- Next: L-11/L-16 integrate the APIs in their UI lane. No push, merge, messages, R26 mutation or deployment by codex.
