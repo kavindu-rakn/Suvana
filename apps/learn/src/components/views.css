@@ -2860,6 +2860,12 @@
     left: 12px;
     bottom: 14px;
   }
+  .aww-cam-notice {
+    left: 12px;
+    right: 12px;
+    bottom: 66px;
+    max-width: calc(100% - 24px);
+  }
   .aww-cam-rec {
     top: 12px;
     right: 12px;
@@ -3207,6 +3213,25 @@
   left: 20px;
   bottom: 20px;
   z-index: 50;
+}
+
+/* Why the last take was abandoned, just above the action button. */
+.aww-cam-notice {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 76px;
+  z-index: 50;
+  width: fit-content;
+  max-width: calc(100% - 40px);
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font: 500 0.85rem var(--sans);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .aww-cam-btn {
