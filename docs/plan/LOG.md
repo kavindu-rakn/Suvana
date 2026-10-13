@@ -125,3 +125,11 @@ Rules:
 - Needs kvn: merge corrected Q-00, then visual review before R-01 adoption; later mirror from merged main.
 - Plan correction: no rendered/byte-identical R26 claim; standalone paths validated, mirror and renders still separate gates.
 - Next: I-04 from main as a sibling branch (R-01 is a leaf UI branch).
+
+### 2026-10-13 10:58 | codex | R-01 screenshot follow-up
+- What: R-01 rebased onto Q-00 main 26a20e5; 16 screenshots captured across both editions, views and viewports. No additional product change; ready for visual review.
+- Branch @ sha: agent/codex/R-01-portability @ task HEAD (rebased implementation 43c745c; final commit in branch log). L-05 final a34c228 is a sibling; I-04 remains f3bcd1b.
+- Gates: clean npm 10 ci; lint 0 warnings; 161 passed / 9 skipped; Suvana build 142.34 kB gzip, standalone 141.89; guard 156; standalone route/flag/fixture checks and 16 PNG assertions passed. Six image pairs byte-identical; remaining pairs differ at 4 and 7 pixels, inspected with no layout change.
+- Screenshots: C:/Users/User/Documents/Suvana-wt/codex/.agent-local/screens/R-01/index.html (Suvana before main 2fd433a; standalone before R26 ec2604a; after R-01 final source).
+- Needs kvn: adopt/reject renders and merge if accepted; actual R26 mirror/deploy stays separate.
+- Next: both pending screenshot handoffs complete; disable the quiet screenshot follow-up. No pushes, merges or deployments by Codex.
