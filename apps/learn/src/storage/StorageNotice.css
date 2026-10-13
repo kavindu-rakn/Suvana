@@ -13,6 +13,12 @@
   overflow-wrap: anywhere;
 }
 
+.aww-studio-env > .storage-notice {
+  /* Record's existing panes can exceed the phone viewport. Keep the notice
+     readable without changing that separately owned layout. */
+  max-width: 100vw;
+}
+
 .aww-studio-env > .storage-notice + .aww-split-screen {
   flex: 1;
   height: auto;
