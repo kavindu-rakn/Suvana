@@ -2,8 +2,10 @@ import type { SignRecording } from '../vision/types'
 import { dtw } from './dtw'
 import { extractHandFeatures, handednessesIn, mirrorHandFeatures } from './normalize'
 import type { FrameFeature, HandFeatureSequence } from './normalize'
-import { FINGER_LABEL, LANDMARK_FINGER, NUM_LANDMARKS } from './landmarks'
+import { LANDMARK_FINGER, NUM_LANDMARKS } from './landmarks'
 import type { Finger } from './landmarks'
+import { buildHints, hintText } from './hints'
+import type { Hint } from './hints'
 
 // --- tunables -------------------------------------------------------------
 // Relative contribution of handshape vs. movement to the per-frame distance,
@@ -63,10 +65,12 @@ export const D_ZERO = 0.77
 // A hand the reference expects but the learner never showed: heavy penalty.
 const MISSING_HAND_SCORE = 0
 
-// A finger is only worth a corrective hint if its average deviation (in
-// hand-size units) exceeds this — otherwise a near-perfect attempt would still
-// be told to "fix" fingers that are essentially correct.
-const HINT_MIN_DEVIATION = 0.1
+// L-17, hints.calibration.test.ts: ceil-to-0.01 of same-sign worst-joint p95
+// 2.2251505 (557 takes / 33 signs, one signer). At this candidate only 14.5%
+// of different-sign fingers exceed it: NOT a validated corrective threshold.
+// Exported for future fingerStates integration; finger corrections and states
+// remain hidden (D-A15). This does not affect score anchors or match bands.
+export const HINT_MIN_DEVIATION = 2.23
 
 export interface JointDeviation {
   landmark: number
@@ -83,6 +87,9 @@ export interface HandScore {
   perLandmark: number[]
   /** True if the reference used this hand but the attempt never showed it. */
   missing: boolean
+  /** Weighted average shape/trajectory costs along the winning DTW path.
+   * Optional for old fixtures; never changes the score or alignment. */
+  contributions?: { shape: number; traj: number }
 }
 
 export interface ScoreResult {
@@ -99,6 +106,8 @@ export interface ScoreResult {
   worstJoints: JointDeviation[]
   /** Human-readable corrective hints, most important first. */
   hints: string[]
+  /** Typed feedback for L-21; strings above keep existing views compatible. */
+  typedHints?: Hint[]
   /** True when the learner signed mirrored (e.g. left-dominant) and we scored
    *  them against the reflected reference. */
   mirrored: boolean
@@ -175,56 +184,21 @@ function scoreHand(
   const result = dtw(attempt.frames.length, reference.frames.length, (i, j) =>
     frameDistance(attempt.frames[i], reference.frames[j], w),
   )
+  const contributions = { shape: 0, traj: 0 }
+  for (const [ai, ri] of result.path) {
+    contributions.shape += w.shape * rms(attempt.frames[ai].shape, reference.frames[ri].shape)
+    contributions.traj += w.traj * rms(attempt.frames[ai].traj, reference.frames[ri].traj)
+  }
+  contributions.shape /= result.path.length
+  contributions.traj /= result.path.length
   return {
     handedness: reference.handedness,
     score: distanceToScore(result.normalizedDistance),
     normalizedDistance: result.normalizedDistance,
     perLandmark: perLandmarkDeviation(attempt.frames, reference.frames, result.path),
     missing: false,
+    contributions,
   }
-}
-
-function buildHints(
-  hands: HandScore[],
-  worstJoints: JointDeviation[],
-  twoHanded: boolean,
-): string[] {
-  const hints: string[] = []
-
-  // One line, not one per missing hand — a two-handed sign with both hands
-  // missing used to produce two near-identical "use your X hand too" lines.
-  const missing = hands.filter((h) => h.missing)
-  if (missing.length > 0) {
-    if (twoHanded) {
-      hints.push(
-        missing.length >= hands.length
-          ? 'This sign is two-handed — use both hands.'
-          : `Use your ${missing[0].handedness.toLowerCase()} hand too — this sign is two-handed.`,
-      )
-    } else {
-      hints.push('No hand was tracked in your attempt — check your framing and lighting.')
-    }
-  }
-
-  // Group the worst joints by finger so we don't repeat "index finger" 4 times,
-  // and only mention fingers that are meaningfully off.
-  const byFinger = new Map<string, JointDeviation>()
-  for (const j of worstJoints) {
-    if (j.finger === 'wrist' || j.deviation <= HINT_MIN_DEVIATION) continue
-    if (!byFinger.has(j.finger)) byFinger.set(j.finger, j)
-  }
-  for (const dev of [...byFinger.values()].slice(0, 2)) {
-    hints.push(`Check your ${FINGER_LABEL[dev.finger]} — its shape drifts from the reference.`)
-  }
-
-  if (hints.length === 0) {
-    hints.push(
-      twoHanded
-        ? 'Close match — both hands are tracking the reference well.'
-        : 'Close match — keep the same handshape and pace.',
-    )
-  }
-  return hints
 }
 
 /** Score every reference hand against the attempt hand of the same handedness. */
@@ -276,6 +250,7 @@ export function scoreAttempt(
       hands: [],
       worstJoints: [],
       hints: ['No hands were tracked in the reference.'],
+      typedHints: [{ kind: 'untracked-reference' }],
       mirrored: false,
       twoHanded: false,
     }
@@ -311,12 +286,24 @@ export function scoreAttempt(
       : hands.reduce((acc, h, i) => acc + (h.missing ? 0 : h.normalizedDistance) * distanceWeights[i], 0) /
         distanceTotal
 
+  const activeFrames = attempt.frames.filter((frame) => frame.hands.some((h) => h.landmarks.length >= NUM_LANDMARKS))
+  const attemptActiveMs = activeFrames.length < 2 ? 0
+    : activeFrames[activeFrames.length - 1].timestampMs - activeFrames[0].timestampMs
+  // Weight distance contributions by reference frame count, just like score.
+  const frameWeights = refSeqs.map((seq) => Math.max(seq.frames.length, 1))
+  const totalFrames = frameWeights.reduce((a, b) => a + b, 0)
+  const contribution = (kind: 'shape' | 'traj') => hands.reduce((total, hand, i) =>
+    total + (hand.contributions?.[kind] ?? 0) * frameWeights[i], 0) / totalFrames
+  const typedHints = buildHints({ score, missingHands: hands.filter((h) => h.missing).map((h) => h.handedness),
+    handCount: hands.length, mirrored, attemptActiveMs, referenceMs: reference.durationMs,
+    shapeContribution: contribution('shape'), trajectoryContribution: contribution('traj') })
   return {
     score,
     normalizedDistance,
     hands,
     worstJoints,
-    hints: buildHints(hands, worstJoints, twoHanded),
+    hints: typedHints.map((hint) => hintText(hint, twoHanded)),
+    typedHints,
     mirrored,
     twoHanded,
   }

@@ -376,3 +376,11 @@ Rules:
 - Needs kvn: review/merge L-12 then L-13. K-05 curriculum approval and L-11/L-16 UI hooks still have their assigned owners; no new Path button claimed here.
 - Plan correction: strict no-new-while-due applies to single Next; finite sessions implement the specified 2:1 interleave. Fresh low scores receive an honest low-match reason, not a fictional score-drop reason. Details and exact hookup are in handoffs/L-13.md and learner/ADAPTATION.md.
 - Next: L-11/L-16 integrate the APIs in their UI lane. No push, merge, messages, R26 mutation or deployment by codex.
+### 2026-10-13 19:04 | codex | L-17
+- What: done for review: typed hints plus string compatibility, Close match >=85, active-duration timing, real-pair-proven path hint, mirrored missing-hand wording, max two hints. Finger states/corrections stay hidden.
+- Branch @ sha: agent/codex/L-17-hints @ task HEAD (base bca1688; final SHA in branch log).
+- Gates: npm 10 ci; lint 0 warnings; 202 passed / 11 skipped; build 145.17 kB gzip; guard 164; read-only calibration and 314-pair exact numeric comparison passed; existing finger audit unchanged.
+- Screenshots: .agent-local/screens/L-17/index.html; before/after desktop and phone, isolated synthetic fixture using real ScoreBadge/styles. Needs kvn's wording decision.
+- Needs kvn: review/merge and wording adoption; no finger-state revival. HINT_MIN_DEVIATION candidate 2.23 is derived from same-sign p95, but wrong-sign detection remains weak; no correctness claim.
+- Plan correction: preserve legacy strings for current consumers; L-21 consumes typedHints. fingerStates comment-only correction proposed in handoff due to task boundary. No Q-04 e2e script yet.
+- Next: L-23a profiles. L-12/L-13 still wait for L-12 chat approval; L-15a skipped per DN-05=no video.
