@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import shutil
 import subprocess
@@ -68,6 +69,8 @@ COORD_DECIMALS = 5
 # Files converted from the dataset are prefixed so they can never collide with
 # recordings exported from the browser, which must not be overwritten.
 OUTPUT_PREFIX = "kaggle_"
+SENTENCE_CATEGORY = "SSL Sentences"
+SENTENCE_PREFIX = "kaggle_sent_"
 
 # tools/reference-converter/ -> tools/ -> repo root. The defaults pointed at
 # the pre-monorepo layout (<root>/web/public/...) and silently resolved to
@@ -116,6 +119,73 @@ def parse_label(path: Path) -> tuple[str, str | None]:
 def safe_filename(gloss: str, prefix: str = OUTPUT_PREFIX) -> str:
     slug = re.sub(r"[^A-Za-z0-9]+", "_", gloss).strip("_")
     return f"{prefix}{slug}.json"
+
+
+def sentence_video_files(folder: Path) -> list[Path]:
+    # pathlib treats the corpus's literal '.mp4' filename as extensionless.
+    # Include it in evidence/accounting, but never invent a label for it.
+    return video_files(folder) + [p for p in folder.iterdir()
+                                 if p.is_file() and p.name.lower() in VIDEO_SUFFIXES]
+
+
+def probe_video_duration(video: Path) -> int:
+    """Read container metadata only, in an isolated, time-bounded process."""
+    import cv2
+
+    capture = cv2.VideoCapture(str(video))
+    try:
+        if not capture.isOpened():
+            raise ValueError("could not open video metadata")
+        fps = float(capture.get(cv2.CAP_PROP_FPS))
+        frames = float(capture.get(cv2.CAP_PROP_FRAME_COUNT))
+        if not math.isfinite(fps) or not math.isfinite(frames) or fps <= 0 or frames <= 0:
+            raise ValueError("missing or invalid frame count/FPS")
+        return round(frames * 1000 / fps)
+    finally:
+        capture.release()
+
+
+def sentence_inventory(dataset: Path, probe_durations: bool = False) -> dict:
+    """List verbatim source labels without conversion, model loading or writes.
+
+    Durations are container frame-count/FPS estimates, not decoded/tracked spans.
+    A corrupt clip or missing OpenCV yields an explicit unknown, never a guess.
+    """
+    folder = dataset / SENTENCE_CATEGORY
+    if not folder.is_dir():
+        raise ValueError(f"Sentence category not found: {folder}")
+    clips = []
+    for video in sorted(sentence_video_files(folder)):
+        label = None if video.name.lower() in VIDEO_SUFFIXES else video.stem
+        usable = bool(label and label.strip() and not video.name.startswith("."))
+        row = {
+            "sourceFile": video.name,
+            "sourceLabel": label,
+            "hasUsableLabel": usable,
+            "referenceFile": safe_filename(label.upper(), SENTENCE_PREFIX) if usable else None,
+            "numericLabel": label.strip().isdecimal() if label else None,
+            "sourceDurationMs": None,
+        }
+        if probe_durations:
+            try:
+                proc = subprocess.run(
+                    [sys.executable, str(Path(__file__).resolve()), "--probe-video", str(video)],
+                    capture_output=True, text=True, timeout=15,
+                )
+                if proc.returncode:
+                    raise ValueError(proc.stderr.strip() or "video metadata probe failed")
+                row["sourceDurationMs"] = json.loads(proc.stdout)["sourceDurationMs"]
+            except (subprocess.TimeoutExpired, ValueError, KeyError) as exc:
+                row["metadataError"] = str(exc)
+        clips.append(row)
+    return {
+        "sourceCategory": SENTENCE_CATEGORY,
+        "count": len(clips),
+        "labelledCount": sum(c["hasUsableLabel"] for c in clips),
+        "unlabelledCount": sum(not c["hasUsableLabel"] for c in clips),
+        "durationBasis": "container frame count / FPS" if probe_durations else "not probed",
+        "clips": clips,
+    }
 
 
 # =========================== child process ==================================
@@ -361,7 +431,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--dataset", type=Path, help="Dataset root folder")
     p.add_argument("--category", action="append", default=[], help="Subfolder to convert (repeatable)")
-    p.add_argument("--all", action="store_true", help="Convert every subfolder")
+    p.add_argument("--all", action="store_true",
+                   help="Convert all isolated-sign subfolders; sentences are opt-in")
+    p.add_argument("--sentences", action="store_true",
+                   help="Convert only SSL Sentences into the separate kaggle_sent_ namespace")
+    p.add_argument("--list-sentences", action="store_true",
+                   help="Print exact sentence filenames/labels as JSON; no model or output writes")
+    p.add_argument("--probe-durations", action="store_true",
+                   help="With --list-sentences, probe container durations (OpenCV, 15s limit per clip)")
     p.add_argument("--out", type=Path, default=DEFAULT_OUT)
     p.add_argument("--model", type=Path, default=DEFAULT_MODEL)
     p.add_argument("--dataset-name", default="dckahawearachchi/sinhala-sign-language-dataset")
@@ -394,6 +471,7 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Comma-separated sign names to convert, e.g. \"I,You,Can,Where\"")
     # internal
     p.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
+    p.add_argument("--probe-video", type=Path, help=argparse.SUPPRESS)
     p.add_argument("--video", type=Path, help=argparse.SUPPRESS)
     p.add_argument("--worker-out", type=Path, help=argparse.SUPPRESS)
     p.add_argument("--gloss", default="", help=argparse.SUPPRESS)
@@ -405,12 +483,23 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     args = build_parser().parse_args()
 
+    if args.probe_video:
+        try:
+            print(json.dumps({"sourceDurationMs": probe_video_duration(args.probe_video)}))
+            return 0
+        except (ImportError, ValueError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+
     if args.worker:
         return run_worker(
             args.video, args.worker_out, args.model, args.max_width, args.dataset_name,
             args.gloss, args.variant or None, args.source_category,
             args.licence, args.attribution, args.source_id,
         )
+
+    if args.list_sentences and (args.all or args.category or args.sentences or args.manifest_only):
+        sys.exit("Use --list-sentences separately from conversion/manifest selectors.")
 
     if args.manifest_only:
         files = write_manifest(args.out)
@@ -419,15 +508,39 @@ def main() -> int:
 
     if not args.dataset or not args.dataset.is_dir():
         sys.exit(f"Dataset folder not found: {args.dataset}")
-    if not args.model.is_file():
-        sys.exit(f"Model not found: {args.model}")
+    if args.list_sentences:
+        try:
+            print(json.dumps(sentence_inventory(args.dataset, args.probe_durations),
+                             ensure_ascii=False, indent=2))
+            return 0
+        except ValueError as exc:
+            sys.exit(str(exc))
+    if args.probe_durations:
+        sys.exit("--probe-durations requires --list-sentences")
+    if args.sentences:
+        if args.all or args.category:
+            sys.exit("Use --sentences separately from --all/--category.")
+        args.category = [SENTENCE_CATEGORY]
 
     if args.all:
-        categories = sorted(p for p in args.dataset.iterdir() if p.is_dir())
+        categories = sorted(p for p in args.dataset.iterdir()
+                            if p.is_dir() and p.name != SENTENCE_CATEGORY)
+        if (args.dataset / SENTENCE_CATEGORY).is_dir():
+            print("SSL Sentences excluded from single-sign conversion; use --sentences separately.")
     elif args.category:
         categories = [args.dataset / c for c in args.category]
     else:
         sys.exit("Pass --category NAME (repeatable) or --all")
+
+    sentence_run = any(c.name == SENTENCE_CATEGORY for c in categories)
+    if sentence_run:
+        if len(categories) != 1:
+            sys.exit("Convert SSL Sentences separately from isolated signs.")
+        if args.prefix not in (OUTPUT_PREFIX, SENTENCE_PREFIX):
+            sys.exit("Sentence references require prefix kaggle_sent_.")
+        args.prefix = SENTENCE_PREFIX
+    if not args.model.is_file():
+        sys.exit(f"Model not found: {args.model}")
 
     # Two corpus layouts are supported:
     #   flat:   <category>/<Sign>.mp4                  (one take per sign)
@@ -447,7 +560,8 @@ def main() -> int:
         for sign_dir in sorted(p for p in category.iterdir() if p.is_dir()):
             for take in sorted(video_files(sign_dir)):
                 candidates.append((take, sign_dir))
-        for flat in sorted(video_files(category)):
+        flat_videos = sentence_video_files(category) if sentence_run else video_files(category)
+        for flat in sorted(flat_videos):
             candidates.append((flat, flat))
 
         for path, label_source in candidates:
@@ -455,7 +569,10 @@ def main() -> int:
             # ".mp4", and names that are only a parenthetical note
             # ("(1st way).mp4"). A sign we cannot name is a sign we cannot
             # practise, and guessing a gloss is not allowed.
-            gloss, variant = parse_label(label_source)
+            # Sentence cues retain the entire dataset label, including any
+            # parenthetical text. sourceLabel remains verbatim in provenance.
+            gloss, variant = ((label_source.stem.upper(), None) if sentence_run
+                              else parse_label(label_source))
             if path.name.startswith(".") or not gloss:
                 unlabelled.append(path)
                 continue
@@ -473,6 +590,11 @@ def main() -> int:
         videos = videos[: args.limit]
     if not videos:
         sys.exit("No videos found.")
+    if sentence_run:
+        destinations = [safe_filename(gloss, args.prefix) for _, gloss, _, _ in videos]
+        if (f"{SENTENCE_PREFIX}.json" in destinations or
+                len(set(destinations)) != len(destinations)):
+            sys.exit("Sentence labels produce empty or colliding file IDs; no references written.")
 
     print(f"Converting {len(videos)} clip(s) from {len(categories)} category(ies)...\n")
     started = time.time()

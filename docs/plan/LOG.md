@@ -206,3 +206,12 @@ Rules:
 
 ### 2026-10-13 12:45 | kvn | UI approvals for integration/2026-10-13b
 - Approved from before/after renders (desktop + phone): I-01 (pipeline tag says Alerts), L-03 (not-scored notice above Record), L-07 (3-step How it works guide; Record waits for Hands in frame). R-01 was approved earlier; I-04 has no UI.
+
+### 2026-10-13 13:31 | codex | L-22a
+- What: Completed next unblocked board task: read-only inventory of 21 sentence clips (20 named, 1 unlabelled .mp4), converter sentence mode and K-07 commands. Sentence labels preserved verbatim; no footage or references generated/committed.
+- Branch @ sha: agent/codex/L-22a-sentence-labels @ task HEAD (base d9a6aaf; final SHA in branch log).
+- Gates: converter 12 tests passed; clean npm 10 ci; Learn lint 0 warnings, 181 passed / 9 skipped, build 144.27 kB gzip; sync guard 164; diff check passed.
+- Screenshots: n/a (CLI/logic/docs only).
+- Plan correction: 21 inputs include one clip with no label; K-07 cannot promise 21 usable labelled references. --all now announces sentence exclusion; --sentences uses its own namespace. Exact labels and measured container durations are in handoffs/L-22a.md.
+- Needs kvn: review/merge L-22a; decide DN-08 before K-07. No game implementation until L-09 is merged and exact DN-10 values approved. L-15a follows DN-05's no-video default while undecided.
+- Next: L-12 after its dependency/decision gates; K-07 after DN-08. Screenshot automation already stopped; no new follow-up scheduled.
