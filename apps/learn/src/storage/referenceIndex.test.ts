@@ -128,6 +128,46 @@ describe.skipIf(!indexExists)('reference index', () => {
       expect(typeof entry.createdAt, entry.file).toBe('string')
     }
   })
+
+  it('adds hands, motion, durationMs, licence and hasMeaning to every reference', () => {
+    for (const entry of index) {
+      expect([1, 2], `hands for ${entry.file}`).toContain(entry.hands)
+      expect(['still', 'moving'], `motion for ${entry.file}`).toContain(entry.motion)
+      expect(typeof entry.durationMs, `durationMs for ${entry.file}`).toBe('number')
+      expect(entry.durationMs, `positive durationMs for ${entry.file}`).toBeGreaterThan(0)
+      expect(typeof entry.licence, `licence for ${entry.file}`).toBe('string')
+      expect(entry.licence?.length, `non-empty licence for ${entry.file}`).toBeGreaterThan(0)
+      expect(typeof entry.hasMeaning, `hasMeaning for ${entry.file}`).toBe('boolean')
+    }
+  })
+
+  it('correctly classifies known references (C, ADINAWA, AYUBOWAN)', () => {
+    const byFile = new Map(index.map((e) => [e.file, e]))
+
+    const c = byFile.get('kaggle_C.json')
+    expect(c).toBeDefined()
+    expect(c?.hands).toBe(1)
+    expect(c?.motion).toBe('still')
+    expect(c?.durationMs).toBe(3480)
+    expect(c?.licence).toBe('CC0-1.0')
+    expect(c?.hasMeaning).toBe(false)
+
+    const adinawa = byFile.get('kaggle_ADINAWA.json')
+    expect(adinawa).toBeDefined()
+    expect(adinawa?.hands).toBe(2)
+    expect(adinawa?.motion).toBe('moving')
+    expect(adinawa?.durationMs).toBe(1720)
+    expect(adinawa?.licence).toBe('CC0-1.0')
+    expect(adinawa?.hasMeaning).toBe(true)
+
+    const ayubowan = byFile.get('yohan_AYUBOWAN.json')
+    expect(ayubowan).toBeDefined()
+    expect(ayubowan?.hands).toBe(2)
+    expect(ayubowan?.motion).toBe('still')
+    expect(ayubowan?.durationMs).toBe(2800)
+    expect(ayubowan?.licence).toBe('CC-BY-NC-SA-4.0')
+    expect(ayubowan?.hasMeaning).toBe(false)
+  })
 })
 
 // A skipped suite is easy to mistake for a passing one, so say why out loud.

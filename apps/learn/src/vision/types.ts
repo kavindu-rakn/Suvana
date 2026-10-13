@@ -95,6 +95,12 @@ export interface RecordingMeta {
   videoWidth: number
   videoHeight: number
   frameCount: number
+  /** Number of hands primarily used in the sign (1 or 2). */
+  hands?: 1 | 2
+  /** Whether the hand is static or moving throughout the sign. */
+  motion?: 'still' | 'moving'
+  /** Whether a verified Sinhala-to-English translation exists for the gloss. */
+  hasMeaning?: boolean
   /** Licence and attribution travel with the metadata so the Library can
    *  credit a corpus without loading a single frame. */
   licence?: string

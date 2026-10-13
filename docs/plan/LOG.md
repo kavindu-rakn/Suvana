@@ -206,3 +206,10 @@ Rules:
 
 ### 2026-10-13 12:45 | kvn | UI approvals for integration/2026-10-13b
 - Approved from before/after renders (desktop + phone): I-01 (pipeline tag says Alerts), L-03 (not-scored notice above Record), L-07 (3-step How it works guide; Record waits for Hands in frame). R-01 was approved earlier; I-04 has no UI.
+
+### 2026-10-13 16:15 | antigravity | L-10 review
+- Branch agent/antigravity/L-10-ref-meta @ HEAD; handoff: docs/plan/handoffs/L-10.md.
+- Added data-derived reference metadata: hands (1|2), motion ('still'|'moving'), durationMs, licence, hasMeaning.
+- Thresholds documented as untuned UI constants: TWO_HAND_FRAME_THRESHOLD = 0.20, MOTION_PATH_THRESHOLD = 5.0 hand-size units.
+- Gates: Learn lint 0 warnings/errors, Learn tests 183 passed + 9 skipped (10 passed in referenceIndex.test.ts), build clean (bundle 144.27 kB gzip), index size 46.09 B/ref (budget 50 B), sync guard 164 passed.
+- Next: L-09 (curriculum report, data-derived units, scenario coverage) stacked on this branch.
