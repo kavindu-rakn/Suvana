@@ -10,7 +10,10 @@
  * have real per-gloss exports — see lib/animation/mixamoJsonToClip.ts for
  * the accepted JSON shapes.
  *
- * Usage:  npx tsx scripts/seedGlosses.ts
+ * Usage:  npx tsx scripts/seedGlosses.ts --placeholder-dev-only
+ *
+ * NOTE: The script refuses to run without --placeholder-dev-only to prevent
+ * accidental demoing of placeholder animations.
  */
 import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
@@ -60,6 +63,28 @@ const FALLBACK_SYNONYMS: Partial<Record<(typeof GLOSS_TOKENS)[number], string[]>
 };
 
 async function main() {
+  if (!process.argv.includes("--placeholder-dev-only")) {
+    console.error(
+      "\n====================================================================\n" +
+      "REFUSING TO SEED: --placeholder-dev-only flag required\n" +
+      "====================================================================\n" +
+      "seedGlosses.ts generates placeholder animation data (identical keyframes\n" +
+      "for every gloss) purely to exercise the pipeline end-to-end.\n\n" +
+      "Hard rules: Placeholder animations must NEVER be used in demos or\n" +
+      "production. Use importGlosses.ts to import genuine SSL animations instead.\n\n" +
+      "If you are developing locally and explicitly want placeholder fixtures,\n" +
+      "re-run with:\n" +
+      "  npx tsx scripts/seedGlosses.ts --placeholder-dev-only\n" +
+      "====================================================================\n"
+    );
+    process.exit(1);
+  }
+
+  console.warn(
+    "\n[WARNING] Seeding placeholder animations via --placeholder-dev-only.\n" +
+    "These placeholder animations are for local pipeline tests only and must NEVER be used in demos or production.\n"
+  );
+
   await connectDB();
 
   for (const gloss of GLOSS_TOKENS) {

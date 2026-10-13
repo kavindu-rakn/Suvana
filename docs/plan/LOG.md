@@ -321,3 +321,11 @@ Rules:
 - Screenshots: n/a (CLI tooling and documentation task).
 - Needs kvn: review and merge branch.
 - Next: L-19 (Scenario cleanup).
+### 2026-10-13 22:05 | antigravity | I-07
+- What: done (review). Enforced --placeholder-dev-only requirement in scripts/seedGlosses.ts (prints warning banner and exits 1 if flag missing); created scripts/importGlosses.ts supporting dry-run by default, Cloudinary URL remapping (--remap-base), and MongoDB upsert (--write/--apply); documented ADMIN_EMAILS with example in .env.local.example.
+- Branch @ sha: agent/antigravity/I-07-communicate-scripts @ HEAD (see git log)
+- Gates: sync guard 164 checks passed; Communicate npm run lint clean (0 errors, 0 warnings); Communicate build passed with NEXT_PUBLIC_BASE_PATH=/communicate (27 routes generated); script execution verified (refusal on seedGlosses, dry-run and URL remapping on importGlosses).
+- Screenshots: n/a (backend/CLI scripts and environment documentation).
+- Proposed diff: `scripts/importGlosses.ts` in Communicate's `suvanaOnly` in `tools/sync/upstreams.json` (handoff).
+- Needs kvn: review and merge branch.
+- Next: D-01 (Deployment smoke script and DEPLOYMENT.md refresh).
