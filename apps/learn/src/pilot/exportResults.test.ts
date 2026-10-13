@@ -67,6 +67,13 @@ describe('session segmentation', () => {
 })
 
 describe('buildExport', () => {
+  it('preserves optional game metadata in JSON without changing legacy CSV columns', () => {
+    const original = attempt('FIXTURE', 70, '2026-10-13T10:00:00.000Z')
+    const staged: AttemptLogEntry = { ...original, stage: 'recall', revealed: false, sessionId: 'fixture-session' }
+    const out = buildExport('fixture', [staged])
+    expect(JSON.parse(JSON.stringify(out)).attempts[0]).toMatchObject({ stage: 'recall', revealed: false, sessionId: 'fixture-session' })
+    expect(toCsv(out).split('\n')[0]).toBe(toCsv(buildExport('fixture', [original])).split('\n')[0])
+  })
   it('summarises a session', () => {
     const out = buildExport('P01', ATTEMPTS)
     expect(out.participantCode).toBe('P01')

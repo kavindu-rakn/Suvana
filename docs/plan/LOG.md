@@ -313,3 +313,11 @@ Rules:
 - Screenshots: .agent-local/screens/L-12/index.html; desktop/phone draft comparison, proposal and rule details. Hypothetical mock, no app UI adopted.
 - Needs kvn: approve or replace numbers and edge rules in handoffs/L-12.md in chat. D-A14 supersedes draft acceptance values; DN-05=no video (skip L-15a), DN-11=per-browser IndexedDB/reset/demo confirmed.
 - Next: R-02 then I-05; L-12 implementation waits for approval; L-13 follows approved L-12.
+
+### 2026-10-13 19:55 | codex | L-12 approved implementation
+- What: done for review: kvn approved in chat with first Try star 60 and third Recall star 60; implemented 60/70/60, all-signs-one-star unit pass, 5-attempt goal, goal-day streak and best-star XP. All approved edge rules included.
+- Branch @ sha: agent/codex/L-12-game-logic @ task HEAD (proposal cfebd34; implementation SHA in branch log).
+- Gates: npm 10 ci; lint clean; 204 passed / 9 skipped; build 144.76 kB gzip; guard 164; game.ts V8 coverage 100% including 64/64 branches; diff check passed.
+- Screenshots: .agent-local/screens/L-12/index.html, approved 60/70/60 mock states added; original proposal snapshots preserved.
+- Needs kvn: review/merge; thresholds already approved. Board/spec draft acceptance values need kvn's update; no agent edit to board/decisions.
+- Next: L-13 stacked on this logic branch, using Recall unlock 70. Path/Practice/Progress consumer UI stays with its assigned owners.
