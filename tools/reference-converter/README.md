@@ -185,6 +185,69 @@ python convert_references.py --dataset "<dataset root>" --all
 Output goes to `../web/public/references/` as one JSON per gloss plus a
 regenerated `manifest.json`.
 
+## Sentence inventory and conversion (L-22a / K-07)
+
+Run these commands from the **Suvana repository root**, using a Python environment
+with the converter dependencies. The inventory itself needs no hand model;
+`--probe-durations` needs OpenCV. It reads filenames and container metadata only,
+prints JSON and writes no references, manifest or video. Each metadata probe has
+a 15-second subprocess limit; unknown durations include an error, never a guess.
+
+```powershell
+python tools/reference-converter/convert_references.py `
+  --dataset "<dataset root>" --list-sentences --probe-durations
+```
+
+`sourceLabel` is the filename stem verbatim, including case, spaces and
+parentheses. `sourceDurationMs` is container frame count divided by FPS, **not**
+the tracked/trimmed reference duration. `numericLabel` only reports whether a
+label consists of digits; it does not validate a label's meaning or signed content.
+
+The supplied corpus was inventoried on 13 Oct 2026: **21 clips, 20 with usable
+text filenames and one literally named `.mp4`**. The latter has no source label,
+is included in the inventory, and is explicitly skipped by conversion. Never
+name it by guessing. Exact labels and durations are in
+`docs/plan/handoffs/L-22a.md`; video files remain outside the repository.
+
+**K-07, only after kvn decides DN-08:** convert the named clips as whole
+references into a staging folder outside the repository. Do not copy them into
+the learner's reference folder until L-22b provides the sentence separation.
+
+```powershell
+# Tracking dry run first; it writes no reference-folder outputs.
+python tools/reference-converter/convert_references.py `
+  --dataset "<dataset root>" --sentences `
+  --model apps/learn/public/models/hand_landmarker.task `
+  --out "$env:TEMP/suvana-sentence-references" --dry-run
+
+# K-07 conversion, after DN-08 approval; no video/audio frames are exported.
+python tools/reference-converter/convert_references.py `
+  --dataset "<dataset root>" --sentences `
+  --model apps/learn/public/models/hand_landmarker.task `
+  --out "$env:TEMP/suvana-sentence-references"
+```
+
+Sentence files always use `kaggle_sent_*.json`; explicitly selecting
+`--category "SSL Sentences"` applies the same namespace. Mixed sentence/isolated
+category runs, incompatible prefixes and colliding sentence filenames fail
+before writing references. `--all` now means all **isolated-sign** categories
+and announces that sentences need a separate invocation. This prevents ordinary
+corpus conversion from putting whole sentences into the single-sign namespace.
+
+Sentence glosses retain the complete uppercased source label (parenthetical text
+is not reinterpreted as an alternate take). Existing `sourceFile`, `sourceLabel`,
+`sourceCategory`, dataset, licence and attribution provenance is retained. No
+translation, segmented gloss sequence or correctness claim is added. Tracking
+coverage can still reject clips; K-07 must record those failures. Showing source
+video remains a separate DN-05 decision; these commands do not redistribute it.
+
+Converter regression checks use temporary non-video placeholders and mocked
+extraction, not invented SSL recordings:
+
+```powershell
+python -m unittest discover -s tools/reference-converter -p "test_*.py" -v
+```
+
 ## How it stays consistent with the app
 
 - **No normalisation happens here.** The app stores *raw* image-normalised
