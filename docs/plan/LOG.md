@@ -337,3 +337,10 @@ Rules:
 - Needs kvn: review/merge; root README provenance/sync-log proposed diff is in handoff for hot-file owner.
 - Plan correction: fourth undeclared difference is merged L-22a's test file. Clean status means declared divergence, not a completed tools backport. ASSET_VERSION unchanged because references unchanged.
 - Next: L-12 implementation still waits for chat approval; optional L-17 calibration work next.
+### 2026-10-13 18:49 | codex | R-02
+- What: done for review: port learn --to <R26> [--check], five exclusions including Learn agent files, deletion mirroring and safety preflight. No real R26 port.
+- Branch @ sha: agent/codex/R-02-port-command @ task HEAD (base bca1688; final SHA in branch log).
+- Gates: 8 temporary-repo tests passed (including no writes to either Git tree in --check); guard 164; syntax/diff checks passed. Disposable sparse R26 copy: 3 add / 9 modify / 0 delete; check and apply agree.
+- Screenshots: n/a; CLI only.
+- Needs kvn: review/merge; older plan's three-file exclusion list needs the two agent-file exclusions per 13 Oct chat.
+- Next: I-05. L-12 remains proposal-only pending chat approval.
