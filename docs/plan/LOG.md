@@ -277,3 +277,9 @@ Rules:
 - Plan correction for R-02: the port command excludes AGENTS.md and CLAUDE.md as well as suvana.config.json, vercel.json and package-lock.json, and `--check` ignores them (07 section 5).
 - Found: learn-ssl-module has no Git auto-deploy (no deployment followed the push); D-06 is the CLI redeploy in 07 section 6.
 - Next: kvn runs D-06 (deploy preview, check, promote) and logs the deployment id.
+
+### 2026-10-13 17:15 | kvn (recorded by claude-code) | D-06 redeploy
+- What: deploy. learn-ssl-module.vercel.app promoted to dpl_6sS4P7JMYmYS6CzkYA7JB8qYNrPh (preview learn-ssl-module-c8kam2nxb), built from R26 761ec32, which ports Suvana d9a6aaf. Rollback target: dpl_4gfgnSdmCw8msd5dhc6nzMhknPLH (334beba).
+- Checks: live site 200 and serves the ported bundle (index-CkacNhbm.js); /references/* now `public, max-age=86400, stale-while-revalidate=604800` (was a year, immutable); preview checked before promotion; kvn checked the camera flow in the browser.
+- Found: the CLI needed `npx vercel login` first ("Not authorized" otherwise); deploys use `--scope kavindu-rakns-projects`. No Git auto-deploy on this project.
+- Next: D-06 can be marked done. R-03 (M1) ports the next Learn milestone.
