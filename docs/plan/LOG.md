@@ -306,3 +306,11 @@ Rules:
 - Seen on the phone: the reference transport overflowing left and the grey scrubber box; both already fixed by L-08 on main, live after R-03.
 - New bug (not in 04-bugs.md; proposed id S6): `handednessesIn()` (apps/learn/src/scoring/normalize.ts:96) counts a reference hand that appears in even one frame, so 75 of 501 references that L-10 classes as one-handed (two hands together in < 20% of tracked frames) are scored and shown as two-handed: 42 with the stray hand in < 10% of tracked frames, 26 at 10-30%, 7 at >= 30% (likely the same hand relabelled). Effect: two hand cards with one missing, a missing-hand hint, and a small score drag. Proposed fix (scoring change, kvn decides): count a reference hand only above a minimum share of tracked frames, re-running calibration to show separation does not drop. Measured from public/references by claude-code, 13 Oct.
 - Next: kvn decides whether both fixes become codex tasks.
+
+### 2026-10-13 20:25 | antigravity | Q-04
+- What: done: Playwright smoke test suite for Learn against vite preview with fake camera, testing first-run onboarding, Esc countdown cancel staying in Practice, Enter on focused Retry, and blocked IndexedDB rendering sign list with StorageNotice.
+- Branch @ sha: agent/antigravity/Q-04-e2e @ HEAD
+- Gates: guard ok (164 passed) | learn lint 0 warnings | tests 191 passed, 9 skipped | build 144.76 kB gzip | e2e 4 passed (11.6s)
+- Screenshots: n/a
+- Needs kvn: none
+- Next: L-14 (Meaning coverage: verified-first browse and a 'meaning not yet verified' chip)
