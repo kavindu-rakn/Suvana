@@ -24,6 +24,7 @@ Only kvn (or a planner session he starts) edits this file, on `main`. If kvn ans
 | D-A17 | 13 Oct | DN-06: not needed (no video). | kvn |
 | D-A18 | 13 Oct | DN-11: learner progress stays **per browser** (IndexedDB), with reset and a demo profile. | kvn |
 | D-A19 | 13 Oct | DN-14: ask Karindra (K-03) with a **15 Oct** deadline; on no reply, rebuild under kvn's EAS with package `help.suvana.alerts` (I-12a, 16 Oct). | kvn |
+| D-A20 | 14 Oct | DN-19: **no third scenario** for the demo; Learn keeps Social Gathering and Restaurant, and L-31 is cancelled. | kvn |
 | D-A10 | 10 Oct | Upstream changes that alter product behaviour go to kvn before they are taken (e.g. Lithira closing registration was not taken). UI changes are decided from rendered before/after screenshots, desktop and phone. | Suvana CLAUDE.md |
 
 ## B. Plan defaults forced by hard rules (kvn may overturn; agents may not)
@@ -125,7 +126,7 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 
 ### DN-19: Build a third scenario from corpus signs? (needed by 16 Oct, after L-09's coverage table; L-31)
 - Options: yes, one scenario whose turns are all existing references, English context written by kvn, no hints; no (O3 stays at 2 of 5 and the thesis says so).
-- Recommendation: **only if the coverage table shows a fully playable scenario and kvn has an hour to write the context**; otherwise no. Status: open.
+- Recommendation: **only if the coverage table shows a fully playable scenario and kvn has an hour to write the context**; otherwise no. Status: **decided 14 Oct: no (D-A20).**
 
 ### DN-20: Run a second Claude Code session as a thesis/docs lane (CC-T)? (needed by 16 Oct)
 - Options: yes (T-02, T-03, T-04, T-07, L-28 on 17-20 Oct, writing outside the repo except two small files); no (CC does T-04 and L-28; kvn drafts T-02/T-03 with CC on 20-21 Oct).

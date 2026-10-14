@@ -524,3 +524,16 @@ Rules:
 - Screenshots: .agent-local/screens/K-05-natural-order/index.html; twelve fresh desktop 1280x800 / phone 390x844 Progress before/after images at start/letters/numbers, visibly showing renamed titles and the single 13-sign A-M unit. Updated complete 53-unit/count table in handoffs/K-05.md.
 - Plan correction: fetched main now contains the 14 Oct K-05 decision journal entry; 15 Oct chat authorizes natural-order exceptions and supersedes the old strict cap for A-M only. No board/decisions edits or unrelated tasks.
 - Needs kvn: review renders/table and merge if adopted. No push, merge, deployment or messages by codex. r26_port yes.
+
+### 2026-10-15 12:00 | kvn (recorded by claude-code) | K-05 follow-up decisions
+- Decision (kvn, chat): letters, weekdays, months and number groups use their natural order (A to Z, Monday to Sunday, January to December, small to big) instead of easiest-first; all other groups keep L-09's order. Letters A-M stays one unit of 13 (the only unit above 12).
+- Titles: "Numbers 1-5" becomes "First numbers" (the corpus has 1, 2, 4, 5 and EQUAL, no 3). claude-code proposed "Numbers 20-99" -> "Numbers 30-90" (it holds 30 to 90, no 20) in the message kvn sent; kvn may still reject it from the renders.
+- One integration for all three Codex branches, after the K-05 follow-up.
+
+### 2026-10-15 12:30 | claude-code (integration prep, light) | integration/2026-10-15
+- What: merged with --no-ff onto main f20dd27: learn-lazy-views (Progress and Scenario load only when opened), I-06b (Privacy, Terms, Roadmap, Contact in plain words; "kvn" replaced by Kavindu Ranathunga), K-05 (53 approved units in kvn's order, split near 10, natural order for letters/days/months/numbers, plain titles). All three merged cleanly.
+- Gates: Learn npm@10 ci, lint 0 warnings, tests 287 passed + 12 skipped, build ok with main JS 140.46 kB gzip (budget 160; was 158.55); Playwright e2e 10 passed; Shell 44 tests + build; sync guard 170.
+- Checks (light, by claude-code, no reviewer agents): translations.ts and meaningCoverage.ts unchanged against main; generated units hold A-M and O-Z in order, MONDAY to SUNDAY first, JANUARY to DECEMBER then MONTH, YEAR, MRACH, numbers ascending with EQUAL and MILIYANAYA last; every unit status approved; no brand names, figures or secrets in the diff ("kvn" appears only in generator comments, not in UI); no "kvn" left on the four Shell pages. Every branch has before/after renders.
+- K-05 left at review: the units and DN-19 are decided and ANDANAWA is fixed, but the acceptance item "meanings for U1 and the everyday-words unit verified by kvn" still needs kvn to confirm the 23 existing meanings (Starter and Everyday words and directions 1-2). Agents changed no meaning.
+- Board: K-05 review; L-31 cancelled (DN-19 no). DECISIONS: DN-19 decided, D-A20.
+- Needs kvn: adopt or reject each change from .agent-local/review/2026-10-15/index.html; then merge and push; confirm or correct the Starter and Everyday-words meanings. Then L-11 (Path view) is unblocked.

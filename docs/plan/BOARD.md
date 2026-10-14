@@ -17,7 +17,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | K-02 | Decide the open decisions by their needed-by dates | kvn | 2026-10-12 to 2026-10-19 | S | - | todo | `n/a` | no | no | DN-01..DN-20 |
 | K-03 | Send the teammate asks to Lithira, Lahiru and Karindra | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
 | K-04 | Create accounts and secrets: three Vercel projects, Atlas M0, Cloudinary, NEXTAUTH_SECRET, optional Gemini key | kvn | 2026-10-13 to 2026-10-14 | M | K-01 | todo | `n/a` | no | no | - |
-| K-05 | Approve the starter curriculum, verify a batch of meanings, decide a third scenario | kvn | 2026-10-15 | M | L-09 | todo | `kvn's own branch, or tell an agent` | yes | no | DN-19 |
+| K-05 | Approve the starter curriculum, verify a batch of meanings, decide a third scenario | kvn | 2026-10-15 | M | L-09 | review | `kvn's own branch, or tell an agent` | yes | no | DN-19 |
 | K-06 | Export the permitted Kaggle clips and upload them to Cloudinary (only if DN-05 allows video) | kvn | 2026-10-16 | M | L-15a, K-04 | cancelled | `n/a` | no | no | DN-05, DN-06 |
 | K-07 | Convert the Kaggle 'SSL Sentences' clips into references | kvn | 2026-10-16 | S | L-22a | todo | `n/a (files handed to the L-22b branch)` | yes | no | DN-08 |
 | K-08 | Buy suvana.help | kvn | 2026-10-20 | S | D-03, D-04 | todo | `n/a` | no | no | - |
@@ -89,7 +89,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | L-28 | Learn docs match what shipped | claude-code-thesis | 2026-10-20 | S | L-26 | todo | `agent/claude/L-28-learn-docs` | yes | no | - |
 | L-29 | iPhone: restart the camera automatically after an app switch | codex | 2026-10-16 | S | L-04 | done | `agent/codex/L-29-ios-camera-resume` | yes | no | - |
 | L-30 | Score one-handed references as one-handed (ignore stray hand labels) | codex | 2026-10-16 | S | - | done | `agent/codex/L-30-stray-hands` | yes | no | - |
-| L-31 | Third scenario from corpus signs (optional, only if kvn approves DN-19) | codex | backlog (earliest 2026-10-19) | M | K-05 | todo | `agent/codex/L-31-scenario3` | yes | yes | DN-19 |
+| L-31 | Third scenario from corpus signs (optional, only if kvn approves DN-19) | codex | backlog (earliest 2026-10-19) | M | K-05 | cancelled | `agent/codex/L-31-scenario3` | yes | yes | DN-19 |
 | L-32 | Sequence-from-memory level (only if Lithira's mapper supplies an order) | codex | backlog | M | K-03 | todo | `agent/codex/L-32-sequence` | yes | yes | DN-08 |
 | R-00 | M0: manual port of the merged blocker fixes into the R26 working tree | claude-code | 2026-10-14 | S | L-01, L-02, L-04, L-05, L-06, K-01 | done | `none (R26 working tree; never commit)` | no | yes | - |
 | R-01 | Portability refactor: base and Suvana-only code driven by suvana.config.json | codex | 2026-10-14 | M | L-06 | done | `agent/codex/R-01-portability` | yes | yes | DN-01 |

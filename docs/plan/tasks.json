@@ -103,7 +103,7 @@
     "deps": [
       "L-09"
     ],
-    "status": "todo",
+    "status": "review",
     "branch": "kvn's own branch, or tell an agent",
     "r26_port": "yes",
     "screenshots": "no",
@@ -2024,7 +2024,7 @@
     "deps": [
       "K-05"
     ],
-    "status": "todo",
+    "status": "cancelled",
     "branch": "agent/codex/L-31-scenario3",
     "r26_port": "yes",
     "screenshots": "yes",
