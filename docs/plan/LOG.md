@@ -491,3 +491,8 @@ Rules:
 - Q-06a re-test (iPhone, after L-29b): the camera now restarts by itself every time kvn switches to another app and back. Bug A19 fixed.
 - Note: commit f4c610e also started tracking .claude/launch.json (allowed by the Q-01 .gitignore); lane worktrees with an untracked copy must move it aside before switching branches.
 - Next: K-05 (curriculum approval) unblocks claude-code's L-11; codex follow-ups: lazy-load views (main JS 158.55 kB of 160), plainer I-06 wording with kvn's full name.
+
+### 2026-10-14 15:00 | kvn (recorded by claude-code) | K-05 curriculum decisions
+- Decision (kvn, chat), from L-09's 21 proposed units: (1) unit order: Starter, Greetings, Numbers 1-5, Restaurant, Everyday words and directions, Letters A-M, Letters N-Z, Numbers 20-99, Days, Months, Colours, People and family, Places, Transport, Big numbers, then the large word groups (action words, things, describing words, time words, position words, small words); (2) split every large unit into groups of about 10 signs, keeping L-09's difficulty order inside each, so no learner is stuck behind a 144-sign unit; (3) unit titles and descriptions in plain words, with no claim beyond how the order was made (one/two hands, still/moving, length); (4) DN-19: no third scenario (L-31 not needed).
+- Meaning correction (kvn, native speaker): ANDANAWA means "cry", not "dressing" (translations.ts line 87; kvn edits it himself; ANDINAWA stays "wear").
+- Next: codex applies (1)-(3) in scripts/curriculum-report.mjs and regenerates src/data/curriculum.ts with status 'approved'; kvn changes translations.ts; then K-05 is done and L-11 (Path view) is unblocked.
