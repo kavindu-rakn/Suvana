@@ -322,7 +322,7 @@ export function PracticeView({
       window.clearInterval(countdownRef.current)
       framesRef.current = []
       setPhase('idle')
-      if (tracking.status === 'error') {
+      if (tracking.status === 'error' || tracking.status === 'interrupted') {
         setCaptureNotice('The camera stopped, so that take was not scored. Try again.')
       }
     }
@@ -839,6 +839,7 @@ export function PracticeView({
               canvasRef={tracking.canvasRef}
               ghostCanvasRef={ghostCanvasRef}
               status={tracking.status}
+              prepareTracker={!browsing && selected !== null}
               error={tracking.error}
               onStart={() => void tracking.start()}
               onStop={() => void tracking.stop()}

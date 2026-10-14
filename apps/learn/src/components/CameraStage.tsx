@@ -2,6 +2,9 @@ import { useState } from 'react'
 import type { ReactNode, RefObject } from 'react'
 import { ArrowLeftRight, Ghost, RotateCcw, Video, VideoOff } from 'lucide-react'
 import type { TrackingStatus } from '../vision/useHandTracking'
+import { useHandTrackerPreparation } from '../vision/useHandTrackerPreparation'
+import { CameraDebugPanel } from './CameraDebugPanel'
+import { CameraPreparationNotice } from './CameraPreparationNotice'
 
 interface CameraStageProps {
   videoRef: RefObject<HTMLVideoElement | null>
@@ -26,6 +29,10 @@ interface CameraStageProps {
   onToggleGhost?: () => void
   /** Whether ghost mode is available for current sign */
   ghostAvailable?: boolean
+  /** Prepare only after a learner opens a sign, never while browsing/Hero. */
+  prepareTracker?: boolean
+  /** Scenario shows this same notice in its always-visible prompt instead. */
+  showPreparationNotice?: boolean
 }
 
 /** Mirrored webcam view + landmark overlay canvas + ghost reference overlay. */
@@ -45,8 +52,11 @@ export function CameraStage({
   ghostActive = false,
   onToggleGhost,
   ghostAvailable = false,
+  prepareTracker = false,
+  showPreparationNotice = true,
 }: CameraStageProps) {
   const [swapped, setSwapped] = useState(false)
+  const preparing = useHandTrackerPreparation(prepareTracker)
 
   return (
     <div className={swapped ? 'camera-stage camera-stage--swapped aww-camera-stage' : 'camera-stage aww-camera-stage'}>
@@ -132,21 +142,28 @@ export function CameraStage({
                 Try again
               </button>
             </>
-          ) : status !== 'starting' && intro ? (
-            intro
+          ) : status === 'interrupted' ? (
+            <>
+              <p className="camera-hint" role="status">Camera paused. Please wait…</p>
+              {onStop && <button className="btn" onClick={onStop}>Turn off camera</button>}
+            </>
           ) : (
             <>
-              <p className="camera-hint">
-                {status === 'starting' ? 'Loading hand tracker and camera…' : idleHint}
-              </p>
-              <button className="btn" onClick={onStart} disabled={status === 'starting'}>
-                <Video size={16} style={{ marginRight: '6px' }} />
-                {status === 'starting' ? 'Starting…' : 'Start camera'}
-              </button>
+              {preparing && showPreparationNotice && <CameraPreparationNotice />}
+              {status !== 'starting' && intro ? intro : (
+                <>
+                  {!preparing && <p className="camera-hint">{status === 'starting' ? 'Getting the camera ready…' : idleHint}</p>}
+                  <button className="btn" onClick={onStart} disabled={status === 'starting'}>
+                    <Video size={16} style={{ marginRight: '6px' }} />
+                    {status === 'starting' ? 'Starting…' : 'Start camera'}
+                  </button>
+                </>
+              )}
             </>
           )}
         </div>
       )}
+      <CameraDebugPanel />
     </div>
   )
 }

@@ -1,0 +1,19 @@
+.camera-debug {
+  position: fixed;
+  z-index: 10000;
+  bottom: max(8px, env(safe-area-inset-bottom));
+  left: 8px;
+  width: min(600px, calc(100vw - 16px));
+  max-height: 230px;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid var(--border-interactive);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: 11px/1.5 monospace;
+  overflow-wrap: anywhere;
+}
+
+.camera-debug ol { list-style: none; padding: 0; margin: 6px 0 0; }

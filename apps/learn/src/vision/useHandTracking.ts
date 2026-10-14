@@ -3,9 +3,12 @@ import { getHandLandmarker } from './handTracker'
 import { drawHands } from './drawing'
 import { toHandFrame } from './types'
 import type { HandFrame, TrackedHand } from './types'
-import { cameraRestoreAction, releaseStream, watchStream } from './cameraLifecycle'
+import { CAMERA_LOSS_GRACE_MS, NO_CAMERA_INTERRUPTION, cameraInterruptionTransition,
+  cameraRestoreAction, releaseStream, watchStream } from './cameraLifecycle'
+import type { CameraTrackEvent } from './cameraLifecycle'
+import { recordCameraEvent } from './cameraDebug'
 
-export type TrackingStatus = 'idle' | 'starting' | 'running' | 'error'
+export type TrackingStatus = 'idle' | 'starting' | 'running' | 'interrupted' | 'error'
 
 export interface TrackingStats {
   fps: number
@@ -54,6 +57,9 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
   const cameraRunningRef = useRef(false)
   const startingRef = useRef(false)
   const restoringRef = useRef(false)
+  const interruptionRef = useRef({ ...NO_CAMERA_INTERRUPTION })
+  const lossTimerRef = useRef(0)
+  const restoreCallbackRef = useRef<() => void>(() => {})
   const lastVideoTimeRef = useRef(-1)
   const emaRef = useRef({ fps: 0, inferenceMs: 0, lastFrameAt: 0, lastUiPush: 0 })
   const onFrameRef = useRef(onFrame)
@@ -67,11 +73,15 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
   const [inferring, setInferring] = useState(false)
 
   const release = useCallback(() => {
+    window.clearTimeout(lossTimerRef.current)
+    lossTimerRef.current = 0
+    interruptionRef.current = { ...NO_CAMERA_INTERRUPTION, away: document.hidden }
     generationRef.current++
     loopRef.current++
     activeRef.current = false
     cameraRunningRef.current = false
     startingRef.current = false
+    restoringRef.current = false
     cancelAnimationFrame(rafRef.current)
     releaseStream(streamRef.current)
     streamRef.current = null
@@ -80,6 +90,8 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
   }, [])
 
   const fail = useCallback((message: string) => {
+    recordCameraEvent('failure', message)
+    restoreRef.current = false
     release()
     setInferring(false)
     setStats(null)
@@ -146,11 +158,57 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
       if (!activeRef.current || loop !== loopRef.current) return
       rafRef.current = requestAnimationFrame(() => void processFrame())
     } catch (e) {
-      if (loop === loopRef.current) fail(describeError(e))
+      if (loop === loopRef.current && !interruptionRef.current.away && interruptionRef.current.lostAt === null) fail(describeError(e))
     }
   }, [fail])
 
+  const suspendFrames = useCallback(() => {
+    loopRef.current++
+    activeRef.current = false
+    cancelAnimationFrame(rafRef.current)
+    setInferring(false)
+    setHands([])
+  }, [])
+
+  const trackChanged = useCallback((event: CameraTrackEvent) => {
+    recordCameraEvent(event, `running=${cameraRunningRef.current}`)
+    // document.hidden can change before its event listener has run.
+    if (document.hidden) {
+      interruptionRef.current = cameraInterruptionTransition(interruptionRef.current, 'away', performance.now()).state
+      restoreRef.current = restoreRef.current || cameraRunningRef.current
+    }
+    const transition = cameraInterruptionTransition(interruptionRef.current, event, performance.now())
+    interruptionRef.current = transition.state
+    if (event === 'unmute') {
+      if (transition.state.lostAt === null) {
+        window.clearTimeout(lossTimerRef.current)
+        lossTimerRef.current = 0
+      }
+      if (transition.action === 'resume' && !startingRef.current) {
+        setStatus('running')
+        restoreCallbackRef.current()
+      }
+      return
+    }
+    // Keep stream handlers and camera-on intent: unmute can end a pause, and
+    // an upcoming blur/pagehide/visibilitychange can explain this loss.
+    suspendFrames()
+    setStatus('interrupted')
+    setError('')
+    if (!lossTimerRef.current && !transition.state.interrupted) {
+      const remaining = Math.max(0, CAMERA_LOSS_GRACE_MS - (performance.now() - transition.state.lostAt!))
+      lossTimerRef.current = window.setTimeout(() => {
+        lossTimerRef.current = 0
+        const expired = cameraInterruptionTransition(interruptionRef.current, 'timeout', performance.now())
+        interruptionRef.current = expired.state
+        if (expired.action === 'fail') fail('Camera disconnected')
+      }, remaining)
+    }
+  }, [fail, suspendFrames])
+
   const start = useCallback(async () => {
+    if (startingRef.current) return
+    recordCameraEvent('start')
     release()
     restoreRef.current = false
     inferenceWantedRef.current = true
@@ -179,18 +237,10 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
           throw new Error('Camera start cancelled.')
         }
         streamRef.current = stream
-        watchStream(stream, () => {
-          if (document.hidden && cameraRunningRef.current) {
-            // iOS may mute/end before the visibility listener runs. Capture
-            // running intent BEFORE release clears the stream and running flag.
-            restoreRef.current = true
-            release()
-            setInferring(false)
-            setStats(null)
-            setHands([])
-            setError('')
-            setStatus('starting')
-          } else fail('Camera disconnected')
+        cameraRunningRef.current = true
+        if (document.hidden || interruptionRef.current.away) restoreRef.current = true
+        watchStream(stream, (event) => {
+          if (generation === generationRef.current) trackChanged(event)
         })
         return stream
       })
@@ -200,22 +250,39 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
       const video = videoRef.current
       if (!video) throw new Error('Video element is not mounted.')
       video.srcObject = stream
-      await video.play()
+      // A background-ended stream cannot finish play(). Leave it for the one
+      // return-time restart, including when model preparation was still pending.
+      if (interruptionRef.current.lostAt !== null || interruptionRef.current.away) {
+        setStatus('interrupted')
+        return
+      }
+      try {
+        await video.play()
+      } catch (e) {
+        if (generation !== generationRef.current) return
+        if (!interruptionRef.current.away && interruptionRef.current.lostAt === null) throw e
+        setStatus('interrupted')
+        return
+      }
       if (generation !== generationRef.current) return
 
       lastVideoTimeRef.current = -1
       emaRef.current = { fps: 0, inferenceMs: 0, lastFrameAt: 0, lastUiPush: 0 }
-      setStatus('running')
+      setStatus(interruptionRef.current.lostAt === null ? 'running' : 'interrupted')
       cameraRunningRef.current = true
-      activeRef.current = !document.hidden && inferenceWantedRef.current
+      activeRef.current = !document.hidden && !interruptionRef.current.away
+        && interruptionRef.current.lostAt === null && inferenceWantedRef.current
       setInferring(activeRef.current)
       if (activeRef.current) rafRef.current = requestAnimationFrame(() => void processFrame())
     } catch (e) {
       if (generation === generationRef.current) fail(describeError(e))
     } finally {
-      if (generation === generationRef.current) startingRef.current = false
+      if (generation === generationRef.current) {
+        startingRef.current = false
+        if (restoreRef.current && !document.hidden && !interruptionRef.current.away) restoreCallbackRef.current()
+      }
     }
-  }, [processFrame, release, fail])
+  }, [processFrame, release, fail, trackChanged])
 
   /**
    * Stop detecting, keep the camera.
@@ -245,7 +312,7 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
    *  on any state change without guarding. */
   const resume = useCallback(() => {
     inferenceWantedRef.current = true
-    if (document.hidden) return
+    if (document.hidden || interruptionRef.current.away || interruptionRef.current.lostAt !== null) return
     if (activeRef.current || !streamRef.current) return
     // The video has advanced while we were away, and the smoothed stats would
     // otherwise average across the gap.
@@ -257,6 +324,7 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
   }, [processFrame])
 
   const stop = useCallback(() => {
+    recordCameraEvent('stop')
     restoreRef.current = false
     inferenceWantedRef.current = false
     release()
@@ -276,7 +344,9 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
     const video = videoRef.current
     if (status === 'running' && streamRef.current && video && video.srcObject !== streamRef.current) {
       video.srcObject = streamRef.current
-      void video.play().catch((e) => fail(describeError(e)))
+      void video.play().catch((e) => {
+        if (!interruptionRef.current.away && interruptionRef.current.lostAt === null) fail(describeError(e))
+      })
       if (inferenceWantedRef.current) resume()
     }
   })
@@ -294,7 +364,7 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
     const restore = () => {
       const stream = streamRef.current
       const tracks = stream?.getVideoTracks() ?? []
-      const action = cameraRestoreAction({ hidden: document.hidden,
+      const action = cameraRestoreAction({ hidden: document.hidden || interruptionRef.current.away,
         wasRunningWhenHidden: restoreRef.current,
         streamUsable: tracks.length > 0 && tracks.every((track) => track.readyState === 'live' && !track.muted),
         starting: startingRef.current, restoring: restoringRef.current })
@@ -303,15 +373,22 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
       restoreRef.current = false // Consume BEFORE async work: at most one retry.
       restoringRef.current = true
       if (action === 'restart') {
+        recordCameraEvent('restart')
         void restart().finally(() => { restoringRef.current = false })
         return
       }
       const generation = generationRef.current
       const video = videoRef.current
       if (!video) { restoringRef.current = false; return }
+      window.clearTimeout(lossTimerRef.current)
+      lossTimerRef.current = 0
+      interruptionRef.current = { ...NO_CAMERA_INTERRUPTION }
       video.srcObject = stream
       void video.play().then(() => {
-        if (generation === generationRef.current && inferenceWantedRef.current) resume()
+        if (generation === generationRef.current && !interruptionRef.current.away && interruptionRef.current.lostAt === null) {
+          setStatus('running')
+          if (inferenceWantedRef.current) resume()
+        }
       }).catch((e) => {
         if (generation !== generationRef.current) return
         // A live-looking iOS stream can still fail to play. Use the same one
@@ -320,22 +397,43 @@ export function useHandTracking(onFrame?: (frame: HandFrame) => void) {
         fail(describeError(e))
       }).finally(() => { restoringRef.current = false })
     }
-    const visibility = () => {
-      if (!document.hidden) return restore()
+    restoreCallbackRef.current = restore
+    const away = () => {
+      const transition = cameraInterruptionTransition(interruptionRef.current, 'away', performance.now())
+      interruptionRef.current = transition.state
+      if (transition.action === 'fail') return fail('Camera disconnected')
       restoreRef.current = restoreRef.current || cameraRunningRef.current
-      loopRef.current++
-      activeRef.current = false
-      cancelAnimationFrame(rafRef.current)
-      setInferring(false)
+      suspendFrames()
     }
+    const returned = () => {
+      if (document.hidden) return
+      interruptionRef.current = cameraInterruptionTransition(interruptionRef.current, 'return', performance.now()).state
+      restore()
+    }
+    const visibility = () => {
+      recordCameraEvent('visibilitychange')
+      if (document.hidden) away()
+      else returned()
+    }
+    const pagehide = () => { recordCameraEvent('pagehide'); away() }
+    const pageshow = () => { recordCameraEvent('pageshow'); returned() }
+    const blur = () => { recordCameraEvent('blur'); away() }
+    const focus = () => { recordCameraEvent('focus'); returned() }
     document.addEventListener('visibilitychange', visibility)
-    window.addEventListener('pageshow', restore)
+    window.addEventListener('pagehide', pagehide)
+    window.addEventListener('pageshow', pageshow)
+    window.addEventListener('blur', blur)
+    window.addEventListener('focus', focus)
     return () => {
       document.removeEventListener('visibilitychange', visibility)
-      window.removeEventListener('pageshow', restore)
+      window.removeEventListener('pagehide', pagehide)
+      window.removeEventListener('pageshow', pageshow)
+      window.removeEventListener('blur', blur)
+      window.removeEventListener('focus', focus)
+      restoreCallbackRef.current = () => {}
       release()
     }
-  }, [start, resume, fail, release])
+  }, [start, resume, fail, release, suspendFrames])
 
   return { videoRef, canvasRef, status, error, stats, hands, inferring, start, stop, pause, resume }
 }

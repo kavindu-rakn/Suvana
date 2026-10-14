@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cameraRestoreAction, captureDeadline, releaseStream, watchStream, withCpuFallback } from './cameraLifecycle'
+import { CAMERA_LOSS_GRACE_MS, NO_CAMERA_INTERRUPTION, cameraInterruptionTransition,
+  cameraRestoreAction, captureDeadline, releaseStream, watchStream, withCpuFallback } from './cameraLifecycle'
 
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals() })
 
@@ -35,17 +36,19 @@ describe('camera lifecycle', () => {
     expect(broken).toHaveBeenCalledTimes(2)
   })
 
-  it('detects mute/end and clears handlers before releasing every track', () => {
+  it('distinguishes mute/unmute/end and clears handlers before releasing every track', () => {
     const disconnected = vi.fn()
-    const track = { onended: null, onmute: null, stop: vi.fn(() => {
+    const track = { onended: null, onmute: null, onunmute: null, stop: vi.fn(() => {
       expect(track.onended).toBeNull()
       expect(track.onmute).toBeNull()
+      expect(track.onunmute).toBeNull()
     }) } as unknown as MediaStreamTrack
     const stream = { getTracks: () => [track], getVideoTracks: () => [track] } as unknown as MediaStream
     watchStream(stream, disconnected)
     track.onmute?.call(track, new Event('mute'))
+    track.onunmute?.call(track, new Event('unmute'))
     track.onended?.call(track, new Event('ended'))
-    expect(disconnected).toHaveBeenCalledTimes(2)
+    expect(disconnected.mock.calls).toEqual([['mute'], ['unmute'], ['ended']])
     releaseStream(stream)
     expect(track.stop).toHaveBeenCalledOnce()
     releaseStream(null)
@@ -64,5 +67,46 @@ describe('camera lifecycle', () => {
     captureDeadline(4000, finish)()
     vi.advanceTimersByTime(4000)
     expect(finish).toHaveBeenCalledOnce()
+  })
+})
+
+describe('iOS interruption event order', () => {
+  it.each(['mute', 'ended'] as const)('defers %s before hidden and recognizes the subsequent switch', (event) => {
+    const loss = cameraInterruptionTransition(NO_CAMERA_INTERRUPTION, event, 100)
+    expect(loss.action).toBe('pause')
+    expect(loss.state.interrupted).toBe(false)
+    const hidden = cameraInterruptionTransition(loss.state, 'away', 100 + CAMERA_LOSS_GRACE_MS)
+    expect(hidden.state.interrupted).toBe(true)
+    expect(cameraInterruptionTransition(hidden.state, 'timeout', 5000).action).toBe('none')
+    const returned = cameraInterruptionTransition(hidden.state, 'return', 6000)
+    expect(cameraRestoreAction({ hidden: returned.state.away, wasRunningWhenHidden: returned.state.interrupted,
+      streamUsable: false, starting: false, restoring: false })).toBe('restart')
+  })
+  it.each(['mute', 'ended'] as const)('recognizes hidden before %s', (event) => {
+    const hidden = cameraInterruptionTransition(NO_CAMERA_INTERRUPTION, 'away', 100)
+    const loss = cameraInterruptionTransition(hidden.state, event, 5000)
+    expect(loss.state.interrupted).toBe(true)
+    expect(cameraInterruptionTransition(loss.state, 'timeout', 7000).action).toBe('none')
+  })
+  it('fails a loss that stays visible, without extending grace for repeated events', () => {
+    const first = cameraInterruptionTransition(NO_CAMERA_INTERRUPTION, 'mute', 100)
+    const repeated = cameraInterruptionTransition(first.state, 'ended', 1000)
+    expect(repeated.state.lostAt).toBe(100)
+    expect(cameraInterruptionTransition(repeated.state, 'timeout', 1600).action).toBe('fail')
+    expect(cameraInterruptionTransition(first.state, 'away', 1601).action).toBe('fail')
+  })
+  it('resumes a visible mute when unmute arrives; an ended track cannot unmute', () => {
+    const muted = cameraInterruptionTransition(NO_CAMERA_INTERRUPTION, 'mute', 100)
+    expect(cameraInterruptionTransition(muted.state, 'unmute', 200))
+      .toEqual({ state: NO_CAMERA_INTERRUPTION, action: 'resume' })
+    const ended = cameraInterruptionTransition(muted.state, 'ended', 150)
+    expect(cameraInterruptionTransition(ended.state, 'unmute', 200).state.ended).toBe(true)
+  })
+  it('clears a background mute on unmute without starting inference while away', () => {
+    const away = cameraInterruptionTransition(NO_CAMERA_INTERRUPTION, 'away', 100)
+    const muted = cameraInterruptionTransition(away.state, 'mute', 200)
+    const unmuted = cameraInterruptionTransition(muted.state, 'unmute', 300)
+    expect(unmuted.action).toBe('none')
+    expect(unmuted.state).toEqual({ ...NO_CAMERA_INTERRUPTION, away: true })
   })
 })

@@ -16,6 +16,8 @@ import { SCENARIOS } from '../data/scenarios'
 import { ArrowRight, Circle, Lightbulb, Square, X } from 'lucide-react'
 import { glossLabel, translationOf } from '../data/translations'
 import { CameraStage } from './CameraStage'
+import { useHandTrackerPreparation } from '../vision/useHandTrackerPreparation'
+import { CameraPreparationNotice } from './CameraPreparationNotice'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
 import { band } from '../scoring/band'
@@ -45,6 +47,7 @@ export function ScenarioView() {
   const [loadingVocab, setLoadingVocab] = useState(false)
   const [loading, setLoading] = useState(true)
   const [stage, setStage] = useState<Stage>('hub')
+  const preparing = useHandTrackerPreparation(stage === 'playing')
   const [index, setIndex] = useState(0)
   const [outcomes, setOutcomes] = useState<TurnOutcome[]>([])
   const [current, setCurrent] = useState<TurnScore | null>(null)
@@ -546,6 +549,7 @@ export function ScenarioView() {
 
         {!current && (
           <div className="aww-scenario-dialogue">
+            {preparing && <CameraPreparationNotice />}
             <div className="dialogue-meta-row">
               <span className="dialogue-turn-tag">Turn {index + 1} of {playable.length}</span>
               <span className="dialogue-scenario-tag">{scenario.title}</span>
@@ -597,8 +601,10 @@ export function ScenarioView() {
               videoRef={capture.tracking.videoRef}
               canvasRef={capture.tracking.canvasRef}
               status={capture.tracking.status}
+              showPreparationNotice={false}
               error={capture.tracking.error}
               onStart={() => void capture.tracking.start()}
+              onStop={capture.tracking.stop}
               idleHint=""
               inferring={capture.tracking.inferring}
               intro={
