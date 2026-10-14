@@ -485,3 +485,11 @@ Rules:
 - Follow-ups: I-06 page wording is formal for the public and says "kvn" twice (use the full name); lazy-load views for bundle size (codex).
 - Board: L-14, L-19, L-23, I-06, D-02, Q-06a done.
 - Needs kvn: adopt or reject each UI change from .agent-local/review/2026-10-14/index.html; then merge and push; then iPhone re-test.
+
+### 2026-10-14 20:12 | codex | Learn lazy views follow-up
+- What: done for review. Progress/Scenario now lazy; Record/Library/Study were already lazy. Hero/Practice stay eager; secondary views share a brief Loading… status fallback. Ready UI unchanged.
+- Branch @ sha: agent/codex/learn-lazy-views @ task HEAD (final SHA in branch log), fresh from main 64dd3db; independent.
+- Size: fresh Vite builds 158.55 -> 140.46 kB gzip main JS (18.09 kB less; 19.54 kB below budget). Deferred code still loads when selected.
+- Gates: npm 10 ci (Learn/screens), lint 0 warnings, 287 passed / 4 skipped, build passed, guard 170, browser suite 10 passed. Extra production check verifies zero secondary view requests on first paint, one fetch per view, loading fallback and Progress-to-Practice sign navigation.
+- Screenshots: .agent-local/screens/learn-lazy-views/index.html, main before/after ready Progress/Scenario and loading after at desktop/phone. Corpus untouched; generated reports restored. r26_port yes after merge; nothing pushed, merged or deployed.
+- Plan correction: only Progress and Scenario required new lazy imports. Needs kvn: review/merge. Next: I-06 plain wording on a separate main-based branch.

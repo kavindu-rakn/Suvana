@@ -1,12 +1,11 @@
 import { Suspense, lazy, useEffect, useState } from 'react'
 import { PracticeView } from './components/PracticeView'
-import { ProgressView } from './components/ProgressView'
-import { ScenarioView } from './components/ScenarioView'
 import { Hero } from './components/Hero'
 
-// Author-only surfaces, split out of the learner's bundle. A participant never
-// opens Record, Library or Study, so there is no reason for them to download
-// the reference recorder, the JSON import/export path or the pilot export.
+// Only Hero and Practice are needed on first paint. Secondary views load when
+// selected; named exports retain their existing props and component identity.
+const ProgressView = lazy(() => import('./components/ProgressView').then((m) => ({ default: m.ProgressView })))
+const ScenarioView = lazy(() => import('./components/ScenarioView').then((m) => ({ default: m.ScenarioView })))
 const RecordView = lazy(() => import('./components/RecordView').then((m) => ({ default: m.RecordView })))
 const LibraryView = lazy(() => import('./components/LibraryView').then((m) => ({ default: m.LibraryView })))
 const StudyView = lazy(() => import('./components/StudyView').then((m) => ({ default: m.StudyView })))
@@ -143,10 +142,10 @@ function App() {
             onIntentConsumed={() => setPracticeIntent(null)}
           />
         )}
-        {tab === 'scenario' && <ScenarioView />}
-        {tab === 'progress' && <ProgressView onPractise={openPractice} />}
-        {(tab === 'record' || tab === 'library' || tab === 'study') && (
-          <Suspense fallback={<p className="empty-state">Loading…</p>}>
+        {tab !== 'practice' && (
+          <Suspense fallback={<p className="empty-state" role="status">Loading…</p>}>
+            {tab === 'scenario' && <ScenarioView />}
+            {tab === 'progress' && <ProgressView onPractise={openPractice} />}
             {tab === 'record' && <RecordView />}
             {tab === 'library' && <LibraryView />}
             {tab === 'study' && <StudyView />}
