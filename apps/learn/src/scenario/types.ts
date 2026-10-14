@@ -14,6 +14,12 @@ export interface ScenarioTurn {
   /** The single gloss the learner must produce this turn. */
   gloss: string
   hint?: string
+  /**
+   * If true, this hint describes a sign's movement or location and was
+   * authored without signer verification. Hidden from learners until
+   * validated by kvn or a signer; visible only in author mode.
+   */
+  pendingSignerValidation?: boolean
 }
 
 export interface Scenario {
