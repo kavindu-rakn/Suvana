@@ -114,6 +114,14 @@ export interface ScoreResult {
   mirrored: boolean
   /** True if the reference itself uses both hands. */
   twoHanded: boolean
+  /** Replay pairs [referenceFrameIndex, attemptFrameIndex] in the original
+   * recordings (including gaps in tracking), start → end. For two hands,
+   * uses the tracked reference hand with most valid frames; ties keep reference
+   * order. This is one replay clock, not a combined two-hand alignment. */
+  alignment?: Array<[number, number]>
+  /** Original attempt-frame index of the largest weighted local cost on that
+   * replay path. Ties use the earliest path step. Absent without alignment. */
+  worstFrameIndex?: number
 }
 
 /** The distinct fingers most in need of correction, worst first. */
@@ -168,37 +176,61 @@ function perLandmarkDeviation(
   return totals.map((t) => t / Math.max(path.length, 1))
 }
 
+interface ScoredHand {
+  hand: HandScore
+  /** Internal feature indices [attempt, reference], before replay remapping. */
+  path: Array<[number, number]>
+  worstPathIndex: number
+}
+
 function scoreHand(
   attempt: HandFeatureSequence,
   reference: HandFeatureSequence,
   w: DistanceWeights,
-): HandScore {
+): ScoredHand {
   if (attempt.frames.length === 0) {
     return {
-      handedness: reference.handedness,
-      score: MISSING_HAND_SCORE,
-      normalizedDistance: Infinity,
-      perLandmark: new Array(NUM_LANDMARKS).fill(Infinity),
-      missing: true,
+      hand: {
+        handedness: reference.handedness,
+        score: MISSING_HAND_SCORE,
+        normalizedDistance: Infinity,
+        perLandmark: new Array(NUM_LANDMARKS).fill(Infinity),
+        missing: true,
+      },
+      path: [],
+      worstPathIndex: -1,
     }
   }
   const result = dtw(attempt.frames.length, reference.frames.length, (i, j) =>
     frameDistance(attempt.frames[i], reference.frames[j], w),
   )
   const contributions = { shape: 0, traj: 0 }
-  for (const [ai, ri] of result.path) {
-    contributions.shape += w.shape * rms(attempt.frames[ai].shape, reference.frames[ri].shape)
-    contributions.traj += w.traj * rms(attempt.frames[ai].traj, reference.frames[ri].traj)
+  let worstPathIndex = 0
+  let worstCost = -Infinity
+  for (let step = 0; step < result.path.length; step++) {
+    const [ai, ri] = result.path[step]
+    const shape = w.shape * rms(attempt.frames[ai].shape, reference.frames[ri].shape)
+    const traj = w.traj * rms(attempt.frames[ai].traj, reference.frames[ri].traj)
+    contributions.shape += shape
+    contributions.traj += traj
+    if (shape + traj > worstCost) {
+      worstCost = shape + traj
+      worstPathIndex = step
+    }
   }
   contributions.shape /= result.path.length
   contributions.traj /= result.path.length
   return {
-    handedness: reference.handedness,
-    score: distanceToScore(result.normalizedDistance),
-    normalizedDistance: result.normalizedDistance,
-    perLandmark: perLandmarkDeviation(attempt.frames, reference.frames, result.path),
-    missing: false,
-    contributions,
+    hand: {
+      handedness: reference.handedness,
+      score: distanceToScore(result.normalizedDistance),
+      normalizedDistance: result.normalizedDistance,
+      perLandmark: perLandmarkDeviation(attempt.frames, reference.frames, result.path),
+      missing: false,
+      contributions,
+    },
+    path: result.path,
+    worstPathIndex,
   }
 }
 
@@ -207,11 +239,12 @@ function evaluate(
   refSeqs: HandFeatureSequence[],
   attemptSeqs: HandFeatureSequence[],
   w: DistanceWeights,
-): { hands: HandScore[]; score: number } {
-  const hands = refSeqs.map((ref) => {
+): { hands: HandScore[]; score: number; scoredHands: ScoredHand[] } {
+  const scoredHands = refSeqs.map((ref) => {
     const att = attemptSeqs.find((a) => a.handedness === ref.handedness)
     return scoreHand(att ?? { handedness: ref.handedness, frames: [] }, ref, w)
   })
+  const hands = scoredHands.map((result) => result.hand)
 
   // Weight each hand by how many reference frames it appears in, so the
   // dominant hand of the sign counts for more.
@@ -220,7 +253,17 @@ function evaluate(
   const score = Math.round(
     hands.reduce((acc, h, i) => acc + h.score * weights[i], 0) / totalWeight,
   )
-  return { hands, score }
+  return { hands, score, scoredHands }
+}
+
+/** Same first-hand/valid-landmark selection as extractHandFeatures. */
+function trackedFrameIndices(recording: SignRecording, handedness: 'Left' | 'Right'): number[] {
+  const indices: number[] = []
+  recording.frames.forEach((frame, index) => {
+    const hand = frame.hands.find((h) => h.handedness === handedness)
+    if (hand && hand.landmarks.length >= NUM_LANDMARKS) indices.push(index)
+  })
+  return indices
 }
 
 /**
@@ -269,7 +312,26 @@ export function scoreAttempt(
   // comparison to a missing-hand branch; retain the old tie rule for two hands.
   const mirrored = flipped.score > direct.score || (!twoHanded && flipped.score === direct.score
     && direct.hands[0].missing && !flipped.hands[0].missing)
-  const { hands, score } = mirrored ? flipped : direct
+  const { hands, score, scoredHands } = mirrored ? flipped : direct
+
+  // Reuse the winning DTW path; no extra matrix or scoring pass. Map filtered
+  // feature indices back to the raw recordings so playback survives gaps.
+  let replayHand = -1
+  for (let index = 0; index < hands.length; index++) {
+    if (hands[index].missing) continue
+    if (replayHand < 0 || refSeqs[index].frames.length > refSeqs[replayHand].frames.length) replayHand = index
+  }
+  let alignment: ScoreResult['alignment']
+  let worstFrameIndex: number | undefined
+  if (replayHand >= 0) {
+    const referenceHand = refSeqs[replayHand].handedness
+    const attemptHand = mirrored ? (referenceHand === 'Left' ? 'Right' : 'Left') : referenceHand
+    const referenceIndices = trackedFrameIndices(reference, referenceHand)
+    const attemptIndices = trackedFrameIndices(attempt, attemptHand)
+    const replay = scoredHands[replayHand]
+    alignment = replay.path.map(([ai, ri]) => [referenceIndices[ri], attemptIndices[ai]])
+    worstFrameIndex = alignment[replay.worstPathIndex][1]
+  }
 
   // Collect per-joint deviations across the hands we actually scored, worst first.
   const worstJoints: JointDeviation[] = []
@@ -311,5 +373,6 @@ export function scoreAttempt(
     typedHints,
     mirrored,
     twoHanded,
+    ...(alignment ? { alignment, worstFrameIndex } : {}),
   }
 }

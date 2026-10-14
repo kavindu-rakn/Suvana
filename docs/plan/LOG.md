@@ -550,3 +550,12 @@ Rules:
 - Hot files: for these tasks the second Codex window owns PracticeView.tsx, views.css, App.tsx (L-11) and Hero.tsx (L-24, L-27); read "CC" as that window in the 10-schedule.md hot-file table.
 - Stacking: kvn allows these seven to stack on each other (an exception to 08 section 4, for this chain only). Each handoff says "stacked on ..." and its renders compare against the parent branch; kvn merges bottom-up.
 - Plan correction: L-24's Hero button opens the first sign in Watch, which L-16a adds, so L-24 is built after L-16a (the board lists only L-11).
+
+### 2026-10-15 | codex (first window) | L-18 and lane ownership
+- What: L-18 ready for review early, ahead of L-21. Optional replay pairs index original reference/attempt frames, including tracking gaps; worstFrameIndex indexes the original attempt. Reuses winning DTW path; scores/hints unchanged. Two-hand replay uses the tracked reference hand with most valid frames; worst moment is on that hand's path. Full contract in handoffs/L-18.md.
+- Branch @ sha: agent/codex/L-18-alignment @ task HEAD (final SHA in git log), fresh origin/main a4a98aa; no stack.
+- Gates: npm 10.9.9 ci --offline; lint clean; 304 passed / 5 skipped; build main JS 140.75 kB gzip; guard 170; diff check clean. Forty-pair numeric/hint preservation and local scoring benchmark passed: median 1.89415 -> 1.98120 ms (+4.60%, within 10%). Generated report changes restored.
+- Screenshots: n/a, logic only. No SSL content or screen files changed. r26_port yes.
+- Decision (kvn, chat): from 16 through 21 Oct the other Codex window builds L-11, L-16a, L-24, L-16b, L-27, L-21, L-26 and owns PracticeView.tsx, views.css, Hero.tsx. This window leaves them untouched and records any exact proposed diff in its handoff. This window takes I-10 after D-04/I-01, I-11 after D-03, Q-05 after D-03/D-04.
+- Plan correction: 10-schedule.md still lists Antigravity for I-10/I-11/Q-05 although BOARD.md assigns Codex; screen ownership is per kvn's window split above. No edits to BOARD.md/tasks.json/DECISIONS.md.
+- Needs kvn: review and merge L-18 before L-21; reconcile schedule/window ownership. No push, merge, deployment or messages by codex.
