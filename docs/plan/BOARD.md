@@ -7,7 +7,7 @@ Status values: `todo`, `in-progress`, `review` (handoff written, waiting for kvn
 Owners: `kvn`; `claude-code` (Claude Code, UI lane); `codex` (OpenAI Codex, logic and platform lane); `antigravity` (Google Antigravity, shell/Communicate/Alerts/tools lane); `claude-code-thesis` (a second Claude Code session for thesis and docs, subject to DN-20).
 Sizes: S < 2 h, M < half a day, L < 1 day. "r26_port: yes" means the change must reach R26 `learn-ssl-module/web` at the next milestone port (07-r26-mirror.md). "screenshots: yes" means desktop 1280x800 and phone 390x844 before/after renders are required, and kvn adopts or rejects from them before merge.
 
-Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 18, codex 24; total 99.
+Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 18, codex 34; total 99.
 
 ## Table
 
@@ -49,7 +49,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | Q-02 | .gitattributes for line endings and a union merge for LOG.md | antigravity | 2026-10-14 | S | K-01 | done | `agent/antigravity/Q-02-gitattributes` | no | no | - |
 | Q-03 | Close CI gaps: concurrency, Docker build, R26-form Learn build, dist smoke, extended brand grep | codex | 2026-10-20 | M | R-01, I-01, I-02 | todo | `agent/codex/Q-03-ci` | no | no | - |
 | Q-04 | Playwright smoke for Learn (keyboard, storage failure, onboarding) | antigravity | 2026-10-15 | M | Q-00, L-02, L-05, L-07 | done | `agent/antigravity/Q-04-e2e` | no | no | - |
-| Q-05 | DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check | antigravity | 2026-10-20 | S | D-03, D-04 | todo | `agent/antigravity/Q-05-demo` | no | no | - |
+| Q-05 | DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check | codex | 2026-10-20 | S | D-03, D-04 | todo | `agent/codex/Q-05-demo` | no | no | - |
 | Q-06 | Full real-device matrix (iPhone Safari, Android Chrome, laptop) | kvn | 2026-10-19 | M | Q-06a, L-16b | todo | `n/a` | no | no | - |
 | Q-06a | Early phone check of the deployed Learn and device inventory | kvn | 2026-10-15 | S | D-02, L-04 | todo | `n/a` | no | no | - |
 | Q-07 | Handedness reality check | kvn | 2026-10-14 | S | - | todo | `n/a` | no | no | - |
@@ -68,28 +68,28 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | L-11 | Path view: units, stars, locks, unit detail, nav entry, 'Why this sign?' chip | claude-code | 2026-10-16 | M | L-12, K-05 | todo | `agent/claude/L-11-path` | yes | yes | - |
 | L-12 | Game logic: stars, unit state, unlocks, daily goal, streak, XP | codex | 2026-10-15 | M | L-09 | done | `agent/codex/L-12-game-logic` | yes | no | DN-10, DN-11 |
 | L-13 | Adaptation fix: review/new interleave, reachable sessions, reasons, ADAPTATION.md | codex | 2026-10-16 | M | L-12 | done | `agent/codex/L-13-adaptation` | yes | no | - |
-| L-14 | Meaning coverage: verified-first browse and a 'meaning not yet verified' chip | antigravity | 2026-10-15 | S | L-10 | changes requested | `agent/antigravity/L-14-meaning-coverage` | yes | yes | - |
+| L-14 | Meaning coverage: verified-first browse and a 'meaning not yet verified' chip | codex | 2026-10-15 | S | L-10 | changes requested | `agent/codex/L-14-meaning-coverage` | yes | yes | - |
 | L-15a | Clip export script (only if DN-05 allows video) | codex | 2026-10-15 | S | - | cancelled | `agent/codex/L-15a-export-clips` | no | no | DN-05 |
 | L-15b | SignVideo component and video manifest (only if DN-05 allows video) | antigravity | 2026-10-16 | M | - | cancelled | `agent/antigravity/L-15b-signvideo` | yes | yes | DN-05, DN-06 |
 | L-16a | Practice stage machine: Watch then Try, with performance marks | claude-code | 2026-10-17 | M | L-11, L-12, L-13 | todo | `agent/claude/L-16a-watch-try` | yes | yes | - |
 | L-16b | Recall stage: hidden reference, cue, reveal costs the third star | claude-code | 2026-10-18 | M | L-16a | todo | `agent/claude/L-16b-recall` | yes | yes | DN-09 |
 | L-17 | Feedback engine: gated 'Close match', timing and path hints, mirrored hand label, typed hints | codex | 2026-10-17 | M | - | done | `agent/codex/L-17-hints` | yes | no | - |
 | L-18 | Export the DTW alignment path and worst-frame index | codex | 2026-10-18 | S | L-17 | todo | `agent/codex/L-18-alignment` | yes | no | - |
-| L-19 | Scenario cleanup: previews, author-only tips and hints, playable counts, recall variant | antigravity | 2026-10-17 | M | L-05 | changes requested | `agent/antigravity/L-19-scenarios` | yes | yes | - |
+| L-19 | Scenario cleanup: previews, author-only tips and hints, playable counts, recall variant | codex | 2026-10-17 | M | L-05 | changes requested | `agent/codex/L-19-scenarios` | yes | yes | - |
 | L-20 | Licence mode (VITE_CONTENT=cc0) and an attribution panel | codex | 2026-10-18 | M | L-10 | todo | `agent/codex/L-20-licence-mode` | yes | yes | DN-04 |
 | L-21 | Feedback UI: side-by-side synced replay, typed hints, fading hints | claude-code | 2026-10-19 | M | L-16b, L-17, L-18 | todo | `agent/claude/L-21-replay` | yes | yes | - |
 | L-22a | List the Kaggle sentence labels and prepare the converter command | codex | 2026-10-15 | S | - | done | `agent/codex/L-22a-sentence-labels` | yes | no | - |
 | L-22b | Sentence data, exclusion from single-sign flows, long-sequence perf test | codex | 2026-10-18 | S | K-07 | todo | `agent/codex/L-22b-sentences` | yes | no | DN-08 |
 | L-23a | Demo profile and reset at the storage layer | codex | 2026-10-17 | S | - | done | `agent/codex/L-23a-profile` | yes | no | - |
-| L-23 | Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI | antigravity | 2026-10-18 | M | L-23a, L-12, L-13 | todo | `agent/antigravity/L-23-progress` | yes | yes | - |
+| L-23 | Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI | codex | 2026-10-18 | M | L-23a, L-12, L-13 | todo | `agent/codex/L-23-progress` | yes | yes | - |
 | L-24 | Hero CTA straight to the first sign; session-complete screen | claude-code | 2026-10-18 | S | L-11 | todo | `agent/claude/L-24-cta-complete` | yes | yes | - |
-| L-25 | Sentence challenge UI (last unit on the Path) | antigravity | 2026-10-19 | M | L-22b, L-16b | todo | `agent/antigravity/L-25-sentences-ui` | yes | yes | DN-08 |
+| L-25 | Sentence challenge UI (last unit on the Path) | codex | 2026-10-19 | M | L-22b, L-16b | todo | `agent/codex/L-25-sentences-ui` | yes | yes | DN-08 |
 | L-26 | Phone, accessibility and polish pass across Learn | claude-code | 2026-10-20 | M | L-21, L-23, L-25 | todo | `agent/claude/L-26-polish` | yes | yes | - |
 | L-27 | Camera off while browsing or hidden; hover hint only on hover devices; GSAP restore | claude-code | 2026-10-20 | S | L-04, L-16b | todo | `agent/claude/L-27-camera-off` | yes | no | - |
 | L-28 | Learn docs match what shipped | claude-code-thesis | 2026-10-20 | S | L-26 | todo | `agent/claude/L-28-learn-docs` | yes | no | - |
 | L-29 | iPhone: restart the camera automatically after an app switch | codex | 2026-10-16 | S | L-04 | done | `agent/codex/L-29-ios-camera-resume` | yes | no | - |
 | L-30 | Score one-handed references as one-handed (ignore stray hand labels) | codex | 2026-10-16 | S | - | done | `agent/codex/L-30-stray-hands` | yes | no | - |
-| L-31 | Third scenario from corpus signs (optional, only if kvn approves DN-19) | antigravity | backlog (earliest 2026-10-19) | M | K-05 | todo | `agent/antigravity/L-31-scenario3` | yes | yes | DN-19 |
+| L-31 | Third scenario from corpus signs (optional, only if kvn approves DN-19) | codex | backlog (earliest 2026-10-19) | M | K-05 | todo | `agent/codex/L-31-scenario3` | yes | yes | DN-19 |
 | L-32 | Sequence-from-memory level (only if Lithira's mapper supplies an order) | codex | backlog | M | K-03 | todo | `agent/codex/L-32-sequence` | yes | yes | DN-08 |
 | R-00 | M0: manual port of the merged blocker fixes into the R26 working tree | claude-code | 2026-10-14 | S | L-01, L-02, L-04, L-05, L-06, K-01 | done | `none (R26 working tree; never commit)` | no | yes | - |
 | R-01 | Portability refactor: base and Suvana-only code driven by suvana.config.json | codex | 2026-10-14 | M | L-06 | done | `agent/codex/R-01-portability` | yes | yes | DN-01 |
@@ -102,13 +102,13 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 | I-03 | Fix stale integration docs and record the Communicate gate | antigravity | 2026-10-14 | S | - | done | `agent/antigravity/I-03-stale-docs` | no | no | - |
 | I-04 | Recognition re-sync of Lahiru's 656f371..ec2604a (code and tests only) | codex | 2026-10-14 | M | K-01 | done | `agent/codex/I-04-recognition-sync` | no | no | DN-18 |
 | I-05 | Reference-converter: take kvn's port 5909a56 and declare the 3 undeclared diffs | codex | 2026-10-16 | S | I-04 | done | `agent/codex/I-05-converter-port` | yes | no | - |
-| I-06 | Shell: Privacy, Terms, Contact and Pricing/business-model pages | antigravity | 2026-10-18 | M | I-01 | todo | `agent/antigravity/I-06-shell-pages` | no | yes | DN-04, DN-15 |
+| I-06 | Shell: Privacy, Terms, Contact and Pricing/business-model pages | codex | 2026-10-18 | M | I-01 | todo | `agent/codex/I-06-shell-pages` | no | yes | DN-04, DN-15 |
 | I-07 | Communicate own instance: placeholder-seed guard, gloss import script, env example | antigravity | 2026-10-16 | S | - | done | `agent/antigravity/I-07-communicate-scripts` | no | no | - |
 | I-08 | Recognition container: Docker build, latency comparison, /api/info, back link and theme | codex | 2026-10-17 | M | I-04 | todo | `agent/codex/I-08-recognition-container` | no | yes | - |
 | I-09 | Speech container: build check and readiness notes | codex | 2026-10-19 | S | - | todo | `agent/codex/I-09-speech-container` | no | no | - |
-| I-10 | Shell: wire the hosted Recognize URL, Alerts download section, phone pass | antigravity | 2026-10-19 | S | D-04, I-01 | todo | `agent/antigravity/I-10-shell-wiring` | no | yes | - |
-| I-11 | Verify the shared session behind the Vercel rewrite; fix if needed | antigravity | 2026-10-19 | S | D-03 | todo | `agent/antigravity/I-11-auth-rewrite` | no | no | - |
-| I-12a | Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild) | antigravity | 2026-10-16 | S | I-02 | todo | `agent/antigravity/I-12a-alerts-eas` | no | no | DN-14 |
+| I-10 | Shell: wire the hosted Recognize URL, Alerts download section, phone pass | codex | 2026-10-19 | S | D-04, I-01 | todo | `agent/codex/I-10-shell-wiring` | no | yes | - |
+| I-11 | Verify the shared session behind the Vercel rewrite; fix if needed | codex | 2026-10-19 | S | D-03 | todo | `agent/codex/I-11-auth-rewrite` | no | no | - |
+| I-12a | Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild) | codex | 2026-10-16 | S | I-02 | todo | `agent/codex/I-12a-alerts-eas` | no | no | DN-14 |
 | I-12 | Alerts APK: Karindra builds from Suvana's tree, or kvn rebuilds under his EAS | kvn | 2026-10-17 to 2026-10-19 | M | K-03, I-02 | todo | `n/a` | no | no | DN-14 |
 | I-13 | Import Lithira's glosses and animations into kvn's Atlas and Cloudinary | kvn | 2026-10-20 | M | I-07, K-03 | todo | `n/a` | no | no | - |
 | I-14 | Learn and Communicate bridge: /learn/?sign=GLOSS deep link | codex | 2026-10-20 | S | L-16a, D-03 | todo | `agent/codex/I-14-deep-link` | yes | yes | - |
@@ -554,9 +554,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 ### Q-05: DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check
 
-- **Owner / day / size:** antigravity / 2026-10-20 / S
+- **Owner / day / size:** codex / 2026-10-20 / S
 - **Depends on:** D-03, D-04
-- **Branch:** `agent/antigravity/Q-05-demo` | **r26_port:** no | **screenshots:** no
+- **Branch:** `agent/codex/Q-05-demo` | **r26_port:** no | **screenshots:** no
 - **Why:** The final demo needs a timed script per module and a rehearsed fallback for every external dependency.
 - **Files:** `DEMO.md`
 - **Acceptance:**
@@ -810,9 +810,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 ### L-14: Meaning coverage: verified-first browse and a 'meaning not yet verified' chip
 
-- **Owner / day / size:** antigravity / 2026-10-15 / S
+- **Owner / day / size:** codex / 2026-10-15 / S
 - **Depends on:** L-10
-- **Branch:** `agent/antigravity/L-14-meaning-coverage` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-14-meaning-coverage` | **r26_port:** yes | **screenshots:** yes
 - **Why:** Learnability B2: most signs show only a transliterated label.
 - **Files:** `apps/learn/src/components/CategorySignNavigator.tsx`, `apps/learn/src/data/meaningCoverage.ts`, `apps/learn/src/data/meaningCoverage.test.ts`
 - **Acceptance:**
@@ -908,9 +908,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 ### L-19: Scenario cleanup: previews, author-only tips and hints, playable counts, recall variant
 
-- **Owner / day / size:** antigravity / 2026-10-17 / M
+- **Owner / day / size:** codex / 2026-10-17 / M
 - **Depends on:** L-05
-- **Branch:** `agent/antigravity/L-19-scenarios` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-19-scenarios` | **r26_port:** yes | **screenshots:** yes
 - **Why:** Learnability B8 and bug A16: an incomplete scenario looks playable; learners are sent to the author tool; team-written movement and location hints are presented as fact.
 - **Files:** `apps/learn/src/components/ScenarioView.tsx`, `apps/learn/src/components/ScenarioView.css`, `apps/learn/src/data/scenarios/restaurant.json`, `apps/learn/src/data/scenarios/introductions.json`, `apps/learn/src/scenario/types.ts`
 - **Acceptance:**
@@ -989,9 +989,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 ### L-23: Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI
 
-- **Owner / day / size:** antigravity / 2026-10-18 / M
+- **Owner / day / size:** codex / 2026-10-18 / M
 - **Depends on:** L-23a, L-12, L-13
-- **Branch:** `agent/antigravity/L-23-progress` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-23-progress` | **r26_port:** yes | **screenshots:** yes
 - **Why:** Shows the panel visible evidence of goals and adaptation.
 - **Files:** `apps/learn/src/components/ProgressView.tsx`, `apps/learn/src/components/ProgressView.css`
 - **Acceptance:**
@@ -1016,9 +1016,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 ### L-25: Sentence challenge UI (last unit on the Path)
 
-- **Owner / day / size:** antigravity / 2026-10-19 / M
+- **Owner / day / size:** codex / 2026-10-19 / M
 - **Depends on:** L-22b, L-16b; decisions DN-08
-- **Branch:** `agent/antigravity/L-25-sentences-ui` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-25-sentences-ui` | **r26_port:** yes | **screenshots:** yes
 - **Why:** A whole-sentence attempt with recall answers PP1's sentence request without inventing gloss order.
 - **Files:** `apps/learn/src/components/SentenceView.tsx`, `apps/learn/src/components/SentenceView.css`, `apps/learn/src/components/PathView.tsx (unit entry only)`
 - **Acceptance:**
@@ -1096,9 +1096,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 ### L-31: Third scenario from corpus signs (optional, only if kvn approves DN-19)
 
-- **Owner / day / size:** antigravity / backlog (earliest 2026-10-19) / M
+- **Owner / day / size:** codex / backlog (earliest 2026-10-19) / M
 - **Depends on:** K-05; decisions DN-19
-- **Branch:** `agent/antigravity/L-31-scenario3` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-31-scenario3` | **r26_port:** yes | **screenshots:** yes
 - **Why:** Proposal O3 named five scenarios; two exist. Single-sign turns need no authored gloss order.
 - **Files:** `apps/learn/src/data/scenarios/<new>.json`
 - **Acceptance:**
@@ -1257,9 +1257,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 ### I-06: Shell: Privacy, Terms, Contact and Pricing/business-model pages
 
-- **Owner / day / size:** antigravity / 2026-10-18 / M
+- **Owner / day / size:** codex / 2026-10-18 / M
 - **Depends on:** I-01; decisions DN-04, DN-15
-- **Branch:** `agent/antigravity/I-06-shell-pages` | **r26_port:** no | **screenshots:** yes
+- **Branch:** `agent/codex/I-06-shell-pages` | **r26_port:** no | **screenshots:** yes
 - **Why:** Commercialisation is graded, and the footer links are '#'.
 - **Files:** `apps/shell/privacy.html`, `apps/shell/terms.html`, `apps/shell/contact.html`, `apps/shell/pricing.html`, `apps/shell/index.html (footer links only)`, `apps/shell/vite.config.ts`
 - **Acceptance:**
@@ -1306,9 +1306,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 ### I-10: Shell: wire the hosted Recognize URL, Alerts download section, phone pass
 
-- **Owner / day / size:** antigravity / 2026-10-19 / S
+- **Owner / day / size:** codex / 2026-10-19 / S
 - **Depends on:** D-04, I-01
-- **Branch:** `agent/antigravity/I-10-shell-wiring` | **r26_port:** no | **screenshots:** yes
+- **Branch:** `agent/codex/I-10-shell-wiring` | **r26_port:** no | **screenshots:** yes
 - **Why:** The landing page must lead to every module on any device.
 - **Files:** `apps/shell/index.html`, `apps/shell/alerts/index.html`
 - **Acceptance:**
@@ -1318,9 +1318,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 ### I-11: Verify the shared session behind the Vercel rewrite; fix if needed
 
-- **Owner / day / size:** antigravity / 2026-10-19 / S
+- **Owner / day / size:** codex / 2026-10-19 / S
 - **Depends on:** D-03
-- **Branch:** `agent/antigravity/I-11-auth-rewrite` | **r26_port:** no | **screenshots:** no
+- **Branch:** `agent/codex/I-11-auth-rewrite` | **r26_port:** no | **screenshots:** no
 - **Why:** Auth.js behind an external rewrite may put cookies and redirects on the wrong host.
 - **Files:** `apps/communicate/auth.ts`, `apps/communicate/next.config.ts`
 - **Acceptance:**
@@ -1330,9 +1330,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 21, claude-code 
 
 ### I-12a: Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild)
 
-- **Owner / day / size:** antigravity / 2026-10-16 / S
+- **Owner / day / size:** codex / 2026-10-16 / S
 - **Depends on:** I-02; decisions DN-14
-- **Branch:** `agent/antigravity/I-12a-alerts-eas` | **r26_port:** no | **screenshots:** no
+- **Branch:** `agent/codex/I-12a-alerts-eas` | **r26_port:** no | **screenshots:** no
 - **Why:** A Karindra-built APK from his own tree still says SoundGuard and carries com.karindragimhan69.soundguard.
 - **Files:** `apps/alerts/app.json`, `apps/alerts/eas.json`
 - **Acceptance:**

@@ -1,0 +1,39 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "shell",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "apps/shell"],
+      "port": 5173
+    },
+    {
+      "name": "learn",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "apps/learn"],
+      "port": 5174
+    },
+    {
+      "name": "communicate",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "apps/communicate"],
+      "port": 3000
+    },
+    {
+      "name": "recognition",
+      "runtimeExecutable": "../R26-SE-019/sinhala_sign_language_recognition/.venv/Scripts/python.exe",
+      "runtimeArgs": [
+        "-m",
+        "uvicorn",
+        "--app-dir",
+        "services/recognition",
+        "webapp.server:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8000"
+      ],
+      "port": 8000
+    }
+  ]
+}

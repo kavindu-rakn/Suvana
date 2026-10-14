@@ -898,7 +898,7 @@
   {
     "id": "Q-05",
     "title": "DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check",
-    "owner": "antigravity",
+    "owner": "codex",
     "day": "2026-10-20",
     "size": "S",
     "deps": [
@@ -906,7 +906,7 @@
       "D-04"
     ],
     "status": "todo",
-    "branch": "agent/antigravity/Q-05-demo",
+    "branch": "agent/codex/Q-05-demo",
     "r26_port": "no",
     "screenshots": "no",
     "decisions": [],
@@ -1419,14 +1419,14 @@
   {
     "id": "L-14",
     "title": "Meaning coverage: verified-first browse and a 'meaning not yet verified' chip",
-    "owner": "antigravity",
+    "owner": "codex",
     "day": "2026-10-15",
     "size": "S",
     "deps": [
       "L-10"
     ],
     "status": "changes requested",
-    "branch": "agent/antigravity/L-14-meaning-coverage",
+    "branch": "agent/codex/L-14-meaning-coverage",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [],
@@ -1620,14 +1620,14 @@
   {
     "id": "L-19",
     "title": "Scenario cleanup: previews, author-only tips and hints, playable counts, recall variant",
-    "owner": "antigravity",
+    "owner": "codex",
     "day": "2026-10-17",
     "size": "M",
     "deps": [
       "L-05"
     ],
     "status": "changes requested",
-    "branch": "agent/antigravity/L-19-scenarios",
+    "branch": "agent/codex/L-19-scenarios",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [],
@@ -1793,7 +1793,7 @@
   {
     "id": "L-23",
     "title": "Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI",
-    "owner": "antigravity",
+    "owner": "codex",
     "day": "2026-10-18",
     "size": "M",
     "deps": [
@@ -1802,7 +1802,7 @@
       "L-13"
     ],
     "status": "todo",
-    "branch": "agent/antigravity/L-23-progress",
+    "branch": "agent/codex/L-23-progress",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [],
@@ -1850,7 +1850,7 @@
   {
     "id": "L-25",
     "title": "Sentence challenge UI (last unit on the Path)",
-    "owner": "antigravity",
+    "owner": "codex",
     "day": "2026-10-19",
     "size": "M",
     "deps": [
@@ -1858,7 +1858,7 @@
       "L-16b"
     ],
     "status": "todo",
-    "branch": "agent/antigravity/L-25-sentences-ui",
+    "branch": "agent/codex/L-25-sentences-ui",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [
@@ -2018,14 +2018,14 @@
   {
     "id": "L-31",
     "title": "Third scenario from corpus signs (optional, only if kvn approves DN-19)",
-    "owner": "antigravity",
+    "owner": "codex",
     "day": "backlog (earliest 2026-10-19)",
     "size": "M",
     "deps": [
       "K-05"
     ],
     "status": "todo",
-    "branch": "agent/antigravity/L-31-scenario3",
+    "branch": "agent/codex/L-31-scenario3",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [
@@ -2363,14 +2363,14 @@
   {
     "id": "I-06",
     "title": "Shell: Privacy, Terms, Contact and Pricing/business-model pages",
-    "owner": "antigravity",
+    "owner": "codex",
     "day": "2026-10-18",
     "size": "M",
     "deps": [
       "I-01"
     ],
     "status": "todo",
-    "branch": "agent/antigravity/I-06-shell-pages",
+    "branch": "agent/codex/I-06-shell-pages",
     "r26_port": "no",
     "screenshots": "yes",
     "decisions": [
@@ -2469,7 +2469,7 @@
   {
     "id": "I-10",
     "title": "Shell: wire the hosted Recognize URL, Alerts download section, phone pass",
-    "owner": "antigravity",
+    "owner": "codex",
     "day": "2026-10-19",
     "size": "S",
     "deps": [
@@ -2477,7 +2477,7 @@
       "I-01"
     ],
     "status": "todo",
-    "branch": "agent/antigravity/I-10-shell-wiring",
+    "branch": "agent/codex/I-10-shell-wiring",
     "r26_port": "no",
     "screenshots": "yes",
     "decisions": [],
@@ -2495,14 +2495,14 @@
   {
     "id": "I-11",
     "title": "Verify the shared session behind the Vercel rewrite; fix if needed",
-    "owner": "antigravity",
+    "owner": "codex",
     "day": "2026-10-19",
     "size": "S",
     "deps": [
       "D-03"
     ],
     "status": "todo",
-    "branch": "agent/antigravity/I-11-auth-rewrite",
+    "branch": "agent/codex/I-11-auth-rewrite",
     "r26_port": "no",
     "screenshots": "no",
     "decisions": [],
@@ -2520,14 +2520,14 @@
   {
     "id": "I-12a",
     "title": "Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild)",
-    "owner": "antigravity",
+    "owner": "codex",
     "day": "2026-10-16",
     "size": "S",
     "deps": [
       "I-02"
     ],
     "status": "todo",
-    "branch": "agent/antigravity/I-12a-alerts-eas",
+    "branch": "agent/codex/I-12a-alerts-eas",
     "r26_port": "no",
     "screenshots": "no",
     "decisions": [
