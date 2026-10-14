@@ -409,3 +409,8 @@ Rules:
 - Plan corrections: (1) the ADMIN_EMAILS example `admin@suvana.help,kvn@suvana.help` (I-07 .env.local.example, D-01 DEPLOYMENT.md) uses a domain kvn does not own yet; set ADMIN_EMAILS to kavindu.rakn@gmail.com only (06-deploy section 2). (2) Ignored Build Step `git diff --quiet HEAD^ HEAD -- .` skips a build when the last pushed commit does not touch the app; use `git diff --quiet $VERCEL_GIT_PREVIOUS_SHA $VERCEL_GIT_COMMIT_SHA -- .`.
 - Board: Q-04, D-01, I-07, I-05, R-02, L-23a, L-12, L-13, L-17, L-30, L-29 done; L-14, L-19 changes requested.
 - Needs kvn: approve L-17's feedback wording from .agent-local/review/2026-10-13d/L-17 (if rejected, L-17 and L-30, which is stacked on it, come out); re-check L-29 on the iPhone after the next deploy. Then merge integration/2026-10-13d and push.
+
+### 2026-10-14 01:10 | kvn (recorded by claude-code) | L-17 wording rejected; plain words for learners
+- Decision (kvn, chat): L-17's hint wording is too formal and is not adopted. Learn is for Sinhala speakers whose first language is not English, and for every age including children; learner-facing words must be short, everyday and friendly (no "reference", "active signing duration", "0.5x" in hint text). L-17's logic stays (L-30 is stacked on it); its hintText() wording is replaced by a follow-up before any public deploy.
+- Plan correction (all lanes): every learner-facing string in Learn follows this rule from now on, and kvn approves wording from screenshots. Existing copy to simplify: the L-07 guide, L-08's playback labels, Scenario and Progress text (L-26 polish, or a dedicated plain-words task).
+- Next: kvn merges integration/2026-10-13d; codex rewrites L-17's hint text with kvn-approved simple wording.
