@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { HandLandmarker } from '@mediapipe/tasks-vision'
-import { HAND_CONNECTIONS, wristAnchorFit } from './drawing'
+import { HAND_CONNECTIONS, interpolateHands, wristAnchorFit } from './drawing'
 import type { Fit } from './drawing'
 import type { TrackedHand } from './types'
 
@@ -63,5 +63,34 @@ describe('wristAnchorFit', () => {
   it('leaves the reference where it was when either side has no hand', () => {
     expect(wristAnchorFit([], [hand('Right', 0.5, 0.5)])).toEqual({ cx: 0.5, cy: 0.5, k: 1 })
     expect(wristAnchorFit([hand('Right', 0.3, 0.6)], [])).toEqual({ cx: 0.5, cy: 0.5, k: 1 })
+  })
+})
+
+describe('interpolateHands', () => {
+  const hand = (handedness: 'Left' | 'Right', x: number): TrackedHand => ({
+    handedness,
+    score: 1,
+    landmarks: [{ x, y: 0.5, z: 0 }, { x: x + 0.1, y: 0.4, z: -0.02 }],
+  })
+
+  it('blends each landmark part-way to the same hand in the next frame', () => {
+    const [mid] = interpolateHands([hand('Right', 0.2)], [hand('Right', 0.4)], 0.25)
+    expect(mid.landmarks[0].x).toBeCloseTo(0.25)
+    expect(mid.landmarks[1].x).toBeCloseTo(0.35)
+    expect(mid.handedness).toBe('Right')
+  })
+
+  it('returns the first frame unchanged at t = 0 and the second hand at t = 1', () => {
+    const a = [hand('Right', 0.2)]
+    expect(interpolateHands(a, [hand('Right', 0.4)], 0)).toBe(a)
+    expect(interpolateHands(a, [hand('Right', 0.4)], 1)[0].landmarks[0].x).toBeCloseTo(0.4)
+  })
+
+  it('never blends a hand into or out of existence', () => {
+    const a = [hand('Right', 0.2), hand('Left', 0.7)]
+    const out = interpolateHands(a, [hand('Right', 0.4)], 0.5)
+    expect(out).toHaveLength(2)
+    expect(out[1]).toBe(a[1]) // no Left partner: drawn as recorded
+    expect(interpolateHands([], [hand('Right', 0.4)], 0.5)).toEqual([])
   })
 })

@@ -414,3 +414,16 @@ Rules:
 - Decision (kvn, chat): L-17's hint wording is too formal and is not adopted. Learn is for Sinhala speakers whose first language is not English, and for every age including children; learner-facing words must be short, everyday and friendly (no "reference", "active signing duration", "0.5x" in hint text). L-17's logic stays (L-30 is stacked on it); its hintText() wording is replaced by a follow-up before any public deploy.
 - Plan correction (all lanes): every learner-facing string in Learn follows this rule from now on, and kvn approves wording from screenshots. Existing copy to simplify: the L-07 guide, L-08's playback labels, Scenario and Progress text (L-26 polish, or a dedicated plain-words task).
 - Next: kvn merges integration/2026-10-13d; codex rewrites L-17's hint text with kvn-approved simple wording.
+
+### 2026-10-14 02:10 | kvn (recorded by claude-code) | decisions: L-17 wording, Antigravity tasks to Codex, suvana deployment
+- L-17 wording (kvn's words, for codex): close match "Great job! That looks correct." / two-handed "Great job! Both hands look correct." (claude-code changed "looks" to "look" for grammar; kvn may revert); hand path "Your hand moved another way, do it again!"; too slow "Nice try! But little slow."; too fast "Nice try! But little fast."; one hand missing "Use your other hand too."; both hands missing "Please use your hands."; hands not seen "Show your hands, turn the lights on!"; broken reference "Oops, this sign is not ready yet."; anything else "Watch again, try again." Timing hint must now say slow or fast.
+- Antigravity stops. All 10 open Antigravity tasks move to codex (kvn has spare Codex allowance; Claude's allowance is kept for integration and talking with kvn): L-14, L-19 (both changes requested), L-23, L-25, L-31, I-06, I-10, I-11, I-12a, Q-05. Board owner changes are kvn's.
+- D-02: the Learn project was created as "suvana" (deployment suvana-mu.vercel.app, from main 7eb446e; root, /learn/ and assets checked OK). It must be renamed suvana-learn and get the domain suvana-learn.vercel.app, because apps/shell/vercel.json rewrites /learn to https://suvana-learn.vercel.app/learn. Node 24.x and the Ignored Build Step are still to set.
+
+### 2026-10-14 02:10 | claude-code | L-08b
+- What: done (review). Reference playback blends between recorded frames, so the 0.5x start is smooth (57 pictures/s instead of 13); kvn reported it as lag on suvana-mu.vercel.app.
+- Branch @ sha: agent/claude/L-08b-smooth-playback (on main 7eb446e; see git log)
+- Gates: guard 168; lint 0 warnings; tests 251 passed + 12 skipped; build ok 146.00 kB gzip
+- Screenshots: n/a (motion only; measured)
+- Needs kvn: merge; check playback on the next deploy.
+- Next: none for claude-code until L-12 and K-05 unblock L-11 (L-12 is now on main; K-05 is kvn's).

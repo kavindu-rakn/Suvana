@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react'
-import { drawHands, fitFor } from '../vision/drawing'
+import { drawHands, fitFor, interpolateHands } from '../vision/drawing'
 import type { HandFrame } from '../vision/types'
 
 interface SkeletonPlayerProps {
@@ -28,6 +28,12 @@ interface SkeletonPlayerProps {
 const SPEEDS = [0.25, 0.5, 0.75, 1]
 const SLOW_SPEED = 0.5
 const SLOW_LOOPS = 2
+/**
+ * Blend between recorded frames only when they are this close together. A
+ * longer gap means tracking dropped out, and a blend would invent a path
+ * across it. Untuned.
+ */
+const MAX_BLEND_GAP_MS = 200
 
 /** Replays a recorded landmark sequence on a canvas — no video involved. */
 export function SkeletonPlayer({
@@ -73,19 +79,22 @@ export function SkeletonPlayer({
     if (!canvas || !ctx) return
 
     let idx = 0
-    let lastDrawn = -1
     const renderAt = (t: number) => {
-      if (frames[idx] && frames[idx].timestampMs > t) {
-        idx = 0 // looped back
-        lastDrawn = -1
-      }
+      if (frames[idx] && frames[idx].timestampMs > t) idx = 0 // looped back
       while (idx + 1 < frames.length && frames[idx + 1].timestampMs <= t) idx++
       lastTRef.current = t
-      if (idx === lastDrawn) return
-      lastDrawn = idx
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       const frame = frames[idx]
-      if (frame) drawHands(ctx, frame.hands, fit, colorOverride)
+      if (!frame) return
+      // Draw the pose between this frame and the next, so playback stays
+      // smooth when slowed down (a 25 fps clip at 0.5x would otherwise show
+      // ~12 pictures a second). Display only.
+      const next = frames[idx + 1]
+      const gap = next ? next.timestampMs - frame.timestampMs : 0
+      const hands = next && gap > 0 && gap <= MAX_BLEND_GAP_MS
+        ? interpolateHands(frame.hands, next.hands, (t - frame.timestampMs) / gap)
+        : frame.hands
+      drawHands(ctx, hands, fit, colorOverride)
     }
     renderAtRef.current = renderAt
 
