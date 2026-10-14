@@ -467,3 +467,11 @@ Rules:
 - Plan corrections: existing exports live in author Study, not Progress; left intact and verified. Review display now matches isDueReview. L-23a's reference/timing profile separation is preserved for kvn's adoption review; no storage engine changes. K-05 pending, so no unit is promoted to approved.
 - Needs kvn: adopt/reject UI and merge the four independent branches from this run: L-14 (80f01a9), L-19 (a752530), I-06 (5238c51), L-23 (task HEAD). No push/merge/deploy by codex; Learn UI changes r26_port yes.
 - Remaining lane queue, not claimed: I-12a waits for kvn's post-15-Oct no-answer confirmation; L-25 waits for L-22b/L-16b/DN-08; I-10 waits D-04; I-11 waits D-03; Q-05 waits D-03/D-04; optional L-31 waits DN-19/K-05. Other Codex lane's tasks untouched.
+### 2026-10-14 | codex (second lane) | I-06
+- What: standalone Privacy, draft Terms, Contact and open-core Roadmap pages; working footer links and multi-page build. kvn approved no prices/paid offering and kavindu.rakn@gmail.com in chat.
+- Branch @ sha: agent/codex/I-06-shell-pages @ task HEAD (base 3a8d552; independent UI leaf).
+- Gates: npm 10 ci; Shell 44 tests, typecheck/build passed; guard 168; all built pages and local page links 200; contact/roadmap assertions; no overflow at desktop/390/360; diff check clean.
+- Screenshots: .agent-local/screens/I-06/index.html; clean main before (missing URLs fall back to homepage), final production after. Footer loader excluded; new Roadmap link wraps away from the floating assistant.
+- Plan correction: actual privacy includes Communicate speech/history/consented voice uploads, Recognize camera uploads and OS speech in Alerts. DN-04 content-edition selection stays a separate decision; no deployment/legal certification. Existing homepage 98% Sequence Accuracy claim is outside footer-only boundary; exact removal proposed in handoff.
+- Needs kvn: UI review/adoption/merge and eventual terms review. No push, merge or deploy by codex; r26_port no.
+- Next: L-23 Progress UI. I-12a still awaits deadline/reply confirmation; later dependency gates remain in force.
