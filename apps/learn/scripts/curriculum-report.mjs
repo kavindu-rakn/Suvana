@@ -11,8 +11,8 @@
 // Rule bounds:
 //  - U1 Starter: kaggle_* AND (verified meaning OR self-explaining) AND 1 hand AND still;
 //    5-8 signs, easiest first by duration.
-//  - Later units: by category, ordered by difficulty (1-hand still -> 1-hand moving ->
-//    2-hand still -> 2-hand moving -> duration).
+//  - Later units: by category, normally ordered by measured difficulty.
+//    Letters, days, months and number groups use kvn's natural order (15 Oct).
 //  - Never invent SSL signs, meanings, or conversational orders.
 
 import { readFileSync, writeFileSync } from 'node:fs'
@@ -160,9 +160,29 @@ function categoryRefs(category) {
     .map((r) => [r.gloss, r])).values()].sort(compareByDifficulty)
 }
 
+// Only reorder existing references; unspecified words keep their measured order.
+function orderedFirst(refs, glosses) {
+  const positions = new Map(glosses.map((gloss, i) => [gloss, i]))
+  return [...refs].sort((a, b) => (positions.get(a.gloss) ?? glosses.length)
+    - (positions.get(b.gloss) ?? glosses.length))
+}
+
+function numberRefs(category) {
+  return categoryRefs(category).sort((a, b) => {
+    const aNumber = /^\d+$/.test(a.gloss)
+    const bNumber = /^\d+$/.test(b.gloss)
+    if (aNumber && bNumber) return Number(a.gloss) - Number(b.gloss)
+    return Number(bNumber) - Number(aNumber)
+  })
+}
+
 const restaurantGlosses = ['KANAWA', 'BONAWA', '500', 'MILADII GANNAWA', 'BILPATHA']
 const restaurantRefs = restaurantGlosses.map((g) => bestRefByGloss.get(g)).filter(Boolean).sort(compareByDifficulty)
-const alphabetRefs = categoryRefs('A-Z')
+const alphabetRefs = categoryRefs('A-Z').sort((a, b) => a.gloss.localeCompare(b.gloss))
+const dayRefs = orderedFirst(categoryRefs('Days'), [
+  'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY',
+])
+const monthRefs = orderedFirst(categoryRefs('Months'), [...MONTHS, 'MONTH', 'YEAR', 'MRACH'])
 const minorCats = new Set(['Determiner', 'Conjunctions', 'Interjection'])
 const smallWordRefs = [...new Map(recordings.filter((r) => minorCats.has(r.sourceCategory))
   .map((r) => [r.gloss, r])).values()].sort(compareByDifficulty)
@@ -170,19 +190,19 @@ const smallWordRefs = [...new Map(recordings.filter((r) => minorCats.has(r.sourc
 const groups = [
   ['u1-starter', 'Starter', 'Start with a few signs.', 'Starter', u1Selection],
   ['u-greetings', 'Greetings', 'Try a few words for meeting people.', 'Greetings', categoryRefs('Greetings')],
-  ['u-numbers', 'Numbers 1-5', 'Try the signs in this number group.', 'Numbers', categoryRefs('Numbers')],
+  ['u-numbers', 'First numbers', 'Try the signs in this number group.', 'Numbers', numberRefs('Numbers')],
   ['u-scenario-restaurant', 'Restaurant', 'Try the signs from the restaurant chat.', 'Restaurant', restaurantRefs],
   ['u-additional-words', 'Everyday words and directions', 'Try a few everyday words and directions.', 'Additional words', categoryRefs('Additional words')],
   ['u-alphabet-part1', 'Letters A-M', 'Try the letters in this group.', 'A-Z', alphabetRefs.filter((r) => r.gloss <= 'M')],
   ['u-alphabet-part2', 'Letters N-Z', 'Try the letters in this group.', 'A-Z', alphabetRefs.filter((r) => r.gloss > 'M')],
-  ['u-numbers-20-99', 'Numbers 20-99', 'Try these two-digit numbers.', '20-99', categoryRefs('20-99')],
-  ['u-days', 'Days', 'Try these day and time words.', 'Days', categoryRefs('Days')],
-  ['u-calendar-months', 'Months', 'Try these month and calendar words.', 'Months', categoryRefs('Months')],
+  ['u-numbers-20-99', 'Numbers 30-90', 'Try these two-digit numbers.', '20-99', numberRefs('20-99')],
+  ['u-days', 'Days', 'Try these day and time words.', 'Days', dayRefs],
+  ['u-calendar-months', 'Months', 'Try these month and calendar words.', 'Months', monthRefs],
   ['u-colors', 'Colours', 'Try these colour words.', 'Colors', categoryRefs('Colors')],
   ['u-people', 'People and family', 'Try these people and family words.', 'People', categoryRefs('People')],
   ['u-places', 'Places', 'Try these place words.', 'Places', categoryRefs('Places')],
   ['u-vehicles', 'Transport', 'Try words for getting around.', 'Vehicles', categoryRefs('Vehicles')],
-  ['u-numbers-large', 'Big numbers', 'Take your time with these bigger numbers.', '100-1 million', categoryRefs('100-1 million')],
+  ['u-numbers-large', 'Big numbers', 'Take your time with these bigger numbers.', '100-1 million', numberRefs('100-1 million')],
   ['u-verbs', 'Action words', 'Try a few action words at a time.', 'Verbs', categoryRefs('Verbs')],
   ['u-nouns', 'Things', 'Try a few of these words at a time.', 'Nouns', categoryRefs('Nouns')],
   ['u-adjectives', 'Describing words', 'Try words that describe things.', 'Adjectives', categoryRefs('Adjectives')],
@@ -196,9 +216,10 @@ const TARGET_UNIT_SIGNS = 10
 const units = []
 for (const [id, title, description, sourceCategory, refs] of groups) {
   if (!refs.length) continue
-  // Balance contiguous groups around ten, with a strict cap of twelve.
-  // E.g. 13 -> 7 + 6, 21 -> 11 + 10; no one-sign trailing group.
-  const count = refs.length <= MAX_UNIT_SIGNS ? 1
+  // Balance contiguous groups around ten. kvn's sole exception (15 Oct)
+  // keeps the thirteen A-M letters together; all other units stay at most twelve.
+  const keepAlphabetTogether = id === 'u-alphabet-part1' && refs.length === 13
+  const count = refs.length <= MAX_UNIT_SIGNS || keepAlphabetTogether ? 1
     : Math.max(Math.ceil(refs.length / MAX_UNIT_SIGNS), Math.round(refs.length / TARGET_UNIT_SIGNS))
   const size = Math.floor(refs.length / count)
   const extra = refs.length % count
@@ -226,8 +247,9 @@ if (coveredGlosses.size !== uniqueCorpusGlosses.size
 if (u1Selection.length < 5 || u1Selection.length > 8) {
   throw new Error('Starter must contain 5-8 qualifying signs.')
 }
-if (units.some((unit) => !unit.signs.length || unit.signs.length > MAX_UNIT_SIGNS)) {
-  throw new Error('Each curriculum unit must contain 1-12 signs.')
+if (units.some((unit) => !unit.signs.length || (unit.signs.length > MAX_UNIT_SIGNS
+    && !(unit.id === 'u-alphabet-part1' && unit.signs.length === 13)))) {
+  throw new Error('Each unit must contain 1-12 signs, except Letters A-M with 13.')
 }
 
 // 6. Write curriculum.ts
@@ -238,11 +260,12 @@ const curriculumFileContent = `/**
  * All units are derived purely by rules from reference landmark data and verified meanings:
  *  - U1 Starter satisfies the hard rule: kaggle_* only, verified meaning or self-explaining,
  *    one hand, still, 5-8 signs, easiest first by duration.
- *  - Subsequent units group signs by authentic corpus category, ordered by difficulty:
- *    (1-hand still -> 1-hand moving -> 2-hand still -> 2-hand moving -> duration).
- *  - Structure and approved status decided by kvn in chat, 14 Oct 2026 (K-05).
- *  - Large groups split into balanced, contiguous units near 10 signs; maximum 12.
- *  - No gloss, meaning, translation or within-group sign order is invented.
+ *  - Categories normally use measured order: one hand before two, still before moving,
+ *    then duration. Letters, days, months and number groups use natural order.
+ *  - Structure and approved status decided by kvn in chat, 14 Oct; order follow-up 15 Oct.
+ *  - Large groups split into balanced, contiguous units near 10 signs; maximum 12,
+ *    except Letters A-M, kept together with 13 signs by kvn's decision.
+ *  - No gloss, meaning or translation is added, removed or renamed.
  */
 
 export type UnitStatus = 'proposed' | 'approved'

@@ -5,11 +5,12 @@
  * All units are derived purely by rules from reference landmark data and verified meanings:
  *  - U1 Starter satisfies the hard rule: kaggle_* only, verified meaning or self-explaining,
  *    one hand, still, 5-8 signs, easiest first by duration.
- *  - Subsequent units group signs by authentic corpus category, ordered by difficulty:
- *    (1-hand still -> 1-hand moving -> 2-hand still -> 2-hand moving -> duration).
- *  - Structure and approved status decided by kvn in chat, 14 Oct 2026 (K-05).
- *  - Large groups split into balanced, contiguous units near 10 signs; maximum 12.
- *  - No gloss, meaning, translation or within-group sign order is invented.
+ *  - Categories normally use measured order: one hand before two, still before moving,
+ *    then duration. Letters, days, months and number groups use natural order.
+ *  - Structure and approved status decided by kvn in chat, 14 Oct; order follow-up 15 Oct.
+ *  - Large groups split into balanced, contiguous units near 10 signs; maximum 12,
+ *    except Letters A-M, kept together with 13 signs by kvn's decision.
+ *  - No gloss, meaning or translation is added, removed or renamed.
  */
 
 export type UnitStatus = 'proposed' | 'approved'
@@ -56,12 +57,12 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
   },
   {
     "id": "u-numbers",
-    "title": "Numbers 1-5",
+    "title": "First numbers",
     "description": "Try the signs in this number group.",
     "status": "approved",
     "signs": [
-      "2",
       "1",
+      "2",
       "4",
       "5",
       "EQUAL"
@@ -121,33 +122,24 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
     "sourceCategory": "Additional words"
   },
   {
-    "id": "u-alphabet-part1-1",
-    "title": "Letters A-M 1",
+    "id": "u-alphabet-part1",
+    "title": "Letters A-M",
     "description": "Try the letters in this group.",
     "status": "approved",
     "signs": [
-      "C",
-      "F",
-      "L",
-      "K",
-      "D",
-      "G",
-      "E"
-    ],
-    "sourceCategory": "A-Z"
-  },
-  {
-    "id": "u-alphabet-part1-2",
-    "title": "Letters A-M 2",
-    "description": "Try the letters in this group.",
-    "status": "approved",
-    "signs": [
-      "B",
-      "I",
-      "M",
-      "H",
       "A",
-      "J"
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M"
     ],
     "sourceCategory": "A-Z"
   },
@@ -159,32 +151,32 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
     "signs": [
       "O",
       "P",
-      "X",
-      "Y",
-      "W",
+      "Q",
+      "R",
+      "S",
       "T",
       "U",
-      "R",
       "V",
-      "Q",
-      "S",
+      "W",
+      "X",
+      "Y",
       "Z"
     ],
     "sourceCategory": "A-Z"
   },
   {
     "id": "u-numbers-20-99",
-    "title": "Numbers 20-99",
+    "title": "Numbers 30-90",
     "description": "Try these two-digit numbers.",
     "status": "approved",
     "signs": [
-      "50",
-      "40",
       "30",
-      "90",
-      "80",
+      "40",
+      "50",
       "60",
-      "70"
+      "70",
+      "80",
+      "90"
     ],
     "sourceCategory": "20-99"
   },
@@ -195,16 +187,16 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
     "status": "approved",
     "signs": [
       "MONDAY",
+      "TUESDAY",
+      "WEDNESDAY",
+      "THURSDAY",
+      "FRIDAY",
+      "SATURDAY",
       "SUNDAY",
       "WEEK",
       "DAY",
       "TODAY",
-      "GOOD MORNING",
-      "GOOD NIGHT",
-      "GOOD EVENING",
-      "HOUR",
-      "TIME",
-      "FRIDAY"
+      "GOOD MORNING"
     ],
     "sourceCategory": "Days"
   },
@@ -214,16 +206,16 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
     "description": "Try these day and time words.",
     "status": "approved",
     "signs": [
-      "SATURDAY",
-      "TUESDAY",
+      "GOOD NIGHT",
+      "GOOD EVENING",
+      "HOUR",
+      "TIME",
       "YESTERDAY",
       "EVENING",
       "SECONDS",
-      "WEDNESDAY",
       "DAY AFTER TOMORROW",
       "MORNING",
       "NIGHT",
-      "THURSDAY",
       "TOMORROW"
     ],
     "sourceCategory": "Days"
@@ -234,14 +226,14 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
     "description": "Try these month and calendar words.",
     "status": "approved",
     "signs": [
-      "YEAR",
-      "AUGUST",
+      "JANUARY",
       "FEBRUARY",
-      "JULY",
-      "JUNE",
       "MARCH",
-      "NOVEMBER",
-      "OCTOBER"
+      "APRIL",
+      "MAY",
+      "JUNE",
+      "JULY",
+      "AUGUST"
     ],
     "sourceCategory": "Months"
   },
@@ -251,12 +243,12 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
     "description": "Try these month and calendar words.",
     "status": "approved",
     "signs": [
-      "JANUARY",
-      "APRIL",
-      "DECEMBER",
-      "MAY",
-      "MONTH",
       "SEPTEMBER",
+      "OCTOBER",
+      "NOVEMBER",
+      "DECEMBER",
+      "MONTH",
+      "YEAR",
       "MRACH"
     ],
     "sourceCategory": "Months"
@@ -398,18 +390,18 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
     "description": "Take your time with these bigger numbers.",
     "status": "approved",
     "signs": [
-      "7000",
-      "1000",
-      "3000",
       "100",
       "200",
-      "8000",
-      "6000",
-      "400",
       "300",
-      "600",
+      "400",
       "500",
-      "2000"
+      "600",
+      "700",
+      "800",
+      "900",
+      "1000",
+      "2000",
+      "3000"
     ],
     "sourceCategory": "100-1 million"
   },
@@ -419,17 +411,17 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
     "description": "Take your time with these bigger numbers.",
     "status": "approved",
     "signs": [
-      "10000",
-      "5000",
-      "800",
-      "9000",
-      "700",
-      "900",
       "4000",
+      "5000",
+      "6000",
+      "7000",
+      "8000",
+      "9000",
+      "10000",
       "100000",
+      "200000",
       "300000",
-      "MILIYANAYA",
-      "200000"
+      "MILIYANAYA"
     ],
     "sourceCategory": "100-1 million"
   },

@@ -23,8 +23,8 @@ const months = new Set(['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
   'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'])
 const groupTitle = (title: string) => title.replace(/ \d+$/, '')
 const order = [
-  'Starter', 'Greetings', 'Numbers 1-5', 'Restaurant', 'Everyday words and directions',
-  'Letters A-M', 'Letters N-Z', 'Numbers 20-99', 'Days', 'Months', 'Colours',
+  'Starter', 'Greetings', 'First numbers', 'Restaurant', 'Everyday words and directions',
+  'Letters A-M', 'Letters N-Z', 'Numbers 30-90', 'Days', 'Months', 'Colours',
   'People and family', 'Places', 'Transport', 'Big numbers', 'Action words',
   'Things', 'Describing words', 'Time words', 'Position words', 'Small words',
 ]
@@ -35,6 +35,12 @@ function compare(a: Reference, b: Reference): number {
     || a.gloss.localeCompare(b.gloss)
 }
 
+const naturalGroups = new Set(['Letters A-M', 'Letters N-Z', 'First numbers',
+  'Numbers 30-90', 'Days', 'Months', 'Big numbers'])
+const signsIn = (title: string) => CURRICULUM_UNITS
+  .filter(unit => groupTitle(unit.title) === title).flatMap(unit => unit.signs)
+const weekdays = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
+
 describe('approved curriculum', () => {
   it('uses the approved group order and keeps split parts together', () => {
     const titles = CURRICULUM_UNITS.map(unit => groupTitle(unit.title))
@@ -44,16 +50,21 @@ describe('approved curriculum', () => {
     }
   })
 
-  it('approves every unit with unique IDs and no more than twelve signs', () => {
+  it('caps units at twelve with only the approved thirteen-letter A-M exception', () => {
     expect(new Set(CURRICULUM_UNITS.map(unit => unit.id)).size).toBe(CURRICULUM_UNITS.length)
     for (const unit of CURRICULUM_UNITS) {
       expect(unit.status).toBe('approved')
       expect(unit.title).toBeTruthy()
       expect(unit.description).toBeTruthy()
       expect(unit.signs.length).toBeGreaterThan(0)
-      expect(unit.signs.length).toBeLessThanOrEqual(12)
+      expect(unit.signs.length).toBeLessThanOrEqual(unit.id === 'u-alphabet-part1' ? 13 : 12)
       expect(new Set(unit.signs).size).toBe(unit.signs.length)
     }
+    const exceptions = CURRICULUM_UNITS.filter(unit => unit.signs.length > 12)
+    expect(exceptions).toHaveLength(1)
+    expect(exceptions[0].id).toBe('u-alphabet-part1')
+    expect(exceptions[0].title).toBe('Letters A-M')
+    expect(exceptions[0].signs).toHaveLength(13)
   })
 
   it('contains every corpus sign without adding or renaming a gloss', () => {
@@ -62,7 +73,7 @@ describe('approved curriculum', () => {
     expect(actual).toEqual(expected)
   })
 
-  it('preserves category membership and measured order across balanced groups', () => {
+  it('preserves category membership and balanced splitting, and measured order for other groups', () => {
     for (const title of order.filter(name => name !== 'Starter' && name !== 'Restaurant')) {
       const parts = CURRICULUM_UNITS.filter(unit => groupTitle(unit.title) === title)
       const category = parts[0].sourceCategory
@@ -72,12 +83,42 @@ describe('approved curriculum', () => {
       if (title === 'Letters A-M') refs = refs.filter(r => r.gloss <= 'M')
       if (title === 'Letters N-Z') refs = refs.filter(r => r.gloss > 'M')
       const expected = [...new Map(refs.map(r => [r.gloss, r])).values()].sort(compare)
-      expect(parts.flatMap(unit => unit.signs), title).toEqual(expected.map(r => r.gloss))
+      const actualSigns = parts.flatMap(unit => unit.signs)
+      expect([...actualSigns].sort(), title).toEqual(expected.map(r => r.gloss).sort())
+      if (!naturalGroups.has(title)) expect(actualSigns, title).toEqual(expected.map(r => r.gloss))
       const sizes = parts.map(unit => unit.signs.length)
       expect(Math.max(...sizes) - Math.min(...sizes), title).toBeLessThanOrEqual(1)
-      if (expected.length > 12) expect(parts.length, title).toBeGreaterThan(1)
+      if (expected.length > 12 && title !== 'Letters A-M') expect(parts.length, title).toBeGreaterThan(1)
       else expect(parts, title).toHaveLength(1)
     }
+  })
+
+  it('keeps both letter units together in alphabetical order without adding N', () => {
+    expect(signsIn('Letters A-M')).toEqual([... 'ABCDEFGHIJKLM'])
+    expect(signsIn('Letters N-Z')).toEqual([... 'OPQRSTUVWXYZ'])
+    expect(CURRICULUM_UNITS.filter(unit => unit.sourceCategory === 'A-Z')).toHaveLength(2)
+  })
+
+  it('puts weekdays first and preserves the remaining day words in their current measured order', () => {
+    const otherDays = [...new Map(recordings.filter(r => r.sourceCategory === 'Days')
+      .map(r => [r.gloss, r])).values()].sort(compare)
+      .map(r => r.gloss).filter(gloss => !weekdays.includes(gloss))
+    expect(signsIn('Days')).toEqual([...weekdays, ...otherDays])
+  })
+
+  it('uses calendar month order, then MONTH, YEAR and the existing unverified MRACH', () => {
+    expect(signsIn('Months')).toEqual([...months, 'MONTH', 'YEAR', 'MRACH'])
+  })
+
+  it('uses numeric order across number-unit splits with the existing word labels last', () => {
+    expect(signsIn('First numbers')).toEqual(['1', '2', '4', '5', 'EQUAL'])
+    expect(signsIn('Numbers 30-90')).toEqual(['30', '40', '50', '60', '70', '80', '90'])
+    const bigNumbers = signsIn('Big numbers')
+    expect(bigNumbers.at(-1)).toBe('MILIYANAYA')
+    expect(bigNumbers[0]).toBe('100')
+    const numeric = bigNumbers.slice(0, -1)
+    expect(numeric.every(gloss => /^\d+$/.test(gloss))).toBe(true)
+    expect(numeric).toEqual([...numeric].sort((a, b) => Number(a) - Number(b)))
   })
 
   it('keeps the existing restaurant glosses in measured order', () => {
