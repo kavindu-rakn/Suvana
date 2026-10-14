@@ -1,10 +1,10 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { listAttempts } from '../learner/attemptLog'
-import { currentStreak, dailyActivity } from '../learner/activity'
+import { dailyActivity } from '../learner/activity'
 import type { DayBucket } from '../learner/activity'
-import { practiceNeed, summarizeAll } from '../learner/mastery'
+import { isDueReview, practiceNeed, summarizeAll } from '../learner/mastery'
 import type { GlossMastery, MasteryLevel } from '../learner/mastery'
-import { buildSession } from '../learner/session'
+import { buildSession, clearSession } from '../learner/session'
 import { translationOf } from '../data/translations'
 import { listRecordings } from '../storage/recordingStore'
 import { loadReferenceIndex } from '../storage/bundledReferences'
@@ -13,15 +13,19 @@ import { toMeta } from '../vision/types'
 import { categoryOf, categoriesIn } from '../data/categories'
 import { safeLoad } from '../storage/safeLoad'
 import { StorageNotice } from '../storage/StorageNotice'
+import type { AttemptLogEntry } from '../learner/attemptLog'
+import { getActiveProfile, setActiveProfile, resetProgress } from '../storage/profile'
+import type { ProgressProfile } from '../storage/profile'
+import { dailyGoal, streak as goalStreak, starsFor, xp, unitState, DAILY_GOAL, TRY_FIRST_STAR, TRY_SECOND_STAR, RECALL_THIRD_STAR } from '../learner/game'
+import { CURRICULUM_UNITS } from '../data/curriculum'
+import { band } from '../scoring/band'
+import './ProgressView.css'
 
 const ACTIVITY_DAYS = 14
 // The full catalogue is Practice's job. Progress shows only what the learner
 // model rates as most worth doing now, plus a breadth read on the categories.
 const FOCUS_COUNT = 6
 const REVIEW_COUNT = 5
-// A practised sign needs real outstanding work before it earns a Review slot —
-// otherwise a sign drilled yesterday shows up asking to be redone.
-const REVIEW_NEED_MIN = 0.3
 const CATEGORY_PREVIEW = 8
 
 const LEVEL_LABEL: Record<MasteryLevel, string> = {
@@ -52,11 +56,13 @@ function SignRow({
   s,
   rank,
   animate,
+  stars,
   onPractise,
 }: {
   s: GlossMastery
   rank: number
   animate: boolean
+  stars: number
   onPractise?: (gloss?: string) => void
 }) {
   const meaning = translationOf(s.gloss)
@@ -64,7 +70,7 @@ function SignRow({
   const meta =
     s.attempts === 0
       ? 'Not practised yet'
-      : `${s.attempts} attempt${s.attempts === 1 ? '' : 's'} · ${relativeDay(s.lastPracticedAt)}`
+      : `${s.attempts} ${s.attempts === 1 ? 'try' : 'tries'} · ${relativeDay(s.lastPracticedAt)}`
 
   return (
     <li className="pg-row" style={animate ? ({ '--i': rank } as React.CSSProperties) : undefined}>
@@ -77,14 +83,14 @@ function SignRow({
           <span className="pg-gloss">{s.gloss}</span>
           {meaning && <span className="pg-meaning">{meaning}</span>}
         </p>
-        <p className="pg-row-meta">{meta}</p>
+        <p className="pg-row-meta">{meta}<span className="pg-row-stars" aria-label={`${stars} of 3 stars`}>{'★'.repeat(stars)}{'☆'.repeat(3 - stars)}</span></p>
       </div>
 
       <div className="pg-row-meter">
         <div className={`pg-meter is-${s.level}`} aria-hidden="true">
           <div className="pg-meter-fill" style={{ width: `${pct}%` }} />
         </div>
-        <span className="pg-meter-val">{pct}%</span>
+        <span className="pg-meter-val" title="Match history estimate">{pct}%</span>
       </div>
 
       <span className={`pg-chip is-${s.level}`}>{LEVEL_LABEL[s.level]}</span>
@@ -118,6 +124,42 @@ export function ProgressView({
   const [loading, setLoading] = useState(true)
 
   const [showAllCategories, setShowAllCategories] = useState(false)
+  const [attempts, setAttempts] = useState<AttemptLogEntry[]>([])
+  const [profile, setProfile] = useState<ProgressProfile>(getActiveProfile)
+  const [revision, setRevision] = useState(0)
+  const [busy, setBusy] = useState(false)
+  const [profileNotice, setProfileNotice] = useState('')
+  const [actionNotice, setActionNotice] = useState('')
+  const [resetError, setResetError] = useState('')
+  const resetDialog = useRef<HTMLDialogElement>(null)
+
+  function switchProfile(next: ProgressProfile) {
+    clearSession()
+    const persisted = setActiveProfile(next)
+    setProfile(next)
+    setProfileNotice(persisted ? '' : 'This choice works until you reload the page. Your browser could not save it.')
+    setActionNotice('')
+    setLoading(true)
+    setRevision(value => value + 1)
+  }
+
+  async function confirmReset() {
+    const target = profile
+    setResetError('')
+    setBusy(true)
+    try {
+      await resetProgress(target)
+      clearSession()
+      resetDialog.current?.close()
+      setActionNotice('Progress cleared for this profile.')
+      setLoading(true)
+      setRevision(value => value + 1)
+    } catch {
+      setResetError('Could not clear your progress. Please try again.')
+    } finally {
+      setBusy(false)
+    }
+  }
 
   // Gate the row stagger the way Hero.tsx does — the token layer already
   // collapses durations under reduced motion, but this drops the transform
@@ -130,11 +172,14 @@ export function ProgressView({
   )
 
   useEffect(() => {
+    let cancelled = false
     void (async () => {
       const { data: [loc, bun, log], storageOk: ok } = await safeLoad(
         listRecordings, loadReferenceIndex, listAttempts,
       )
+      if (cancelled) return
       setStorageOk(ok)
+      setAttempts(log)
       // The same one-per-gloss list Practice builds, so the totals here and
       // there can never disagree (see hero-copy-must-match-build).
       const refs = pickReferenceList([...loc.map(toMeta), ...bun])
@@ -153,7 +198,7 @@ export function ProgressView({
       )
       setAttemptCount(log.length)
       setActivity(dailyActivity(log, ACTIVITY_DAYS, now))
-      setStreak(currentStreak(log, now))
+      setStreak(goalStreak(log, now))
       const recent = log.slice(-10)
       setAvgRecent(
         recent.length > 0
@@ -162,7 +207,8 @@ export function ProgressView({
       )
       setLoading(false)
     })()
-  }, [])
+    return () => { cancelled = true }
+  }, [revision])
 
   const practised = summaries.filter((s) => s.attempts > 0).length
   const mastered = summaries.filter((s) => s.level === 'mastered').length
@@ -186,7 +232,7 @@ export function ProgressView({
     const inFocus = new Set(focus.map((s) => s.gloss))
     return summaries
       .filter(
-        (s) => s.attempts > 0 && !inFocus.has(s.gloss) && practiceNeed(s, now) >= REVIEW_NEED_MIN,
+        (s) => s.attempts > 0 && !inFocus.has(s.gloss) && isDueReview(s, now),
       )
       .sort((a, b) => practiceNeed(b, now) - practiceNeed(a, now))
       .slice(0, REVIEW_COUNT)
@@ -211,16 +257,55 @@ export function ProgressView({
   const peak = Math.max(...activity.map((d) => d.attempts), 1)
   const week = activity.slice(-7)
 
+  const profileName = profile === 'demo' ? 'Demo progress' : 'My progress'
+  const goal = dailyGoal(attempts)
+  const learned = summaries.filter(summary => starsFor(summary.gloss, attempts) >= 2).length
+  const dueToday = summaries.filter(summary => isDueReview(summary, new Date())).length
+  const approvedUnits = CURRICULUM_UNITS.filter(unit => unit.status === 'approved')
+
+  const settings = (
+    <div className="pg-settings">
+      <div className="pg-profile-row">
+        <label htmlFor="pg-profile">Show</label>
+        <select id="pg-profile" value={profile} disabled={loading || busy}
+          onChange={event => switchProfile(event.target.value as ProgressProfile)}>
+          <option value="default">My progress</option>
+          <option value="demo">Demo progress</option>
+        </select>
+        <button type="button" className="pg-reset-button" disabled={loading || busy || !storageOk}
+          onClick={() => { setResetError(''); resetDialog.current?.showModal() }}>Reset progress</button>
+      </div>
+      <p>{profile === 'demo'
+        ? 'Demo progress is separate. Switch back to My progress to see your own work.'
+        : 'Demo progress gives you a separate space to practise for a demo.'}</p>
+      {profileNotice && <p role="status">{profileNotice}</p>}
+      {actionNotice && <p role="status">{actionNotice}</p>}
+      <dialog className="pg-reset-dialog" ref={resetDialog} aria-labelledby="pg-reset-title"
+        onCancel={event => { if (busy) event.preventDefault() }}>
+        <h2 id="pg-reset-title">Clear {profileName}?</h2>
+        <p>This clears scores, stars and your streak in this profile. Your saved signs stay. You cannot undo this.</p>
+        {resetError && <p role="alert">{resetError}</p>}
+        <form method="dialog">
+          <button type="submit" disabled={busy}>Keep progress</button>
+          <button type="button" disabled={busy} onClick={() => void confirmReset()}>
+            {busy ? 'Clearing…' : 'Clear progress'}
+          </button>
+        </form>
+      </dialog>
+    </div>
+  )
+
   if (loading) {
     return (
       <section className="pg">
         <StorageNotice storageOk={storageOk} />
         <header className="pg-masthead">
           <div className="pg-masthead-lead">
-            <p className="pg-kicker">Learner dashboard</p>
+            <p className="pg-kicker">Your practice</p>
             <h1 className="pg-title">Your Progress</h1>
           </div>
         </header>
+      {settings}
         <div className="pg-skeleton" aria-hidden="true">
           <div className="sk sk-band" />
           <div className="sk sk-panel" />
@@ -236,15 +321,15 @@ export function ProgressView({
         <StorageNotice storageOk={storageOk} />
         <header className="pg-masthead">
           <div className="pg-masthead-lead">
-            <p className="pg-kicker">Learner dashboard</p>
+            <p className="pg-kicker">Your practice</p>
             <h1 className="pg-title">Your Progress</h1>
           </div>
         </header>
+      {settings}
         <div className="pg-notice">
           <h2>No sign data loaded.</h2>
           <p>
-            The reference recordings did not load, so there is nothing to track yet. A reload
-            usually fixes it.
+            The signs could not load. Please reload the page.
           </p>
         </div>
       </section>
@@ -258,16 +343,24 @@ export function ProgressView({
       <StorageNotice storageOk={storageOk} />
       <header className="pg-masthead">
         <div className="pg-masthead-lead">
-          <p className="pg-kicker">Learner dashboard</p>
+          <p className="pg-kicker">Your practice</p>
           <h1 className="pg-title">Your Progress</h1>
           <p className="pg-sub">
-            Every attempt is scored against a real-signer recording and logged in this browser.
+            Your scores and stars stay in this browser. They do not sync with your account.
           </p>
         </div>
         {/* No CTA here on purpose: the per-row "Practise" buttons below are the
             page's action, and "See all signs" already covers the untargeted
             trip to Practice. A third control doing the same thing is noise. */}
       </header>
+      {settings}
+
+      <section className="pg-game-stats" aria-label="Stars and daily goal">
+        <div><strong>{learned}</strong><span>Signs learned</span><small>2 stars or more · match rewards</small></div>
+        <div><strong>{xp(attempts)}</strong><span>Stars earned</span><small>Your best stars for each sign</small></div>
+        <div><strong>{dueToday}</strong><span>Review today</span><small>Signs that need another try</small></div>
+        <div><strong>{goal.count}/{goal.target}</strong><span>Today's goal</span><small>{goal.met ? 'Goal reached. Great job!' : `${goal.remaining} more tries to go`}</small></div>
+      </section>
 
       {started ? (
         <div className="pg-stats">
@@ -287,7 +380,7 @@ export function ProgressView({
               {mastered}
               <span className="pg-stat-of">/{total}</span>
             </span>
-            <span className="pg-stat-lbl">Fully mastered</span>
+            <span className="pg-stat-lbl">Mastered</span>
             <div className="pg-stat-track" aria-hidden="true">
               <div className="pg-stat-fill" style={{ width: `${(mastered / total) * 100}%` }} />
             </div>
@@ -298,12 +391,12 @@ export function ProgressView({
               {streak}
               <span className="pg-stat-of">{streak === 1 ? 'day' : 'days'}</span>
             </span>
-            <span className="pg-stat-lbl">Current streak</span>
+            <span className="pg-stat-lbl">Goal streak</span>
             <div className="pg-week" aria-hidden="true">
               {week.map((d) => (
                 <span
                   key={d.date}
-                  className={d.attempts > 0 ? 'pg-week-dot is-on' : 'pg-week-dot'}
+                  className={d.attempts >= DAILY_GOAL ? 'pg-week-dot is-on' : 'pg-week-dot'}
                 />
               ))}
             </div>
@@ -314,7 +407,7 @@ export function ProgressView({
               {avgRecent ?? '—'}
               <span className="pg-stat-of">/100</span>
             </span>
-            <span className="pg-stat-lbl">Recent average</span>
+            <span className="pg-stat-lbl">Recent match</span>
             <div className="pg-stat-track" aria-hidden="true">
               <div className="pg-stat-fill" style={{ width: `${avgRecent ?? 0}%` }} />
             </div>
@@ -324,8 +417,7 @@ export function ProgressView({
         <div className="pg-notice pg-notice-inline">
           <h2>Nothing logged yet.</h2>
           <p>
-            Practise a sign and this page fills in — a mastery estimate for every sign, a daily
-            streak, and an activity record.
+            Try a sign to start earning stars. Your progress will show up here.
           </p>
         </div>
       )}
@@ -335,7 +427,7 @@ export function ProgressView({
           <section className="pg-panel" aria-labelledby="pg-focus-h">
             <div className="pg-panel-head">
               <div>
-                <p className="pg-kicker">Ranked by the learner model</p>
+                <p className="pg-kicker">Picked for your next try</p>
                 <h2 id="pg-focus-h">Practise next</h2>
               </div>
               {onPractise && (
@@ -346,7 +438,7 @@ export function ProgressView({
             </div>
             <ol className={`pg-rows${animate ? ' is-animated' : ''}`}>
               {focus.map((s, i) => (
-                <SignRow key={s.gloss} s={s} rank={i} animate={animate} onPractise={onPractise} />
+                <SignRow key={s.gloss} s={s} rank={i} animate={animate} stars={starsFor(s.gloss, attempts)} onPractise={onPractise} />
               ))}
             </ol>
           </section>
@@ -361,7 +453,7 @@ export function ProgressView({
               </div>
               <ol className={`pg-rows${animate ? ' is-animated' : ''}`}>
                 {review.map((s, i) => (
-                  <SignRow key={s.gloss} s={s} rank={i} animate={animate} onPractise={onPractise} />
+                  <SignRow key={s.gloss} s={s} rank={i} animate={animate} stars={starsFor(s.gloss, attempts)} onPractise={onPractise} />
                 ))}
               </ol>
             </section>
@@ -374,11 +466,11 @@ export function ProgressView({
               <div className="pg-panel-head">
                 <div>
                   <p className="pg-kicker">Last {ACTIVITY_DAYS} days</p>
-                  <h2 id="pg-activity-h">Activity</h2>
+                  <h2 id="pg-activity-h">Your tries</h2>
                 </div>
                 <span className="pg-panel-figure">
                   {activity.reduce((n, d) => n + d.attempts, 0)}
-                  <span> attempts</span>
+                  <span> tries</span>
                 </span>
               </div>
 
@@ -397,7 +489,7 @@ export function ProgressView({
                       title={
                         d.attempts === 0
                           ? `${d.date}: no practice`
-                          : `${d.date}: ${d.attempts} attempt${d.attempts === 1 ? '' : 's'}, avg ${d.avgScore}`
+                          : `${d.date}: ${d.attempts} ${d.attempts === 1 ? 'try' : 'tries'}, avg ${d.avgScore}`
                       }
                     />
                   )
@@ -418,11 +510,11 @@ export function ProgressView({
                   table) carries .sr-only — clipping a bare table is unreliable. */}
               <div className="sr-only">
                 <table>
-                  <caption>Practice attempts per day, last {ACTIVITY_DAYS} days</caption>
+                  <caption>Practice tries per day, last {ACTIVITY_DAYS} days</caption>
                   <thead>
                     <tr>
                       <th scope="col">Date</th>
-                      <th scope="col">Attempts</th>
+                      <th scope="col">Tries</th>
                       <th scope="col">Average score</th>
                     </tr>
                   </thead>
@@ -444,8 +536,8 @@ export function ProgressView({
             <section className="pg-panel" aria-labelledby="pg-coverage-h">
               <div className="pg-panel-head">
                 <div>
-                  <p className="pg-kicker">Breadth across the corpus</p>
-                  <h2 id="pg-coverage-h">Coverage</h2>
+                  <p className="pg-kicker">Signs you have tried</p>
+                  <h2 id="pg-coverage-h">Your categories</h2>
                 </div>
               </div>
 
@@ -480,6 +572,41 @@ export function ProgressView({
           )}
         </aside>
       </div>
+      <section className="pg-panel pg-units" aria-labelledby="pg-units-h">
+        <h2 id="pg-units-h">Learning units</h2>
+        {approvedUnits.length === 0 && <p>These units are still being checked. You can keep practising any sign.</p>}
+        <details>
+          <summary>See the unit plan</summary>
+          <ul className="pg-unit-list">
+            {CURRICULUM_UNITS.map(unit => {
+              const earned = unit.signs.reduce((sum, gloss) => sum + starsFor(gloss, attempts), 0)
+              const state = unit.status === 'approved' ? unitState(unit, approvedUnits, attempts) : 'proposed'
+              const labels = { proposed: 'Plan preview', locked: 'Later', open: 'Ready', passed: 'Finished', mastered: 'Mastered' }
+              return <li key={unit.id}>
+                <div><strong>{unit.title}</strong><span>{unit.signs.length} signs · {labels[state]}</span></div>
+                <span>{earned}/{unit.signs.length * 3} stars</span>
+              </li>
+            })}
+          </ul>
+        </details>
+      </section>
+      <section className="pg-panel pg-explainers" aria-label="About your progress">
+        <details>
+          <summary>How we pick your next sign</summary>
+          <p>When you tap Next, a sign that needs another try comes first. If none needs review, you get a new sign.</p>
+          <p>A short session mixes two signs to review with one new sign, when both are available.</p>
+          <p>Your match scores and time since practice help choose what comes next. These are simple rules. They do not prove that you know a sign.</p>
+        </details>
+        <details>
+          <summary>How scores and stars work</summary>
+          <p>A score compares your hands with one saved sign. It measures a match, not whether your sign is correct.</p>
+          <p>85–100: {band(85).label}. 60–84: {band(60).label}. Below 60: {band(0).label}.</p>
+          <p>In Try, {TRY_FIRST_STAR} earns one star and {TRY_SECOND_STAR} earns two. After two stars, Recall (try from memory) can earn a third with a score of {RECALL_THIRD_STAR} or more, without showing the sign first.</p>
+          <p>Finish a unit by earning at least one star on each sign. Stars are match rewards. They do not prove that a sign is correct.</p>
+          <p>The match history estimate uses your scores, with newer tries counting more. Mastered means at least three tries and an estimate of 85 or more. It is a label for your match history.</p>
+          <p>Do {DAILY_GOAL} scored tries in a day to meet your goal. Your goal streak counts days in a row when you met that goal.</p>
+        </details>
+      </section>
     </section>
   )
 }

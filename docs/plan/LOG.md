@@ -459,3 +459,11 @@ Rules:
 - Plan correction: 4 flags in the old branch missed 8 hints. Main phone author-nav overlap remains outside this file boundary (L-26); keyboard navigation used for captures.
 - Needs kvn: review/adopt/merge. No push or merge by codex; r26_port yes.
 - Next: I-12a stays gated on kvn confirming no Karindra answer by 15 Oct; I-06 awaits page decisions; L-23 follows the requested order.
+### 2026-10-14 | codex (second lane) | L-23
+- What: stars/learned signs/reviews due/daily goal; approved goal streak; per-sign and unit stars; units honestly Plan preview pending K-05; simple adaptation/scoring explainers. My progress/Demo progress uses L-23a; native confirmed reset clears only that profile's attempts, with session queue cleanup and visible storage failures.
+- Branch @ sha: agent/codex/L-23-progress @ task HEAD (base 3a8d552; independent UI leaf).
+- Gates: npm 10 ci; lint 0 warnings; 251 passed / 12 skipped; build 152.13 kB gzip; guard 168; Playwright 10 passed (4 smoke + 6 new Progress tests), including real profile isolation, reset cancel/confirm/failure, blocked persistence and existing JSON/CSV exports. Diff check clean.
+- Screenshots: .agent-local/screens/L-23/index.html; main before/final production after, desktop 1280x800, phone 390x844 and 360x800. Synthetic demo UI fixtures explicitly not study results; no production seed data added.
+- Plan corrections: existing exports live in author Study, not Progress; left intact and verified. Review display now matches isDueReview. L-23a's reference/timing profile separation is preserved for kvn's adoption review; no storage engine changes. K-05 pending, so no unit is promoted to approved.
+- Needs kvn: adopt/reject UI and merge the four independent branches from this run: L-14 (80f01a9), L-19 (a752530), I-06 (5238c51), L-23 (task HEAD). No push/merge/deploy by codex; Learn UI changes r26_port yes.
+- Remaining lane queue, not claimed: I-12a waits for kvn's post-15-Oct no-answer confirmation; L-25 waits for L-22b/L-16b/DN-08; I-10 waits D-04; I-11 waits D-03; Q-05 waits D-03/D-04; optional L-31 waits DN-19/K-05. Other Codex lane's tasks untouched.
