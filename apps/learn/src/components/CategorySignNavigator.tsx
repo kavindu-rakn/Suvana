@@ -26,8 +26,10 @@ import {
   Zap,
 } from 'lucide-react'
 import type { RecordingMeta } from '../vision/types'
-import { categoryOf, foldedCategoryOf, groupForPicker, orderSigns } from '../data/categories'
+import { categoryOf, foldedCategoryOf, groupForPicker } from '../data/categories'
 import { matchesSearch, translationOf } from '../data/translations'
+import { hasMeaningCoverage, orderSignsVerifiedFirst } from '../data/meaningCoverage'
+import './CategorySignNavigator.css'
 
 export interface CategorySignNavigatorProps {
   references: RecordingMeta[]
@@ -122,7 +124,8 @@ export function CategorySignNavigator({
   const globalSearchResults = useMemo(() => {
     const q = globalQuery.trim()
     if (!q) return []
-    return references.filter((r) => matchesSearch(r.gloss, q))
+    const list = references.filter((r) => matchesSearch(r.gloss, q))
+    return orderSignsVerifiedFirst('', list)
   }, [references, globalQuery])
 
   // Scoped search results in selected category
@@ -131,7 +134,7 @@ export function CategorySignNavigator({
     const list = signsByCategory.get(selectedCategory) ?? []
     const q = categoryQuery.trim()
     const filtered = q ? list.filter((r) => matchesSearch(r.gloss, q)) : list
-    return orderSigns(selectedCategory, filtered)
+    return orderSignsVerifiedFirst(selectedCategory, filtered)
   }, [selectedCategory, signsByCategory, categoryQuery])
 
   // Suggested sign record
@@ -279,11 +282,13 @@ export function CategorySignNavigator({
                 </div>
                 <div className="cs-suggested-title-row">
                   <h3 className="cs-suggested-gloss">{suggestedRec.gloss}</h3>
-                  {translationOf(suggestedRec.gloss) && (
-                    <span className="cs-suggested-sub" lang="si">
+                  {translationOf(suggestedRec.gloss) ? (
+                    <span className="cs-suggested-sub" lang="en">
                       {translationOf(suggestedRec.gloss)}
                     </span>
-                  )}
+                  ) : !hasMeaningCoverage(suggestedRec.gloss) ? (
+                    <span className="badge cs-unverified-chip">meaning not yet verified</span>
+                  ) : null}
                 </div>
               </div>
               <button type="button" className="btn small cs-suggested-btn">
@@ -390,9 +395,11 @@ export function CategorySignNavigator({
                     </div>
 
                     <h4 className="cs-sign-gloss">{r.gloss}</h4>
-                    {meaning && (
-                      <p className="cs-sign-meaning" lang="si">{meaning}</p>
-                    )}
+                    {meaning ? (
+                      <p className="cs-sign-meaning" lang="en">{meaning}</p>
+                    ) : !hasMeaningCoverage(r.gloss) ? (
+                      <span className="badge cs-unverified-chip">meaning not yet verified</span>
+                    ) : null}
                   </div>
                 )
               })}
@@ -439,9 +446,11 @@ export function CategorySignNavigator({
                         <span className="cs-sign-cat-tag">{foldedCategoryOf(r)}</span>
                       )}
                       <h4 className="cs-sign-gloss">{r.gloss}</h4>
-                      {meaning && (
-                        <p className="cs-sign-meaning" lang="si">{meaning}</p>
-                      )}
+                      {meaning ? (
+                        <p className="cs-sign-meaning" lang="en">{meaning}</p>
+                      ) : !hasMeaningCoverage(r.gloss) ? (
+                        <span className="badge cs-unverified-chip">meaning not yet verified</span>
+                      ) : null}
                     </div>
 
                     {(isSuggested || r.source === 'team-recording') && (

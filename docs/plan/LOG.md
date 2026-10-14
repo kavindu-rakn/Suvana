@@ -442,3 +442,12 @@ Rules:
 - Gates: npm 10 ci (Learn/screens), lint 0 warnings, 268 passed / 4 skipped, build 150.16 kB gzip, guard 168, existing browser smoke 4 passed. Additional Chromium hook checks 19 passed; loading checks and countdown/recording abandonment passed with zero logged attempts. Corpus untouched; generated tracked reports restored. No iPhone-check or startup-time claim.
 - Screenshots: .agent-local/screens/L-29b/index.html, 18 desktop/phone images: real loading before/after, isolated pause/start, debug after. Needs kvn's wording/UI approval and physical iPhone re-test after the next deploy; no push, merge, deploy or R26 edit performed.
 - Plan correction: existing phone Scenario layout clips the camera below the long prompt; loading text stays visible in the header. Broader layout repair remains Scenario/polish work. Direct chat assignment; board/decisions unchanged.
+### 2026-10-14 | codex (second lane) | L-14 rework
+- What: English corpus names count as display coverage per kvn's chat decision; stable covered-first browse, untranslated-label chip, correct English language attribute. No translations or sign descriptions added.
+- Branch @ sha: agent/codex/L-14-meaning-coverage @ task HEAD (base 3a8d552; final SHA in git log).
+- Gates: npm 10 ci; lint 0 warnings; 255 passed / 12 skipped; build 147.78 kB gzip; sync guard 168; Playwright 4 passed; diff check clean.
+- Screenshots: .agent-local/screens/L-14/index.html; fresh main before and after at desktop 1280x800 / phone 390x844. AYUBOWAN chip visible; HELLO has no chip. Old unusable images preserved separately.
+- Plan correction: English Nouns now correctly have no chip. Category labels alone cannot verify MRACH/MILIYANAYA. No learner preference files changed.
+- Needs kvn: UI adoption and merge; update the board/decision record. Never pushed or merged.
+- Next: L-19 rework from origin/main, independent UI leaf branch.
+- L-14 visual-review follow-up on the same branch: scoped chip cards grow beyond 88px so the sign name stays visible on desktop; final after renders refreshed. Lint 0 warnings, 255 passed / 12 skipped, build 147.78 kB gzip, guard 168 repeated.
