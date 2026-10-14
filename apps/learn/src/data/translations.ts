@@ -84,7 +84,7 @@ export const GLOSS_TRANSLATIONS: Record<string, string> = {
   'THATTU KARANAWA': 'tap',
   'WIYADAM KARANAWA': 'spend',
   YANAWA: 'go',
-  'ANDANAWA': 'dressing',
+  'ANDANAWA': 'cry',
   KOTANAWA: 'crush(mortal and pestle)',
   'THERUM GANNAWA': 'understand',
   THORANAWA: 'choose/pick',
