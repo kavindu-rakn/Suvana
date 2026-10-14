@@ -15,9 +15,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 |---|---|---|---|---|---|---|---|---|---|---|
 | K-01 | Merge the re-sync branch and this plan into main; set up local excludes and pull R26 | kvn | 2026-10-12 | S | - | done | `n/a (kvn, GitHub Desktop)` | no | no | - |
 | K-02 | Decide the open decisions by their needed-by dates | kvn | 2026-10-12 to 2026-10-19 | S | - | todo | `n/a` | no | no | DN-01..DN-20 |
-| K-03 | Send the teammate asks to Lithira, Lahiru and Karindra | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
+| K-03 | Send the teammate asks to Lithira, Lahiru and Karindra | kvn | 2026-10-13 | S | - | done | `n/a` | no | no | - |
 | K-04 | Create accounts and secrets: three Vercel projects, Atlas M0, Cloudinary, NEXTAUTH_SECRET, optional Gemini key | kvn | 2026-10-13 to 2026-10-14 | M | K-01 | todo | `n/a` | no | no | - |
-| K-05 | Approve the starter curriculum, verify a batch of meanings, decide a third scenario | kvn | 2026-10-15 | M | L-09 | review | `kvn's own branch, or tell an agent` | yes | no | DN-19 |
+| K-05 | Approve the starter curriculum, verify a batch of meanings, decide a third scenario | kvn | 2026-10-15 | M | L-09 | done | `kvn's own branch, or tell an agent` | yes | no | DN-19 |
 | K-06 | Export the permitted Kaggle clips and upload them to Cloudinary (only if DN-05 allows video) | kvn | 2026-10-16 | M | L-15a, K-04 | cancelled | `n/a` | no | no | DN-05, DN-06 |
 | K-07 | Convert the Kaggle 'SSL Sentences' clips into references | kvn | 2026-10-16 | S | L-22a | todo | `n/a (files handed to the L-22b branch)` | yes | no | DN-08 |
 | K-08 | Buy suvana.help | kvn | 2026-10-20 | S | D-03, D-04 | todo | `n/a` | no | no | - |
@@ -26,7 +26,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | K-11 | Demo rehearsals, including the laptop fallback | kvn | 2026-10-20 and 2026-10-21 | M | Q-05, D-04 | todo | `n/a` | no | no | - |
 | K-12 | Final demo and thesis submission | kvn | 2026-10-22 | M | T-08, K-11 | todo | `n/a` | no | no | - |
 | K-13 | Record two hand-fixture clips for automated screenshots | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
-| T-01 | Create the final-thesis working copy; the uploaded draft stays untouched | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
+| T-01 | Create the final-thesis working copy; the uploaded draft stays untouched | kvn | 2026-10-13 | S | - | done | `n/a` | no | no | - |
 | T-02 | Draft revised Ch1/Ch4/Ch5 text for what was actually built | claude-code-thesis | 2026-10-19 | M | T-01 | todo | `none (writes outside the repo)` | no | no | DN-16 |
 | T-03 | Draft Ch6/Ch7/Ch8: objectives table, panel responses, limitations, future work | claude-code-thesis | 2026-10-20 | M | T-02, Q-09, L-13 | todo | `none (writes outside the repo)` | no | no | - |
 | T-04 | Learner-model worked example computed with the real code | claude-code-thesis | 2026-10-17 | S | L-13 | todo | `agent/claude/T-04-worked-example` | yes | no | - |
@@ -52,7 +52,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | Q-05 | DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check | codex | 2026-10-20 | S | D-03, D-04 | todo | `agent/codex/Q-05-demo` | no | no | - |
 | Q-06 | Full real-device matrix (iPhone Safari, Android Chrome, laptop) | kvn | 2026-10-19 | M | Q-06a, L-16b | todo | `n/a` | no | no | - |
 | Q-06a | Early phone check of the deployed Learn and device inventory | kvn | 2026-10-15 | S | D-02, L-04 | done | `n/a` | no | no | - |
-| Q-07 | Handedness reality check | kvn | 2026-10-14 | S | - | todo | `n/a` | no | no | - |
+| Q-07 | Handedness reality check | kvn | 2026-10-14 | S | - | done | `n/a` | no | no | - |
 | Q-08 | Demo-ready gate run and release tag proposal | claude-code | 2026-10-21 | S | L-26, L-27 | todo | `agent/claude/Q-08-gates` | no | no | - |
 | Q-09 | Measure end-to-end feedback latency (capture end to result shown) | codex | 2026-10-19 | S | L-16a, Q-00, K-13 | todo | `agent/codex/Q-09-latency` | no | no | - |
 | L-01 | Replace invented per-finger percentages with measured Correct/Almost/Wrong states (DN-17); one label scale | claude-code | 2026-10-13 | S | L-02 | done | `agent/claude/L-01-finger-states` | yes | yes | DN-17 |
