@@ -436,3 +436,4 @@ Rules:
 - Plan correction: English Nouns now correctly have no chip. Category labels alone cannot verify MRACH/MILIYANAYA. No learner preference files changed.
 - Needs kvn: UI adoption and merge; update the board/decision record. Never pushed or merged.
 - Next: L-19 rework from origin/main, independent UI leaf branch.
+- L-14 visual-review follow-up on the same branch: scoped chip cards grow beyond 88px so the sign name stays visible on desktop; final after renders refreshed. Lint 0 warnings, 255 passed / 12 skipped, build 147.78 kB gzip, guard 168 repeated.

@@ -11,3 +11,13 @@
   background: var(--surface-2);
   border: 1px solid var(--border);
 }
+
+/* A wrapped chip must not squeeze the sign name out of the fixed-height card. */
+.cs-nav-container .cs-sign-card:has(.cs-unverified-chip) {
+  height: auto;
+  min-height: 88px;
+}
+
+.cs-nav-container .cs-sign-card:has(.cs-unverified-chip) > * {
+  flex-shrink: 0;
+}
