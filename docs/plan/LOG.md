@@ -475,3 +475,13 @@ Rules:
 - Plan correction: actual privacy includes Communicate speech/history/consented voice uploads, Recognize camera uploads and OS speech in Alerts. DN-04 content-edition selection stays a separate decision; no deployment/legal certification. Existing homepage 98% Sequence Accuracy claim is outside footer-only boundary; exact removal proposed in handoff.
 - Needs kvn: UI review/adoption/merge and eventual terms review. No push, merge or deploy by codex; r26_port no.
 - Next: L-23 Progress UI. I-12a still awaits deadline/reply confirmation; later dependency gates remain in force.
+
+### 2026-10-14 13:00 | claude-code (integration prep, light) | integration/2026-10-14
+- What: merged with --no-ff onto main 3a8d552: L-17b (kvn's hint wording), L-29b (iPhone camera restart, model preload, "getting ready" line, ?camdebug=1 panel), L-14 (meaning chip; English dataset names count, kvn 14 Oct), L-19 (all 12 scenario hints hidden from learners, author mode only, text unchanged), L-23 (Progress page), I-06 (Privacy, Terms, Contact, Roadmap pages; kvn approved the open-core roadmap with no prices and kavindu.rakn@gmail.com as contact). No conflicts; LOG kept every entry. Antigravity's old L-14/L-19 branches are superseded.
+- Gates: Learn npm@10 ci, lint 0 warnings, tests 279 passed + 12 skipped, build ok; Playwright e2e 10 passed; Shell 44 tests + build; sync guard 170.
+- Checks (light, by claude-code, no reviewer agents): L-17b strings match kvn's wording exactly; L-19 hides every hint from learners and rewords none; L-14's 366 English names are all real yohan_* glosses (no kaggle/Sinhala names); no invented SSL content, no figures beyond "75/100" in a seeded demo render, no secrets, no board edits by agents. Every branch has before/after renders.
+- Warning: Learn's main JS is 158.55 kB gzip (budget 160; it was 146.00). The next feature will exceed it unless views are split off (lazy-load Progress, Scenario, Record, Library, Study).
+- kvn's checks recorded: Q-06a done (iPhone: camera starts, a take completes, app switch fails -> L-29/L-29b; Android: fine). D-02 done (suvana-learn.vercel.app/learn/ serves main; camera starts on the phone; first start about a minute on the iPhone because of about 9 MB of model files -> L-29b preload). L-29 did not fix the iPhone app switch; L-29b is the follow-up and needs kvn's iPhone re-test after deploy.
+- Follow-ups: I-06 page wording is formal for the public and says "kvn" twice (use the full name); lazy-load views for bundle size (codex).
+- Board: L-14, L-19, L-23, I-06, D-02, Q-06a done.
+- Needs kvn: adopt or reject each UI change from .agent-local/review/2026-10-14/index.html; then merge and push; then iPhone re-test.

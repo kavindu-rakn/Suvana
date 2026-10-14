@@ -35,7 +35,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | T-08 | Turnitin report and final PDF | kvn | 2026-10-22 | M | T-05, T-09 | todo | `n/a` | no | no | - |
 | T-09 | Own-words pass on chapters that will not change | kvn | 2026-10-16 to 2026-10-18 | M | T-01 | todo | `n/a` | no | no | - |
 | D-01 | Deployment smoke script and DEPLOYMENT.md refresh | antigravity | 2026-10-17 | S | L-06 | done | `agent/antigravity/D-01-smoke` | no | no | - |
-| D-02 | Deploy suvana-learn (.vercel.app) from current main | kvn | 2026-10-14 | S | K-01, K-04 | todo | `n/a` | no | no | - |
+| D-02 | Deploy suvana-learn (.vercel.app) from current main | kvn | 2026-10-14 | S | K-01, K-04 | done | `n/a` | no | no | - |
 | D-03 | Deploy suvana-communicate, then suvana-shell | kvn | 2026-10-17 | M | D-02, I-01, I-07, K-04 | todo | `n/a` | no | no | DN-13 |
 | D-04 | Host Recognize on the chosen platform with an uptime ping | kvn | 2026-10-18 | M | I-08 | todo | `n/a` | no | no | DN-02 |
 | D-05 | Speech service: laptop-only by default; host only if DN-03 says so | kvn | 2026-10-19 | S | I-09 | todo | `n/a` | no | no | DN-03 |
@@ -51,7 +51,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | Q-04 | Playwright smoke for Learn (keyboard, storage failure, onboarding) | antigravity | 2026-10-15 | M | Q-00, L-02, L-05, L-07 | done | `agent/antigravity/Q-04-e2e` | no | no | - |
 | Q-05 | DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check | codex | 2026-10-20 | S | D-03, D-04 | todo | `agent/codex/Q-05-demo` | no | no | - |
 | Q-06 | Full real-device matrix (iPhone Safari, Android Chrome, laptop) | kvn | 2026-10-19 | M | Q-06a, L-16b | todo | `n/a` | no | no | - |
-| Q-06a | Early phone check of the deployed Learn and device inventory | kvn | 2026-10-15 | S | D-02, L-04 | todo | `n/a` | no | no | - |
+| Q-06a | Early phone check of the deployed Learn and device inventory | kvn | 2026-10-15 | S | D-02, L-04 | done | `n/a` | no | no | - |
 | Q-07 | Handedness reality check | kvn | 2026-10-14 | S | - | todo | `n/a` | no | no | - |
 | Q-08 | Demo-ready gate run and release tag proposal | claude-code | 2026-10-21 | S | L-26, L-27 | todo | `agent/claude/Q-08-gates` | no | no | - |
 | Q-09 | Measure end-to-end feedback latency (capture end to result shown) | codex | 2026-10-19 | S | L-16a, Q-00, K-13 | todo | `agent/codex/Q-09-latency` | no | no | - |
@@ -68,20 +68,20 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | L-11 | Path view: units, stars, locks, unit detail, nav entry, 'Why this sign?' chip | claude-code | 2026-10-16 | M | L-12, K-05 | todo | `agent/claude/L-11-path` | yes | yes | - |
 | L-12 | Game logic: stars, unit state, unlocks, daily goal, streak, XP | codex | 2026-10-15 | M | L-09 | done | `agent/codex/L-12-game-logic` | yes | no | DN-10, DN-11 |
 | L-13 | Adaptation fix: review/new interleave, reachable sessions, reasons, ADAPTATION.md | codex | 2026-10-16 | M | L-12 | done | `agent/codex/L-13-adaptation` | yes | no | - |
-| L-14 | Meaning coverage: verified-first browse and a 'meaning not yet verified' chip | codex | 2026-10-15 | S | L-10 | changes requested | `agent/codex/L-14-meaning-coverage` | yes | yes | - |
+| L-14 | Meaning coverage: verified-first browse and a 'meaning not yet verified' chip | codex | 2026-10-15 | S | L-10 | done | `agent/codex/L-14-meaning-coverage` | yes | yes | - |
 | L-15a | Clip export script (only if DN-05 allows video) | codex | 2026-10-15 | S | - | cancelled | `agent/codex/L-15a-export-clips` | no | no | DN-05 |
 | L-15b | SignVideo component and video manifest (only if DN-05 allows video) | antigravity | 2026-10-16 | M | - | cancelled | `agent/antigravity/L-15b-signvideo` | yes | yes | DN-05, DN-06 |
 | L-16a | Practice stage machine: Watch then Try, with performance marks | claude-code | 2026-10-17 | M | L-11, L-12, L-13 | todo | `agent/claude/L-16a-watch-try` | yes | yes | - |
 | L-16b | Recall stage: hidden reference, cue, reveal costs the third star | claude-code | 2026-10-18 | M | L-16a | todo | `agent/claude/L-16b-recall` | yes | yes | DN-09 |
 | L-17 | Feedback engine: gated 'Close match', timing and path hints, mirrored hand label, typed hints | codex | 2026-10-17 | M | - | done | `agent/codex/L-17-hints` | yes | no | - |
 | L-18 | Export the DTW alignment path and worst-frame index | codex | 2026-10-18 | S | L-17 | todo | `agent/codex/L-18-alignment` | yes | no | - |
-| L-19 | Scenario cleanup: previews, author-only tips and hints, playable counts, recall variant | codex | 2026-10-17 | M | L-05 | changes requested | `agent/codex/L-19-scenarios` | yes | yes | - |
+| L-19 | Scenario cleanup: previews, author-only tips and hints, playable counts, recall variant | codex | 2026-10-17 | M | L-05 | done | `agent/codex/L-19-scenarios` | yes | yes | - |
 | L-20 | Licence mode (VITE_CONTENT=cc0) and an attribution panel | codex | 2026-10-18 | M | L-10 | todo | `agent/codex/L-20-licence-mode` | yes | yes | DN-04 |
 | L-21 | Feedback UI: side-by-side synced replay, typed hints, fading hints | claude-code | 2026-10-19 | M | L-16b, L-17, L-18 | todo | `agent/claude/L-21-replay` | yes | yes | - |
 | L-22a | List the Kaggle sentence labels and prepare the converter command | codex | 2026-10-15 | S | - | done | `agent/codex/L-22a-sentence-labels` | yes | no | - |
 | L-22b | Sentence data, exclusion from single-sign flows, long-sequence perf test | codex | 2026-10-18 | S | K-07 | todo | `agent/codex/L-22b-sentences` | yes | no | DN-08 |
 | L-23a | Demo profile and reset at the storage layer | codex | 2026-10-17 | S | - | done | `agent/codex/L-23a-profile` | yes | no | - |
-| L-23 | Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI | codex | 2026-10-18 | M | L-23a, L-12, L-13 | todo | `agent/codex/L-23-progress` | yes | yes | - |
+| L-23 | Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI | codex | 2026-10-18 | M | L-23a, L-12, L-13 | done | `agent/codex/L-23-progress` | yes | yes | - |
 | L-24 | Hero CTA straight to the first sign; session-complete screen | claude-code | 2026-10-18 | S | L-11 | todo | `agent/claude/L-24-cta-complete` | yes | yes | - |
 | L-25 | Sentence challenge UI (last unit on the Path) | codex | 2026-10-19 | M | L-22b, L-16b | todo | `agent/codex/L-25-sentences-ui` | yes | yes | DN-08 |
 | L-26 | Phone, accessibility and polish pass across Learn | claude-code | 2026-10-20 | M | L-21, L-23, L-25 | todo | `agent/claude/L-26-polish` | yes | yes | - |
@@ -102,7 +102,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | I-03 | Fix stale integration docs and record the Communicate gate | antigravity | 2026-10-14 | S | - | done | `agent/antigravity/I-03-stale-docs` | no | no | - |
 | I-04 | Recognition re-sync of Lahiru's 656f371..ec2604a (code and tests only) | codex | 2026-10-14 | M | K-01 | done | `agent/codex/I-04-recognition-sync` | no | no | DN-18 |
 | I-05 | Reference-converter: take kvn's port 5909a56 and declare the 3 undeclared diffs | codex | 2026-10-16 | S | I-04 | done | `agent/codex/I-05-converter-port` | yes | no | - |
-| I-06 | Shell: Privacy, Terms, Contact and Pricing/business-model pages | codex | 2026-10-18 | M | I-01 | todo | `agent/codex/I-06-shell-pages` | no | yes | DN-04, DN-15 |
+| I-06 | Shell: Privacy, Terms, Contact and Pricing/business-model pages | codex | 2026-10-18 | M | I-01 | done | `agent/codex/I-06-shell-pages` | no | yes | DN-04, DN-15 |
 | I-07 | Communicate own instance: placeholder-seed guard, gloss import script, env example | antigravity | 2026-10-16 | S | - | done | `agent/antigravity/I-07-communicate-scripts` | no | no | - |
 | I-08 | Recognition container: Docker build, latency comparison, /api/info, back link and theme | codex | 2026-10-17 | M | I-04 | todo | `agent/codex/I-08-recognition-container` | no | yes | - |
 | I-09 | Speech container: build check and readiness notes | codex | 2026-10-19 | S | - | todo | `agent/codex/I-09-speech-container` | no | no | - |

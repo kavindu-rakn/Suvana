@@ -548,7 +548,7 @@
       "K-01",
       "K-04"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a",
     "r26_port": "no",
     "screenshots": "no",
@@ -956,7 +956,7 @@
       "D-02",
       "L-04"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a",
     "r26_port": "no",
     "screenshots": "no",
@@ -1425,7 +1425,7 @@
     "deps": [
       "L-10"
     ],
-    "status": "changes requested",
+    "status": "done",
     "branch": "agent/codex/L-14-meaning-coverage",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1626,7 +1626,7 @@
     "deps": [
       "L-05"
     ],
-    "status": "changes requested",
+    "status": "done",
     "branch": "agent/codex/L-19-scenarios",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1801,7 +1801,7 @@
       "L-12",
       "L-13"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-23-progress",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -2369,7 +2369,7 @@
     "deps": [
       "I-01"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/I-06-shell-pages",
     "r26_port": "no",
     "screenshots": "yes",
