@@ -7,7 +7,7 @@ Status values: `todo`, `in-progress`, `review` (handoff written, waiting for kvn
 Owners: `kvn`; `claude-code` (Claude Code, UI lane); `codex` (OpenAI Codex, logic and platform lane); `antigravity` (Google Antigravity, shell/Communicate/Alerts/tools lane); `claude-code-thesis` (a second Claude Code session for thesis and docs, subject to DN-20).
 Sizes: S < 2 h, M < half a day, L < 1 day. "r26_port: yes" means the change must reach R26 `learn-ssl-module/web` at the next milestone port (07-r26-mirror.md). "screenshots: yes" means desktop 1280x800 and phone 390x844 before/after renders are required, and kvn adopts or rejects from them before merge.
 
-Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 18, codex 34; total 99.
+Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 11, codex 41; total 99.
 
 ## Table
 
@@ -65,27 +65,27 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | L-08 | Learner playback: 0.5x start, speed control, mirror label, raw-framing view with frame outline, sized wrist-anchored ghost | claude-code | 2026-10-15 | M | L-07 | done | `agent/claude/L-08-playback` | yes | yes | - |
 | L-09 | Curriculum report, data-derived units and scenario coverage table | antigravity | 2026-10-14 | M | L-10 | done | `agent/antigravity/L-09-curriculum` | yes | no | - |
 | L-10 | Reference metadata: hands, motion, duration, licence, hasMeaning in the generated index | antigravity | 2026-10-14 | S | - | done | `agent/antigravity/L-10-ref-meta` | yes | no | - |
-| L-11 | Path view: units, stars, locks, unit detail, nav entry, 'Why this sign?' chip | claude-code | 2026-10-16 | M | L-12, K-05 | todo | `agent/claude/L-11-path` | yes | yes | - |
+| L-11 | Path view: units, stars, locks, unit detail, nav entry, 'Why this sign?' chip | codex | 2026-10-16 | M | L-12, K-05 | todo | `agent/codex/L-11-path` | yes | yes | - |
 | L-12 | Game logic: stars, unit state, unlocks, daily goal, streak, XP | codex | 2026-10-15 | M | L-09 | done | `agent/codex/L-12-game-logic` | yes | no | DN-10, DN-11 |
 | L-13 | Adaptation fix: review/new interleave, reachable sessions, reasons, ADAPTATION.md | codex | 2026-10-16 | M | L-12 | done | `agent/codex/L-13-adaptation` | yes | no | - |
 | L-14 | Meaning coverage: verified-first browse and a 'meaning not yet verified' chip | codex | 2026-10-15 | S | L-10 | done | `agent/codex/L-14-meaning-coverage` | yes | yes | - |
 | L-15a | Clip export script (only if DN-05 allows video) | codex | 2026-10-15 | S | - | cancelled | `agent/codex/L-15a-export-clips` | no | no | DN-05 |
 | L-15b | SignVideo component and video manifest (only if DN-05 allows video) | antigravity | 2026-10-16 | M | - | cancelled | `agent/antigravity/L-15b-signvideo` | yes | yes | DN-05, DN-06 |
-| L-16a | Practice stage machine: Watch then Try, with performance marks | claude-code | 2026-10-17 | M | L-11, L-12, L-13 | todo | `agent/claude/L-16a-watch-try` | yes | yes | - |
-| L-16b | Recall stage: hidden reference, cue, reveal costs the third star | claude-code | 2026-10-18 | M | L-16a | todo | `agent/claude/L-16b-recall` | yes | yes | DN-09 |
+| L-16a | Practice stage machine: Watch then Try, with performance marks | codex | 2026-10-17 | M | L-11, L-12, L-13 | todo | `agent/codex/L-16a-watch-try` | yes | yes | - |
+| L-16b | Recall stage: hidden reference, cue, reveal costs the third star | codex | 2026-10-18 | M | L-16a | todo | `agent/codex/L-16b-recall` | yes | yes | DN-09 |
 | L-17 | Feedback engine: gated 'Close match', timing and path hints, mirrored hand label, typed hints | codex | 2026-10-17 | M | - | done | `agent/codex/L-17-hints` | yes | no | - |
 | L-18 | Export the DTW alignment path and worst-frame index | codex | 2026-10-18 | S | L-17 | todo | `agent/codex/L-18-alignment` | yes | no | - |
 | L-19 | Scenario cleanup: previews, author-only tips and hints, playable counts, recall variant | codex | 2026-10-17 | M | L-05 | done | `agent/codex/L-19-scenarios` | yes | yes | - |
 | L-20 | Licence mode (VITE_CONTENT=cc0) and an attribution panel | codex | 2026-10-18 | M | L-10 | todo | `agent/codex/L-20-licence-mode` | yes | yes | DN-04 |
-| L-21 | Feedback UI: side-by-side synced replay, typed hints, fading hints | claude-code | 2026-10-19 | M | L-16b, L-17, L-18 | todo | `agent/claude/L-21-replay` | yes | yes | - |
+| L-21 | Feedback UI: side-by-side synced replay, typed hints, fading hints | codex | 2026-10-19 | M | L-16b, L-17, L-18 | todo | `agent/codex/L-21-replay` | yes | yes | - |
 | L-22a | List the Kaggle sentence labels and prepare the converter command | codex | 2026-10-15 | S | - | done | `agent/codex/L-22a-sentence-labels` | yes | no | - |
 | L-22b | Sentence data, exclusion from single-sign flows, long-sequence perf test | codex | 2026-10-18 | S | K-07 | todo | `agent/codex/L-22b-sentences` | yes | no | DN-08 |
 | L-23a | Demo profile and reset at the storage layer | codex | 2026-10-17 | S | - | done | `agent/codex/L-23a-profile` | yes | no | - |
 | L-23 | Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI | codex | 2026-10-18 | M | L-23a, L-12, L-13 | done | `agent/codex/L-23-progress` | yes | yes | - |
-| L-24 | Hero CTA straight to the first sign; session-complete screen | claude-code | 2026-10-18 | S | L-11 | todo | `agent/claude/L-24-cta-complete` | yes | yes | - |
+| L-24 | Hero CTA straight to the first sign; session-complete screen | codex | 2026-10-18 | S | L-11 | todo | `agent/codex/L-24-cta-complete` | yes | yes | - |
 | L-25 | Sentence challenge UI (last unit on the Path) | codex | 2026-10-19 | M | L-22b, L-16b | todo | `agent/codex/L-25-sentences-ui` | yes | yes | DN-08 |
-| L-26 | Phone, accessibility and polish pass across Learn | claude-code | 2026-10-20 | M | L-21, L-23, L-25 | todo | `agent/claude/L-26-polish` | yes | yes | - |
-| L-27 | Camera off while browsing or hidden; hover hint only on hover devices; GSAP restore | claude-code | 2026-10-20 | S | L-04, L-16b | todo | `agent/claude/L-27-camera-off` | yes | no | - |
+| L-26 | Phone, accessibility and polish pass across Learn | codex | 2026-10-20 | M | L-21, L-23, L-25 | todo | `agent/codex/L-26-polish` | yes | yes | - |
+| L-27 | Camera off while browsing or hidden; hover hint only on hover devices; GSAP restore | codex | 2026-10-20 | S | L-04, L-16b | todo | `agent/codex/L-27-camera-off` | yes | no | - |
 | L-28 | Learn docs match what shipped | claude-code-thesis | 2026-10-20 | S | L-26 | todo | `agent/claude/L-28-learn-docs` | yes | no | - |
 | L-29 | iPhone: restart the camera automatically after an app switch | codex | 2026-10-16 | S | L-04 | done | `agent/codex/L-29-ios-camera-resume` | yes | no | - |
 | L-30 | Score one-handed references as one-handed (ignore stray hand labels) | codex | 2026-10-16 | S | - | done | `agent/codex/L-30-stray-hands` | yes | no | - |
@@ -768,9 +768,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 
 ### L-11: Path view: units, stars, locks, unit detail, nav entry, 'Why this sign?' chip
 
-- **Owner / day / size:** claude-code / 2026-10-16 / M
+- **Owner / day / size:** codex / 2026-10-16 / M
 - **Depends on:** L-12, K-05
-- **Branch:** `agent/claude/L-11-path` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-11-path` | **r26_port:** yes | **screenshots:** yes
 - **Why:** Answers PP1's 'game with levels and goals'. Learn has no levels, goals or unlocks today.
 - **Files:** `apps/learn/src/components/PathView.tsx`, `apps/learn/src/components/PathView.css`, `apps/learn/src/App.tsx`, `apps/learn/src/components/AppNavBar.tsx`, `tools/screens/e2e/path.spec.ts`
 - **Acceptance:**
@@ -851,9 +851,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 
 ### L-16a: Practice stage machine: Watch then Try, with performance marks
 
-- **Owner / day / size:** claude-code / 2026-10-17 / M
+- **Owner / day / size:** codex / 2026-10-17 / M
 - **Depends on:** L-11, L-12, L-13
-- **Branch:** `agent/claude/L-16a-watch-try` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-16a-watch-try` | **r26_port:** yes | **screenshots:** yes
 - **Why:** The core learning loop starts with watching slowly and imitating.
 - **Files:** `apps/learn/src/components/PracticeView.tsx`, `apps/learn/src/components/practiceStages.ts`, `apps/learn/src/components/practiceStages.test.ts`, `apps/learn/src/components/views.css`
 - **Acceptance:**
@@ -867,9 +867,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 
 ### L-16b: Recall stage: hidden reference, cue, reveal costs the third star
 
-- **Owner / day / size:** claude-code / 2026-10-18 / M
+- **Owner / day / size:** codex / 2026-10-18 / M
 - **Depends on:** L-16a; decisions DN-09
-- **Branch:** `agent/claude/L-16b-recall` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-16b-recall` | **r26_port:** yes | **screenshots:** yes
 - **Why:** The direct answer to PP1's 'showing the accuracy is not enough': the learner performs from memory.
 - **Files:** `apps/learn/src/components/PracticeView.tsx`, `apps/learn/src/components/practiceStages.ts`, `apps/learn/src/components/views.css`
 - **Acceptance:**
@@ -937,9 +937,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 
 ### L-21: Feedback UI: side-by-side synced replay, typed hints, fading hints
 
-- **Owner / day / size:** claude-code / 2026-10-19 / M
+- **Owner / day / size:** codex / 2026-10-19 / M
 - **Depends on:** L-16b, L-17, L-18
-- **Branch:** `agent/claude/L-21-replay` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-21-replay` | **r26_port:** yes | **screenshots:** yes
 - **Why:** A novice needs to see where the attempt diverged, not just a number.
 - **Files:** `apps/learn/src/components/ReplayCompare.tsx`, `apps/learn/src/components/ReplayCompare.css`, `apps/learn/src/components/PracticeView.tsx`, `apps/learn/src/components/ScoreBadge.tsx`
 - **Acceptance:**
@@ -1002,9 +1002,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 
 ### L-24: Hero CTA straight to the first sign; session-complete screen
 
-- **Owner / day / size:** claude-code / 2026-10-18 / S
+- **Owner / day / size:** codex / 2026-10-18 / S
 - **Depends on:** L-11
-- **Branch:** `agent/claude/L-24-cta-complete` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-24-cta-complete` | **r26_port:** yes | **screenshots:** yes
 - **Why:** Time to first attempt is long and there is no session-complete moment. The Hero's decorative preview cards stay as they are (kvn, 11 Oct).
 - **Files:** `apps/learn/src/components/Hero.tsx (CTA target only)`, `apps/learn/src/components/SessionComplete.tsx`, `apps/learn/src/components/SessionComplete.css`, `apps/learn/src/components/PracticeView.tsx (session end hook)`
 - **Acceptance:**
@@ -1031,9 +1031,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 
 ### L-26: Phone, accessibility and polish pass across Learn
 
-- **Owner / day / size:** claude-code / 2026-10-20 / M
+- **Owner / day / size:** codex / 2026-10-20 / M
 - **Depends on:** L-21, L-23, L-25
-- **Branch:** `agent/claude/L-26-polish` | **r26_port:** yes | **screenshots:** yes
+- **Branch:** `agent/codex/L-26-polish` | **r26_port:** yes | **screenshots:** yes
 - **Why:** It must work on any device. PROGRESS-CRITIQUE 5.3 and RECORD-UIUX-PLAN phone checks were never done.
 - **Files:** `apps/learn/src/components/views.css`, `apps/learn/src/index.css`, `apps/learn/src/components/PracticeView.tsx`, `apps/learn/src/components/CategorySignNavigator.tsx`
 - **Acceptance:**
@@ -1045,9 +1045,9 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 
 ### L-27: Camera off while browsing or hidden; hover hint only on hover devices; GSAP restore
 
-- **Owner / day / size:** claude-code / 2026-10-20 / S
+- **Owner / day / size:** codex / 2026-10-20 / S
 - **Depends on:** L-04, L-16b
-- **Branch:** `agent/claude/L-27-camera-off` | **r26_port:** yes | **screenshots:** no
+- **Branch:** `agent/codex/L-27-camera-off` | **r26_port:** yes | **screenshots:** no
 - **Why:** Bug A18: the camera light stays on while browsing; the hover hint shows on touch tablets; a global GSAP setting leaks.
 - **Files:** `apps/learn/src/components/PracticeView.tsx`, `apps/learn/src/components/Hero.tsx (gsap cleanup only)`
 - **Acceptance:**

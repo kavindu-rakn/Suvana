@@ -543,3 +543,10 @@ Rules:
 - K-05 meanings: kvn confirmed the 23 existing meanings in Starter and Everyday words and directions 1-2 as correct (ANDANAWA = cry was his earlier fix). K-05 is done; L-11 is unblocked.
 - Board catch-up from earlier LOG entries (13 Oct): T-01, K-03 and Q-07 done.
 - Open for kvn: K-04, K-09 and K-13 postponed by kvn; Karindra's K-03 deadline is 15 Oct (DN-14: no reply means I-12a rebuild on 16 Oct); Lithira's is 16 Oct; who builds L-11 and the other claude-code Learn tasks is kvn's choice (Codex or a new Claude chat).
+
+### 2026-10-15 | kvn (recorded by claude-code) | claude-code's Learn tasks move to codex
+- Decision (kvn, chat): Codex builds the seven remaining claude-code Learn tasks: L-11, L-16a, L-24, L-16b, L-27, L-21, L-26. Claude's allowance is kept for integration prep, the R26 ports (R-03, R-04, R-05), Q-08 and talking with kvn. Board: owner codex, branches agent/codex/<same name>.
+- Lane: the second Codex window (antigravity worktree, ports 5193/5194) builds them one after another in that order, after I-12a if DN-14 needs it. L-25 stays with it. Its I-10, I-11 and Q-05 go to the first Codex window.
+- Hot files: for these tasks the second Codex window owns PracticeView.tsx, views.css, App.tsx (L-11) and Hero.tsx (L-24, L-27); read "CC" as that window in the 10-schedule.md hot-file table.
+- Stacking: kvn allows these seven to stack on each other (an exception to 08 section 4, for this chain only). Each handoff says "stacked on ..." and its renders compare against the parent branch; kvn merges bottom-up.
+- Plan correction: L-24's Hero button opens the first sign in Watch, which L-16a adds, so L-24 is built after L-16a (the board lists only L-11).

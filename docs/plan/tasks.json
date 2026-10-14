@@ -1324,7 +1324,7 @@
   {
     "id": "L-11",
     "title": "Path view: units, stars, locks, unit detail, nav entry, 'Why this sign?' chip",
-    "owner": "claude-code",
+    "owner": "codex",
     "day": "2026-10-16",
     "size": "M",
     "deps": [
@@ -1332,7 +1332,7 @@
       "K-05"
     ],
     "status": "todo",
-    "branch": "agent/claude/L-11-path",
+    "branch": "agent/codex/L-11-path",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [],
@@ -1503,7 +1503,7 @@
   {
     "id": "L-16a",
     "title": "Practice stage machine: Watch then Try, with performance marks",
-    "owner": "claude-code",
+    "owner": "codex",
     "day": "2026-10-17",
     "size": "M",
     "deps": [
@@ -1512,7 +1512,7 @@
       "L-13"
     ],
     "status": "todo",
-    "branch": "agent/claude/L-16a-watch-try",
+    "branch": "agent/codex/L-16a-watch-try",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [],
@@ -1536,14 +1536,14 @@
   {
     "id": "L-16b",
     "title": "Recall stage: hidden reference, cue, reveal costs the third star",
-    "owner": "claude-code",
+    "owner": "codex",
     "day": "2026-10-18",
     "size": "M",
     "deps": [
       "L-16a"
     ],
     "status": "todo",
-    "branch": "agent/claude/L-16b-recall",
+    "branch": "agent/codex/L-16b-recall",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [
@@ -1684,7 +1684,7 @@
   {
     "id": "L-21",
     "title": "Feedback UI: side-by-side synced replay, typed hints, fading hints",
-    "owner": "claude-code",
+    "owner": "codex",
     "day": "2026-10-19",
     "size": "M",
     "deps": [
@@ -1693,7 +1693,7 @@
       "L-18"
     ],
     "status": "todo",
-    "branch": "agent/claude/L-21-replay",
+    "branch": "agent/codex/L-21-replay",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [],
@@ -1821,14 +1821,14 @@
   {
     "id": "L-24",
     "title": "Hero CTA straight to the first sign; session-complete screen",
-    "owner": "claude-code",
+    "owner": "codex",
     "day": "2026-10-18",
     "size": "S",
     "deps": [
       "L-11"
     ],
     "status": "todo",
-    "branch": "agent/claude/L-24-cta-complete",
+    "branch": "agent/codex/L-24-cta-complete",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [],
@@ -1882,7 +1882,7 @@
   {
     "id": "L-26",
     "title": "Phone, accessibility and polish pass across Learn",
-    "owner": "claude-code",
+    "owner": "codex",
     "day": "2026-10-20",
     "size": "M",
     "deps": [
@@ -1891,7 +1891,7 @@
       "L-25"
     ],
     "status": "todo",
-    "branch": "agent/claude/L-26-polish",
+    "branch": "agent/codex/L-26-polish",
     "r26_port": "yes",
     "screenshots": "yes",
     "decisions": [],
@@ -1913,7 +1913,7 @@
   {
     "id": "L-27",
     "title": "Camera off while browsing or hidden; hover hint only on hover devices; GSAP restore",
-    "owner": "claude-code",
+    "owner": "codex",
     "day": "2026-10-20",
     "size": "S",
     "deps": [
@@ -1921,7 +1921,7 @@
       "L-16b"
     ],
     "status": "todo",
-    "branch": "agent/claude/L-27-camera-off",
+    "branch": "agent/codex/L-27-camera-off",
     "r26_port": "yes",
     "screenshots": "no",
     "decisions": [],
