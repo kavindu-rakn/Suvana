@@ -250,7 +250,7 @@ export function scoreAttempt(
       normalizedDistance: Infinity,
       hands: [],
       worstJoints: [],
-      hints: ['No hands were tracked in the reference.'],
+      hints: [hintText({ kind: 'untracked-reference' })],
       typedHints: [{ kind: 'untracked-reference' }],
       mirrored: false,
       twoHanded: false,

@@ -1,7 +1,7 @@
 export type Hint =
   | { kind: 'missing-hand'; hand: 'Left' | 'Right' | 'both' }
   | { kind: 'untracked-attempt' | 'untracked-reference' | 'path' | 'close-match' | 'compare-reference' }
-  | { kind: 'timing'; ratio: number }
+  | { kind: 'timing'; ratio: number; direction: 'slow' | 'fast' }
 
 export interface HintInput {
   score: number
@@ -39,7 +39,8 @@ export function buildHints(input: HintInput): Hint[] {
   const ratio = input.attemptActiveMs / input.referenceMs
   if (input.attemptActiveMs > 0 && input.referenceMs > 0 && Number.isFinite(ratio)
       && (ratio < TIMING_MIN_RATIO || ratio > TIMING_MAX_RATIO)) {
-    hints.push({ kind: 'timing', ratio: Math.round(ratio * 10) / 10 })
+    hints.push({ kind: 'timing', ratio: Math.round(ratio * 10) / 10,
+      direction: ratio > TIMING_MAX_RATIO ? 'slow' : 'fast' })
   }
   if (!hints.length) hints.push({ kind: input.score >= CLOSE_MATCH_SCORE ? 'close-match' : 'compare-reference' })
   return hints.slice(0, 2)
@@ -49,15 +50,17 @@ export function buildHints(input: HintInput): Hint[] {
 export function hintText(hint: Hint, twoHanded = false): string {
   switch (hint.kind) {
     case 'missing-hand': return hint.hand === 'both'
-      ? 'This sign is two-handed — use both hands.'
-      : `Use your ${hint.hand.toLowerCase()} hand too — this sign is two-handed.`
-    case 'untracked-attempt': return 'No hand was tracked in your attempt — check your framing and lighting.'
-    case 'untracked-reference': return 'No hands were tracked in the reference.'
-    case 'path': return 'Your hand path differs from the reference — watch the movement at 0.5x.'
-    case 'timing': return `Your active signing duration was ${hint.ratio.toFixed(1)}x the reference — compare the pace at 0.5x.`
+      ? 'Please use your hands.'
+      : 'Use your other hand too.'
+    case 'untracked-attempt': return 'Show your hands, turn the lights on!'
+    case 'untracked-reference': return 'Oops, this sign is not ready yet.'
+    case 'path': return 'Your hand moved another way, do it again!'
+    case 'timing': return hint.direction === 'slow'
+      ? 'Nice try! But little slow.'
+      : 'Nice try! But little fast.'
     case 'close-match': return twoHanded
-      ? 'Close match — both hands are tracking the reference well.'
-      : 'Close match — keep the same handshape and pace.'
-    case 'compare-reference': return 'Compare your attempt with the reference at 0.5x, then try again.'
+      ? 'Great job! Both hands look correct.'
+      : 'Great job! That looks correct.'
+    default: return 'Watch again, try again.'
   }
 }

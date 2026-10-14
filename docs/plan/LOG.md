@@ -427,3 +427,11 @@ Rules:
 - Screenshots: n/a (motion only; measured)
 - Needs kvn: merge; check playback on the next deploy.
 - Next: none for claude-code until L-12 and K-05 unblock L-11 (L-12 is now on main; K-05 is kvn's).
+
+### 2026-10-14 18:21 | codex | L-17b
+- What: done for review. Use exactly kvn's short hint strings in hintText(), the empty-reference scoring return, and the two dev fixtures with old close-match text. Timing hints carry slow/fast from the unrounded ratio; scores and hint selection stay unchanged.
+- Branch @ sha: agent/codex/L-17b-plain-hints @ task HEAD (final SHA in branch log), fresh from origin/main 3a8d552; no stack.
+- Gates: npm 10 ci (Learn/screens), lint 0 warnings, 271 passed / 4 skipped, build 145.95 kB gzip, guard 168; existing browser smoke 4 passed on Codex port 5184. Additional parent comparison: 25,344 hint inputs and 501 reference pairs unchanged except text/new direction field.
+- Screenshots: .agent-local/screens/L-17b/index.html; 40 before/after images across ten hint states, desktop 1280x800 and phone 390x844. Isolated synthetic fixture with real ScoreBadge/CSS, like L-17; 20 exact-text/viewport checks passed. Representative images visually inspected; no device-check claim.
+- Needs kvn: review rendered cards and merge the leaf branch. Broader plain-words cleanup remains separate; no hot files or scoring math changed. Corpus untouched; generated tracked reports restored. No push, merge, port or deployment performed.
+- Plan corrections: none; directly authorized by kvn's chat and the 14 Oct wording decision.
