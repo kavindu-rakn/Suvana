@@ -485,3 +485,9 @@ Rules:
 - Follow-ups: I-06 page wording is formal for the public and says "kvn" twice (use the full name); lazy-load views for bundle size (codex).
 - Board: L-14, L-19, L-23, I-06, D-02, Q-06a done.
 - Needs kvn: adopt or reject each UI change from .agent-local/review/2026-10-14/index.html; then merge and push; then iPhone re-test.
+
+### 2026-10-14 14:00 | kvn (recorded by claude-code) | 14 Oct approvals and iPhone re-test
+- Verdict: kvn adopted all six UI changes from the before/after renders in .agent-local/review/2026-10-14/: L-17b, L-29b, L-14, L-19, L-23, I-06. Merged integration/2026-10-14 into main and pushed; Vercel deployed the latest commit to suvana-learn.vercel.app.
+- Q-06a re-test (iPhone, after L-29b): the camera now restarts by itself every time kvn switches to another app and back. Bug A19 fixed.
+- Note: commit f4c610e also started tracking .claude/launch.json (allowed by the Q-01 .gitignore); lane worktrees with an untracked copy must move it aside before switching branches.
+- Next: K-05 (curriculum approval) unblocks claude-code's L-11; codex follow-ups: lazy-load views (main JS 158.55 kB of 160), plainer I-06 wording with kvn's full name.
