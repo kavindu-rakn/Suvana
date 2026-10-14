@@ -485,3 +485,10 @@ Rules:
 - Follow-ups: I-06 page wording is formal for the public and says "kvn" twice (use the full name); lazy-load views for bundle size (codex).
 - Board: L-14, L-19, L-23, I-06, D-02, Q-06a done.
 - Needs kvn: adopt or reject each UI change from .agent-local/review/2026-10-14/index.html; then merge and push; then iPhone re-test.
+
+### 2026-10-14 20:24 | codex | I-06b
+- What: done for review. Plain, friendly copy in Privacy, Terms, Roadmap and Contact; kvn -> Kavindu Ranathunga, including the contact owner line. All original data-handling facts, optional voice metadata, rights/safety limits, draft label, future-plan caveats, support limits and contact address retained. Full section-by-section fact audit in handoff.
+- Branch @ sha: agent/codex/I-06b-plain-pages @ task HEAD (final SHA in branch log), fresh from main 64dd3db; independent of Learn's lazy-view fix 14868e3.
+- Gates: npm 10 ci; Shell 44 tests, typecheck/build passed; guard 170; diff check clean. Same element structure, links, scripts and numeric facts; all pages/local page links 200; no overflow at 1280/390/360. Existing Shell homepage size warning unchanged.
+- Screenshots: .agent-local/screens/I-06b/index.html; 32 images covering all four pages before/after at desktop/phone, including full-page copies for all paragraphs. All four full-page after renders visually inspected.
+- Needs kvn: adopt/reject wording and merge the separate branches. r26_port no; no CSS, behavior, prices, facts or board/decision changes. Nothing pushed, merged or deployed.
