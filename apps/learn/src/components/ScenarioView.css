@@ -1,0 +1,77 @@
+/* Scenario-only styles; shared playback and practice styles stay untouched. */
+.aww-scenario-card .card-status-preview,
+.briefing-pills .briefing-pill-preview,
+.aww-scenario-dialogue .dialogue-recall-pill,
+.aww-recall-hidden-card .aww-recall-badge {
+  background: #fff4d6;
+  color: #493500;
+  border: 1px solid #a67c20;
+}
+.briefing-hero-body h1:focus { outline: none; }
+.scenario-variant-selector { margin: 18px 0; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.variant-label { font-size: 0.75rem; font-weight: 600; color: var(--text-dim); }
+.variant-toggle-group { display: flex; padding: 3px; gap: 4px; border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--surface-2); }
+.variant-toggle-btn { flex: 1; padding: 8px 12px; font-size: 0.85rem; font-weight: 600; color: var(--text); background: transparent; border: none; border-radius: 6px; cursor: pointer; }
+.variant-toggle-group .variant-toggle-btn.active { color: var(--surface); background: var(--text); }
+.variant-description { margin: 0; font-size: 0.85rem; line-height: 1.5; color: var(--text-dim); }
+.dialogue-recall-pill, .aww-recall-badge { display: inline-flex; padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 999px; }
+
+/* Normal flow puts the title above Recall instead of on top of it. */
+.aww-scenario-env .scenario-recall-pane .aww-pane-header {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  flex: 0 0 auto;
+  padding: 24px 32px 0;
+}
+.aww-scenario-env .scenario-recall-pane .aww-pane-content {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.aww-scenario-env .aww-recall-hidden-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: auto;
+  min-height: 180px;
+  width: 100%;
+  padding: 28px 20px;
+  margin: 0;
+  text-align: center;
+  box-sizing: border-box;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px dashed var(--border-subtle);
+  border-radius: 12px;
+}
+.aww-recall-hidden-card .aww-recall-lead { margin: 0; color: var(--text); font-size: 1.15rem; font-weight: 600; }
+.aww-recall-sub { margin: 0; color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; max-width: 320px; }
+.aww-scenario-dialogue .dialogue-hint-pill { color: #493500; background: #fff4d6; border: 1px solid #a67c20; border-radius: 12px; flex-wrap: wrap; }
+.hint-author-badge { font-size: 0.72rem; font-weight: 600; color: inherit; }
+@media (max-width: 640px) {
+  .aww-scenario-env .scenario-recall-pane .aww-pane-header { padding: 16px 20px 0; }
+  .aww-scenario-env .scenario-recall-pane .aww-pane-content { padding: 12px; }
+}
+
+/* A narrow briefing must wrap its own contents rather than widen the page. */
+.aww-mission-briefing { width: 100%; box-sizing: border-box; min-width: 0; }
+.briefing-main-grid > * { min-width: 0; box-sizing: border-box; }
+@media (max-width: 640px) {
+  .aww-mission-briefing { margin: 20px auto; padding: 0 16px 100px; }
+  .aww-mission-briefing .briefing-hero-overlay { padding: 24px 20px; }
+  .aww-mission-briefing .briefing-hero-body h1 { font-size: 2.1rem; overflow-wrap: anywhere; }
+  .aww-mission-briefing .briefing-hero-sub { font-size: 1.05rem; }
+  .aww-mission-briefing .briefing-main-grid { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .aww-mission-briefing .briefing-script-container,
+  .aww-mission-briefing .briefing-action-card { padding: 20px; }
+  .aww-mission-briefing .briefing-section-header { flex-wrap: wrap; gap: 8px; }
+  .aww-mission-briefing .briefing-flow-item { flex-direction: column; padding: 14px; gap: 10px; }
+  .aww-mission-briefing .briefing-vocab-chip { max-width: 100%; overflow-wrap: anywhere; }
+  .aww-mission-briefing .briefing-pill { letter-spacing: 0.02em; font-size: 0.7rem; }
+}

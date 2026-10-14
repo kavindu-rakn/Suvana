@@ -10,35 +10,40 @@
       "partnerLine": "A server comes over with a menu and waits for your order.",
       "prompt": "Tell them you would like something to eat.",
       "gloss": "KANAWA",
-      "hint": "Keep the movement towards your mouth clear and unhurried."
+      "hint": "Keep the movement towards your mouth clear and unhurried.",
+      "pendingSignerValidation": true
     },
     {
       "id": "order-drink",
       "partnerLine": "They note it down, then look up again — anything else?",
       "prompt": "Now ask for something to drink.",
       "gloss": "BONAWA",
-      "hint": "This one is close to the previous sign — make the difference obvious."
+      "hint": "This one is close to the previous sign — make the difference obvious.",
+      "pendingSignerValidation": true
     },
     {
       "id": "price",
       "partnerLine": "They tell you what it costs and check that you have understood.",
       "prompt": "Confirm the amount back to them.",
       "gloss": "500",
-      "hint": "Number signs are held briefly — do not rush out of the shape."
+      "hint": "Number signs are held briefly — do not rush out of the shape.",
+      "pendingSignerValidation": true
     },
     {
       "id": "buy",
       "partnerLine": "That sounds right to you.",
       "prompt": "Tell them you will take it.",
       "gloss": "MILADII GANNAWA",
-      "hint": "Finish the full movement before dropping your hands."
+      "hint": "Finish the full movement before dropping your hands.",
+      "pendingSignerValidation": true
     },
     {
       "id": "bill",
       "partnerLine": "You have finished your meal and are ready to leave.",
       "prompt": "Ask for the bill.",
       "gloss": "BILPATHA",
-      "hint": "Keep both hands inside the camera frame throughout."
+      "hint": "Keep both hands inside the camera frame throughout.",
+      "pendingSignerValidation": true
     }
   ]
 }

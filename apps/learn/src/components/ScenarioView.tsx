@@ -14,7 +14,7 @@ import type { TurnScore } from '../scenario/rubric'
 import type { Scenario, ScenarioTurn } from '../scenario/types'
 import { SCENARIOS } from '../data/scenarios'
 import { ArrowRight, Circle, Lightbulb, Square, X } from 'lucide-react'
-import { glossLabel, translationOf } from '../data/translations'
+import { glossLabel } from '../data/translations'
 import { CameraStage } from './CameraStage'
 import { useHandTrackerPreparation } from '../vision/useHandTrackerPreparation'
 import { CameraPreparationNotice } from './CameraPreparationNotice'
@@ -23,6 +23,9 @@ import { ScoreBadge } from './ScoreBadge'
 import { band } from '../scoring/band'
 import { safeLoad } from '../storage/safeLoad'
 import { StorageNotice } from '../storage/StorageNotice'
+import { readMode } from '../app/mode'
+import { scenarioHint } from '../scenario/hints'
+import './ScenarioView.css'
 
 type Stage = 'hub' | 'intro' | 'playing' | 'summary'
 
@@ -37,6 +40,7 @@ interface TurnOutcome {
  * through the existing DTW path, and reports against the proposal's rubric.
  */
 export function ScenarioView() {
+  const isAuthorMode = readMode() === 'author'
   const [storageOk, setStorageOk] = useState(true)
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id)
   const scenario: Scenario = SCENARIOS.find((s) => s.id === scenarioId) ?? SCENARIOS[0]
@@ -46,6 +50,7 @@ export function ScenarioView() {
   const [vocab, setVocab] = useState<Map<string, SignRecording>>(new Map())
   const [loadingVocab, setLoadingVocab] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [recallMode, setRecallMode] = useState(false)
   const [stage, setStage] = useState<Stage>('hub')
   const preparing = useHandTrackerPreparation(stage === 'playing')
   const [index, setIndex] = useState(0)
@@ -150,14 +155,10 @@ export function ScenarioView() {
     if (capture.phase === 'countdown') return 'Get ready. Recording starts in 3 seconds.'
     if (capture.phase === 'recording') return 'Recording. Sign now.'
     if (current) {
-      const wrong =
-        current.bestMatchGloss !== turn?.gloss
-          ? ` That looked closer to ${current.bestMatchGloss}.`
-          : ''
-      return `Scored ${current.rubric.total} out of 100.${wrong}`
+      return `Scored ${current.rubric.total} out of 100.`
     }
     return ''
-  }, [capture.phase, current, turn])
+  }, [capture.phase, current])
 
   const stopTracking = capture.tracking.stop
   useEffect(() => {
@@ -170,28 +171,39 @@ export function ScenarioView() {
     else resumeTracking()
   }, [current, pauseTracking, resumeTracking])
 
+  const loadVocabForPlayable = useCallback(
+    async (targets = playable) => {
+      setLoadingVocab(true)
+      const metas = targets
+        .map((t) => references.get(t.gloss))
+        .filter((m): m is RecordingMeta => m !== undefined)
+      const updated = new Map(vocab)
+      await Promise.all(
+        metas.map(async (m) => {
+          if (updated.has(m.gloss)) return
+          try {
+            const full = m.file
+              ? await loadReferenceFrames(m.file)
+              : (localRecs.find((r) => r.id === m.id) ?? null)
+            if (full) updated.set(m.gloss, full)
+          } catch (e: unknown) {
+            console.error(`Failed to load reference for ${m.gloss}`, e)
+          }
+        }),
+      )
+      setVocab(updated)
+      setLoadingVocab(false)
+    },
+    [playable, references, vocab, localRecs],
+  )
+
   async function startScenario() {
     setIndex(0)
     setOutcomes([])
     setCurrent(null)
     setCurrentAttempt(null)
     setStage('playing')
-    if (vocab.size > 0) return
-    setLoadingVocab(true)
-    const metas = playable
-      .map((t) => references.get(t.gloss))
-      .filter((m): m is RecordingMeta => m !== undefined)
-    const loaded = new Map<string, SignRecording>()
-    await Promise.all(
-      metas.map(async (m) => {
-        const full = m.file
-          ? await loadReferenceFrames(m.file)
-          : (localRecs.find((r) => r.id === m.id) ?? null)
-        if (full) loaded.set(m.gloss, full)
-      }),
-    )
-    setVocab(loaded)
-    setLoadingVocab(false)
+    await loadVocabForPlayable()
   }
 
   function nextTurn() {
@@ -213,8 +225,8 @@ export function ScenarioView() {
       <section className="aww-scenario-hub">
         <StorageNotice storageOk={storageOk} />
         <div className="aww-hub-header">
-          <h1 className="aww-hub-title">Immersive Scenarios</h1>
-          <p className="aww-hub-subtitle">Practice your sign language in real-world conversational environments.</p>
+          <h1 className="aww-hub-title">Everyday chats</h1>
+          <p className="aww-hub-subtitle">Try one sign at a time in an everyday chat.</p>
         </div>
 
         <div className="aww-scenario-grid">
@@ -237,10 +249,12 @@ export function ScenarioView() {
               >
                 <div className="card-glass-layer">
                   <div className="card-top">
-                    <span className="card-status">
-                      {isReady ? 'Fully Playable' : `${covered}/${s.turns.length} Signs Ready`}
+                    <span className={`card-status ${isReady ? '' : 'card-status-preview'}`}>
+                      {isReady ? 'Ready to try' : `Preview: ${covered} of ${s.turns.length} signs available`}
                     </span>
-                    <span className="card-status">{s.turns.length} Turns</span>
+                    <span className="card-status">
+                      {isReady ? `${s.turns.length} Turns` : `${covered} Playable Turns`}
+                    </span>
                   </div>
                   <div className="card-bottom">
                     <h3>{s.title}</h3>
@@ -287,7 +301,7 @@ export function ScenarioView() {
   }
 
   // ==========================================================================
-  // STAGE: MISSION BRIEFING (INTRO)
+  // STAGE: BEFORE YOU START (INTRO)
   // ==========================================================================
   if (stage === 'intro') {
     const isReady = playable.length === scenario.turns.length
@@ -302,12 +316,14 @@ export function ScenarioView() {
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M19 12H5M12 19l-7-7 7-7" />
                 </svg>
-                Back to Hub
+                Back to chats
               </button>
               <div className="briefing-pills">
-                <span className="briefing-pill">MISSION BRIEFING</span>
-                <span className="briefing-pill">{scenario.turns.length} TURNS</span>
-                <span className="briefing-pill">{isReady ? 'READY TO PLAY' : `${playable.length}/${scenario.turns.length} READY`}</span>
+                <span className="briefing-pill">BEFORE YOU START</span>
+                <span className="briefing-pill">{isReady ? `${scenario.turns.length} TURNS` : `${playable.length} PLAYABLE TURNS`}</span>
+                <span className={`briefing-pill ${isReady ? '' : 'briefing-pill-preview'}`}>
+                  {isReady ? 'READY TO TRY' : `PREVIEW: ${playable.length} OF ${scenario.turns.length} SIGNS AVAILABLE`}
+                </span>
               </div>
             </div>
 
@@ -328,22 +344,18 @@ export function ScenarioView() {
             </div>
 
             {loading ? (
-              <p className="empty-state">Loading signs and references...</p>
+              <p className="empty-state">Loading signs...</p>
             ) : (
               <>
                 <div className="briefing-vocab">
-                  {[...new Set(scenario.turns.map((t) => t.gloss))].map((g) => {
-                    const meaning = translationOf(g)
-                    return (
-                      <span
-                        key={g}
-                        className={`briefing-vocab-chip ${references.has(g) ? '' : 'pending'}`}
-                      >
-                        {g}
-                        {meaning && <em>{meaning}</em>}
-                      </span>
-                    )
-                  })}
+                  {[...new Set(scenario.turns.map((t) => t.gloss))].map((g) => (
+                    <span
+                      key={g}
+                      className={`briefing-vocab-chip ${references.has(g) ? '' : 'pending'}`}
+                    >
+                      {glossLabel(g)}
+                    </span>
+                  ))}
                 </div>
 
                 {/* The script is a spoiler for a "one sign at a time" roleplay —
@@ -366,10 +378,7 @@ export function ScenarioView() {
                             <p className="flow-partner-line">"{t.partnerLine}"</p>
                             <div className="flow-sign-row">
                               <span className="flow-sign-tag">Sign to produce:</span>
-                              <strong className="flow-sign-gloss">{t.gloss}</strong>
-                              {translationOf(t.gloss) && (
-                                <span className="flow-sign-trans">({translationOf(t.gloss)})</span>
-                              )}
+                              <strong className="flow-sign-gloss">{glossLabel(t.gloss)}</strong>
                             </div>
                             <p className="flow-prompt-text">{t.prompt}</p>
                           </div>
@@ -386,8 +395,37 @@ export function ScenarioView() {
           <aside className="briefing-action-card">
             <h3>Ready to begin?</h3>
             <p className="action-card-text">
-              Step into the roleplay. You'll sign in response to the conversational prompts.
+              Read the chat. Then try each sign.
             </p>
+
+            <div className="scenario-variant-selector">
+              <span className="variant-label">Mode</span>
+              <div className="variant-toggle-group" role="radiogroup" aria-label="Scenario practice mode">
+                <button
+                  type="button"
+                  className={`variant-toggle-btn ${!recallMode ? 'active' : ''}`}
+                  onClick={() => setRecallMode(false)}
+                  role="radio"
+                  aria-checked={!recallMode}
+                >
+                  Guided
+                </button>
+                <button
+                  type="button"
+                  className={`variant-toggle-btn ${recallMode ? 'active' : ''}`}
+                  onClick={() => setRecallMode(true)}
+                  role="radio"
+                  aria-checked={recallMode}
+                >
+                  Recall
+                </button>
+              </div>
+              <p className="variant-description">
+                {recallMode
+                  ? 'Try from memory. See the sign after your turn.'
+                  : 'Watch the sign while you try.'}
+              </p>
+            </div>
 
             <div className="action-card-stats">
               <div className="card-stat-box">
@@ -408,10 +446,14 @@ export function ScenarioView() {
               disabled={playable.length === 0}
               style={{ width: '100%', justifyContent: 'center' }}
             >
-              {playable.length === 0 ? 'Missing Reference Signs' : 'Start Scenario'}
+              {playable.length === 0
+                ? 'Signs are not ready yet'
+                : isReady
+                  ? 'Start Scenario'
+                  : `Start Preview (${playable.length} turns)`}
             </button>
 
-            {pending.length > 0 && (
+            {isAuthorMode && pending.length > 0 && (
               <p className="action-missing-note">
                 Tip: Record the missing signs in the Record tab to unlock the full sequence.
               </p>
@@ -444,11 +486,11 @@ export function ScenarioView() {
                 </svg>
                 Back to Hub
               </button>
-              <span className="briefing-pill">SCENARIO COMPLETE</span>
+              <span className="briefing-pill">{pending.length > 0 ? 'PREVIEW FINISHED' : 'CHAT FINISHED'}</span>
             </div>
             <div className="briefing-hero-body">
               <h1 ref={stageHeadingRef} tabIndex={-1}>{scenario.title}</h1>
-              <p className="briefing-hero-sub">You completed {outcomes.length} of {scenario.turns.length} conversational turns.</p>
+              <p className="briefing-hero-sub">You completed {outcomes.length} of {playable.length} playable turns.</p>
             </div>
           </div>
         </div>
@@ -456,20 +498,18 @@ export function ScenarioView() {
         <div className="briefing-main-grid">
           <div className="briefing-script-container">
             <div className="briefing-section-header">
-              <h2>Performance Breakdown</h2>
+              <h2>Your matches</h2>
             </div>
             <ul className="mastery-list" style={{ marginTop: '16px' }}>
               {outcomes.map((o) => (
                 <li className="mastery-row" key={o.turn.id}>
-                  <span className="rec-gloss">{o.turn.gloss}</span>
+                  <span className="rec-gloss">{glossLabel(o.turn.gloss)}</span>
                   <div className="mastery-bar">
                     <div style={{ width: `${o.score.rubric.total}%` }} />
                   </div>
                   <span className="mastery-pct">{o.score.rubric.total}</span>
                   <span className="mastery-meta">
                     {band(o.score.rubric.total).label}
-                    {o.score.bestMatchGloss !== o.turn.gloss &&
-                      ` · closer to ${o.score.bestMatchGloss}`}
                   </span>
                 </li>
               ))}
@@ -481,7 +521,7 @@ export function ScenarioView() {
               <ScoreBadge score={total} hideDelta />
               {weakest && (
                 <p style={{ marginTop: '16px', textAlign: 'center', fontSize: '0.95rem' }}>
-                  Weakest sign: <strong>{weakest.turn.gloss}</strong> ({weakest.score.rubric.total}/100)
+                  Try this again: <strong>{glossLabel(weakest.turn.gloss)}</strong> ({weakest.score.rubric.total}/100)
                 </p>
               )}
             </div>
@@ -512,7 +552,7 @@ export function ScenarioView() {
       <div className="aww-practice-env">
         <StorageNotice storageOk={storageOk} />
         <div className="aww-pane-content">
-          <p className="hint-text">Loading conversational signs...</p>
+          <p className="hint-text">Loading signs...</p>
         </div>
       </div>
     )
@@ -523,10 +563,19 @@ export function ScenarioView() {
       <div className="aww-practice-env">
         <StorageNotice storageOk={storageOk} />
         <div className="aww-pane-content">
-          <p className="hint-text">This turn has no reference recording.</p>
-          <button className="btn" onClick={() => setStage('intro')} style={{ marginTop: '16px' }}>
-            Back to Briefing
-          </button>
+          <p className="hint-text">
+            {!turn
+              ? 'This turn could not be found.'
+              : `"${glossLabel(turn.gloss)}" could not load.`}
+          </p>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '16px', justifyContent: 'center' }}>
+            <button className="btn" onClick={() => void loadVocabForPlayable()}>
+              Try loading again
+            </button>
+            <button className="btn ghost" onClick={() => setStage('intro')}>
+              Back to the chat
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -553,6 +602,7 @@ export function ScenarioView() {
             <div className="dialogue-meta-row">
               <span className="dialogue-turn-tag">Turn {index + 1} of {playable.length}</span>
               <span className="dialogue-scenario-tag">{scenario.title}</span>
+              {recallMode && <span className="dialogue-recall-pill">Recall Mode</span>}
             </div>
             {turn.partnerLine && (
               <p className="dialogue-partner-line">"{turn.partnerLine}"</p>
@@ -560,10 +610,13 @@ export function ScenarioView() {
             <p className="dialogue-prompt-line">
               Sign: <strong>{glossLabel(turn.gloss)}</strong> &mdash; {turn.prompt}
             </p>
-            {turn.hint && (
+            {scenarioHint(turn, isAuthorMode) && (
               <span className="dialogue-hint-pill">
                 <Lightbulb size={13} aria-hidden="true" />
                 {turn.hint}
+                {turn.pendingSignerValidation && isAuthorMode && (
+                  <span className="hint-author-badge"> [Author: pending validation]</span>
+                )}
               </span>
             )}
           </div>
@@ -573,19 +626,29 @@ export function ScenarioView() {
       {/* The 50/50 Split Screen */}
       <div className="aww-split-screen">
         {/* Left Pane: Target Reference */}
-        <div className="aww-pane aww-pane-left">
+        <div className={`aww-pane aww-pane-left ${recallMode && !current ? 'scenario-recall-pane' : ''}`}>
           <div className="aww-pane-header">
-            <p className="aww-pane-label">Reference</p>
+            <p className="aww-pane-label">Watch</p>
             <h2 className="aww-pane-title">{glossLabel(turn.gloss)}</h2>
           </div>
 
           <div className="aww-pane-content">
-            <SkeletonPlayer
-              frames={reference.frames}
-              videoWidth={reference.videoWidth}
-              videoHeight={reference.videoHeight}
-              colorOverride="#e6eeec"
-            />
+            {recallMode && !current ? (
+              <div className="aww-recall-hidden-card">
+                <span className="aww-recall-badge">Recall Mode</span>
+                <p className="aww-recall-lead">Sign from memory</p>
+                <p className="aww-recall-sub">
+                  Try the sign. Then watch it again.
+                </p>
+              </div>
+            ) : (
+              <SkeletonPlayer
+                frames={reference.frames}
+                videoWidth={reference.videoWidth}
+                videoHeight={reference.videoHeight}
+                colorOverride="#e6eeec"
+              />
+            )}
           </div>
         </div>
 
@@ -609,9 +672,9 @@ export function ScenarioView() {
               inferring={capture.tracking.inferring}
               intro={
                 <div className="aww-camera-intro">
-                  <p className="aww-camera-intro-lead">Join the conversation.</p>
+                  <p className="aww-camera-intro-lead">Your turn.</p>
                   <p className="aww-camera-intro-note">
-                    Hand tracking runs entirely in your browser. No video is uploaded or
+                    Your camera stays on this device. No video is sent or
                     recorded.
                   </p>
                   <button className="btn massive" onClick={() => void capture.tracking.start()}>
@@ -696,15 +759,9 @@ export function ScenarioView() {
                 <ScoreBadge score={current.rubric.total} hideDelta />
                 <div className="aww-result-feedback">
                   {current.rubric.total === 100 ? (
-                    <p className="perfect-hint">Flawless match. Perfect execution.</p>
+                    <p className="perfect-hint">Great match!</p>
                   ) : (
                     <>
-                      {current.bestMatchGloss !== turn.gloss && (
-                        <p>
-                          That looked closer to <strong>{current.bestMatchGloss}</strong> than to{' '}
-                          {turn.gloss}.
-                        </p>
-                      )}
                       {current.detail.hints.map((h, i) => (
                         <p key={i}>{h}</p>
                       ))}

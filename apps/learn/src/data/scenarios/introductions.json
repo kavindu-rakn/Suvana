@@ -11,35 +11,40 @@
       "partnerGloss": "YOU",
       "prompt": "Greet them back — sign the one that singles out the person you are addressing.",
       "gloss": "YOU",
-      "hint": "Point clearly towards the person you are greeting, at a natural pace."
+      "hint": "Point clearly towards the person you are greeting, at a natural pace.",
+      "pendingSignerValidation": true
     },
     {
       "id": "topic-name",
       "partnerLine": "They gesture between the two of you — it is time to exchange names.",
       "prompt": "Bring up the subject of names.",
       "gloss": "NAME",
-      "hint": "Keep the handshape steady and let the movement do the work."
+      "hint": "Keep the handshape steady and let the movement do the work.",
+      "pendingSignerValidation": true
     },
     {
       "id": "introduce-self",
       "partnerLine": "They look at you, waiting for you to go first.",
       "prompt": "Indicate yourself, so it is clear you are the one being introduced.",
       "gloss": "ME",
-      "hint": "Bring the sign in towards your own body rather than out to the side."
+      "hint": "Bring the sign in towards your own body rather than out to the side.",
+      "pendingSignerValidation": true
     },
     {
       "id": "turn-to-them",
       "partnerLine": "You have introduced yourself. Now it is their turn.",
       "prompt": "Turn the exchange towards them — the sign that marks something as belonging to the person you are talking to.",
       "gloss": "YOUR",
-      "hint": "Direct the sign towards them, not towards yourself."
+      "hint": "Direct the sign towards them, not towards yourself.",
+      "pendingSignerValidation": true
     },
     {
       "id": "ask-what",
       "partnerLine": "They are waiting for your question.",
       "prompt": "Ask them the question word.",
       "gloss": "WHAT",
-      "hint": "Question signs are usually held a little longer — do not rush it."
+      "hint": "Question signs are usually held a little longer — do not rush it.",
+      "pendingSignerValidation": true
     },
     {
       "id": "ask-where",
@@ -47,14 +52,16 @@
       "partnerGloss": "WHERE",
       "prompt": "Ask about place.",
       "gloss": "WHERE",
-      "hint": "Keep your hand within the camera frame through the whole movement."
+      "hint": "Keep your hand within the camera frame through the whole movement.",
+      "pendingSignerValidation": true
     },
     {
       "id": "ask-can",
       "partnerLine": "The conversation is going well and you want to keep it going.",
       "prompt": "Ask about ability — whether something is possible.",
       "gloss": "CAN",
-      "hint": "Finish the movement fully before dropping your hand."
+      "hint": "Finish the movement fully before dropping your hand.",
+      "pendingSignerValidation": true
     }
   ]
 }

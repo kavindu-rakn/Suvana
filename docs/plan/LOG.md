@@ -451,3 +451,11 @@ Rules:
 - Needs kvn: UI adoption and merge; update the board/decision record. Never pushed or merged.
 - Next: L-19 rework from origin/main, independent UI leaf branch.
 - L-14 visual-review follow-up on the same branch: scoped chip cards grow beyond 88px so the sign name stays visible on desktop; final after renders refreshed. Lint 0 warnings, 255 passed / 12 skipped, build 147.78 kB gzip, guard 168 repeated.
+### 2026-10-14 | codex (second lane) | L-19 rework
+- What: all 12 hints flagged pending and shown only to authors, unchanged text; Record tip author-only; honest 3/7 Social preview; playable summary; reference retry; closer-to feedback removed; Guided/Recall variant. Recall title overlap, yellow pills, heading focus box and phone briefing overflow fixed in task-local CSS.
+- Branch @ sha: agent/codex/L-19-scenarios @ task HEAD (base 3a8d552; independent UI leaf).
+- Gates: npm 10 ci, lint 0 warnings, 254 passed / 12 skipped, build 146.40 kB gzip, guard 168; real-browser failed-reference retry passed; JSON equivalence proves flags only and all 12 hint texts unchanged. Playwright result in handoff.
+- Screenshots: .agent-local/screens/L-19/index.html; main before/final after desktop 1280x800, phone 390x844 and 360x800. Capture assertions: learner hint hidden, author hint visible, Recall sign hidden, no title/placeholder overlap.
+- Plan correction: 4 flags in the old branch missed 8 hints. Main phone author-nav overlap remains outside this file boundary (L-26); keyboard navigation used for captures.
+- Needs kvn: review/adopt/merge. No push or merge by codex; r26_port yes.
+- Next: I-12a stays gated on kvn confirming no Karindra answer by 15 Oct; I-06 awaits page decisions; L-23 follows the requested order.
