@@ -5,8 +5,9 @@
 //  1. Exact count of verified meanings (resolving ~40 vs ~75 note).
 //  2. Per-category tables: gloss, licence, hands, motion, hasMeaning.
 //  3. Scenario coverage table for the 5 proposal scenarios by licence.
-//  4. Writes data-derived units into src/data/curriculum.ts marked 'proposed'.
+//  4. Writes data-derived units into src/data/curriculum.ts, approved by kvn (14 Oct).
 //
+// Run with --check to verify the generated file without writing it.
 // Rule bounds:
 //  - U1 Starter: kaggle_* AND (verified meaning OR self-explaining) AND 1 hand AND still;
 //    5-8 signs, easiest first by duration.
@@ -61,7 +62,7 @@ for (const g of uniqueCorpusGlosses) {
 }
 
 console.log('='.repeat(80))
-console.log('SUAVANA LEARN: CURRICULUM REPORT (L-09)')
+console.log('SUVANA LEARN: CURRICULUM REPORT (K-05)')
 console.log('='.repeat(80))
 console.log(`Corpus recordings:       ${recordings.length}`)
 console.log(`Distinct glosses:        ${uniqueCorpusGlosses.size}`)
@@ -152,173 +153,96 @@ if (u1Candidates.length < 5) {
 
 const u1Selection = u1Candidates.slice(0, 7) // exactly 7 signs (within 5-8)
 
-// 5. Build units by category
-const units = []
+// 5. Build the structure approved by kvn in chat, 14 Oct 2026 (K-05).
+// A category keeps its existing deduplication and measured display order.
+function categoryRefs(category) {
+  return [...new Map(recordings.filter((r) => r.sourceCategory === category)
+    .map((r) => [r.gloss, r])).values()].sort(compareByDifficulty)
+}
 
-// U1
-units.push({
-  id: 'u1-starter',
-  title: 'Starter Signs',
-  description: 'First steps: single-hand static signs with verified meanings or self-explaining forms.',
-  status: 'proposed',
-  signs: u1Selection.map((s) => s.gloss),
-  sourceCategory: 'Starter',
-})
-
-// Restaurant scenario unit
 const restaurantGlosses = ['KANAWA', 'BONAWA', '500', 'MILADII GANNAWA', 'BILPATHA']
-const restaurantRefs = restaurantGlosses.map((g) => bestRefByGloss.get(g)).filter(Boolean)
-restaurantRefs.sort(compareByDifficulty)
-units.push({
-  id: 'u-scenario-restaurant',
-  title: 'Restaurant Vocabulary',
-  description: 'Signs used in the Restaurant dialogue scenario: ordering food, drink, and paying.',
-  status: 'proposed',
-  signs: restaurantRefs.map((r) => r.gloss),
-  sourceCategory: 'Restaurant',
-})
+const restaurantRefs = restaurantGlosses.map((g) => bestRefByGloss.get(g)).filter(Boolean).sort(compareByDifficulty)
+const alphabetRefs = categoryRefs('A-Z')
+const minorCats = new Set(['Determiner', 'Conjunctions', 'Interjection'])
+const smallWordRefs = [...new Map(recordings.filter((r) => minorCats.has(r.sourceCategory))
+  .map((r) => [r.gloss, r])).values()].sort(compareByDifficulty)
 
-// Alphabet Part 1 (A-M) & Part 2 (N-Z)
-const azRefs = recordings.filter((r) => r.sourceCategory === 'A-Z')
-const uniqueAZ = [...new Map(azRefs.map((r) => [r.gloss, r])).values()]
-const azPart1 = uniqueAZ.filter((r) => r.gloss <= 'M').sort(compareByDifficulty)
-const azPart2 = uniqueAZ.filter((r) => r.gloss > 'M').sort(compareByDifficulty)
-
-units.push({
-  id: 'u-alphabet-part1',
-  title: 'Fingerspelling: A–M',
-  description: 'First half of the fingerspelling alphabet in SSL, ordered from simpler to more complex poses.',
-  status: 'proposed',
-  signs: azPart1.map((r) => r.gloss),
-  sourceCategory: 'A-Z',
-})
-
-units.push({
-  id: 'u-alphabet-part2',
-  title: 'Fingerspelling: N–Z',
-  description: 'Second half of the fingerspelling alphabet in SSL, ordered from simpler to more complex poses.',
-  status: 'proposed',
-  signs: azPart2.map((r) => r.gloss),
-  sourceCategory: 'A-Z',
-})
-
-// Numbers 20-99
-const num2099 = [...new Map(recordings.filter((r) => r.sourceCategory === '20-99').map((r) => [r.gloss, r])).values()]
-num2099.sort(compareByDifficulty)
-units.push({
-  id: 'u-numbers-20-99',
-  title: 'Numbers: 20–99',
-  description: 'Two-digit numeral signs in SSL, ordered by hand configuration difficulty.',
-  status: 'proposed',
-  signs: num2099.map((r) => r.gloss),
-  sourceCategory: '20-99',
-})
-
-// Numbers 100 - 1 Million
-const numLarge = [...new Map(recordings.filter((r) => r.sourceCategory === '100-1 million').map((r) => [r.gloss, r])).values()]
-numLarge.sort(compareByDifficulty)
-units.push({
-  id: 'u-numbers-large',
-  title: 'Numbers: Hundreds to Millions',
-  description: 'Higher numerals and magnitude signs, ordered by configuration difficulty.',
-  status: 'proposed',
-  signs: numLarge.map((r) => r.gloss),
-  sourceCategory: '100-1 million',
-})
-
-// Months
-const monthRefs = [...new Map(recordings.filter((r) => r.sourceCategory === 'Months').map((r) => [r.gloss, r])).values()]
-monthRefs.sort(compareByDifficulty)
-units.push({
-  id: 'u-calendar-months',
-  title: 'Calendar & Months',
-  description: 'Signs for months and calendar concepts in SSL, ordered by difficulty.',
-  status: 'proposed',
-  signs: monthRefs.map((r) => r.gloss),
-  sourceCategory: 'Months',
-})
-
-// Additional Words (Kaggle)
-const addWords = [...new Map(recordings.filter((r) => r.sourceCategory === 'Additional words').map((r) => [r.gloss, r])).values()]
-addWords.sort(compareByDifficulty)
-units.push({
-  id: 'u-additional-words',
-  title: 'Everyday Vocabulary',
-  description: 'Common everyday expressions and directional signs from the Kaggle dataset.',
-  status: 'proposed',
-  signs: addWords.map((r) => r.gloss),
-  sourceCategory: 'Additional words',
-})
-
-// Verbs (Kaggle + Yohan)
-const verbRefs = [...new Map(recordings.filter((r) => r.sourceCategory === 'Verbs').map((r) => [r.gloss, r])).values()]
-verbRefs.sort(compareByDifficulty)
-units.push({
-  id: 'u-verbs',
-  title: 'Action Verbs',
-  description: 'Action signs and motion verbs in SSL, ordered from simpler to dynamic movements.',
-  status: 'proposed',
-  signs: verbRefs.map((r) => r.gloss),
-  sourceCategory: 'Verbs',
-})
-
-// Yohan Categories
-const YOHAN_CATEGORIES = [
-  ['Greetings', 'Greetings & Courtesies', 'Polite greetings and common social expressions.'],
-  ['Numbers', 'Numbers: 1–5', 'Basic counting handshapes from the Yohan dataset.'],
-  ['Days', 'Days of the Week', 'Day and routine vocabulary in SSL.'],
-  ['Colors', 'Colors', 'Visual color descriptor signs in SSL.'],
-  ['Vehicles', 'Transport & Vehicles', 'Modes of transportation and vehicle signs.'],
-  ['Places', 'Places & Locations', 'Common public spaces and facility signs.'],
-  ['People', 'People & Family', 'Family relationships and person referent signs.'],
-  ['Nouns', 'Common Objects & Nouns', 'Everyday objects, items, and physical nouns.'],
-  ['Adjectives', 'Descriptive Signs (Adjectives)', 'Descriptors, attributes, and comparative signs.'],
-  ['Adverb', 'Manner & Time (Adverbs)', 'Adverbs of time, degree, and frequency.'],
-  ['Preposition', 'Spatial Positions (Prepositions)', 'Spatial relationships and positional signs.'],
+const groups = [
+  ['u1-starter', 'Starter', 'Start with a few signs.', 'Starter', u1Selection],
+  ['u-greetings', 'Greetings', 'Try a few words for meeting people.', 'Greetings', categoryRefs('Greetings')],
+  ['u-numbers', 'Numbers 1-5', 'Try the signs in this number group.', 'Numbers', categoryRefs('Numbers')],
+  ['u-scenario-restaurant', 'Restaurant', 'Try the signs from the restaurant chat.', 'Restaurant', restaurantRefs],
+  ['u-additional-words', 'Everyday words and directions', 'Try a few everyday words and directions.', 'Additional words', categoryRefs('Additional words')],
+  ['u-alphabet-part1', 'Letters A-M', 'Try the letters in this group.', 'A-Z', alphabetRefs.filter((r) => r.gloss <= 'M')],
+  ['u-alphabet-part2', 'Letters N-Z', 'Try the letters in this group.', 'A-Z', alphabetRefs.filter((r) => r.gloss > 'M')],
+  ['u-numbers-20-99', 'Numbers 20-99', 'Try these two-digit numbers.', '20-99', categoryRefs('20-99')],
+  ['u-days', 'Days', 'Try these day and time words.', 'Days', categoryRefs('Days')],
+  ['u-calendar-months', 'Months', 'Try these month and calendar words.', 'Months', categoryRefs('Months')],
+  ['u-colors', 'Colours', 'Try these colour words.', 'Colors', categoryRefs('Colors')],
+  ['u-people', 'People and family', 'Try these people and family words.', 'People', categoryRefs('People')],
+  ['u-places', 'Places', 'Try these place words.', 'Places', categoryRefs('Places')],
+  ['u-vehicles', 'Transport', 'Try words for getting around.', 'Vehicles', categoryRefs('Vehicles')],
+  ['u-numbers-large', 'Big numbers', 'Take your time with these bigger numbers.', '100-1 million', categoryRefs('100-1 million')],
+  ['u-verbs', 'Action words', 'Try a few action words at a time.', 'Verbs', categoryRefs('Verbs')],
+  ['u-nouns', 'Things', 'Try a few of these words at a time.', 'Nouns', categoryRefs('Nouns')],
+  ['u-adjectives', 'Describing words', 'Try words that describe things.', 'Adjectives', categoryRefs('Adjectives')],
+  ['u-adverb', 'Time words', 'Try a few of these words at a time.', 'Adverb', categoryRefs('Adverb')],
+  ['u-preposition', 'Position words', 'Try these words, one at a time.', 'Preposition', categoryRefs('Preposition')],
+  ['u-grammatical-markers', 'Small words', 'Finish with this short group of words.', 'Other', smallWordRefs],
 ]
 
-for (const [catName, title, desc] of YOHAN_CATEGORIES) {
-  const catRefs = [...new Map(recordings.filter((r) => r.sourceCategory === catName).map((r) => [r.gloss, r])).values()]
-  if (catRefs.length > 0) {
-    catRefs.sort(compareByDifficulty)
+const MAX_UNIT_SIGNS = 12
+const TARGET_UNIT_SIGNS = 10
+const units = []
+for (const [id, title, description, sourceCategory, refs] of groups) {
+  if (!refs.length) continue
+  // Balance contiguous groups around ten, with a strict cap of twelve.
+  // E.g. 13 -> 7 + 6, 21 -> 11 + 10; no one-sign trailing group.
+  const count = refs.length <= MAX_UNIT_SIGNS ? 1
+    : Math.max(Math.ceil(refs.length / MAX_UNIT_SIGNS), Math.round(refs.length / TARGET_UNIT_SIGNS))
+  const size = Math.floor(refs.length / count)
+  const extra = refs.length % count
+  let offset = 0
+  for (let part = 0; part < count; part++) {
+    const length = size + (part < extra ? 1 : 0)
     units.push({
-      id: `u-${catName.toLowerCase().replace(/\s+/g, '-')}`,
-      title,
-      description: desc,
-      status: 'proposed',
-      signs: catRefs.map((r) => r.gloss),
-      sourceCategory: catName,
+      id: count === 1 ? id : `${id}-${part + 1}`,
+      title: count === 1 ? title : `${title} ${part + 1}`,
+      description,
+      status: 'approved',
+      signs: refs.slice(offset, offset + length).map((r) => r.gloss),
+      sourceCategory,
     })
+    offset += length
   }
 }
 
-// Minor categories folded into Other
-const minorCats = new Set(['Determiner', 'Conjunctions', 'Interjection'])
-const otherRefs = [...new Map(recordings.filter((r) => minorCats.has(r.sourceCategory)).map((r) => [r.gloss, r])).values()]
-if (otherRefs.length > 0) {
-  otherRefs.sort(compareByDifficulty)
-  units.push({
-    id: 'u-grammatical-markers',
-    title: 'Grammatical Markers & Other Signs',
-    description: 'Determiners, conjunctions, and interjections in SSL.',
-    status: 'proposed',
-    signs: otherRefs.map((r) => r.gloss),
-    sourceCategory: 'Other',
-  })
+// Fail before writing if a new corpus category is accidentally left out.
+const coveredGlosses = new Set(units.flatMap((unit) => unit.signs))
+if (coveredGlosses.size !== uniqueCorpusGlosses.size
+    || [...uniqueCorpusGlosses].some((gloss) => !coveredGlosses.has(gloss))) {
+  throw new Error('Curriculum must contain every corpus gloss, with no new names.')
+}
+if (u1Selection.length < 5 || u1Selection.length > 8) {
+  throw new Error('Starter must contain 5-8 qualifying signs.')
+}
+if (units.some((unit) => !unit.signs.length || unit.signs.length > MAX_UNIT_SIGNS)) {
+  throw new Error('Each curriculum unit must contain 1-12 signs.')
 }
 
 // 6. Write curriculum.ts
 const curriculumFileContent = `/**
  * Data-derived curriculum units for Suvana Learn.
- * Generated by scripts/curriculum-report.mjs (L-09).
+ * Generated by scripts/curriculum-report.mjs (L-09 / K-05).
  *
  * All units are derived purely by rules from reference landmark data and verified meanings:
  *  - U1 Starter satisfies the hard rule: kaggle_* only, verified meaning or self-explaining,
  *    one hand, still, 5-8 signs, easiest first by duration.
  *  - Subsequent units group signs by authentic corpus category, ordered by difficulty:
  *    (1-hand still -> 1-hand moving -> 2-hand still -> 2-hand moving -> duration).
- *  - Marked status: 'proposed' pending human review and approval by kvn (K-05).
- *  - No unit list, meaning, or sign order is hand-authored or invented.
+ *  - Structure and approved status decided by kvn in chat, 14 Oct 2026 (K-05).
+ *  - Large groups split into balanced, contiguous units near 10 signs; maximum 12.
+ *  - No gloss, meaning, translation or within-group sign order is invented.
  */
 
 export type UnitStatus = 'proposed' | 'approved'
@@ -345,8 +269,19 @@ export function getStarterUnit(): CurriculumUnit {
 }
 `
 
-writeFileSync(curriculumOutPath, curriculumFileContent, 'utf8')
-console.log(`Generated curriculum file: ${curriculumOutPath} (${units.length} units)`)
+if (process.argv.includes('--check')) {
+  if (readFileSync(curriculumOutPath, 'utf8') !== curriculumFileContent) {
+    throw new Error('curriculum.ts is stale; run node scripts/curriculum-report.mjs.')
+  }
+  console.log('Generated curriculum is up to date (no files written).')
+} else {
+  writeFileSync(curriculumOutPath, curriculumFileContent, 'utf8')
+}
+console.log(`Curriculum: ${units.length} units, ${coveredGlosses.size} unique signs.`)
+console.log('--- APPROVED UNIT ORDER ---')
+for (const [index, unit] of units.entries()) {
+  console.log(`${index + 1}. ${unit.title}: ${unit.signs.length} signs`)
+}
 console.log()
 
 // 7. Print Per-Category Breakdown Table
@@ -427,5 +362,7 @@ for (const [scenarioName, meta] of Object.entries(SCENARIO_KEYWORDS)) {
 }
 
 console.log('\n' + '='.repeat(80))
-console.log('Curriculum report complete. curriculum.ts written successfully.')
+console.log(process.argv.includes('--check')
+  ? 'Curriculum report complete. curriculum.ts verified without writes.'
+  : 'Curriculum report complete. curriculum.ts written successfully.')
 console.log('='.repeat(80))

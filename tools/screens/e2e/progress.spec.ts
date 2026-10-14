@@ -57,14 +57,17 @@ async function count(page: Page, name: string, store: string) {
   }), { name, store })
 }
 
-test('Progress shows game rules and keeps proposed units unapproved', async ({ page }) => {
+test('Progress shows game rules and the approved curriculum states', async ({ page }) => {
   await prepare(page)
   const values = page.locator('.pg-game-stats > div > strong')
   await expect(values).toHaveText(['2', '4', '1', '5/5'])
   await expect(page.locator('.pg-stat').filter({ hasText: 'Goal streak' })).toContainText('1')
   await page.locator('.pg-units summary').click()
-  await expect(page.locator('.pg-unit-list')).toContainText('Plan preview')
-  await expect(page.locator('.pg-unit-list')).not.toContainText('Ready')
+  await expect(page.locator('.pg-unit-list')).not.toContainText('Plan preview')
+  await expect(page.locator('.pg-unit-list li').first()).toContainText('Starter')
+  await expect(page.locator('.pg-unit-list li').first()).toContainText('Ready')
+  await expect(page.locator('.pg-unit-list li').nth(1)).toContainText('Greetings')
+  await expect(page.locator('.pg-unit-list li').nth(1)).toContainText('Later')
 })
 
 test('switching profiles clears the practice queue and restores separate progress', async ({ page }) => {
