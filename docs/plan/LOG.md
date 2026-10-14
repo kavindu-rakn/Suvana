@@ -427,3 +427,12 @@ Rules:
 - Screenshots: n/a (motion only; measured)
 - Needs kvn: merge; check playback on the next deploy.
 - Next: none for claude-code until L-12 and K-05 unblock L-11 (L-12 is now on main; K-05 is kvn's).
+
+### 2026-10-14 | codex (second lane) | L-14 rework
+- What: English corpus names count as display coverage per kvn's chat decision; stable covered-first browse, untranslated-label chip, correct English language attribute. No translations or sign descriptions added.
+- Branch @ sha: agent/codex/L-14-meaning-coverage @ task HEAD (base 3a8d552; final SHA in git log).
+- Gates: npm 10 ci; lint 0 warnings; 255 passed / 12 skipped; build 147.78 kB gzip; sync guard 168; Playwright 4 passed; diff check clean.
+- Screenshots: .agent-local/screens/L-14/index.html; fresh main before and after at desktop 1280x800 / phone 390x844. AYUBOWAN chip visible; HELLO has no chip. Old unusable images preserved separately.
+- Plan correction: English Nouns now correctly have no chip. Category labels alone cannot verify MRACH/MILIYANAYA. No learner preference files changed.
+- Needs kvn: UI adoption and merge; update the board/decision record. Never pushed or merged.
+- Next: L-19 rework from origin/main, independent UI leaf branch.
