@@ -215,3 +215,29 @@ export function wristAnchorFit(reference: TrackedHand[], live: TrackedHand[]): F
   if (!liveWrist) return IDENTITY
   return translateFit(liveWrist.x - refWrist.x, liveWrist.y - refWrist.y)
 }
+
+/**
+ * The hands part-way between two consecutive recorded frames, for smooth slow
+ * playback: at 0.5x a 25 fps recording otherwise shows only ~12 distinct
+ * pictures a second and looks jerky. Display only; scoring never sees this.
+ *
+ * Each hand in `a` is blended with the hand of the same handedness in `b`
+ * (`t` = 0 gives `a`, 1 gives `b`). A hand with no partner in `b`, or a
+ * different landmark count, is drawn as recorded in `a`: nothing is blended
+ * into or out of existence.
+ */
+export function interpolateHands(a: TrackedHand[], b: TrackedHand[], t: number): TrackedHand[] {
+  if (t <= 0 || b.length === 0) return a
+  const k = Math.min(t, 1)
+  return a.map((hand) => {
+    const other = b.find((h) => h.handedness === hand.handedness)
+    if (!other || other.landmarks.length !== hand.landmarks.length) return hand
+    return {
+      ...hand,
+      landmarks: hand.landmarks.map((p, i) => {
+        const q = other.landmarks[i]
+        return { x: p.x + (q.x - p.x) * k, y: p.y + (q.y - p.y) * k, z: p.z + (q.z - p.z) * k }
+      }),
+    }
+  })
+}
