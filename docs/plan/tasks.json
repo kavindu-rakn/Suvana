@@ -522,7 +522,7 @@
     "deps": [
       "L-06"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/antigravity/D-01-smoke",
     "r26_port": "no",
     "screenshots": "no",
@@ -877,7 +877,7 @@
       "L-05",
       "L-07"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/antigravity/Q-04-e2e",
     "r26_port": "no",
     "screenshots": "no",
@@ -1361,7 +1361,7 @@
     "deps": [
       "L-09"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-12-game-logic",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1394,7 +1394,7 @@
     "deps": [
       "L-12"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-13-adaptation",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1425,7 +1425,7 @@
     "deps": [
       "L-10"
     ],
-    "status": "todo",
+    "status": "changes requested",
     "branch": "agent/antigravity/L-14-meaning-coverage",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1569,7 +1569,7 @@
     "day": "2026-10-17",
     "size": "M",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-17-hints",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1626,7 +1626,7 @@
     "deps": [
       "L-05"
     ],
-    "status": "todo",
+    "status": "changes requested",
     "branch": "agent/antigravity/L-19-scenarios",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1773,7 +1773,7 @@
     "day": "2026-10-17",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-23a-profile",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1971,7 +1971,7 @@
     "deps": [
       "L-04"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-29-ios-camera-resume",
     "r26_port": "yes",
     "screenshots": "no",
@@ -1997,7 +1997,7 @@
     "day": "2026-10-16",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-30-stray-hands",
     "r26_port": "yes",
     "screenshots": "no",
@@ -2141,7 +2141,7 @@
     "deps": [
       "R-01"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/R-02-port-command",
     "r26_port": "no",
     "screenshots": "no",
@@ -2344,7 +2344,7 @@
     "deps": [
       "I-04"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/I-05-converter-port",
     "r26_port": "yes",
     "screenshots": "no",
@@ -2400,7 +2400,7 @@
     "day": "2026-10-16",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/antigravity/I-07-communicate-scripts",
     "r26_port": "no",
     "screenshots": "no",
