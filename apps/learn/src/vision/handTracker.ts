@@ -1,6 +1,6 @@
 // Type-only: erased at build, so it creates no bundle edge. The library itself
 // is imported dynamically in createHandLandmarker below, which keeps ~135 KB
-// off the initial chunk — a learner who never starts the camera never pays it.
+// off the initial chunk — the Hero never loads it. Practice prepares it early.
 import type { HandLandmarker } from '@mediapipe/tasks-vision'
 import { withCpuFallback } from './cameraLifecycle'
 import { withAssetVersion } from '../app/assetVersion'
@@ -15,19 +15,36 @@ const WASM_DIR = `${import.meta.env.BASE_URL}wasm`
 const MODEL_PATH = withAssetVersion(`${import.meta.env.BASE_URL}models/hand_landmarker.task`)
 
 let cached: Promise<HandLandmarker> | null = null
+type TrackerLoadStatus = 'idle' | 'loading' | 'ready' | 'error'
+let loadStatus: TrackerLoadStatus = 'idle'
+const listeners = new Set<() => void>()
+function setLoadStatus(status: TrackerLoadStatus) {
+  loadStatus = status
+  listeners.forEach((notify) => notify())
+}
+export function handTrackerLoadStatus() { return loadStatus }
+export function subscribeHandTracker(notify: () => void) {
+  listeners.add(notify)
+  return () => { listeners.delete(notify) }
+}
 
 /**
- * Shared landmarker instance. Loading the WASM runtime + model takes ~1 s,
- * so all views reuse one tracker instead of re-creating it per mount.
+ * Shared promise for preparation and camera starts. Initial loading depends
+ * on device/network, so all views reuse one tracker rather than reload it.
  * Timestamps passed to detectForVideo use performance.now(), which stays
  * monotonic across views, as MediaPipe's VIDEO mode requires.
  */
 export function getHandLandmarker(): Promise<HandLandmarker> {
   if (!cached) {
-    cached = createHandLandmarker().catch((e) => {
+    cached = createHandLandmarker().then((tracker) => {
+      setLoadStatus('ready')
+      return tracker
+    }).catch((e) => {
       cached = null // allow a retry after a failed load
+      setLoadStatus('error')
       throw e
     })
+    setLoadStatus('loading')
   }
   return cached
 }

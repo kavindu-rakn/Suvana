@@ -427,3 +427,11 @@ Rules:
 - Screenshots: n/a (motion only; measured)
 - Needs kvn: merge; check playback on the next deploy.
 - Next: none for claude-code until L-12 and K-05 unblock L-11 (L-12 is now on main; K-05 is kvn's).
+
+### 2026-10-14 19:00 | codex | L-29b
+- What: done for review. Preserve camera-on intent across mute/end before or after visibility/pagehide/blur using a labelled untuned 1.5 s grace. Unmute can end a pause; a visible persistent loss still reports Camera disconnected. One return-time restart, with explicit off/cancellation preserved. ?camdebug=1 shows bounded timestamped lifecycle events on screen.
+- Branch @ sha: agent/codex/L-29b-ios-camera @ task HEAD (final SHA in branch log), fresh from origin/main 3a8d552; no stack. PracticeView has only two small edits: preparation flag and interrupted-capture notice.
+- Loading: shared model/WASM promise begins on Practice sign entry or Scenario playing, never Hero/browsing/briefing; no early camera permission. Tested one model/WASM request per flow, reused by camera start. Wording for adoption: Getting ready… the first time takes a little longer. Scenario shows it in the visible prompt header.
+- Gates: npm 10 ci (Learn/screens), lint 0 warnings, 268 passed / 4 skipped, build 150.16 kB gzip, guard 168, existing browser smoke 4 passed. Additional Chromium hook checks 19 passed; loading checks and countdown/recording abandonment passed with zero logged attempts. Corpus untouched; generated tracked reports restored. No iPhone-check or startup-time claim.
+- Screenshots: .agent-local/screens/L-29b/index.html, 18 desktop/phone images: real loading before/after, isolated pause/start, debug after. Needs kvn's wording/UI approval and physical iPhone re-test after the next deploy; no push, merge, deploy or R26 edit performed.
+- Plan correction: existing phone Scenario layout clips the camera below the long prompt; loading text stays visible in the header. Broader layout repair remains Scenario/polish work. Direct chat assignment; board/decisions unchanged.
