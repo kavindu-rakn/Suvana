@@ -173,7 +173,7 @@ describe('scoreAttempt — invariances (the key correctness properties)', () => 
     const rec = buildRecording()
     const hints = scoreAttempt(rec, rec).hints
     expect(hints).toHaveLength(1)
-    expect(hints[0]).toMatch(/close match/i)
+    expect(hints[0]).toBe('Great job! That looks correct.')
     expect(hints.some((h) => /check your/i.test(h))).toBe(false)
   })
 
@@ -244,18 +244,18 @@ describe('scoreAttempt — active duration and feedback compatibility', () => {
     slow.frames.push({ timestampMs: 9000, hands: [] })
     const result = scoreAttempt(slow, ref)
     expect(result.score).toBe(100) // Timing feedback must never penalize DTW score.
-    expect(result.typedHints).toEqual([{ kind: 'timing', ratio: 2 }])
-    expect(result.hints[0]).toContain('2.0x')
+    expect(result.typedHints).toEqual([{ kind: 'timing', ratio: 2, direction: 'slow' }])
+    expect(result.hints[0]).toBe('Nice try! But little slow.')
   })
   it('never restores unvalidated corrective finger hints', () => {
     const result = scoreAttempt(buildRecording({ pose: rotatedHand() }), buildRecording())
     expect(result.hints.some((hint) => hint.startsWith('Check your '))).toBe(false)
-    expect(result.hints.some((hint) => hint.startsWith('Close match'))).toBe(false)
+    expect(result.hints.some((hint) => hint.startsWith('Great job!'))).toBe(false)
   })
   it('handles an empty reference with one typed compatibility hint', () => {
     const result = scoreAttempt(buildRecording(), withoutHands(buildRecording()))
     expect(result.typedHints).toEqual([{ kind: 'untracked-reference' }])
-    expect(result.hints).toEqual(['No hands were tracked in the reference.'])
+    expect(result.hints).toEqual(['Oops, this sign is not ready yet.'])
   })
 })
 
@@ -280,7 +280,7 @@ describe('scoreAttempt — handedness', () => {
     expect(result.score).toBe(0)
     expect(result.twoHanded).toBe(false)
     expect(result.hints.some((h) => /two-handed/.test(h))).toBe(false)
-    expect(result.hints.some((h) => /framing and lighting/.test(h))).toBe(true)
+    expect(result.hints).toContain('Show your hands, turn the lights on!')
   })
 })
 
@@ -294,7 +294,7 @@ describe('scoreAttempt — two-handed signs', () => {
     const result = scoreAttempt(mirrorRecording(right), ref)
     expect(result.mirrored).toBe(true)
     expect(result.typedHints).toContainEqual({ kind: 'missing-hand', hand: 'Right' })
-    expect(result.hints[0]).toContain('your right hand')
+    expect(result.hints[0]).toBe('Use your other hand too.')
   })
   it('penalises a one-handed attempt at a two-handed sign', () => {
     const ref = buildRecording()
@@ -310,7 +310,7 @@ describe('scoreAttempt — two-handed signs', () => {
     const oneHanded = buildRecording() // right hand only
     const result = scoreAttempt(oneHanded, ref)
     expect(result.hands.some((h) => h.missing)).toBe(true)
-    expect(result.hints.some((h) => /two-handed/.test(h))).toBe(true)
+    expect(result.hints).toContain('Use your other hand too.')
     expect(result.score).toBeLessThan(scoreAttempt(ref, ref).score)
   })
 })
