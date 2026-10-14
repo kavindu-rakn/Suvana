@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="What stays on your device, and what is sent to a service." />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<title>Privacy · Suvana</title>
+<link rel="stylesheet" href="/src/styles/information.css" />
+<script>try { document.documentElement.dataset.theme = localStorage.getItem('suvana.theme') === 'dark' ? 'dark' : 'light'; } catch { document.documentElement.dataset.theme = 'light'; }</script>
+</head>
+<body class="info-page">
+<a class="info-skip" href="#content">Skip to content</a>
+<header class="info-header"><a class="info-brand" href="/"><img src="/branding/suvana-mark.png" alt="" width="36" height="36" /><span>Suvana</span></a><a class="info-home" href="/">Back to home <span aria-hidden="true">↗</span></a></header>
+<main id="content" class="info-main">
+<div class="info-heading"><p class="info-eyebrow">Suvana · Research demo</p><h1>Privacy</h1><p class="info-lead">What stays on your device, and what is sent to a service.</p><p class="info-date">Updated 14 October 2026</p></div>
+<nav class="info-nav" aria-label="Information pages"><a href="/privacy.html" aria-current="page">Privacy</a>
+<a href="/terms.html">Terms</a>
+<a href="/contact.html">Contact</a>
+<a href="/pricing.html">Roadmap</a></nav>
+<article class="info-body" aria-label="Privacy">
+<section><h2>Learn stays on your device</h2><p>Learn tracks your hands and compares your attempt with a saved sign on your device. Learn does not upload your camera video. Practice progress and author recordings are kept in this browser. They do not sync with your account.</p><p>Clear this site's browser data to remove local progress and recordings. Save anything you need first.</p></section>
+<section><h2>Communicate uses online services</h2><p>If you make an account, Communicate stores your name, email and a hashed password in MongoDB. A hash is a protected form of the password. Sign-in uses a session cookie.</p><p>Speech recordings are sent through Communicate to the configured speech service to make text. Signed-in session history can include that text, emotion estimates and matched sign sequences. Sign animation files are loaded from Cloudinary.</p><p>If you choose to contribute a voice sample and give consent, the recording is stored in Cloudinary. Its speaker key, sentence, emotion label, consent time and any age-band or gender details you provide are stored in MongoDB.</p></section>
+<section><h2>Recognize sends camera images</h2><p>When you start Recognize, camera images are sent to the recognition server for processing. This is different from Learn's on-device processing.</p></section>
+<section><h2>Alerts uses phone permissions</h2><p>The phone app uses the microphone for sound alerts and the phone's speech service for captions. Speech processing may depend on the phone's service and offline setting. An SOS can share your location with the contacts you choose.</p></section>
+<section><h2>The assistant may use Gemini</h2><p>When the online assistant is enabled, your question, recent chat turns and page context are sent through Suvana's server to Google Gemini. Do not put passwords or private details in a question.</p></section>
+<section><h2>Files and hosting</h2><p>This demo uses landmark files to show signs in Learn. Corpus video is not shown in this edition. If corpus video is approved later, its delivery and privacy details must be added here before it is used.</p><p>Hosting and file providers receive the requests needed to load pages and files. Their own privacy terms apply to those requests.</p></section>
+<section><h2>Questions about your data</h2><p>For questions or a request about account data or a contributed voice sample, <a href="mailto:kavindu.rakn@gmail.com">email kavindu.rakn@gmail.com</a>. Include only the details needed to find your record. Please do not send a password.</p></section></article>
+</main>
+<footer class="info-footer"><p>© 2026 Suvana · Academic demo</p><nav aria-label="Footer"><a href="/privacy.html" aria-current="page">Privacy</a>
+<a href="/terms.html">Terms</a>
+<a href="/contact.html">Contact</a>
+<a href="/pricing.html">Roadmap</a></nav></footer>
+</body>
+</html>

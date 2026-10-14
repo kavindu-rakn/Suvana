@@ -90,12 +90,16 @@ export default defineConfig(({ mode }) => {
     ],
     build: {
       rollupOptions: {
-        // Two documents, not one: /alerts/ is a real page on this domain, since
+        // Each information page and /alerts/ is a real document on this domain;
         // Alerts is the module with no web surface of its own to link out to.
         // Nested as alerts/index.html so the built path is /alerts/ on any static
         // host, with no clean-URL rewrite needed.
         input: {
           main: fileURLToPath(new URL("./index.html", import.meta.url)),
+          privacy: fileURLToPath(new URL("./privacy.html", import.meta.url)),
+          terms: fileURLToPath(new URL("./terms.html", import.meta.url)),
+          contact: fileURLToPath(new URL("./contact.html", import.meta.url)),
+          pricing: fileURLToPath(new URL("./pricing.html", import.meta.url)),
           alerts: fileURLToPath(
             new URL("./alerts/index.html", import.meta.url),
           ),

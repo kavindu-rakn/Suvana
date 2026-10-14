@@ -427,3 +427,12 @@ Rules:
 - Screenshots: n/a (motion only; measured)
 - Needs kvn: merge; check playback on the next deploy.
 - Next: none for claude-code until L-12 and K-05 unblock L-11 (L-12 is now on main; K-05 is kvn's).
+
+### 2026-10-14 | codex (second lane) | I-06
+- What: standalone Privacy, draft Terms, Contact and open-core Roadmap pages; working footer links and multi-page build. kvn approved no prices/paid offering and kavindu.rakn@gmail.com in chat.
+- Branch @ sha: agent/codex/I-06-shell-pages @ task HEAD (base 3a8d552; independent UI leaf).
+- Gates: npm 10 ci; Shell 44 tests, typecheck/build passed; guard 168; all built pages and local page links 200; contact/roadmap assertions; no overflow at desktop/390/360; diff check clean.
+- Screenshots: .agent-local/screens/I-06/index.html; clean main before (missing URLs fall back to homepage), final production after. Footer loader excluded; new Roadmap link wraps away from the floating assistant.
+- Plan correction: actual privacy includes Communicate speech/history/consented voice uploads, Recognize camera uploads and OS speech in Alerts. DN-04 content-edition selection stays a separate decision; no deployment/legal certification. Existing homepage 98% Sequence Accuracy claim is outside footer-only boundary; exact removal proposed in handoff.
+- Needs kvn: UI review/adoption/merge and eventual terms review. No push, merge or deploy by codex; r26_port no.
+- Next: L-23 Progress UI. I-12a still awaits deadline/reply confirmation; later dependency gates remain in force.
