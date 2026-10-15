@@ -19,7 +19,9 @@
         "NSMicrophoneUsageDescription": "Suvana listens to your surroundings to recognise important sounds, and captions speech in real time. Audio is processed on this device and never uploaded by the app.",
         "NSSpeechRecognitionUsageDescription": "Suvana uses speech recognition to turn what people say into large, high-contrast captions you can read and show to the person you are talking to.",
         "NSLocationWhenInUseUsageDescription": "Your location is attached to an SOS message so the people in your Safety Circle know where to find you. It is used only when an SOS is sent.",
-        "UIBackgroundModes": ["audio"]
+        "UIBackgroundModes": [
+          "audio"
+        ]
       }
     },
     "android": {
@@ -76,7 +78,11 @@
       "typedRoutes": true
     },
     "extra": {
-      "router": {}
-    }
+      "router": {},
+      "eas": {
+        "projectId": "7c1afe12-2cb6-4ed7-ae86-b1486825cf59"
+      }
+    },
+    "owner": "kavindu-rakn"
   }
 }
