@@ -52,6 +52,8 @@ import './PracticeReason.css'
 import { initialPracticeStage, practiceStageTransition } from './practiceStages'
 import { starsFor } from '../learner/game'
 import { nextExercise } from '../learner/nextExercise'
+import { SessionComplete } from './SessionComplete'
+import { clearHeroSession, readHeroSession } from '../learner/heroSession'
 
 const COUNTDOWN_S = 3
 /**
@@ -86,7 +88,13 @@ export function PracticeView({
   const [attempt, setAttempt] = useState<SignRecording | null>(null)
   const [entries, setEntries] = useState<AttemptLogEntry[]>([])
   const [suggested, setSuggested] = useState<string | null>(null)
-  const [session, setSession] = useState<PracticeSession | null>(() => loadSession())
+  const [session, setSession] = useState<PracticeSession | null>(() => {
+    const saved = readHeroSession() ?? loadSession()
+    // An explicit sign entry must not get trapped behind an old completion.
+    return initialGloss && saved && (isComplete(saved) || !saved.glosses.includes(initialGloss)) ? null : saved
+  })
+  const [loadingProgress, setLoadingProgress] = useState(true)
+  const mountIntent = useRef({ gloss: initialGloss, session })
   const [isBrowsing, setIsBrowsing] = useState(true)
   // Why the last countdown or take was abandoned, shown until the next one.
   const [captureNotice, setCaptureNotice] = useState<string | null>(null)
@@ -158,6 +166,7 @@ export function PracticeView({
   })
 
   useEffect(() => {
+    let cancelled = false
     void (async () => {
       // allSettled: a failed IndexedDB (blocked site storage) must not blank
       // the bundled signs. Each store that fails contributes nothing.
@@ -166,6 +175,7 @@ export function PracticeView({
         loadReferenceIndex(),
         Promise.resolve().then(listAttempts),
       ])
+      if (cancelled) return
       const loc = locR.status === 'fulfilled' ? locR.value : []
       const index = indexR.status === 'fulfilled' ? indexR.value : []
       const log = logR.status === 'fulfilled' ? logR.value : []
@@ -173,9 +183,19 @@ export function PracticeView({
         if (r.status === 'rejected') console.error('Practice could not load a store', r.reason)
       }
       setLocalRecs(loc)
-      setReferences(pickReferenceList([...loc.map(toMeta), ...index]))
+      const refs = pickReferenceList([...loc.map(toMeta), ...index])
+      setReferences(refs)
       setEntries(log)
+      if (!mountIntent.current.gloss) {
+        const active = mountIntent.current.session
+        const first = active ? currentGloss(active) : null
+        const rec = refs.find(item => item.gloss === first)
+        if (rec) { setSelected(rec); setIsBrowsing(false) }
+      }
+      clearHeroSession()
+      setLoadingProgress(false)
     })()
+    return () => { cancelled = true }
   }, [])
 
   // Fetch reference frames for the selected sign
@@ -765,6 +785,15 @@ export function PracticeView({
       </button>
     </div>
   )
+
+  if (sessionDone && phase === 'idle' && session) return loadingProgress
+    ? <p role="status" className="empty-state">Loading your session…</p>
+    : <SessionComplete session={session} attempts={entries} onContinue={() => {
+    setSession(null)
+    clearSession()
+    setSelected(null)
+    setIsBrowsing(true)
+  }} />
 
   return (
     <div className={`aww-practice-env${browsing ? ' aww-browse' : ''}`} data-phase={phase} data-stage={teaching.stage}>

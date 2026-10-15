@@ -1,9 +1,15 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Tab } from '../app/tabs'
 import { ThemeToggle } from './ThemeToggle'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
+import { CURRICULUM_UNITS } from '../data/curriculum'
+import { listAttempts } from '../learner/attemptLog'
+import { queueHeroSession, startHeroSession } from '../learner/heroSession'
+import { saveSession } from '../learner/session'
+import { loadReferenceIndex } from '../storage/bundledReferences'
+import { listRecordings } from '../storage/recordingStore'
 
 const STEPS = [
   {
@@ -29,6 +35,24 @@ const STEPS = [
 ]
 
 export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
+  const [starting, setStarting] = useState(false)
+  const [startNotice, setStartNotice] = useState('')
+  async function startLearning() {
+    if (starting) return
+    setStarting(true)
+    setStartNotice('')
+    const [index, local, log] = await Promise.allSettled([loadReferenceIndex(), Promise.resolve().then(listRecordings), Promise.resolve().then(listAttempts)])
+    const glosses = [...(index.status === 'fulfilled' ? index.value : []), ...(local.status === 'fulfilled' ? local.value : [])].map(rec => rec.gloss)
+    const session = startHeroSession(CURRICULUM_UNITS, glosses, log.status === 'fulfilled' ? log.value : [])
+    if (!session) {
+      setStartNotice('Could not load the signs. Please try again.')
+      setStarting(false)
+      return
+    }
+    queueHeroSession(session)
+    saveSession(session)
+    onEnter('practice')
+  }
   const container = useRef<HTMLDivElement>(null)
   const marqueeRef = useRef<HTMLDivElement>(null)
   const stepRefs = useRef<(HTMLElement | null)[]>([])
@@ -188,7 +212,8 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
         </p>
 
         <div className="aww-hero-cta">
-          <button className="btn massive" onClick={() => onEnter('practice')}>Start practising</button>
+          <button className="btn massive" disabled={starting} onClick={() => void startLearning()}>{starting ? 'Loading your first sign…' : 'Start practising'}</button>
+          {startNotice && <p role="status">{startNotice}</p>}
         </div>
 
         <div className="lhero-stats-strip">
@@ -351,7 +376,8 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
             <button
               type="button"
               className="aww-start-cta-link"
-              onClick={() => onEnter('practice')}
+              disabled={starting}
+              onClick={() => void startLearning()}
               aria-label="Start practicing now"
             >
               start?
