@@ -7,6 +7,7 @@ import { SkeletonPlayer } from './SkeletonPlayer'
 import { glossLabel, translationOf } from '../data/translations'
 import { safeLoad } from '../storage/safeLoad'
 import { StorageNotice } from '../storage/StorageNotice'
+import { Attribution } from './Attribution'
 
 interface Row {
   meta: RecordingMeta
@@ -181,6 +182,7 @@ export function LibraryView() {
   return (
     <section className="library-card">
       <StorageNotice storageOk={storageOk} />
+      <Attribution />
       <div className="library-head">
         <h2>Reference library</h2>
         <span className="library-count">

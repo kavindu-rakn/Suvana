@@ -19,6 +19,27 @@ import { withAssetVersion } from '../app/assetVersion'
 // BASE_URL-relative: this module is served under /learn/ (see vite.config.ts).
 const INDEX_URL = withAssetVersion(`${import.meta.env.BASE_URL}reference-index.json`)
 
+/** Unknown/missing settings retain the full academic edition and its NC notice. */
+export const CONTENT_EDITION = import.meta.env.VITE_CONTENT === 'cc0' ? 'cc0' : 'all'
+
+/** CC0 preview is fail-closed: a prefix alone cannot override a restrictive licence. */
+export function filterContentIndex(index: RecordingMeta[], edition: 'all' | 'cc0'): RecordingMeta[] {
+  if (edition === 'all') return index
+  return index.filter((rec) =>
+    rec.licence === 'CC0-1.0' &&
+    !rec.id.startsWith('yohan_') &&
+    !rec.file?.startsWith('yohan_') &&
+    rec.source !== 'yohan-dataset',
+  )
+}
+
+/** For the Path owner: retain every approved unit, showing incomplete ones as Preview. */
+export function contentCoverage(signs: readonly string[], index: RecordingMeta[]) {
+  const available = new Set(index.map((rec) => rec.gloss))
+  const covered = signs.filter((gloss) => available.has(gloss)).length
+  return { covered, total: signs.length, preview: covered < signs.length }
+}
+
 // Module-level, so the four views share one request no matter how many mount
 // concurrently or how often the learner switches tabs.
 let indexPromise: Promise<RecordingMeta[]> | null = null
@@ -57,7 +78,7 @@ export function loadReferenceIndex(): Promise<RecordingMeta[]> {
   indexPromise ??= fetch(INDEX_URL)
     .then((r) => {
       if (!r.ok) throw new Error(`${r.status} ${r.statusText}`)
-      return r.json().then(unpack) as Promise<RecordingMeta[]>
+      return r.json().then(unpack).then((index) => filterContentIndex(index, CONTENT_EDITION))
     })
     .catch((e: unknown) => {
       // Allow a retry: a transient failure should not leave the app with an
@@ -81,6 +102,16 @@ const frameCache = new Map<string, Promise<SignRecording | null>>()
 
 /** Full recording, frames included, for one bundled reference file. */
 export function loadReferenceFrames(file: string): Promise<SignRecording | null> {
+  // A stale selection must not bypass the filtered index in the CC0 preview.
+  if (CONTENT_EDITION === 'cc0') {
+    return loadReferenceIndex().then((index) =>
+      index.some((rec) => rec.file === file) ? fetchReferenceFrames(file) : null,
+    )
+  }
+  return fetchReferenceFrames(file)
+}
+
+function fetchReferenceFrames(file: string): Promise<SignRecording | null> {
   const cached = frameCache.get(file)
   if (cached) {
     // Re-insert to mark as most recently used (Map iterates in insertion order).
