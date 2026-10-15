@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "Suvana",
-    "slug": "soundguard",
+    "slug": "suvana-alerts",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "soundguard",
+    "scheme": "suvana-alerts",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -29,7 +29,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.karindragimhan69.soundguard",
+      "package": "help.suvana.alerts",
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS",
@@ -76,10 +76,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "80d799af-0e87-41d7-8a12-60fb02e661d1"
-      }
+      "router": {}
     }
   }
 }
