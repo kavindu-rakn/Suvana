@@ -77,6 +77,7 @@ test.describe('Learn smoke tests', () => {
     await practiseBtn.click()
 
     // Start camera tracking
+    await page.getByRole('button', { name: 'My turn', exact: true }).click()
     const turnOnCamBtn = page.locator('button:has-text("Turn on camera")')
     await expect(turnOnCamBtn).toBeVisible()
     await turnOnCamBtn.click()
@@ -123,6 +124,7 @@ test.describe('Learn smoke tests', () => {
     await practiseBtn.click()
 
     // Start camera tracking
+    await page.getByRole('button', { name: 'My turn', exact: true }).click()
     const turnOnCamBtn = page.locator('button:has-text("Turn on camera")')
     await expect(turnOnCamBtn).toBeVisible()
     await turnOnCamBtn.click()
@@ -144,6 +146,20 @@ test.describe('Learn smoke tests', () => {
     // Result panel appears with Retry button
     const retryBtn = page.locator('button.aww-btn-retry')
     await expect(retryBtn).toBeVisible({ timeout: 10000 })
+
+    await expect.poll(() => page.evaluate(() => performance.getEntriesByName('suvana:result-shown').length)).toBe(1)
+    const marks = await page.evaluate(() => ['suvana:capture-end', 'suvana:result-shown'].map(name => performance.getEntriesByName(name)[0]?.startTime))
+    expect(marks[1]).toBeGreaterThanOrEqual(marks[0])
+    const savedStages = await page.evaluate(() => new Promise<string[]>((resolve, reject) => {
+      const req = indexedDB.open('ssl-learn', 3)
+      req.onerror = () => reject(req.error)
+      req.onsuccess = () => {
+        const db = req.result, tx = db.transaction('attempts'), all = tx.objectStore('attempts').getAll()
+        all.onsuccess = () => resolve(all.result.map(entry => entry.stage))
+        tx.oncomplete = () => db.close()
+      }
+    }))
+    expect(savedStages).toEqual(['try'])
 
     // Focus the Retry button
     await retryBtn.focus()
