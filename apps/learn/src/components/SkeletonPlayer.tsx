@@ -23,6 +23,8 @@ interface SkeletonPlayerProps {
    * learner sees the movement slowly before full speed. Choosing a speed ends it.
    */
   slowStart?: boolean
+  /** Watch keeps its slow start until the learner chooses another speed. */
+  autoSpeedUp?: boolean
 }
 
 const SPEEDS = [0.25, 0.5, 0.75, 1]
@@ -44,6 +46,7 @@ export function SkeletonPlayer({
   fitToFrame = false,
   colorOverride,
   slowStart = true,
+  autoSpeedUp = true,
 }: SkeletonPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef(0)
@@ -55,7 +58,7 @@ export function SkeletonPlayer({
 
   const prevTRef = useRef(0) // last rendered position, to count loop wraps
   const loopsRef = useRef(0)
-  const autoSpeedRef = useRef(slowStart) // still on the automatic slow start
+  const autoSpeedRef = useRef(slowStart && autoSpeedUp) // still on the automatic slow start
 
   const [playing, setPlaying] = useState(true)
   const [speed, setSpeed] = useState(slowStart ? SLOW_SPEED : 1)
@@ -66,12 +69,12 @@ export function SkeletonPlayer({
 
   // A new clip starts slow again, from the beginning.
   useEffect(() => {
-    autoSpeedRef.current = slowStart
+    autoSpeedRef.current = slowStart && autoSpeedUp
     loopsRef.current = 0
     prevTRef.current = 0
     offsetRef.current = 0
     setSpeed(slowStart ? SLOW_SPEED : 1)
-  }, [frames, slowStart])
+  }, [frames, slowStart, autoSpeedUp])
 
   useEffect(() => {
     const canvas = canvasRef.current

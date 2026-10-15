@@ -599,3 +599,11 @@ Rules:
 - Screenshots: .agent-local/screens/L-11/index.html, desktop 1280x800/phone 390x844 empty and synthetic seeded before/after plus unit details. Before is parent Progress because Path was absent; no study results. Visually inspected.
 - Plan correction: use merged approved game rules, not stale plan thresholds. kvn authorized starting on 15 Oct. No SSL content/figures added; r26_port yes after milestone merge.
 - Needs kvn: UI adoption from renders and eventual bottom-up merge. No push, merge or deploy. Next: L-16a stacked on this branch.
+
+### 2026-10-15 | codex (Learn UI lane) | L-16a
+- What: review. Each sign opens Watch at 0.5x; My turn opens Try. Pure tested stage machine; Recall disabled until L-16b. Results show actual stars and nextExercise advice; attempts log stage try/sessionId; capture-end/result-shown marks emitted. Guide updated.
+- Branch @ sha: agent/codex/L-16a-watch-try @ task HEAD, stacked on agent/codex/L-11-path e0dfb16. Parent-only before/after renders.
+- Gates: npm 10 ci; lint 0 warnings; 298 passed / 13 skipped; build 142.82 kB gzip; guard 172; final production Playwright 14 passed. Two earlier loaded-run timeouts passed in isolation and the full final suite. Diff check clean.
+- Screenshots: .agent-local/screens/L-16a/index.html; Watch, Try and result at desktop 1280x800/phone 390x844. Results use explicitly synthetic landmarks/fake camera, not K-13 hands or learner evidence; inspected. Phone result polish remains L-26.
+- Plan corrections: no video (L-15b cancelled); optional SkeletonPlayer autoSpeedUp and guide/browser changes are necessary supporting files. No SSL content, bands, scoring or reward-rule changes; r26_port yes.
+- Needs kvn: UI adoption and eventual bottom-up merge. No push, merge or deploy. Next: L-24 stacked on this branch, before Recall, per kvn's order.

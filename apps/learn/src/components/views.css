@@ -7324,3 +7324,12 @@
     flex: 1;
   }
 }
+/* L-16a: teaching steps stay separate from capture controls. */
+.practice-steps { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border-subtle); color: var(--text-dim); font-size: .9rem; }
+.practice-steps button { min-height: 44px; }
+.practice-steps [aria-current="step"], .practice-steps [aria-pressed="true"] { color: var(--text); font-weight: 700; }
+.practice-stars { margin-left: auto; letter-spacing: .15em; color: var(--text); }
+.practice-watch-prompt { margin: auto; padding: 32px 24px; max-width: 360px; text-align: center; color: var(--text); line-height: 1.7; }
+.practice-watch-prompt p:first-child { font-size: 1.4rem; }
+.practice-watch-prompt p { margin-bottom: 24px; }
+.practice-next-step { color: var(--text); margin: 8px 0 16px; font-size: .9rem; }
