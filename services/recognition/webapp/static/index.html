@@ -4,6 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Recognize — සුවණ Suvana</title>
+  <script>
+    // Recognize lives on its own origin; the shell passes its theme by URL.
+    // Invalid or absent values keep this page's existing dark appearance.
+    const suvanaTheme = new URLSearchParams(window.location.search).get('theme');
+    document.documentElement.dataset.theme = suvanaTheme === 'light' ? 'light' : 'dark';
+  </script>
   <link rel="icon" type="image/png" href="/suvana-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -3396,11 +3402,54 @@
       font-size: 13px;
       color: var(--text);
     }
+    /* I-08: shell navigation and the explicit light theme, without changing
+       the dark defaults or the recognition controls/IDs. */
+    .suvana-return { padding: 14px var(--gutter) 0; max-width: var(--maxw); margin: 0 auto; }
+    .suvana-return a { color: var(--text-dim); font-size: 13px; text-decoration: none; }
+    .suvana-return a:hover { color: var(--text); text-decoration: underline; }
+    .suvana-return a:focus-visible { outline: 2px solid var(--ring); outline-offset: 5px; }
+    :root[data-theme="dark"] { color-scheme: dark; }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f5f8f6; --bg-deep: #edf3ef;
+      --panel: rgba(255, 255, 255, 0.88); --panel-strong: #fff;
+      --panel-border: rgba(24, 65, 54, 0.18); --hairline: rgba(24, 65, 54, 0.12);
+      --surface-raise: rgba(24, 65, 54, 0.04);
+      --text: #183b33; --text-dim: #3f6359; --text-faint: #527267;
+      --accent: #886100; --accent-2: #087568;
+      --accent-grad: linear-gradient(103.22deg, #087568 -13.86%, #886100 99.55%);
+      --gold: #886100; --gold-bright: #765600;
+      --ring: #087568; --danger: #ac3030; --success: #087558;
+      --e1: 0 1px 3px rgba(24, 65, 54, 0.08);
+      --e2: 0 5px 18px rgba(24, 65, 54, 0.10);
+      --e3: 0 12px 35px rgba(24, 65, 54, 0.12);
+    }
+    [data-theme="light"] .bg-radial { background: var(--bg-deep); }
+    [data-theme="light"] .bg-aurora { opacity: 0.08; }
+    [data-theme="light"] body::after { background: none; }
+    [data-theme="light"] .app-header.is-scrolled,
+    [data-theme="light"] .settings-drawer,
+    [data-theme="light"] .guide-drawer { background: rgba(245, 248, 246, 0.97); }
+    [data-theme="light"] .video-wrap { background: #e6efea; box-shadow: inset 0 0 0 1px var(--hairline); }
+    [data-theme="light"] .card { background: var(--panel); }
+    [data-theme="light"] .btn-primary { color: #fff; }
+    [data-theme="light"] .caption-text.placeholder { color: var(--text-dim); }
+    [data-theme="light"] .search-input { background: #f5f8f6; color: var(--text); }
+    [data-theme="light"] .buffer-track,
+    [data-theme="light"] .confidence-track { background: var(--hairline); }
+    [data-theme="light"] .guide-drawer:not(.open),
+    [data-theme="light"] .settings-drawer:not(.open) { box-shadow: none; }
+    [data-theme="light"] .svn-ai-root {
+      --svn-panel: #f5f8f6; --svn-border: var(--panel-border); --svn-bubble-bot: #e6efea;
+    }
   </style>
   <!-- සුවණ AI assistant (additive; namespaced under .svn-ai*) -->
   <link rel="stylesheet" href="/assistant.css" />
 </head>
 <body>
+  <nav class="suvana-return" aria-label="Suvana navigation">
+    <a href="https://suvana-shell.vercel.app/">&larr; Back to Suvana</a>
+  </nav>
   <!-- background layers -->
   <div class="bg-radial" aria-hidden="true"></div>
   <div class="bg-aurora" aria-hidden="true">

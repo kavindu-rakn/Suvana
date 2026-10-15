@@ -1,0 +1,19 @@
+# I-08: CPU HTTP/WebSocket serving, matching upstream's model/runtime versions.
+# Keep the full training/desktop requirements.txt unchanged.
+numpy==1.24.3
+tensorflow-cpu==2.13.0
+keras==2.13.1
+mediapipe==0.10.7
+opencv-contrib-python==4.8.0.74
+matplotlib==3.7.1
+scipy==1.11.1
+protobuf==3.20.3
+h5py==3.10.0
+tqdm==4.65.0
+pyyaml==6.0.1
+gTTS==2.3.1
+requests==2.31.0
+fastapi==0.103.2
+pydantic==1.10.13
+uvicorn[standard]==0.23.2
+websockets==11.0.3
