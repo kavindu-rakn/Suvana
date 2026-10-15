@@ -7333,3 +7333,13 @@
 .practice-watch-prompt p:first-child { font-size: 1.4rem; }
 .practice-watch-prompt p { margin-bottom: 24px; }
 .practice-next-step { color: var(--text); margin: 8px 0 16px; font-size: .9rem; }
+.practice-recall-cue { display: grid; place-content: center; justify-items: center; gap: 12px; min-height: 280px; padding: 32px 24px; text-align: center; color: var(--text); }
+.practice-recall-cue p { margin: 0; line-height: 1.7; }
+.practice-recall-cue button { min-height: 48px; margin-top: 16px; white-space: normal; }
+.practice-next-step button + button { margin-left: 8px; }
+.aww-practice-env[data-stage='recall'][data-phase='result'] .aww-pane-left .aww-pane-content { visibility: visible; }
+.aww-practice-env[data-stage='recall'][data-phase='result'] .aww-result-overlay { left: 50%; width: 50%; align-items: flex-start; }
+@media (max-width: 860px) {
+  .aww-practice-env[data-stage='recall'][data-phase='result'] .aww-result-overlay { left: 0; top: 40vh; width: 100%; height: calc(100% - 40vh); padding: 12px; }
+  .aww-practice-env[data-stage='recall'][data-phase='result'] .aww-result-panel { padding: 20px 16px; max-height: none; }
+}
