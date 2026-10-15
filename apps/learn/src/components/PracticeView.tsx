@@ -19,7 +19,7 @@ import { categoryOf, orderSigns } from '../data/categories'
 import { glossLabel, translationOf } from '../data/translations'
 import { addAttempt, listAttempts } from '../learner/attemptLog'
 import type { AttemptLogEntry } from '../learner/attemptLog'
-import { summarizeAll } from '../learner/mastery'
+import { summarizeAll, summarizeGloss } from '../learner/mastery'
 import {
   buildSession,
   clearSession,
@@ -32,7 +32,6 @@ import {
 import type { PracticeSession } from '../learner/session'
 import { scoreAttempt, topFingers } from '../scoring/score'
 import type { ScoreResult } from '../scoring/score'
-import { FINGER_LABEL } from '../scoring/landmarks'
 import { band } from '../scoring/band'
 import { useFeedbackLatency } from '../metrics/useFeedbackLatency'
 import { drawHands, wristAnchorFit } from '../vision/drawing'
@@ -56,6 +55,8 @@ import { SessionComplete } from './SessionComplete'
 import { clearHeroSession, readHeroSession } from '../learner/heroSession'
 import { cameraIntentTransition, initialCameraIntent } from './practiceCamera'
 import type { PracticeCameraEvent } from './practiceCamera'
+import { ReplayCompare } from './ReplayCompare'
+import { feedbackTip } from './feedbackTips'
 
 const COUNTDOWN_S = 3
 /**
@@ -478,7 +479,7 @@ export function PracticeView({
     if (phase === 'idle' && captureNotice) return captureNotice
     if (phase === 'result' && result) {
       const bandLabel = band(result.score).label
-      const hint = result.hints[0] ? ` ${result.hints[0]}` : ''
+      const hint = result.typedHints?.[0] ? ` ${feedbackTip(result.typedHints[0])}` : ''
       return `${selectedRef.current?.gloss ?? 'Sign'} scored ${result.score} out of 100. ${bandLabel}.${hint}`
     }
     return ''
@@ -615,7 +616,7 @@ export function PracticeView({
   const noAttemptHands =
     result != null && result.hands.length > 0 && result.hands.every((h) => h.missing)
 
-  const resultNotes = result ? result.hints.filter((h) => !h.startsWith('Check your ')) : []
+  const resultTips = result ? (result.typedHints ?? [{ kind: 'compare-reference' } as const]).slice(0, 2).map(feedbackTip) : []
 
   // Measured per-hand scores for ScoreBadge. When the take was scored
   // mirrored, the learner signed with the other hand than the reference's, so
@@ -629,7 +630,9 @@ export function PracticeView({
     }))
   }, [result])
 
-  const fingerFocus = result ? topFingers(result) : []
+  // D-A15/L-30: finger correctness states and highlights remain unvalidated.
+  // Keep the measured hand scores, without adding per-finger judgments.
+  const fadeTips = useMemo(() => selected ? ['improving', 'mastered'].includes(summarizeGloss(selected.gloss, entries).level) : false, [selected, entries])
 
   const progress = useMemo(() => {
     if (!result || !selected || !attempt) return { delta: null, best: false }
@@ -653,6 +656,7 @@ export function PracticeView({
   const watching = teaching.stage === 'watch'
   const exercise = selected ? nextExercise(selected.gloss, entries) : null
   const earnedStars = selected ? starsFor(selected.gloss, entries) : 0
+  const starsAdded = selected && attempt ? Math.max(0, earnedStars - starsFor(selected.gloss, entries.filter(entry => entry.id !== attempt.id))) : 0
   const recallUnlocked = earnedStars >= 2
 
   function enterRecall() {
@@ -1143,6 +1147,7 @@ export function PracticeView({
               </div>
             ) : (
               <div className="aww-result-panel">
+                {reference && attempt && <ReplayCompare key={attempt.id} reference={reference} attempt={attempt} result={result} />}
                 <ScoreBadge
                   score={result.score}
                   delta={progress.delta}
@@ -1151,33 +1156,16 @@ export function PracticeView({
                 />
                 <div className="aww-result-feedback">
                   <div className="practice-next-step">
-                    <p>Your stars: {earnedStars} of 3</p>
+                    <p>Your stars: {earnedStars} of 3 · +{starsAdded} this try</p>
                     <p>{exercise?.stage === 'recall' ? 'Ready to practise from memory.' : exercise?.suggestedSpeed === 0.25 ? 'Watch again at quarter speed. You can turn on the hand guide too.' : 'Watch again, or give it another try.'}</p>
                     <button className="btn ghost" onClick={watchAgain}>Watch again</button>
                     {recallUnlocked && <button className="btn" onClick={enterRecall}>Try from memory</button>}
                     {teaching.stage === 'recall' && teaching.revealed && <p>This revealed try cannot add the third star.</p>}
                   </div>
-                  {result.score === 100 ? (
-                    <p className="perfect-hint">Flawless match. Perfect execution.</p>
-                  ) : (
-                    <>
-                      {resultNotes.map((h, i) => (
-                        <p key={i}>{h}</p>
-                      ))}
-                      {fingerFocus.length > 0 && (
-                        <div className="focus-block">
-                          <p className="pane-label">Focus on</p>
-                          <div className="finger-chips">
-                            {fingerFocus.map((f) => (
-                              <span key={f} className="finger-chip">
-                                {FINGER_LABEL[f]}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  )}
+                  <details className="practice-tips" key={attempt?.id} open={!fadeTips}>
+                    <summary>{fadeTips ? 'Show tips' : 'Tips'}</summary>
+                    {resultTips.map((tip, index) => <p key={index}>{tip}</p>)}
+                  </details>
                   {resultActions}
                 </div>
               </div>
