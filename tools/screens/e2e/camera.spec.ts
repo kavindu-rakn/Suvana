@@ -21,7 +21,7 @@ async function prepare(page: Page) {
   })
   await page.addInitScript(mockHandDetectionScript)
   await page.goto('./')
-  await page.locator('button:has-text("Practise")').first().click()
+  await page.getByRole('button', { name: /Practise/ }).first().click()
   await page.getByRole('button', { name: 'My turn', exact: true }).click()
   await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
   await expect(page.locator('#aww-hands-pill')).toHaveAttribute('data-ready', 'yes', { timeout: 15000 })

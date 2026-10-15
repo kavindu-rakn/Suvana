@@ -12,7 +12,7 @@ test('Watch stays slow and My turn opens Try without requesting the camera', asy
     }
   })
   await page.goto('./')
-  await page.locator('button:has-text("Practise")').first().click()
+  await page.getByRole('button', { name: /Practise/ }).first().click()
   await expect(page.locator('.aww-practice-env')).toHaveAttribute('data-stage', 'watch')
   await expect(page.getByRole('button', { name: 'My turn', exact: true })).toBeEnabled()
   await expect(page.getByRole('button', { name: 'Turn on camera', exact: true })).not.toBeVisible()
