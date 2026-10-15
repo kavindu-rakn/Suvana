@@ -568,3 +568,11 @@ Rules:
 - Decision (kvn, chat): from 16 through 21 Oct the other Codex window builds L-11, L-16a, L-24, L-16b, L-27, L-21, L-26 and owns PracticeView.tsx, views.css, Hero.tsx. This window leaves them untouched and records any exact proposed diff in its handoff. This window takes I-10 after D-04/I-01, I-11 after D-03, Q-05 after D-03/D-04.
 - Plan correction: 10-schedule.md still lists Antigravity for I-10/I-11/Q-05 although BOARD.md assigns Codex; screen ownership is per kvn's window split above. No edits to BOARD.md/tasks.json/DECISIONS.md.
 - Needs kvn: review and merge L-18 before L-21; reconcile schedule/window ownership. No push, merge, deployment or messages by codex.
+
+### 2026-10-15 | claude-code (integration prep, light) | integration/2026-10-15b
+- What: merged with --no-ff onto main a4a98aa: I-12a (Alerts app.json: slug and scheme suvana-alerts, Android package help.suvana.alerts, Karindra's EAS project ID removed; app name stays Suvana) and L-18 (scoring keeps the winning DTW path as replay pairs in original frame numbers, plus worstFrameIndex, for L-21). Both merged cleanly; LOG kept both entries.
+- Gates: Learn npm@10 ci, lint 0 warnings, tests 296 passed + 13 skipped (no calibration corpus in this worktree), build ok, main JS 140.75 kB gzip (budget 160); sync guard 170. apps/alerts after the merge is identical to I-12a's branch, where codex ran tsc --noEmit (passed).
+- Checks (light, by claude-code): app.json differs only in slug, scheme, package and the removed project ID; no soundguard://, karindragimhan69 or old project ID left in apps/alerts; the background plugin takes its Java package from app.json. L-18 computes score, hands and hints as before; its frame mapping uses the same frame selection as extractHandFeatures. No UI, SSL content, figures or secrets in either diff.
+- Karindra (reply to kvn's note, 15 Oct): Alerts needs no server; it runs on-device ("Edge AI") and works offline. DN-14 (kvn, chat, 15 Oct): rebuild under kvn's own Expo account regardless of any later reply.
+- Follow-ups: the first Codex window (upstreams.json owner) applies I-12a's proposed app.json coupling and guard; kvn runs eas init and then the preview build (I-12).
+- Needs kvn: merge integration/2026-10-15b and push. Board: I-12a and L-18 done.
