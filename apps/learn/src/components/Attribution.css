@@ -1,0 +1,30 @@
+.attribution {
+  margin-bottom: 24px;
+  padding: 20px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.content-notice {
+  margin: 0 0 16px;
+  color: var(--text);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.attribution h3 { margin: 0 0 8px; font-size: 1rem; }
+.attribution-intro { margin: 0 0 16px; color: var(--text-dim); }
+.attribution ul { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; list-style: none; margin: 0 0 16px; padding: 0; }
+.attribution li { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.attribution a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.attribution a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+@media (max-width: 600px) {
+  .attribution { padding: 16px; }
+  .attribution ul { grid-template-columns: 1fr; gap: 16px; }
+}
