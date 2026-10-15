@@ -55,7 +55,7 @@ for (const reveal of [false, true]) test(`scored Recall records revealed=${revea
   await expect(page.locator('.aww-cam-btn-stop')).toBeVisible({ timeout: 5000 })
   await page.waitForTimeout(300)
   await page.locator('.aww-cam-btn-stop').click()
-  await expect(page.locator('.aww-pane-left canvas')).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Reference hand replay', exact: true })).toBeVisible()
   const entries = await page.evaluate(() => new Promise<Array<{ stage: string; revealed: boolean; sessionId: string }>>((resolve, reject) => {
     const req = indexedDB.open('ssl-learn', 3)
     req.onerror = () => reject(req.error)

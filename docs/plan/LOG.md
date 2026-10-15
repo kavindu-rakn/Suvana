@@ -629,3 +629,11 @@ Rules:
 - Screenshots/evidence: .agent-local/screens/L-27/index.html, desktop/phone live/browse before/after; synthetic camera. before-tracks.json live -> after-tracks.json ended on both. Tests verify three returns with no duplicate starts, bfcache and blur-only ended-stream recovery.
 - Plan correction: renders included per kvn's chain rule. L-18 already in base runtime; f611b0a updates board/decisions only. Own stack will rebase before L-21. No SSL content/scoring changes; r26_port yes.
 - Needs kvn: UI adoption and physical iPhone re-test. No push, merge or deploy. Next: L-21 replay; then L-26 last. L-25 remains conditional on sentence data and priority.
+
+### 2026-10-15 | codex (Learn UI lane) | L-21
+- What: review. Replay uses original L-18 frame pairs at half speed, pauses at the scorer's selected moment, and has one keyboard scrubber. Desktop side by side/phone stacked; at most two typed tips, faded once improving, plus actual star change. No perfect-execution/string-filter/finger-focus claims.
+- Branch @ sha: agent/codex/L-21-replay @ task HEAD, stacked on agent/codex/L-27-camera-off 5eae5fa. Owned five-task stack rebased cleanly onto main f611b0a; no Learn/screens runtime change. New SHA mapping in handoff.
+- Gates: npm 10 ci Learn/screens; lint 0 warnings; 308 passed / 13 skipped; build 149.14 kB gzip; guard 173; production browser 31 passed; diff check clean.
+- Screenshots: .agent-local/screens/L-21/index.html, result and controls before/after at 1280x800, 390x844, 360x800. Explicit synthetic frozen corpus-pose take and history (K-13 absent); high match displays are not real learner/accuracy evidence; visually inspected.
+- Plan correction: off-finger highlights/states remain disabled under D-A15/L-30's unvalidated-method gate. No new SSL content, scoring changes, push, merge or deploy. r26_port yes.
+- Needs kvn: rendered adoption and real-clip check when available. Next: L-26 last; conditional L-25 still waits for L-22b/data and priority.

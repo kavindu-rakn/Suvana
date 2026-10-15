@@ -1,0 +1,24 @@
+.replay-compare { width: 100%; min-width: 0; color: var(--text); }
+.replay-panes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.replay-panes figure { margin: 0; min-width: 0; }
+.replay-panes figcaption { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; text-align: left; font-weight: 600; font-size: .95rem; }
+.replay-panes small { font-size: .8rem; font-weight: 400; }
+.replay-panes canvas { display: block; width: 100%; height: 220px; object-fit: contain; background: #050d0c; border: 1px solid var(--border-interactive); border-radius: 12px; }
+.replay-caption { font-size: .8rem; margin: 12px 0 !important; }
+.replay-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.replay-controls button { min-height: 44px; padding: 10px 12px; font-size: .85rem; }
+.replay-seek { display: grid; text-align: left; gap: 8px; margin: 16px 0; font-size: .85rem; }
+.replay-seek input { width: 100%; min-height: 44px; accent-color: var(--accent); }
+.replay-status { font-size: .85rem; }
+.practice-tips { width: 100%; text-align: left; margin: 16px 0; border-top: 1px solid var(--border-subtle); }
+.practice-tips summary { min-height: 44px; padding: 12px 0; cursor: pointer; }
+.practice-tips p { margin-bottom: 12px !important; }
+.app .aww-practice-env[data-stage][data-phase='result'] .aww-result-overlay { left: 0; top: 0; width: 100%; height: 100%; align-items: flex-start; }
+.aww-practice-env[data-phase='result'] .aww-result-panel { width: min(960px, 100%); max-height: none; margin: 0 auto; }
+.aww-practice-env[data-phase='result'] .aww-result-panel .aww-score-svg { width: 120px; height: 120px; }
+@media(max-width: 860px) {
+  .replay-panes { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .replay-panes canvas { height: 180px; }
+  .aww-practice-env[data-phase='result'] .aww-result-overlay { padding: 12px; }
+  .aww-practice-env[data-phase='result'] .aww-result-panel { padding: 20px 16px; }
+}
