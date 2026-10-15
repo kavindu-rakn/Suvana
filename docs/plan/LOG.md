@@ -550,3 +550,13 @@ Rules:
 - Hot files: for these tasks the second Codex window owns PracticeView.tsx, views.css, App.tsx (L-11) and Hero.tsx (L-24, L-27); read "CC" as that window in the 10-schedule.md hot-file table.
 - Stacking: kvn allows these seven to stack on each other (an exception to 08 section 4, for this chain only). Each handoff says "stacked on ..." and its renders compare against the parent branch; kvn merges bottom-up.
 - Plan correction: L-24's Hero button opens the first sign in Watch, which L-16a adds, so L-24 is built after L-16a (the board lists only L-11).
+
+### 2026-10-15 | codex (Learn UI lane) | I-12a
+- What: ready for review. app.json uses slug/scheme suvana-alerts and Android package help.suvana.alerts; removed Karindra's extra.eas project binding. App name stays Suvana; eas.json and runtime code need no edits.
+- Branch @ sha: agent/codex/I-12a-alerts-eas @ task HEAD (final SHA in git log), fresh from origin/main a4a98aa; independent.
+- Gates: npx tsc --noEmit passed; sync guard 170 passed; exact config-delta and locally resolved Expo config assertions passed; diff check clean. No build or device verification.
+- Audit: no old-scheme links or hard-coded old package/project binding remain. Background plugin derives the Java package from app.json; relative service, explicit intents, internal bridge/channel/action IDs and notification routes remain consistent. Full evidence and proposed upstreams.json coupling/guard in handoffs/I-12a.md; declaration not applied in this lane.
+- Screenshots: n/a, config only. SSL content/figures untouched; r26_port no.
+- Plan correction: kvn's direct 15 Oct chat confirms DN-14 rebuild and authorizes I-12a now, before its 16 Oct board date; old projectId removed instead of a placeholder. No board or decisions edits.
+- Needs kvn: review branch, then run eas init in apps/alerts under his own Expo account; I-12 APK build/install stays manual. No build, push, merge, deploy, account changes or messages performed.
+- Next: L-11 starts the Learn UI chain from 16 Oct.
