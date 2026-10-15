@@ -118,6 +118,7 @@ export function PracticeView({
 
   // While browsing, the right pane previews a sign instead of sitting empty
   const [hoverRec, setHoverRec] = useState<RecordingMeta | null>(null)
+  const [previewOpen, setPreviewOpen] = useState(false)
   const [previewFrames, setPreviewFrames] = useState<SignRecording | null>(null)
 
   const phaseRef = useRef<Phase>('idle')
@@ -132,7 +133,7 @@ export function PracticeView({
   const framesRef = useRef<HandFrame[]>([])
   const startTsRef = useRef<number | null>(null)
   const countdownRef = useRef(0)
-  const retryRef = useRef<HTMLButtonElement>(null)
+  const resultHeadingRef = useRef<HTMLHeadingElement>(null)
   const completeRef = useRef<HTMLHeadingElement>(null)
   const lastFrameAtRef = useRef<number | null>(null)
   const finishRef = useRef<() => void>(() => {})
@@ -486,7 +487,12 @@ export function PracticeView({
   }, [phase, result, captureNotice])
 
   useEffect(() => {
-    if (phase === 'result') retryRef.current?.focus({ preventScroll: true })
+    if (phase === 'result') {
+      const heading = resultHeadingRef.current
+      heading?.closest('.aww-practice-env')?.scrollTo({ top: 0 })
+      heading?.closest('.aww-result-overlay')?.scrollTo({ top: 0 })
+      heading?.focus({ preventScroll: true })
+    }
   }, [phase])
 
   useEffect(() => {
@@ -810,7 +816,6 @@ export function PracticeView({
     <div className="aww-result-actions">
       {tracking.status === 'running' ? (
         <button
-          ref={retryRef}
           className="btn massive aww-btn-action aww-btn-retry"
           onClick={beginCountdown}
           aria-label="Retry attempt (Left Arrow or Space)"
@@ -823,7 +828,6 @@ export function PracticeView({
         </button>
       ) : (
         <button
-          ref={retryRef}
           className="btn massive aww-btn-action"
           onClick={() => requestCamera()}
         >
@@ -869,7 +873,7 @@ export function PracticeView({
   }} />
 
   return (
-    <div className={`aww-practice-env${browsing ? ' aww-browse' : ''}`} data-phase={phase} data-stage={teaching.stage}>
+    <div className={`aww-practice-env${browsing ? ' aww-browse' : ''}`} data-phase={phase} data-stage={teaching.stage} data-preview={previewOpen && previewRec ? 'open' : 'closed'}>
       {!browsing && <div className="practice-steps" aria-label="Practice steps">
         <button className="btn ghost" aria-pressed={watching} disabled={phase === 'countdown' || phase === 'recording'} onClick={watchAgain}>1. Watch</button>
         <button className="btn ghost" aria-pressed={teaching.stage === 'try'} disabled={watching || phase === 'countdown' || phase === 'recording'} onClick={() => {
@@ -894,11 +898,14 @@ export function PracticeView({
               selectedId={selected?.id}
               mode="practice"
               onSelect={(rec) => {
+                setTeaching(initialPracticeStage())
                 setSelected(rec)
                 setIsBrowsing(false)
                 setHoverRec(null)
+                setPreviewOpen(false)
               }}
-              onPreview={setHoverRec}
+              onPreview={(rec) => { setHoverRec(rec); setPreviewOpen(rec !== null) }}
+              previewedId={previewOpen ? hoverRec?.id : null}
             />
           ) : (
             <>
@@ -975,6 +982,13 @@ export function PracticeView({
                 <h2 className="aww-pane-title">{glossLabel(previewRec.gloss)}</h2>
               )}
             </div>
+            {browsing && previewOpen && previewRec && <div className="practice-preview-actions">
+              <button className="btn" onClick={() => {
+                setTeaching(initialPracticeStage())
+                setSelected(previewRec); setIsBrowsing(false); setHoverRec(null); setPreviewOpen(false)
+              }}>Watch this sign</button>
+              <button className="btn ghost" onClick={() => { setPreviewOpen(false); setHoverRec(null) }} aria-label="Close preview">Close</button>
+            </div>}
           </div>
 
           {browsing && (
@@ -1116,30 +1130,27 @@ export function PracticeView({
             {noAttemptHands ? (
               <div className="aww-result-panel aww-result-nohands">
                 <div className="aww-nohands-icon-wrap">
-                  <X size={32} />
+                  <X size={32} aria-hidden="true" />
                 </div>
-                <h3 className="aww-result-nohands-title">Couldn't see your hands</h3>
-                <p className="aww-result-lead">The AI tracker didn't detect a hand gesture in that take.</p>
+                <h3 className="aww-result-nohands-title" ref={resultHeadingRef} tabIndex={-1}>Couldn't see your hands</h3>
+                <p className="aww-result-lead">We couldn't track your hands in this try.</p>
                 <div className="aww-diagnostics-grid">
                   <div className="aww-diag-item">
-                    <span className="aww-diag-icon">💡</span>
                     <div>
-                      <strong>Check Room Lighting</strong>
-                      <p>Ensure light is in front of you, not behind.</p>
+                      <strong>Check the light</strong>
+                      <p>Keep a light in front of you.</p>
                     </div>
                   </div>
                   <div className="aww-diag-item">
-                    <span className="aww-diag-icon">📐</span>
                     <div>
-                      <strong>Camera Distance</strong>
-                      <p>Step back until your head &amp; shoulders are visible.</p>
+                      <strong>Check the camera</strong>
+                      <p>Move back until your head and shoulders fit.</p>
                     </div>
                   </div>
                   <div className="aww-diag-item">
-                    <span className="aww-diag-icon">✋</span>
                     <div>
-                      <strong>Hand Visibility</strong>
-                      <p>Raise your hands clearly within the camera frame.</p>
+                      <strong>Show your hands</strong>
+                      <p>Keep your hands inside the camera view.</p>
                     </div>
                   </div>
                 </div>
@@ -1147,6 +1158,7 @@ export function PracticeView({
               </div>
             ) : (
               <div className="aww-result-panel">
+                <h2 className="practice-result-title" ref={resultHeadingRef} tabIndex={-1}>Your try</h2>
                 {reference && attempt && <ReplayCompare key={attempt.id} reference={reference} attempt={attempt} result={result} />}
                 <ScoreBadge
                   score={result.score}

@@ -41,7 +41,7 @@ test.describe('Learn smoke tests', () => {
     await expect(page.locator('.aww-practice-env')).toBeVisible()
 
     // Select a sign to practice
-    const practiseBtn = page.locator('button:has-text("Practise")').first()
+    const practiseBtn = page.getByRole('button', { name: /Practise/ }).first()
     await expect(practiseBtn).toBeVisible()
     await practiseBtn.click()
 
@@ -88,7 +88,7 @@ test.describe('Learn smoke tests', () => {
     await expect(page.locator('.aww-practice-env')).toBeVisible()
 
     // Select a sign to practice
-    const practiseBtn = page.locator('button:has-text("Practise")').first()
+    const practiseBtn = page.getByRole('button', { name: /Practise/ }).first()
     await expect(practiseBtn).toBeVisible()
     await practiseBtn.click()
 

@@ -29,6 +29,8 @@ import type { RecordingMeta } from '../vision/types'
 import { categoryOf, foldedCategoryOf, groupForPicker } from '../data/categories'
 import { matchesSearch, translationOf } from '../data/translations'
 import { hasMeaningCoverage, orderSignsVerifiedFirst } from '../data/meaningCoverage'
+import { isTextEntryTarget } from '../app/keyboard'
+import { signCardAction } from './signCardAction'
 import './CategorySignNavigator.css'
 
 export interface CategorySignNavigatorProps {
@@ -40,6 +42,8 @@ export interface CategorySignNavigatorProps {
   onCreateCustom?: (gloss: string) => void
   /** Fired as the pointer / focus moves over a sign card, for a live preview. */
   onPreview?: (sign: RecordingMeta | null) => void
+  /** The parent clears this when the learner closes the touch preview. */
+  previewedId?: string | null
 }
 
 function getCategoryLucideIcon(cat: string) {
@@ -93,18 +97,26 @@ export function CategorySignNavigator({
   onSelect,
   onCreateCustom,
   onPreview,
+  previewedId = null,
 }: CategorySignNavigatorProps) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [globalQuery, setGlobalQuery] = useState('')
   const [categoryQuery, setCategoryQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const pointerTypeRef = useRef('mouse')
+
+  function activateSign(sign: RecordingMeta) {
+    const touch = pointerTypeRef.current === 'touch' || window.matchMedia('(hover: none)').matches
+    if (signCardAction(Boolean(onPreview), touch, previewedId, sign.id) === 'preview') {
+      onPreview?.(sign)
+    } else onSelect(sign)
+  }
 
   // Keyboard shortcut '/' to instantly focus search
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === '/' && document.activeElement !== searchInputRef.current) {
-        const target = e.target as HTMLElement
-        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+      if (!e.defaultPrevented && e.key === '/' && document.activeElement !== searchInputRef.current) {
+        if (!isTextEntryTarget(e.target)) {
           e.preventDefault()
           searchInputRef.current?.focus()
         }
@@ -209,7 +221,8 @@ export function CategorySignNavigator({
               type="text"
               className="cs-search-input"
               value={categoryQuery}
-              onChange={(e) => setCategoryQuery(e.target.value)}
+              onChange={(e) => { onPreview?.(null); setCategoryQuery(e.target.value) }}
+              aria-label={`Search within ${selectedCategory}`}
               placeholder={`Search within ${selectedCategory}...`}
               autoComplete="off"
               spellCheck={false}
@@ -236,7 +249,8 @@ export function CategorySignNavigator({
               type="text"
               className="cs-search-input"
               value={globalQuery}
-              onChange={(e) => setGlobalQuery(e.target.value)}
+              onChange={(e) => { onPreview?.(null); setGlobalQuery(e.target.value) }}
+              aria-label="Search signs"
               placeholder={`Search ${references.length} signs (e.g. Ayubowan, Numbers)...`}
               autoComplete="off"
               spellCheck={false}
@@ -265,11 +279,12 @@ export function CategorySignNavigator({
           {suggestedRec && mode === 'practice' && (
             <div
               className="cs-suggested-banner"
+              aria-label={`Practise ${suggestedRec.gloss}`}
               onClick={() => onSelect(suggestedRec)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') onSelect(suggestedRec)
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(suggestedRec) }
               }}
             >
               <div className="cs-suggested-left">
@@ -291,10 +306,10 @@ export function CategorySignNavigator({
                   ) : null}
                 </div>
               </div>
-              <button type="button" className="btn small cs-suggested-btn">
+              <span className="btn small cs-suggested-btn" aria-hidden="true">
                 <span>Practise</span>
                 <ArrowRight size={13} />
-              </button>
+              </span>
             </div>
           )}
 
@@ -321,6 +336,7 @@ export function CategorySignNavigator({
                   key={catName}
                   className="cs-category-card"
                   onClick={() => {
+                    onPreview?.(null)
                     setSelectedCategory(catName)
                     setCategoryQuery('')
                   }}
@@ -328,6 +344,8 @@ export function CategorySignNavigator({
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onPreview?.(null)
                       setSelectedCategory(catName)
                       setCategoryQuery('')
                     }
@@ -370,7 +388,7 @@ export function CategorySignNavigator({
               )}
             </div>
           ) : (
-            <div className="cs-signs-grid" onMouseLeave={() => onPreview?.(null)}>
+            <div className="cs-signs-grid">
               {globalSearchResults.map((r) => {
                 const meaning = translationOf(r.gloss)
                 const isSelected = selectedId === r.id
@@ -379,13 +397,14 @@ export function CategorySignNavigator({
                   <div
                     key={r.id}
                     className={`cs-sign-card ${isSelected ? 'selected' : ''} ${isSuggested ? 'suggested' : ''}`}
-                    onClick={() => onSelect(r)}
-                    onMouseEnter={() => onPreview?.(r)}
-                    onFocus={() => onPreview?.(r)}
+                    onPointerDown={(e) => { pointerTypeRef.current = e.pointerType }}
+                    onClick={() => activateSign(r)}
+                    onPointerEnter={(e) => { if (e.pointerType === 'mouse' && window.matchMedia('(hover: hover)').matches) onPreview?.(r) }}
+                    onFocus={(e) => { if (e.currentTarget.matches(':focus-visible')) onPreview?.(r) }}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') onSelect(r)
+                      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(r) }
                     }}
                   >
                     <div className="cs-sign-top">
@@ -423,7 +442,7 @@ export function CategorySignNavigator({
               </button>
             </div>
           ) : (
-            <div className="cs-signs-grid" onMouseLeave={() => onPreview?.(null)}>
+            <div className="cs-signs-grid">
               {categorySigns.map((r) => {
                 const meaning = translationOf(r.gloss)
                 const isSelected = selectedId === r.id
@@ -432,13 +451,14 @@ export function CategorySignNavigator({
                   <div
                     key={r.id}
                     className={`cs-sign-card ${isSelected ? 'selected' : ''} ${isSuggested ? 'suggested' : ''}`}
-                    onClick={() => onSelect(r)}
-                    onMouseEnter={() => onPreview?.(r)}
-                    onFocus={() => onPreview?.(r)}
+                    onPointerDown={(e) => { pointerTypeRef.current = e.pointerType }}
+                    onClick={() => activateSign(r)}
+                    onPointerEnter={(e) => { if (e.pointerType === 'mouse' && window.matchMedia('(hover: hover)').matches) onPreview?.(r) }}
+                    onFocus={(e) => { if (e.currentTarget.matches(':focus-visible')) onPreview?.(r) }}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') onSelect(r)
+                      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(r) }
                     }}
                   >
                     <div className="cs-sign-main">
