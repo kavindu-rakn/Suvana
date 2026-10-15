@@ -5,6 +5,7 @@ import { Hero } from './components/Hero'
 // Only Hero and Practice are needed on first paint. Secondary views load when
 // selected; named exports retain their existing props and component identity.
 const ProgressView = lazy(() => import('./components/ProgressView').then((m) => ({ default: m.ProgressView })))
+const PathView = lazy(() => import('./components/PathView').then((m) => ({ default: m.PathView })))
 const ScenarioView = lazy(() => import('./components/ScenarioView').then((m) => ({ default: m.ScenarioView })))
 const RecordView = lazy(() => import('./components/RecordView').then((m) => ({ default: m.RecordView })))
 const LibraryView = lazy(() => import('./components/LibraryView').then((m) => ({ default: m.LibraryView })))
@@ -18,6 +19,8 @@ import { fetchSession } from './app/session'
 import type { SuvanaUser } from './app/session'
 import { AccountButton } from './app/AccountButton'
 import './components/views.css'
+import { currentGloss, saveSession } from './learner/session'
+import type { PracticeSession } from './learner/session'
 
 /**
  * Whether the learner has passed the hero and is inside the tool.
@@ -50,10 +53,17 @@ function App() {
   // PracticeView. In-memory and one-shot: reloading just lands you in Practice,
   // which is fine. PracticeView clears it once it has selected the sign.
   const [practiceIntent, setPracticeIntent] = useState<string | null>(null)
+  const [practiceKey, setPracticeKey] = useState(0)
 
   function openPractice(gloss?: string) {
     setPracticeIntent(gloss ?? null)
+    setPracticeKey(value => value + 1)
     setTab('practice')
+  }
+
+  function openSession(session: PracticeSession) {
+    saveSession(session)
+    openPractice(currentGloss(session) ?? undefined)
   }
 
   const tabs = mode === 'author' ? AUTHOR_TABS : LEARNER_TABS
@@ -138,12 +148,14 @@ function App() {
       <main data-tab={tab}>
         {tab === 'practice' && (
           <PracticeView
+            key={practiceKey}
             initialGloss={practiceIntent}
             onIntentConsumed={() => setPracticeIntent(null)}
           />
         )}
         {tab !== 'practice' && (
           <Suspense fallback={<p className="empty-state" role="status">Loading…</p>}>
+            {tab === 'path' && <PathView onPractise={openPractice} onSession={openSession} />}
             {tab === 'scenario' && <ScenarioView />}
             {tab === 'progress' && <ProgressView onPractise={openPractice} />}
             {tab === 'record' && <RecordView />}
