@@ -614,3 +614,10 @@ Rules:
 - Gates: npm 10 ci; lint 0 warnings; 301 passed / 13 skipped; build 146.99 kB gzip; guard 172; production browser 17 passed; diff check clean.
 - Screenshots: .agent-local/screens/L-24/index.html; desktop/phone Hero, direct destination and synthetic seeded completion before/after, visually inspected. Decorative Hero preview cards/figures unchanged; no SSL content added. r26_port yes.
 - Needs kvn: UI adoption and a real-camera landing-to-enabled-Record check under 30 seconds (not claimed from mocks). No push, merge or deploy. Next: L-16b Recall stacked on this branch; DN-09 uses verified English meaning, else gloss.
+
+### 2026-10-15 | codex (Learn UI lane) | L-16b
+- What: review. Recall unlocks after two Try stars; cue is verified English meaning else the existing gloss. Reference/ghost/reasons hidden until reveal or result. Revealed flag stays sticky for a take; scored Recall logs stage, reveal flag and sessionId; existing game rules decide rewards.
+- Branch @ sha: agent/codex/L-16b-recall @ task HEAD, stacked on agent/codex/L-24-cta-complete 32039e8; before/after compare only this task against that parent.
+- Gates: npm 10 ci; lint 0 warnings; 302 passed / 13 skipped; build 147.29 kB gzip; guard 173; final production browser 21 passed. Browser checks caught hidden post-result reference; Recall-specific desktop/phone layout fixed and assertions retained. Diff check clean.
+- Screenshots: .agent-local/screens/L-16b/index.html, desktop/phone cue, reveal and result before/after; synthetic two-star history/camera/result fixtures on existing content, not learner/K-13 evidence; visually inspected. No SSL content or scoring rules changed. r26_port yes.
+- Needs kvn: UI adoption and later real-phone checks. No push, merge or deploy. Next: L-27 camera lifecycle. L-18 now merged on origin/main f611b0a; rebase this own stack onto it before L-21.

@@ -16,7 +16,7 @@ import { listRecordings } from '../storage/recordingStore'
 import { loadReferenceFrames, loadReferenceIndex } from '../storage/bundledReferences'
 import { pickReferenceList } from '../storage/references'
 import { categoryOf, orderSigns } from '../data/categories'
-import { glossLabel } from '../data/translations'
+import { glossLabel, translationOf } from '../data/translations'
 import { addAttempt, listAttempts } from '../learner/attemptLog'
 import type { AttemptLogEntry } from '../learner/attemptLog'
 import { summarizeAll } from '../learner/mastery'
@@ -82,6 +82,7 @@ export function PracticeView({
   const [refFailed, setRefFailed] = useState(false)
   const [phase, setPhaseState] = useState<Phase>('idle')
   const [teaching, setTeaching] = useState(initialPracticeStage)
+  const recallHidden = teaching.stage === 'recall' && !teaching.revealed && phase !== 'result'
   const [count, setCount] = useState(COUNTDOWN_S)
   const [elapsedMs, setElapsedMs] = useState(0)
   const [result, setResult] = useState<ScoreResult | null>(null)
@@ -272,7 +273,7 @@ export function PracticeView({
   // Ghost Mode animation loop on webcam overlay canvas
   useEffect(() => {
     const canvas = ghostCanvasRef.current
-    if (!canvas || !ghostActive || !reference || tracking.status !== 'running' || phase === 'result') {
+    if (!canvas || !ghostActive || recallHidden || !reference || tracking.status !== 'running' || phase === 'result') {
       if (canvas) {
         const ctx = canvas.getContext('2d')
         ctx?.clearRect(0, 0, canvas.width, canvas.height)
@@ -332,7 +333,7 @@ export function PracticeView({
         c?.clearRect(0, 0, canvas.width, canvas.height)
       }
     }
-  }, [ghostActive, reference, tracking.status, tracking.videoRef, phase])
+  }, [ghostActive, recallHidden, reference, tracking.status, tracking.videoRef, phase])
 
   // Readiness is about the frames arriving now: start over whenever they stop.
   useEffect(() => {
@@ -437,6 +438,7 @@ export function PracticeView({
 
   function beginCountdown() {
     if (teaching.stage === 'watch') return
+    if (phaseRef.current === 'result') setTeaching(state => practiceStageTransition(state, 'retry'))
     if (tracking.status !== 'running' || !referenceRef.current) return
     setCaptureNotice(null)
     setResult(null)
@@ -541,7 +543,8 @@ export function PracticeView({
       gloss: currentRef.gloss,
       referenceId: currentRef.id,
       score: scored.score,
-      stage: 'try',
+      stage: teaching.stage === 'recall' ? 'recall' : 'try',
+      revealed: teaching.stage === 'recall' ? teaching.revealed : undefined,
       worstFingers: topFingers(scored),
       sessionId: session?.id,
       createdAt: att.createdAt,
@@ -594,6 +597,16 @@ export function PracticeView({
   const watching = teaching.stage === 'watch'
   const exercise = selected ? nextExercise(selected.gloss, entries) : null
   const earnedStars = selected ? starsFor(selected.gloss, entries) : 0
+  const recallUnlocked = earnedStars >= 2
+
+  function enterRecall() {
+    if (!recallUnlocked || watching) return
+    const retry = phaseRef.current === 'result'
+    leaveResult()
+    setTeaching(state => state.stage === 'recall' && retry
+      ? practiceStageTransition(state, 'retry')
+      : practiceStageTransition(state, 'recall', recallUnlocked))
+  }
 
   function watchAgain() {
     leaveResult()
@@ -710,7 +723,7 @@ export function PracticeView({
         setIsBrowsing(true)
       }
     } else if (e.key === 'm' || e.key === 'M') {
-      if (!isBrowsing && !watching && phaseRef.current !== 'result') {
+      if (!isBrowsing && !watching && !recallHidden && phaseRef.current !== 'result') {
         e.preventDefault()
         setGhostActive((prev) => !prev)
       }
@@ -799,11 +812,13 @@ export function PracticeView({
     <div className={`aww-practice-env${browsing ? ' aww-browse' : ''}`} data-phase={phase} data-stage={teaching.stage}>
       {!browsing && <div className="practice-steps" aria-label="Practice steps">
         <button className="btn ghost" aria-pressed={watching} disabled={phase === 'countdown' || phase === 'recording'} onClick={watchAgain}>1. Watch</button>
-        <span aria-current={!watching ? 'step' : undefined}>2. Try</span>
-        <button className="btn ghost" disabled>3. Recall</button>
+        <button className="btn ghost" aria-pressed={teaching.stage === 'try'} disabled={watching || phase === 'countdown' || phase === 'recording'} onClick={() => {
+          leaveResult(); setTeaching(state => practiceStageTransition(state, 'my-turn'))
+        }}>2. Try</button>
+        <button className="btn ghost" aria-pressed={teaching.stage === 'recall'} disabled={!recallUnlocked || watching || phase === 'countdown' || phase === 'recording'} onClick={enterRecall}>3. Recall</button>
         {phase === 'result' && <span className="practice-stars" aria-label={`${earnedStars} of 3 stars`}>{'★'.repeat(earnedStars)}{'☆'.repeat(3 - earnedStars)}</span>}
       </div>}
-      {!browsing && session?.recommendations?.find(item => item.gloss === selected?.gloss) && (
+      {!browsing && !recallHidden && session?.recommendations?.find(item => item.gloss === selected?.gloss) && (
         <details className="practice-reason"><summary>Why this sign?</summary>
           <p>{session.recommendations.find(item => item.gloss === selected?.gloss)?.reason}</p>
         </details>
@@ -841,13 +856,13 @@ export function PracticeView({
                   </div>
                 )}
                 <div className="aww-ref-heading">
-                  <p className="aww-pane-label">Reference</p>
+                  <p className="aww-pane-label">{recallHidden ? 'From memory' : 'Reference'}</p>
                   <div className="aww-ref-title-wrap">
                     {/* glossLabel() already carries the English meaning */}
                     <h2 className="aww-pane-title">
-                      {glossLabel(selected.gloss)}
+                      {recallHidden ? translationOf(selected.gloss) ?? glossLabel(selected.gloss) : glossLabel(selected.gloss)}
                     </h2>
-                    {selected.gloss === suggested && (
+                    {!recallHidden && selected.gloss === suggested && (
                       <span className="badge cs-suggested-chip">Suggested</span>
                     )}
                   </div>
@@ -855,7 +870,13 @@ export function PracticeView({
               </div>
 
               <div className="aww-pane-content">
-                {reference ? (
+                {recallHidden ? (
+                  <div className="practice-recall-cue">
+                    <p>Try the sign from memory.</p>
+                    <p>Need another look?</p>
+                    <button className="btn ghost" onClick={() => setTeaching(state => practiceStageTransition(state, 'reveal'))}>Reveal (costs the 3rd star)</button>
+                  </div>
+                ) : reference ? (
                   <SkeletonPlayer
                     key={`${selected.id}-${teaching.stage}`}
                     frames={reference.frames}
@@ -930,9 +951,9 @@ export function PracticeView({
               error={tracking.error}
               onStart={() => void tracking.start()}
               onStop={() => void tracking.stop()}
-              ghostActive={ghostActive}
+              ghostActive={ghostActive && !recallHidden}
               onToggleGhost={() => setGhostActive((g) => !g)}
-              ghostAvailable={reference !== null}
+              ghostAvailable={reference !== null && !recallHidden}
               idleHint=""
               inferring={tracking.inferring}
               intro={
@@ -1077,6 +1098,8 @@ export function PracticeView({
                     <p>Your stars: {earnedStars} of 3</p>
                     <p>{exercise?.stage === 'recall' ? 'Ready to practise from memory.' : exercise?.suggestedSpeed === 0.25 ? 'Watch again at quarter speed. You can turn on the hand guide too.' : 'Watch again, or give it another try.'}</p>
                     <button className="btn ghost" onClick={watchAgain}>Watch again</button>
+                    {recallUnlocked && <button className="btn" onClick={enterRecall}>Try from memory</button>}
+                    {teaching.stage === 'recall' && teaching.revealed && <p>This revealed try cannot add the third star.</p>}
                   </div>
                   {result.score === 100 ? (
                     <p className="perfect-hint">Flawless match. Perfect execution.</p>
