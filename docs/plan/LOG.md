@@ -621,3 +621,11 @@ Rules:
 - Gates: npm 10 ci; lint 0 warnings; 302 passed / 13 skipped; build 147.29 kB gzip; guard 173; final production browser 21 passed. Browser checks caught hidden post-result reference; Recall-specific desktop/phone layout fixed and assertions retained. Diff check clean.
 - Screenshots: .agent-local/screens/L-16b/index.html, desktop/phone cue, reveal and result before/after; synthetic two-star history/camera/result fixtures on existing content, not learner/K-13 evidence; visually inspected. No SSL content or scoring rules changed. r26_port yes.
 - Needs kvn: UI adoption and later real-phone checks. No push, merge or deploy. Next: L-27 camera lifecycle. L-18 now merged on origin/main f611b0a; rebase this own stack onto it before L-21.
+
+### 2026-10-15 | codex (Learn UI lane) | L-27
+- What: review. Browsing/Watch/hidden pages release camera tracks; view-level intent restores once only in an active Try/Recall. Manual stop/failure/browsing revoke restart. Hidden takes cancelled unscored. L-29b vision hook unchanged. Hover copy gated; Hero ticker defaults restored.
+- Branch @ sha: agent/codex/L-27-camera-off @ task HEAD, stacked on agent/codex/L-16b-recall cbae144; parent-based renders.
+- Gates: npm 10 ci; lint 0 warnings; 305 passed / 13 skipped; build 147.79 kB gzip; guard 173; production browser 26 passed + 2 Safari-event regressions passed; diff check clean.
+- Screenshots/evidence: .agent-local/screens/L-27/index.html, desktop/phone live/browse before/after; synthetic camera. before-tracks.json live -> after-tracks.json ended on both. Tests verify three returns with no duplicate starts, bfcache and blur-only ended-stream recovery.
+- Plan correction: renders included per kvn's chain rule. L-18 already in base runtime; f611b0a updates board/decisions only. Own stack will rebase before L-21. No SSL content/scoring changes; r26_port yes.
+- Needs kvn: UI adoption and physical iPhone re-test. No push, merge or deploy. Next: L-21 replay; then L-26 last. L-25 remains conditional on sentence data and priority.
