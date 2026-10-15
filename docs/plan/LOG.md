@@ -576,3 +576,9 @@ Rules:
 - Karindra (reply to kvn's note, 15 Oct): Alerts needs no server; it runs on-device ("Edge AI") and works offline. DN-14 (kvn, chat, 15 Oct): rebuild under kvn's own Expo account regardless of any later reply.
 - Follow-ups: the first Codex window (upstreams.json owner) applies I-12a's proposed app.json coupling and guard; kvn runs eas init and then the preview build (I-12).
 - Needs kvn: merge integration/2026-10-15b and push. Board: I-12a and L-18 done.
+
+### 2026-10-15 | codex (first window) | I-12a-sync-guard
+- What: applied the exact merged I-12a handoff proposal to alerts.couplings["app.json"] and appended its app.json guard; existing Suvana name guard retained. Protects slug/scheme suvana-alerts and package help.suvana.alerts, rejects Karindra's old identity/project binding, and allows kvn's future EAS projectId.
+- Branch @ sha: agent/codex/I-12a-sync-guard @ task HEAD (final SHA in git log), fresh origin/main d527398; explicitly requested by kvn.
+- Gates: sync guard 171 passed; parsed manifest exactly equals HEAD plus the two proposed changes; diff check clean. No app/runtime edits; screenshots n/a; r26_port no.
+- Needs kvn: review and merge this branch. Existing I-12 EAS steps are separate. No push, merge, deployment or account operations by codex.

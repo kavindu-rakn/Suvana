@@ -216,7 +216,7 @@
       "recorded": "2026-08-24",
       "policy": "Take everything, then re-apply the rebrand.",
       "couplings": {
-        "app.json": "app name 'Suvana' and Suvana permission copy",
+        "app.json": "App name Suvana and Suvana permission copy; DN-14/I-12a sets slug/scheme suvana-alerts and Android package help.suvana.alerts for kvn's own Expo account. Remove Karindra's extra.eas.projectId; after kvn runs eas init, preserve his new project binding on sync.",
         "app/**": "Suvana rebrand of screen copy and palette (bootstrap)",
         "components/**": "Suvana rebrand of copy and palette (bootstrap)",
         "constants/theme.ts": "Suvana palette",
@@ -232,6 +232,21 @@
             "\"name\": \"Suvana\""
           ],
           "why": "the installed app is called Suvana"
+        },
+        {
+          "file": "app.json",
+          "has": [
+            "\"slug\": \"suvana-alerts\"",
+            "\"scheme\": \"suvana-alerts\"",
+            "\"package\": \"help.suvana.alerts\""
+          ],
+          "lacks": [
+            "\"slug\": \"soundguard\"",
+            "\"scheme\": \"soundguard\"",
+            "com.karindragimhan69.soundguard",
+            "80d799af-0e87-41d7-8a12-60fb02e661d1"
+          ],
+          "why": "DN-14: preserve Suvana's install/deep-link identity and prevent restoring Karindra's EAS binding; allow kvn's own projectId after eas init"
         }
       ]
     },
