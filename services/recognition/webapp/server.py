@@ -157,6 +157,9 @@ def get_info():
         "sequenceLength": config['video']['frames_per_sequence'],
         "confidenceThreshold": config['recognition']['confidence_threshold'],
         "numClasses": len(unique_labels),
+        "labels": unique_labels,
+        "backend": getattr(fast_engine, "backend", "keras_predict"),
+        "model": Path(config['model']['model_path']).name,
     })
 
 
