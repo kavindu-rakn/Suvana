@@ -592,3 +592,10 @@ Rules:
 ### 2026-10-15 | kvn (recorded by claude-code) | decisions due 16 Oct
 - Decided (kvn, chat, after claude-code's pros and cons): DN-02 Railway Hobby from 18 Oct with the laptop tunnel as fallback; DN-04 (a); DN-08 whole sentence clips, experimental, lowest priority; DN-20 yes from 17 Oct. Taken as recommended, no objection from kvn: DN-03 laptop only; DN-09 verified English meaning, else gloss label; DN-13 own instance, said up front. DN-15 recorded as decided on 14 Oct by I-06. DECISIONS D-A21 to D-A29.
 - Consequences: kvn signs up for Railway and runs D-04 on 18 Oct after I-08 (hosting needs Lahiru's OK); K-04 accounts (Atlas, Cloudinary, NEXTAUTH_SECRET) are needed before D-03 on 17 Oct; K-07 (kvn) converts the 20 labelled sentence clips; L-25 only if the Learn chain is on track on 19 Oct; claude-code sets up the claude-thesis worktree and kickoff on 17 Oct.
+### 2026-10-15 | codex (Learn UI lane) | L-11
+- What: review. New lazy Path shows approved units, stars and game-layer states; unit detail offers Watch/Try and a capped eight-sign session. Practice Next follows the queue and shows L-13's reason. Free Practice remains open.
+- Branch @ sha: agent/codex/L-11-path @ task HEAD (final SHA in git log), stacked on origin/main 150a4c6 as the first task of kvn's authorized chain.
+- Gates: npm 10 ci Learn/screens; lint 0 warnings; 296 passed / 13 skipped; build within 160 kB gzip; guard 171; browser 13 passed including seeded unlock/session and 390/360 checks; diff check clean.
+- Screenshots: .agent-local/screens/L-11/index.html, desktop 1280x800/phone 390x844 empty and synthetic seeded before/after plus unit details. Before is parent Progress because Path was absent; no study results. Visually inspected.
+- Plan correction: use merged approved game rules, not stale plan thresholds. kvn authorized starting on 15 Oct. No SSL content/figures added; r26_port yes after milestone merge.
+- Needs kvn: UI adoption from renders and eventual bottom-up merge. No push, merge or deploy. Next: L-16a stacked on this branch.

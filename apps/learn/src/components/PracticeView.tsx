@@ -23,6 +23,7 @@ import { summarizeAll } from '../learner/mastery'
 import {
   buildSession,
   clearSession,
+  currentGloss,
   isComplete,
   loadSession,
   markAttempted,
@@ -47,6 +48,7 @@ import { trimTake } from '../scoring/trimTake'
 import { shortcutBlockedByTarget } from '../app/keyboard'
 import { captureDeadline } from '../vision/cameraLifecycle'
 import { progressAgainstEarlier, shouldLogAttempt } from '../learner/attemptProgress'
+import './PracticeReason.css'
 
 const COUNTDOWN_S = 3
 /**
@@ -554,6 +556,14 @@ export function PracticeView({
     if (references.length === 0) return
     let targetRec: RecordingMeta | null = null
 
+    if (session) {
+      const next = currentGloss(session)
+      leaveResult()
+      if (next) setSelected(references.find(rec => rec.gloss === next) ?? null)
+      else setIsBrowsing(true)
+      return
+    }
+
     if (suggested && (!selected || suggested !== selected.gloss)) {
       targetRec = references.find((r) => r.gloss === suggested) ?? null
     }
@@ -578,7 +588,7 @@ export function PracticeView({
       leaveResult()
       setIsBrowsing(true)
     }
-  }, [references, suggested, selected])
+  }, [references, suggested, selected, session])
 
   // Cycle previous sign in category
   const handlePrevSign = useCallback(() => {
@@ -728,6 +738,11 @@ export function PracticeView({
 
   return (
     <div className={`aww-practice-env${browsing ? ' aww-browse' : ''}`} data-phase={phase}>
+      {!browsing && session?.recommendations?.find(item => item.gloss === selected?.gloss) && (
+        <details className="practice-reason"><summary>Why this sign?</summary>
+          <p>{session.recommendations.find(item => item.gloss === selected?.gloss)?.reason}</p>
+        </details>
+      )}
       {/* The Split Screen */}
       <div className="aww-split-screen">
         {/* Left Pane: Target Reference or In-Pane Category & Sign Browser */}

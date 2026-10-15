@@ -1,0 +1,31 @@
+.path-view { max-width: 920px; margin: 0 auto; padding: 32px 24px 48px; }
+.path-heading { margin-bottom: 32px; }
+.path-heading h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 500; margin: 12px 0 16px; }
+.path-view p { color: var(--text-dim); line-height: 1.7; }
+.path-units { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.path-card { display: flex; align-items: center; gap: 20px; text-align: left; width: 100%; padding: 24px; color: var(--text); background: var(--surface); border: 1px solid var(--border-interactive); border-radius: var(--r-lg); cursor: pointer; font: inherit; }
+.path-card[data-state="open"] { border-color: var(--accent); background: var(--surface-2); }
+.path-number { font-size: 1.4rem; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.path-card-copy { display: grid; flex: 1; gap: 8px; min-width: 0; }
+.path-card-copy strong { font-size: 1.15rem; font-weight: 600; }
+.path-card-copy > span { font-size: .9rem; color: var(--text-dim); line-height: 1.5; }
+.path-state { font-size: .85rem; border: 1px solid var(--border-interactive); border-radius: 24px; padding: 8px 12px; }
+.path-detail h2 { font-size: 2rem; margin-bottom: 8px; }
+.path-signs { list-style: none; padding: 0; margin-top: 24px; }
+.path-signs li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--border-subtle); }
+.path-signs li > div:first-child { display: grid; gap: 8px; overflow-wrap: anywhere; }
+.path-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.path-view button { min-height: 44px; }
+.path-view button:disabled { opacity: .55; cursor: not-allowed; }
+.path-note { font-size: .9rem; }
+.path-preview { height: 420px; margin: 24px 0 80px; }
+@media(max-width: 600px) {
+  .path-view { padding: 24px 16px 40px; }
+  .path-card { padding: 18px 14px; gap: 12px; flex-wrap: wrap; }
+  .path-card-copy { flex-basis: 65%; }
+  .path-state { margin-left: 36px; }
+  .path-signs li { align-items: flex-start; flex-direction: column; }
+  .path-actions { width: 100%; }
+  .path-actions button { flex: 1; }
+  .path-preview { height: 330px; }
+}
