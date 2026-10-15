@@ -74,7 +74,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | L-16a | Practice stage machine: Watch then Try, with performance marks | codex | 2026-10-17 | M | L-11, L-12, L-13 | todo | `agent/codex/L-16a-watch-try` | yes | yes | - |
 | L-16b | Recall stage: hidden reference, cue, reveal costs the third star | codex | 2026-10-18 | M | L-16a | todo | `agent/codex/L-16b-recall` | yes | yes | DN-09 |
 | L-17 | Feedback engine: gated 'Close match', timing and path hints, mirrored hand label, typed hints | codex | 2026-10-17 | M | - | done | `agent/codex/L-17-hints` | yes | no | - |
-| L-18 | Export the DTW alignment path and worst-frame index | codex | 2026-10-18 | S | L-17 | todo | `agent/codex/L-18-alignment` | yes | no | - |
+| L-18 | Export the DTW alignment path and worst-frame index | codex | 2026-10-18 | S | L-17 | done | `agent/codex/L-18-alignment` | yes | no | - |
 | L-19 | Scenario cleanup: previews, author-only tips and hints, playable counts, recall variant | codex | 2026-10-17 | M | L-05 | done | `agent/codex/L-19-scenarios` | yes | yes | - |
 | L-20 | Licence mode (VITE_CONTENT=cc0) and an attribution panel | codex | 2026-10-18 | M | L-10 | todo | `agent/codex/L-20-licence-mode` | yes | yes | DN-04 |
 | L-21 | Feedback UI: side-by-side synced replay, typed hints, fading hints | codex | 2026-10-19 | M | L-16b, L-17, L-18 | todo | `agent/codex/L-21-replay` | yes | yes | - |
@@ -108,8 +108,8 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | I-09 | Speech container: build check and readiness notes | codex | 2026-10-19 | S | - | todo | `agent/codex/I-09-speech-container` | no | no | - |
 | I-10 | Shell: wire the hosted Recognize URL, Alerts download section, phone pass | codex | 2026-10-19 | S | D-04, I-01 | todo | `agent/codex/I-10-shell-wiring` | no | yes | - |
 | I-11 | Verify the shared session behind the Vercel rewrite; fix if needed | codex | 2026-10-19 | S | D-03 | todo | `agent/codex/I-11-auth-rewrite` | no | no | - |
-| I-12a | Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild) | codex | 2026-10-16 | S | I-02 | todo | `agent/codex/I-12a-alerts-eas` | no | no | DN-14 |
-| I-12 | Alerts APK: Karindra builds from Suvana's tree, or kvn rebuilds under his EAS | kvn | 2026-10-17 to 2026-10-19 | M | K-03, I-02 | todo | `n/a` | no | no | DN-14 |
+| I-12a | Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild) | codex | 2026-10-16 | S | I-02 | done | `agent/codex/I-12a-alerts-eas` | no | no | DN-14 |
+| I-12 | Alerts APK: Karindra builds from Suvana's tree, or kvn rebuilds under his EAS | kvn | 2026-10-17 to 2026-10-19 | M | K-03, I-02 | done | `n/a` | no | no | DN-14 |
 | I-13 | Import Lithira's glosses and animations into kvn's Atlas and Cloudinary | kvn | 2026-10-20 | M | I-07, K-03 | todo | `n/a` | no | no | - |
 | I-14 | Learn and Communicate bridge: /learn/?sign=GLOSS deep link | codex | 2026-10-20 | S | L-16a, D-03 | todo | `agent/codex/I-14-deep-link` | yes | yes | - |
 

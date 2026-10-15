@@ -1600,7 +1600,7 @@
     "deps": [
       "L-17"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-18-alignment",
     "r26_port": "yes",
     "screenshots": "no",
@@ -2526,7 +2526,7 @@
     "deps": [
       "I-02"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/I-12a-alerts-eas",
     "r26_port": "no",
     "screenshots": "no",
@@ -2554,7 +2554,7 @@
       "K-03",
       "I-02"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a",
     "r26_port": "no",
     "screenshots": "no",

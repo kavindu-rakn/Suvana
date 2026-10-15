@@ -25,6 +25,15 @@ Only kvn (or a planner session he starts) edits this file, on `main`. If kvn ans
 | D-A18 | 13 Oct | DN-11: learner progress stays **per browser** (IndexedDB), with reset and a demo profile. | kvn |
 | D-A19 | 13 Oct | DN-14: ask Karindra (K-03) with a **15 Oct** deadline; on no reply, rebuild under kvn's EAS with package `help.suvana.alerts` (I-12a, 16 Oct). | kvn |
 | D-A20 | 14 Oct | DN-19: **no third scenario** for the demo; Learn keeps Social Gathering and Restaurant, and L-31 is cancelled. | kvn |
+| D-A21 | 15 Oct | DN-02: Recognize runs on **Railway Hobby** from 18 Oct (kvn pays, about $5/month plus usage), with kvn's laptop plus a free Cloudflare tunnel rehearsed as the fallback. Hosting needs Lahiru's OK (K-03 ask 5). | kvn |
+| D-A22 | 15 Oct | DN-03: the speech service stays on **kvn's laptop**, not hosted; I-09 measures its speed. | kvn |
+| D-A23 | 15 Oct | DN-04: option **(a)**: the full corpus as a free, non-commercial, academic edition with a visible NC notice; no payments, no ads; the Roadmap page says there is no paid offering; L-20 adds the attribution panel. | kvn |
+| D-A24 | 15 Oct | DN-08: **whole Kaggle sentence clips, labelled experimental, lowest priority.** Only the 20 labelled clips (never the unlabelled one), cued by their dataset labels as written; kvn may add meanings himself. L-25 is built only if the Learn chain is on track on 19 Oct, otherwise dropped and named as future work. Sign sequences only if Lithira's mapper output arrives. | kvn |
+| D-A25 | 15 Oct | DN-09: Recall shows the **verified English meaning, else the gloss label**. | kvn |
+| D-A26 | 15 Oct | DN-13: Communicate is demoed as **Suvana's own instance** (accounts, UI, avatar), said up front; Lithira's data is imported if it arrives (I-13); never placeholders. | kvn |
+| D-A27 | 14 Oct | DN-15: open-core Roadmap page with **no prices and no paid offering** (I-06, adopted by kvn from the renders). | kvn |
+| D-A28 | 15 Oct | DN-20: **yes**: a second Claude Code session runs the thesis/docs lane (CC-T) from 17 Oct in `Suvana-wt\claude-thesis`. | kvn |
+| D-A29 | 15 Oct | DN-14 follow-up: kvn rebuilt Alerts under his own Expo account regardless of any later reply from Karindra; the APK is GitHub Release alerts-v1.0.0 (I-12 done). | kvn |
 | D-A10 | 10 Oct | Upstream changes that alter product behaviour go to kvn before they are taken (e.g. Lithira closing registration was not taken). UI changes are decided from rendered before/after screenshots, desktop and phone. | Suvana CLAUDE.md |
 
 ## B. Plan defaults forced by hard rules (kvn may overturn; agents may not)
@@ -52,17 +61,17 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 ### DN-02: Where is Recognize hosted for 18-22 Oct? (needed by 16 Oct; D-04 on 18 Oct)
 - Options: Railway Hobby (about $5/month plus usage, always on); HF Docker Space (PRO needed; sleeps); Fly.io (card); Cloud Run with min-instances=1 (billing); laptop + cloudflared only.
 - Pros/cons: Railway is the cheapest always-on WebSocket option. HF costs money and sleeps. Fly/Cloud Run need billing. Laptop-only cannot be opened from the panel's phones and depends on venue Wi-Fi.
-- Recommendation: **Railway Hobby from 18 Oct**, plus the rehearsed laptop fallback. Status: open.
+- Recommendation: **Railway Hobby from 18 Oct**, plus the rehearsed laptop fallback. Status: decided 15 Oct (D-A21).
 
 ### DN-03: Host the speech service? (needed by 16 Oct; D-05 on 19 Oct)
 - Options: host on the DN-02 platform; laptop only, registered in Communicate Settings on demo day; skip speech in the demo.
 - Pros/cons: hosting costs money and CPU inference is slow (3.5 GB weights); laptop-only works locally but not from phones; skipping weakens Communicate.
-- Recommendation: **laptop only** (safe to assume). Status: open.
+- Recommendation: **laptop only** (safe to assume). Status: decided 15 Oct (D-A22).
 
 ### DN-04: Which content edition is served at suvana-shell.vercel.app and suvana.help? (needed by 16 Oct; L-20, I-06 on 18 Oct)
 - Options: (a) full corpus as a free non-commercial academic edition with the NC notice, pricing page labelled "Roadmap: no paid offering; this deployment is non-commercial and academic", Hobby caveat on the page, and the `cc0` build shown as the commercial edition preview; (b) the `cc0` build at suvana.help and the full edition only at learn-ssl-module.vercel.app; (c) full corpus with no licence handling.
 - Pros/cons: (a) keeps all 501 references (greetings, numbers, Social Gathering) for the demo but a pricing page beside NC content is arguable under CC's "directed towards commercial advantage" test. (b) is cleanest legally but drops about 72% of references and all of Social Gathering from the branded site. (c) risks breaching BY-NC-SA.
-- Recommendation: **(a)** with the labelling, no payments, no ads; switch to (b) if kvn is uneasy. Status: open.
+- Recommendation: **(a)** with the labelling, no payments, no ads; switch to (b) if kvn is uneasy. Status: decided 15 Oct: (a) (D-A23).
 
 ### DN-05: May corpus video be shown, and which? (needed by 14 Oct; L-15a/L-15b 15-16 Oct, K-06 16 Oct)
 - Facts: the Kaggle dataset is CC0, but its own description says the clips come from "public YouTube videos and private interviews" (`tools/reference-converter/README.md:130`). The uploader's CC0 cannot license third-party footage or signers' likeness. The repo currently states no video frames are redistributed. Whether kvn has Yohan's source videos locally is unknown; Yohan video is NC and share-alike.
@@ -79,11 +88,11 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 ### DN-08: How are sentences attempted? (needed by 16 Oct, after L-22a's label list; K-07 16 Oct, L-22b 18 Oct, L-25 19 Oct)
 - Options: grade whole Kaggle "SSL Sentences" clips as single references, cued by their dataset labels, labelled experimental; sequence 2-3 isolated signs ordered only by Lithira's mapper (L-32, needs his reply); drop the sentence challenge.
 - Pros/cons: whole clips use real SSL sentences with no authored order, but grading is uncalibrated and depends on usable labels. The mapper option depends on Lithira. Dropping leaves the PP1 sentence request unanswered.
-- Recommendation: **whole-clip, experimental** if L-22a shows meaningful labels; add sequences only if the mapper output arrives. Status: open.
+- Recommendation: **whole-clip, experimental** if L-22a shows meaningful labels; add sequences only if the mapper output arrives. Status: decided 15 Oct: whole-clip, experimental, lowest priority (D-A24).
 
 ### DN-09: What cue does Recall show? (needed by 16 Oct; L-16b 18 Oct)
 - Options: verified English meaning, else the gloss label; Sinhala text (only if verified); gloss label only.
-- Recommendation: **verified English meaning, falling back to the gloss label** (safe to assume). Status: open.
+- Recommendation: **verified English meaning, falling back to the gloss label** (safe to assume). Status: decided 15 Oct (D-A25).
 
 ### DN-10: Game rules (needed by 14 Oct; L-12 15 Oct)
 - Options: as specified (stars 60/85 plus Recall >= 60; unit pass = all signs >= 2 stars; daily goal 10 attempts); stricter; looser.
@@ -101,16 +110,16 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 
 ### DN-13: What does Communicate show in the demo without Lithira's data? (needed by 16 Oct)
 - Options: Suvana's own instance (accounts, UI, avatar), said up front; link out to Lithira's hosted app; seeded placeholder animations.
-- Recommendation: **own instance, said up front**; import his data if it arrives; never placeholders. Status: open.
+- Recommendation: **own instance, said up front**; import his data if it arrives; never placeholders. Status: decided 15 Oct (D-A26).
 
 ### DN-14: How is the Alerts APK produced? (needed by 15 Oct; I-12a 16 Oct)
 - Options: Karindra builds a signed preview APK **from Suvana's `apps/alerts`**; Karindra adds kvn to his EAS project; rebuild under kvn's EAS with package `help.suvana.alerts` if no reply by 15 Oct.
 - Pros/cons: an APK from Karindra's own tree still says SoundGuard and carries his package id, so it is not acceptable under one brand. A rebuild gives brand control but changes the package id and needs an EAS build and install time.
-- Recommendation: **ask (K-03), deadline 15 Oct, then rebuild.** Status: decided 13 Oct (D-A19).
+- Recommendation: **ask (K-03), deadline 15 Oct, then rebuild.** Status: decided 13 Oct (D-A19); rebuilt 15 Oct (D-A29).
 
 ### DN-15: Pricing/business-model page content (needed by 16 Oct; I-06 18 Oct)
 - Options: open-core model page with no prices; with indicative prices supplied by kvn; no pricing page.
-- Recommendation: **open-core page, no prices unless kvn supplies and justifies them**, labelled roadmap and non-commercial, with the Hobby caveat. Status: open.
+- Recommendation: **open-core page, no prices unless kvn supplies and justifies them**, labelled roadmap and non-commercial, with the Hobby caveat. Status: decided 14 Oct (D-A27).
 
 ### DN-16: App screenshots in the final thesis? (needed by 19 Oct)
 - Options: none (as in the draft); 2-3 key screens (Path, Recall, replay).
@@ -131,8 +140,10 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 ### DN-20: Run a second Claude Code session as a thesis/docs lane (CC-T)? (needed by 16 Oct)
 - Options: yes (T-02, T-03, T-04, T-07, L-28 on 17-20 Oct, writing outside the repo except two small files); no (CC does T-04 and L-28; kvn drafts T-02/T-03 with CC on 20-21 Oct).
 - Pros/cons: yes keeps the UI lane free but uses more Claude usage; no adds load to CC and kvn on the busiest days.
-- Recommendation: **yes**, subject to usage limits. Status: open.
+- Recommendation: **yes**, subject to usage limits. Status: decided 15 Oct: yes (D-A28).
 
 ## D. Teammate replies
 
 (kvn or the planner logs replies here: date, who, what, consequence.)
+
+- 15 Oct, Karindra (reply to kvn's note): Alerts needs no server; it runs on the phone ("Edge AI") and works offline. Consequence: nothing to host for Alerts; I-12 done with kvn's own build (D-A29).

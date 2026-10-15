@@ -582,3 +582,13 @@ Rules:
 - Branch @ sha: agent/codex/I-12a-sync-guard @ task HEAD (final SHA in git log), fresh origin/main d527398; explicitly requested by kvn.
 - Gates: sync guard 171 passed; parsed manifest exactly equals HEAD plus the two proposed changes; diff check clean. No app/runtime edits; screenshots n/a; r26_port no.
 - Needs kvn: review and merge this branch. Existing I-12 EAS steps are separate. No push, merge, deployment or account operations by codex.
+
+### 2026-10-15 | kvn (recorded by claude-code) | I-12 Alerts APK done; board catch-up
+- I-12 (kvn): ran eas init under his own Expo account (project linked in app.json, commit b5c25e6) and `eas build -p android --profile preview`. The APK installs and runs on kvn's Android phone without the laptop; in airplane mode a sound alert still worked. Published as GitHub Release alerts-v1.0.0: https://github.com/kavindu-rakn/Suvana/releases/download/alerts-v1.0.0/suvana-alerts-1.0.0.apk (267 MB; never committed). That URL is the one I-10 links from /alerts/.
+- Note: speech captions use Android speech recognition and need internet unless on-device recognition is turned on in the app's options with the offline language pack downloaded while connected.
+- kvn merged agent/codex/I-12a-sync-guard (sync guard 171 with his project ID; checked by claude-code before the merge).
+- Board: I-12a, L-18 and I-12 done.
+
+### 2026-10-15 | kvn (recorded by claude-code) | decisions due 16 Oct
+- Decided (kvn, chat, after claude-code's pros and cons): DN-02 Railway Hobby from 18 Oct with the laptop tunnel as fallback; DN-04 (a); DN-08 whole sentence clips, experimental, lowest priority; DN-20 yes from 17 Oct. Taken as recommended, no objection from kvn: DN-03 laptop only; DN-09 verified English meaning, else gloss label; DN-13 own instance, said up front. DN-15 recorded as decided on 14 Oct by I-06. DECISIONS D-A21 to D-A29.
+- Consequences: kvn signs up for Railway and runs D-04 on 18 Oct after I-08 (hosting needs Lahiru's OK); K-04 accounts (Atlas, Cloudinary, NEXTAUTH_SECRET) are needed before D-03 on 17 Oct; K-07 (kvn) converts the 20 labelled sentence clips; L-25 only if the Learn chain is on track on 19 Oct; claude-code sets up the claude-thesis worktree and kickoff on 17 Oct.
