@@ -40,10 +40,7 @@ test.describe('Learn smoke tests', () => {
     await expect(startBtn).toBeVisible()
     await startBtn.click()
 
-    // PracticeView opens in browsing mode; pick the suggested sign to start practicing
-    const practiseBtn = page.locator('button:has-text("Practise")').first()
-    await expect(practiseBtn).toBeVisible()
-    await practiseBtn.click()
+    // Hero now opens the first curriculum sign directly in Watch.
 
     // First sign chosen triggers the modal Onboarding guide (<dialog class="onb">)
     const dialog = page.locator('dialog.onb')

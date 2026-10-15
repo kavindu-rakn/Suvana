@@ -607,3 +607,10 @@ Rules:
 - Screenshots: .agent-local/screens/L-16a/index.html; Watch, Try and result at desktop 1280x800/phone 390x844. Results use explicitly synthetic landmarks/fake camera, not K-13 hands or learner evidence; inspected. Phone result polish remains L-26.
 - Plan corrections: no video (L-15b cancelled); optional SkeletonPlayer autoSpeedUp and guide/browser changes are necessary supporting files. No SSL content, bands, scoring or reward-rule changes; r26_port yes.
 - Needs kvn: UI adoption and eventual bottom-up merge. No push, merge or deploy. Next: L-24 stacked on this branch, before Recall, per kvn's order.
+
+### 2026-10-15 | codex (Learn UI lane) | L-24
+- What: review. Hero start opens the first sign of the first open approved unit in Watch; finite session and blocked-storage handoff included. Completion shows new stars without double counting, today's goal, next open unit and a free-practice continuation.
+- Branch @ sha: agent/codex/L-24-cta-complete @ task HEAD, stacked on agent/codex/L-16a-watch-try 5347f3c; parent-only comparison renders.
+- Gates: npm 10 ci; lint 0 warnings; 301 passed / 13 skipped; build 146.99 kB gzip; guard 172; production browser 17 passed; diff check clean.
+- Screenshots: .agent-local/screens/L-24/index.html; desktop/phone Hero, direct destination and synthetic seeded completion before/after, visually inspected. Decorative Hero preview cards/figures unchanged; no SSL content added. r26_port yes.
+- Needs kvn: UI adoption and a real-camera landing-to-enabled-Record check under 30 seconds (not claimed from mocks). No push, merge or deploy. Next: L-16b Recall stacked on this branch; DN-09 uses verified English meaning, else gloss.
