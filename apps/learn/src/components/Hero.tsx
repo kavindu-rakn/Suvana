@@ -84,6 +84,8 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
 
     return () => {
       gsap.ticker.remove(raf)
+      // Defaults in the installed GSAP ticker (500 ms threshold / 33 ms lag).
+      gsap.ticker.lagSmoothing(500, 33)
       lenis.destroy()
       delete (window as unknown as { lenis?: Lenis }).lenis
       const bar = document.getElementById('scroll-progress')

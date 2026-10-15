@@ -7343,3 +7343,5 @@
   .aww-practice-env[data-stage='recall'][data-phase='result'] .aww-result-overlay { left: 0; top: 40vh; width: 100%; height: calc(100% - 40vh); padding: 12px; }
   .aww-practice-env[data-stage='recall'][data-phase='result'] .aww-result-panel { padding: 20px 16px; max-height: none; }
 }
+.practice-hover-hint { display: none; }
+@media (hover: hover) { .practice-hover-hint { display: block; } }

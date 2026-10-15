@@ -54,6 +54,8 @@ import { starsFor } from '../learner/game'
 import { nextExercise } from '../learner/nextExercise'
 import { SessionComplete } from './SessionComplete'
 import { clearHeroSession, readHeroSession } from '../learner/heroSession'
+import { cameraIntentTransition, initialCameraIntent } from './practiceCamera'
+import type { PracticeCameraEvent } from './practiceCamera'
 
 const COUNTDOWN_S = 3
 /**
@@ -165,6 +167,60 @@ export function PracticeView({
     setElapsedMs(rel)
     if (rel >= captureMs) finishRecording()
   })
+
+  const cameraIntent = useRef(initialCameraIntent(document.hidden))
+  const cameraControls = useRef({ start: tracking.start, stop: tracking.stop })
+  cameraControls.current = { start: tracking.start, stop: tracking.stop }
+  const cameraSurface = useRef(false)
+  cameraSurface.current = !isBrowsing && selected !== null && teaching.stage !== 'watch'
+  const issueCameraIntent = useCallback((event: PracticeCameraEvent) => {
+    const next = cameraIntentTransition(cameraIntent.current, event)
+    cameraIntent.current = next.state
+    if (next.action === 'start') void cameraControls.current.start()
+    if (next.action === 'stop') {
+      cameraControls.current.stop()
+      handStreakRef.current = 0
+      handsReadyRef.current = false
+      setHandsReady(false)
+    }
+  }, [])
+  const requestCamera = useCallback(() => issueCameraIntent('start'), [issueCameraIntent])
+  const stopCamera = useCallback(() => issueCameraIntent('stop'), [issueCameraIntent])
+
+  useEffect(() => {
+    if (!cameraSurface.current) issueCameraIntent('leave-surface')
+  }, [isBrowsing, selected, teaching.stage, issueCameraIntent])
+  useEffect(() => {
+    if (tracking.status === 'error') issueCameraIntent('failed')
+  }, [tracking.status, issueCameraIntent])
+  useEffect(() => {
+    const away = () => {
+      if (phaseRef.current === 'countdown' || phaseRef.current === 'recording') {
+        window.clearInterval(countdownRef.current)
+        framesRef.current = []
+        setPhase('idle')
+        setCaptureNotice('You left the page, so that take was not scored. Try again.')
+      }
+      issueCameraIntent('away')
+    }
+    const returned = () => {
+      if (document.hidden) return
+      if (!cameraSurface.current) issueCameraIntent('leave-surface')
+      issueCameraIntent('return')
+    }
+    const visibility = () => { if (document.hidden) away(); else returned() }
+    document.addEventListener('visibilitychange', visibility)
+    window.addEventListener('pagehide', away)
+    window.addEventListener('pageshow', returned)
+    window.addEventListener('focus', returned)
+    return () => {
+      document.removeEventListener('visibilitychange', visibility)
+      window.removeEventListener('pagehide', away)
+      window.removeEventListener('pageshow', returned)
+      window.removeEventListener('focus', returned)
+      cameraIntent.current = initialCameraIntent()
+    }
+  }, [issueCameraIntent])
 
   useEffect(() => {
     let cancelled = false
@@ -386,7 +442,7 @@ export function PracticeView({
       pauseTracking()
       resetReady()
     } else resumeTracking()
-  }, [phase, isBrowsing, selected, teaching.stage, pauseTracking, resumeTracking])
+  }, [phase, isBrowsing, selected, teaching.stage, tracking.status, pauseTracking, resumeTracking])
 
   useLayoutEffect(() => {
     if (phase !== 'result' || !result) return
@@ -694,13 +750,13 @@ export function PracticeView({
       } else if (phaseRef.current === 'result') {
         e.preventDefault()
         if (tracking.status === 'running') beginCountdown()
-        else void tracking.start()
+        else requestCamera()
       }
     } else if (e.key === 'ArrowLeft') {
       if (phaseRef.current === 'result') {
         e.preventDefault()
         if (tracking.status === 'running') beginCountdown()
-        else void tracking.start()
+        else requestCamera()
       }
     } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
       if (phaseRef.current === 'result') {
@@ -765,7 +821,7 @@ export function PracticeView({
         <button
           ref={retryRef}
           className="btn massive aww-btn-action"
-          onClick={() => void tracking.start()}
+          onClick={() => requestCamera()}
         >
           <RotateCcw size={16} aria-hidden="true" />
           <span>Turn on camera</span>
@@ -928,7 +984,7 @@ export function PracticeView({
                   colorOverride="#e6eeec"
                 />
               ) : (
-                <p className="hint-text">Hover a sign to preview it here.</p>
+                <p className="hint-text practice-hover-hint">Hover a sign to preview it here.</p>
               )}
             </div>
           )}
@@ -949,8 +1005,8 @@ export function PracticeView({
               status={tracking.status}
               prepareTracker={!browsing && !watching && selected !== null}
               error={tracking.error}
-              onStart={() => void tracking.start()}
-              onStop={() => void tracking.stop()}
+              onStart={requestCamera}
+              onStop={stopCamera}
               ghostActive={ghostActive && !recallHidden}
               onToggleGhost={() => setGhostActive((g) => !g)}
               ghostAvailable={reference !== null && !recallHidden}
@@ -963,7 +1019,7 @@ export function PracticeView({
                     Hand tracking runs entirely in your browser. No video is uploaded or
                     recorded.
                   </p>
-                  <button className="btn massive" onClick={() => void tracking.start()}>
+                  <button className="btn massive" onClick={() => requestCamera()}>
                     Turn on camera
                   </button>
                 </div>
