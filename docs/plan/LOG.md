@@ -717,3 +717,12 @@ Rules:
 - kvn sent the Learn window the three small fixes (focus box only for keyboard users, Watch zoomed to the hands on phones, two rendered options for the "Mastered" wording) and the camera.spec.ts port fix; the first window started L-22b.
 - Lahiru and Lithira: no reply yet (both due 16 Oct).
 - Board: Q-03 and K-07 done.
+
+### 2026-10-16 | codex | Learn small fixes from 15 Oct review
+- What: automatic heading focus keeps the screen-reader announcement without an outline; keyboard controls retain :focus-visible rings. Practice Watch starts zoomed below 768 px, keeps desktop/Try/Recall defaults and the manual full-frame toggle. camera.spec.ts uses its configured baseURL.
+- Branch: agent/codex/learn-small-fixes (final SHA in git log), fresh from origin/main 34f43cc, clean rebase to b0ce3d4's approval-only update.
+- Gates: npm@10.9.9 ci in Learn/screens; lint zero warnings/errors; Vitest 320 passed, 13 skipped; build 150.19 kB gzip; 51 browser checks passed on configured port 5197; guard 181; diff check clean. No package/config/content/game-rule changes.
+- Renders: .agent-local/screens/learn-small-fixes/index.html, at 1280x800, 390x844 and 360x800. Badge chooser: badge-options.html in that folder. Actual first Starter reference for Watch; synthetic progress for completion/badges explicitly disclosed.
+- Badge choice pending: A shows Well practised; B shows Passed until all stars then Mastered. Both source-built options rendered on Path and Progress, with 14/21 and 21/21-star fixtures; exact unadopted patches in handoffs/learn-small-fixes.md. Neither option selected in production while kvn chooses.
+- Needs kvn: choose A/B from the renders, then review/merge the branch. No push/merge/deploy. r26_port yes at a later milestone. Plan correction: direct chat authorizes these hot-file fixes; board/decision files untouched.
+- Next: L-22b is in the first Codex window after K-07; L-25 waits for it to land.
