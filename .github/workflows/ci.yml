@@ -1,13 +1,19 @@
 name: CI
 
-# Every deployable is built the way Vercel or Docker will build it, and every
-# existing test suite is run. Nothing here is new coverage — it is the coverage
-# the repo already had, finally executing on push.
+# Existing module gates plus portability, built-asset and brand checks.
+# Docker builds are manual only; no image is pushed or deployed.
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   sync-guards:
@@ -39,6 +45,57 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      - name: Check Suvana dist assets
+        run: node ../../tools/ci/check-learn-dist.mjs suvana
+
+  learn-r26:
+    name: Learn — standalone R26 build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/learn
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/learn/package-lock.json
+      - run: npm ci
+      # Isolated checkout: never remove the config from the Suvana build job.
+      - run: rm suvana.config.json
+      - run: npm run build
+      - name: Check standalone dist assets
+        run: node ../../tools/ci/check-learn-dist.mjs r26
+
+  brands:
+    name: Brand — user-facing source grep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/learn/package-lock.json
+      # Reuse the pinned TypeScript parser; do not run Learn asset generation.
+      - run: npm ci --ignore-scripts --prefix apps/learn
+      - run: node --test tools/ci/*.test.mjs
+      - run: node tools/ci/check-brands.mjs
+
+  docker-build:
+    name: Docker — ${{ matrix.service }} (manual)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [recognition, speech]
+    steps:
+      - uses: actions/checkout@v4
+      # Build only. No registry login, model download at startup or image push.
+      - run: docker build --tag suvana-${{ matrix.service }}:ci services/${{ matrix.service }}
 
   shell:
     name: Shell — tests and build
