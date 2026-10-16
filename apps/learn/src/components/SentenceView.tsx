@@ -127,6 +127,7 @@ export function SentenceView({ onBack }: { onBack: () => void }) {
   return <section className="sentence-view" aria-labelledby="sentence-title" data-stage={selected ? stage : 'list'} data-phase={result ? 'result' : capture.phase} data-capture-ms={captureMs}>
     <button className="btn ghost" onClick={() => { resetCapture(); onBack() }}>Back to path</button>
     <p className="sentence-experimental">{SENTENCE_EXPERIMENTAL_LABEL}</p>
+    <div className="sentence-content">
     <header className="sentence-heading">
       <p className="pane-label">Whole recording challenge</p>
       <h1 id="sentence-title" ref={heading} tabIndex={-1}>Sentence challenge</h1>
@@ -200,5 +201,6 @@ export function SentenceView({ onBack }: { onBack: () => void }) {
         </section>}
       </>}
     </>}
+    </div>
   </section>
 }

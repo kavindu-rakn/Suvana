@@ -41,7 +41,23 @@
 .path-card.sentence-entry:disabled { opacity: 1; cursor: not-allowed; }
 .sentence-entry .path-card-copy { overflow-wrap: anywhere; }
 @media (max-width: 767px) {
-  .sentence-view { padding: 24px 16px 80px; }
+  /* Reserve a row for the notice. Only the content scrolls, so no control
+     can pass behind it; the existing shell heights also clear the tab bar. */
+  .sentence-view {
+    position: fixed;
+    inset: var(--app-bar-h) 0 var(--nav-offset);
+    max-width: none;
+    margin: 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .sentence-view > button { align-self: flex-start; flex-shrink: 0; }
+  .sentence-experimental { position: static; flex-shrink: 0; margin: 12px 0; }
+  .sentence-content { min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; padding: 0 4px 24px 0; scroll-padding-block: 12px; }
+  .sentence-result h2 { scroll-margin-top: 12px; }
   .sentence-list, .sentence-panels { grid-template-columns: minmax(0, 1fr); }
   .sentence-player { height: 340px; }
   .sentence-camera .camera-stage { min-height: 230px; }

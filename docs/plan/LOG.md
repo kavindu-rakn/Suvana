@@ -781,3 +781,10 @@ Rules:
 - L-25 follow-up sent to the Learn window: on phones the sticky experimental label must stop covering the "Choose another sentence" button in Recall.
 - I-10 stays in progress: the hosted Recognize URL is wired after D-04 (18 Oct).
 - Board: L-25 done; I-10 in-progress.
+
+### 2026-10-16 | codex | L-25 phone notice follow-up
+- What: reserved separate Back/experimental-notice rows below the app bar on phones under 768px; sentence content scrolls in its own area above the bottom tabs. The exact SENTENCE_EXPERIMENTAL_LABEL stays fully visible without covering Recall controls. Desktop behavior, SSL content, scoring and capture rules unchanged.
+- Branch: agent/codex/L-25-notice-layout, fresh origin/main 82592a3; final fetch unchanged. Explicit kvn follow-up to merged L-25; board/tasks/decisions and hot files untouched.
+- Gates: npm@10.9.9 ci Learn/screens; lint zero warnings/errors; Vitest 330 passed, 13 skipped; production build main JS 149.27 kB gzip; full browser suite 64 passed (including two new both-theme phone Recall regressions); sync guard 182; diff check clean.
+- Renders: .agent-local/screens/L-25-notice-layout/index.html; paired Recall at 390x844 and 360x800 plus working chooser renders. Notice no longer covers the chooser; all control hit points and pointer/Enter activation verified. Supplemental 1280x800 Recall PNGs byte-identical. No page errors/overflow. Synthetic unlock/camera fixtures disclosed; screenshots ignored.
+- Handoff: handoffs/L-25-notice-layout.md; r26_port yes. Needs kvn: adopt/reject renders, merge/push and check hosted CI; later R26 milestone port. No agent push, merge, deploy or external messages.

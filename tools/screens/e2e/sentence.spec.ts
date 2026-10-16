@@ -212,3 +212,42 @@ test('CC0 selection cannot unlock the challenge through old full-corpus stars', 
   await expect(page.locator('.sentence-entry')).toBeDisabled()
   await expect(page.locator('.sentence-entry')).toContainText(SENTENCE_EXPERIMENTAL_LABEL)
 })
+
+for (const [width, height] of [[390, 844], [360, 800]]) {
+  test(`phone Recall keeps its notice visible without covering controls at ${width}x${height}`, async ({ page }) => {
+    await page.setViewportSize({ width, height })
+    await enter(page)
+    await page.locator('.sentence-choice').first().click()
+    await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    await record(page)
+    await expect(page.locator('#sentence-result-title')).toBeFocused()
+    await expect(page.locator('#sentence-result-title')).toBeInViewport()
+    await page.getByRole('button', { name: 'Try from memory', exact: true }).click()
+
+    for (const theme of ['light', 'dark']) {
+      await page.evaluate(theme => { document.documentElement.dataset.theme = theme }, theme)
+      for (const name of ['Choose another sentence', '3. Recall', 'Show reference', 'Start camera', 'Record sentence']) {
+        const button = page.getByRole('button', { name, exact: true })
+        // Native scrolling/focus must reveal the whole target, even at the
+        // top edge where the former sticky paragraph covered Recall controls.
+        await button.evaluate(el => el.scrollIntoView({ block: 'start' }))
+        await expect(page.locator('.sentence-experimental')).toHaveText(SENTENCE_EXPERIMENTAL_LABEL)
+        await expect(page.locator('.sentence-experimental')).toBeInViewport({ ratio: 1 })
+        expect(await button.evaluate(el => {
+          const rect = el.getBoundingClientRect()
+          const notice = document.querySelector('.sentence-experimental')!.getBoundingClientRect()
+          return rect.top >= notice.bottom && [2, rect.height / 2, rect.height - 2].every(y =>
+            el.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + y)))
+        })).toBe(true)
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+    }
+
+    const choose = page.getByRole('button', { name: 'Choose another sentence', exact: true })
+    await choose.evaluate(el => el.scrollIntoView({ block: 'start' }))
+    if (width === 390) await choose.click({ position: { x: 20, y: 2 } })
+    else { await choose.focus(); await page.keyboard.press('Enter') }
+    await expect(page.locator('.sentence-choice').first()).toBeVisible()
+    await expect(page.locator('.sentence-experimental')).toBeInViewport({ ratio: 1 })
+  })
+}
