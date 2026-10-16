@@ -40,7 +40,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | D-04 | Host Recognize on the chosen platform with an uptime ping | kvn | 2026-10-18 | M | I-08 | todo | `n/a` | no | no | DN-02 |
 | D-05 | Speech service: laptop-only by default; host only if DN-03 says so | kvn | 2026-10-19 | S | I-09 | todo | `n/a` | no | no | DN-03 |
 | D-06 | Commit the R26 M0 port and redeploy learn-ssl-module.vercel.app | kvn | 2026-10-14 | S | R-00 | done | `n/a (R26: kvn commits)` | no | no | - |
-| D-07 | Commit the R26 M1 port and redeploy learn-ssl-module | kvn | 2026-10-17 | S | R-03 | todo | `n/a (R26)` | no | no | - |
+| D-07 | Commit the R26 M1 port and redeploy learn-ssl-module | kvn | 2026-10-17 | S | R-03 | done | `n/a (R26)` | no | no | - |
 | D-08 | Commit the R26 M2 port and redeploy learn-ssl-module | kvn | 2026-10-19 | S | R-04 | todo | `n/a (R26)` | no | no | - |
 | D-09 | Attach suvana.help to suvana-shell and re-run the smoke | kvn | 2026-10-20 | S | K-08 | todo | `n/a` | no | no | - |
 | D-10 | Final R26 commit and learn-ssl-module redeploy | kvn | 2026-10-21 | S | R-05 | todo | `n/a (R26)` | no | no | - |
@@ -94,7 +94,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | R-00 | M0: manual port of the merged blocker fixes into the R26 working tree | claude-code | 2026-10-14 | S | L-01, L-02, L-04, L-05, L-06, K-01 | done | `none (R26 working tree; never commit)` | no | yes | - |
 | R-01 | Portability refactor: base and Suvana-only code driven by suvana.config.json | codex | 2026-10-14 | M | L-06 | done | `agent/codex/R-01-portability` | yes | yes | DN-01 |
 | R-02 | sync.mjs `port learn --to <R26>` with --check | codex | 2026-10-16 | S | R-01 | done | `agent/codex/R-02-port-command` | no | no | - |
-| R-03 | M1: port Learn into the R26 working tree | claude-code | 2026-10-17 | S | R-02 | todo | `none (R26 working tree)` | no | yes | - |
+| R-03 | M1: port Learn into the R26 working tree | claude-code | 2026-10-17 | S | R-02 | done | `none (R26 working tree)` | no | yes | - |
 | R-04 | M2: port Learn into the R26 working tree | claude-code | 2026-10-19 | S | R-03 | todo | `none (R26 working tree)` | no | yes | - |
 | R-05 | Final Learn port to R26 for the demo | claude-code | 2026-10-21 | S | R-04, L-26, L-27, Q-08 | todo | `none (R26 working tree)` | no | no | - |
 | I-01 | Shell: remove the 'SoundGuard Ecosystem' sub-brand, configurable Recognize URL, fix the stale example | antigravity | 2026-10-13 | S | - | done | `agent/antigravity/I-01-shell-brand` | no | yes | - |

@@ -800,3 +800,11 @@ Rules:
 - Screenshots: .agent-local/screens/R-03/index.html (claude worktree): live site before, R26 build after, landing page, Path and end of Path, desktop and phone; no errors or overflow.
 - Needs kvn: commit in R26 with the two blocks in handoffs/R-03.md, push, then D-07 redeploy; afterwards codex records ported sha 75f51ac in upstreams.json.
 - Next: R-04 (M2) on 19 Oct.
+
+### 2026-10-16 20:15 | kvn (recorded by claude-code) | R-03 and D-07 done: R26 M1 port live
+- kvn committed the R-03 working-tree port in R26 as d0bfd21 ("Learn: port Suvana Learn (M1) from Suvana 75f51ac"), pushed it, and redeployed learn-ssl-module.vercel.app: preview dpl_6zXE9XWDnV3SgRvEeYDqFmmvYDDo, production dpl_Cd3mPjHDgSNjLjRsct6q1NU56ZCs (from d0bfd21). Rollback target: the M0 production deployment dpl_4jdWJTHd3nxH7bFhW793FQDiue5E.
+- Suvana sha ported: 75f51ac6907aab963811ae8050ac66e0681b8cd9.
+- Checked by claude-code after the redeploy: the site returns 200 and serves the same main bundle as the R-03 build (index-DxNGxcyg.js); /references/kaggle_sent_MAGE_NAMA.json, /references/kaggle_100.json, /wasm/vision_wasm_internal.wasm and /models/hand_landmarker.task return 200; references carry the 1-day cache with revalidation.
+- R26 tree: the pre-deploy `npm test` rewrote calibration-report.md and weight-fit-report.md again (the current scorer's figures, L-30); they are not part of the site. Discard them before R-04 so the port's clean-tree check passes.
+- Next: codex records ported sha 75f51ac in tools/sync/upstreams.json on its next slot (07 section 5); R-04 (M2) on 19 Oct.
+- Board: R-03 and D-07 done.

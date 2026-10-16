@@ -666,7 +666,7 @@
     "deps": [
       "R-03"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a (R26)",
     "r26_port": "no",
     "screenshots": "no",
@@ -2167,7 +2167,7 @@
     "deps": [
       "R-02"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "none (R26 working tree)",
     "r26_port": "no",
     "screenshots": "yes",
