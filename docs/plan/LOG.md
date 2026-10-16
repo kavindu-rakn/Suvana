@@ -775,3 +775,9 @@ Rules:
 - Checks (light): no protected files, brand names, figures or binaries (one "accuracy" word is a test comment saying the self-comparison is not accuracy); new learner text shows dataset labels as written and invents no meaning or order. Spot-checked L-25 list and Recall on phone and the Alerts install section.
 - Noticed for kvn: on phones the sticky experimental label covers the "Choose another sentence" button in Recall.
 - Needs kvn: adopt from .agent-local/review/2026-10-16c/ (integration worktree); merge, push, check GitHub Actions and the deployed /alerts/ page.
+
+### 2026-10-16 18:10 | kvn (recorded by claude-code) | 16 Oct evening approvals; L-25 done, I-10 in progress
+- kvn adopted L-25 (experimental whole-sentence challenge) and I-10's Alerts part (Download Android APK button and install steps) from the renders in .agent-local/review/2026-10-16c/ (integration worktree), and merged integration/2026-10-16c into main.
+- L-25 follow-up sent to the Learn window: on phones the sticky experimental label must stop covering the "Choose another sentence" button in Recall.
+- I-10 stays in progress: the hosted Recognize URL is wired after D-04 (18 Oct).
+- Board: L-25 done; I-10 in-progress.

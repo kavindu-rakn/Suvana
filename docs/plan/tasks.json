@@ -1857,7 +1857,7 @@
       "L-22b",
       "L-16b"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-25-sentences-ui",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -2476,7 +2476,7 @@
       "D-04",
       "I-01"
     ],
-    "status": "todo",
+    "status": "in-progress",
     "branch": "agent/codex/I-10-shell-wiring",
     "r26_port": "no",
     "screenshots": "yes",

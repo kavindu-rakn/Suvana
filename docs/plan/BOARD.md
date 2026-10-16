@@ -83,7 +83,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | L-23a | Demo profile and reset at the storage layer | codex | 2026-10-17 | S | - | done | `agent/codex/L-23a-profile` | yes | no | - |
 | L-23 | Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI | codex | 2026-10-18 | M | L-23a, L-12, L-13 | done | `agent/codex/L-23-progress` | yes | yes | - |
 | L-24 | Hero CTA straight to the first sign; session-complete screen | codex | 2026-10-18 | S | L-11 | done | `agent/codex/L-24-cta-complete` | yes | yes | - |
-| L-25 | Sentence challenge UI (last unit on the Path) | codex | 2026-10-19 | M | L-22b, L-16b | todo | `agent/codex/L-25-sentences-ui` | yes | yes | DN-08 |
+| L-25 | Sentence challenge UI (last unit on the Path) | codex | 2026-10-19 | M | L-22b, L-16b | done | `agent/codex/L-25-sentences-ui` | yes | yes | DN-08 |
 | L-26 | Phone, accessibility and polish pass across Learn | codex | 2026-10-20 | M | L-21, L-23, L-25 | done | `agent/codex/L-26-polish` | yes | yes | - |
 | L-27 | Camera off while browsing or hidden; hover hint only on hover devices; GSAP restore | codex | 2026-10-20 | S | L-04, L-16b | done | `agent/codex/L-27-camera-off` | yes | no | - |
 | L-28 | Learn docs match what shipped | claude-code-thesis | 2026-10-20 | S | L-26 | todo | `agent/claude/L-28-learn-docs` | yes | no | - |
@@ -106,7 +106,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | I-07 | Communicate own instance: placeholder-seed guard, gloss import script, env example | antigravity | 2026-10-16 | S | - | done | `agent/antigravity/I-07-communicate-scripts` | no | no | - |
 | I-08 | Recognition container: Docker build, latency comparison, /api/info, back link and theme | codex | 2026-10-17 | M | I-04 | done | `agent/codex/I-08-recognition-container` | no | yes | - |
 | I-09 | Speech container: build check and readiness notes | codex | 2026-10-19 | S | - | done | `agent/codex/I-09-speech-container` | no | no | - |
-| I-10 | Shell: wire the hosted Recognize URL, Alerts download section, phone pass | codex | 2026-10-19 | S | D-04, I-01 | todo | `agent/codex/I-10-shell-wiring` | no | yes | - |
+| I-10 | Shell: wire the hosted Recognize URL, Alerts download section, phone pass | codex | 2026-10-19 | S | D-04, I-01 | in-progress | `agent/codex/I-10-shell-wiring` | no | yes | - |
 | I-11 | Verify the shared session behind the Vercel rewrite; fix if needed | codex | 2026-10-19 | S | D-03 | todo | `agent/codex/I-11-auth-rewrite` | no | no | - |
 | I-12a | Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild) | codex | 2026-10-16 | S | I-02 | done | `agent/codex/I-12a-alerts-eas` | no | no | DN-14 |
 | I-12 | Alerts APK: Karindra builds from Suvana's tree, or kvn rebuilds under his EAS | kvn | 2026-10-17 to 2026-10-19 | M | K-03, I-02 | done | `n/a` | no | no | DN-14 |
