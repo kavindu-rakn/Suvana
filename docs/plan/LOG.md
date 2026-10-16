@@ -704,3 +704,9 @@ Rules:
 - Handoff: handoffs/L-20-learner-wiring.md; r26_port yes. Plan correction: separate follow-up for the deferred L-20 wiring explicitly requested by kvn; historical handoff and board/decisions untouched.
 - Needs kvn: review renders and merge; milestone R26 port remains separate. No push, merge or deploy done. CC0 remains a selection preview with the existing physical-asset caveat.
 - Next: L-25 is on after L-22b lands; kvn is doing K-07. Sentence work not started here.
+
+### 2026-10-16 | claude-code (integration prep, light) | integration/2026-10-16
+- What: merged with --no-ff onto main 33e0dd5: I-08-sync-guard (four Recognize guards), Q-03 (CI concurrency, R26-form Learn build, dist and brand checks, manual Docker matrix; stacked on I-08-sync-guard) and L-20 learner wiring (learner-visible NC notice and credits; CC0 Preview units on the Path). All merged cleanly.
+- Gates: Learn npm@10 ci, lint 0 warnings, tests 320 passed + 13 skipped, build ok, main JS 150.17 kB gzip; tools/ci tests 6 passed, brand check 128 files, Suvana dist check; sync guard 181; browser suite 46 passed (45 on port 5174, plus camera.spec on 5194 because one test hard-codes that port).
+- Checks (light): no brand names, figures, secrets or protected-file changes; the new learner text is the notice, credits and one Preview line. L-20 renders spot-checked.
+- Needs kvn: adopt L-20 from .agent-local/review/2026-10-16/ (integration worktree); merge and push; then check that GitHub Actions passes on main (Q-03 is done only when hosted CI is green). Follow-up for the Learn window: camera.spec.ts should use the configured base URL instead of port 5194.
