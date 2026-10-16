@@ -815,3 +815,10 @@ Rules:
 - Screenshots: n/a.
 - Needs kvn: merge the branch. Optional: at the 5-day check the reason reads "review: score dropped" (Recall 66 below Try 76) rather than "not practised for 5 days"; this follows the literal rules and the thesis explains it. Plan correction: 09 section 3 says stars use 60/85; the code uses Try 60/70 and Recall 60 (60/85 is the label scale).
 - Next: T-07 commercialisation, T-02 Ch1/4/5 (DN-16, app screenshots in the thesis, is still open: kvn is asked before T-02 relies on it), T-03, L-28.
+### 2026-10-16 20:10 | claude-code-thesis | T-07 commercialisation write-up
+- What: done (early; board day 19 Oct). New docs/commercialisation.md: open core as a roadmap only (DN-04 (a), DN-15: no prices, no paid offering), licences (360 of 501 single-sign references CC BY-NC-SA; cc0 build is a preview, not a cleared edition; video provenance), privacy (Learn and Alerts on-device; Recognize uploads camera frames to its server), costs with source and date, competitor table re-checked 16 Oct with URLs, and a checklist before any commercial step.
+- Branch @ sha: agent/claude/T-07-commercialisation (final SHA in git log), from origin/main 82592a3; independent of T-04.
+- Gates: sync guard 182; brand check passed; docs only.
+- Screenshots: n/a.
+- Needs kvn: merge. Three CHECKs, not blocking: no licence file at the repo root (needed for "open core"); teammates' upstream licences not recorded; Cloudinary plan not recorded. Thesis 7.7 exists, so T-03 updates it from this document.
+- Next: T-02 (Ch1/4/5) needs DN-16 (app screenshots in the thesis), which is still open.
