@@ -837,3 +837,11 @@ Rules:
 - Screenshots: n/a.
 - Needs kvn: record DN-16 = no in DECISIONS.md (agents don't edit it). Still open for T-03: which separation figure Ch6 reports (74.6% before L-30, 75.7% after; same 65.4% baseline).
 - Next: T-02 refresh 19 Oct; T-03 and L-28 on 20 Oct.
+
+### 2026-10-16 22:10 | claude-code (integration prep, light) | integration/2026-10-16d
+- What: merged with --no-ff onto main 61817f6 the thesis lane's three branches: T-04 (learner-model worked example as a test; placeholder signs SIGN-A/B/C, no product code), T-07 (docs/commercialisation.md: open core as a roadmap only, no prices, licences, costs with sources, competitors) and T-02 (handoff + LOG only; thesis text is outside the repo; records kvn's DN-16 = no app screenshots). All merged cleanly.
+- Gates: Learn npm@10 ci, lint 0, tests 331 passed + 13 skipped, build ok (main JS 149.27 kB gzip); tools/ci tests 6 passed, brand check 128 files, Suvana dist check; sync guard 182. No UI change, so no browser suite or renders.
+- Checks (light): no protected files, sub-brands, secrets or Suvana prices; 74.6% is quoted with its 65.4% baseline and "not the 90% target"; the T-07 per-finger claim was already dropped.
+- Correction to handoffs/R-03.md: shipped Learn shows no "Focus on" finger chips (only the dev fixtures page has them; worstFingers is logged, not shown). So Learn's landing line "with corrections down to individual fingers" (Hero.tsx subline) and the "Joint-Level DTW Feedback" card ("feedback down to individual fingers") are not true today, on Suvana and on learn-ssl-module (M1). Shipped feedback is the score, timing (too fast or too slow), hand path and the side-by-side replay. The fix is a copy change in the Learn window (kvn adopts from renders), then a port.
+- Noticed: docs/commercialisation.md quotes the old scorer's 74.6%; which figure to report (74.6% before L-30, 75.7% after, same 65.4% baseline) is kvn's open choice for Ch6, and this document should follow it.
+- Needs kvn: merge integration/2026-10-16d and push; then the records patch (T-04 and T-07 done, T-02 in progress, DN-16 decided).
