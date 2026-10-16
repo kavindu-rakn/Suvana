@@ -688,3 +688,10 @@ Rules:
 - Branch: agent/codex/I-08-sync-guard, fresh origin/main 72cd406; explicitly requested by kvn.
 - Gates: sync guard 181 passed; parsed manifest equals HEAD plus I-08's three proposal blocks; diff check passed. Runtime/assets unchanged; screenshots n/a; r26_port no.
 - Needs kvn: review and merge before stacked Q-03. No push, merge or deployment. L-22b still waits for K-07.
+
+### 2026-10-16 | codex | Q-03 CI gaps (early)
+- What: workflow/event/ref concurrency cancellation; manual-only recognition/speech Docker matrix; isolated standalone R26 Learn job; Suvana/R26 dist assertions; four-module source brand check with narrow internal-name exceptions and six failure-case tests. New tools/ci helpers reuse Learn's pinned TypeScript parser; no dependency/runtime/UI/content changes.
+- Branch: agent/codex/Q-03-ci stacked on agent/codex/I-08-sync-guard 44fb0b1; both rebased cleanly onto origin/main 33e0dd5 after kvn's plan-only update.
+- Gates: npm 10 ci; lint 0 warnings; Learn 323 passed/5 skipped after sandbox EPERM rerun; Suvana 149.55 kB gzip, R26 149.11 kB; both dist checks 4 HTML assets/2 WASM files; 6 helper tests; brand scan 128 source files; actionlint 1.7.12 syntax validation; sync guard 181; diff check. Recognition and speech Docker builds both exit 0 from tracked-only snapshots (speech cached, recognition fresh dependency resolution/pip check). Logs/image IDs in handoffs/Q-03.md and ignored .agent-local/Q-03/.
+- Plan correction: explicit chat authorizes Q-03/ci.yml on 16 Oct instead of 20 Oct; its R-01/I-01/I-02 dependencies are merged. Board/tasks/decisions untouched. Screenshots n/a; r26_port no; L-22b remains waiting for K-07.
+- Needs kvn: review/merge I-08-sync-guard then Q-03-ci, push/open PR and require hosted CI green; manually dispatch CI on the reviewed ref for the Docker matrix. Hosted CI is unverified and Q-03 is not done until it passes. No push, merge, deployment or messages by codex.
