@@ -683,3 +683,12 @@ Rules:
 - Board: L-11, L-16a, L-24, L-16b, L-27, L-21, L-26, I-08, I-09 and L-20 done.
 - Still open from these tasks: kvn's phone checks on the deployed Learn (iPhone camera after app switch with L-27; landing to first Record under 30 s for L-24); the learner-facing NC notice and Path Preview from handoffs/L-20.md (Learn window); I-08's proposed sync declarations (first window); I-09 emotion path (ASR-only unless Lithira sends his classifier); the three small points in the review page (focus outline on "Nice work!", Watch zoom on phones, "Mastered" beside 14/21 stars), kvn to decide.
 - Next for claude-code: R-03, the M1 port of Learn into the R26 working tree (17 Oct).
+
+### 2026-10-16 | codex | L-20 learner notice and Path follow-up
+- What: applied L-20's exact proposed Hero/footer notice and expandable credits; wired filtered-index coverage into Path cards/details. Incomplete units stay Preview despite saved full-edition stars, cannot run a full unit session or unlock successors; only available references enter queues. No curriculum/content/CSS/config changes.
+- Branch: codex/L-20-learner-notice-preview (final SHA in git log); fresh from origin/main 72cd406, rebased cleanly to 33e0dd5 after its approval-record-only update.
+- Gates: Learn/screens ci passed; lint 0 warnings/errors; Vitest 320 passed, 13 skipped; builds full 150.17 kB gzip / CC0 150.20 kB; Playwright 46 passed; sync guard 175 passed; diff check clean. Windows lock/cache and Vitest sandbox rename issues resolved by confirmed local-server cleanup/authorized normal-user reruns.
+- Screenshots: .agent-local/screens/L-20-learner-wiring/index.html; real full/CC0 before/after Hero, Path, unit detail, footer at 1280x800 and 390x844; extra CC0 Months 1 (6/8 coverage) comparisons and expanded-credit after renders. No seeded screenshot progress. Evidence: no page errors/overflow in the captured combinations.
+- Handoff: handoffs/L-20-learner-wiring.md; r26_port yes. Plan correction: separate follow-up for the deferred L-20 wiring explicitly requested by kvn; historical handoff and board/decisions untouched.
+- Needs kvn: review renders and merge; milestone R26 port remains separate. No push, merge or deploy done. CC0 remains a selection preview with the existing physical-asset caveat.
+- Next: L-25 is on after L-22b lands; kvn is doing K-07. Sentence work not started here.

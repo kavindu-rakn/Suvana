@@ -11,6 +11,7 @@ const RecordView = lazy(() => import('./components/RecordView').then((m) => ({ d
 const LibraryView = lazy(() => import('./components/LibraryView').then((m) => ({ default: m.LibraryView })))
 const StudyView = lazy(() => import('./components/StudyView').then((m) => ({ default: m.StudyView })))
 import { AppNavBar } from './components/AppNavBar'
+import { Attribution, ContentNotice } from './components/Attribution'
 import { persistMode, readMode } from './app/mode'
 import type { AppMode } from './app/mode'
 import { AUTHOR_TABS, LEARNER_TABS } from './app/tabs'
@@ -166,6 +167,11 @@ function App() {
       </main>
 
       <footer className="app-footer">
+        <ContentNotice />
+        <details>
+          <summary>Corpus credits and licences</summary>
+          <Attribution />
+        </details>
         <p>
           Hand tracking runs fully in your browser (MediaPipe HandLandmarker) — no video ever
           leaves your device.
