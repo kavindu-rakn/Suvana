@@ -1,0 +1,13 @@
+.finger-feedback { width: 100%; max-width: 600px; text-align: left; border-top: 1px solid var(--border-subtle); padding-top: 18px; margin-top: 8px; }
+.finger-feedback-heading { margin-bottom: 14px; }
+.finger-feedback-heading h3 { font-size: 1rem; margin: 0 0 4px; color: var(--text); }
+.finger-feedback-heading p { font-size: .85rem; color: var(--text-dim); }
+.finger-feedback-hands { display: flex; flex-wrap: wrap; gap: 16px; }
+.finger-feedback-hand { flex: 1 1 220px; min-width: 0; padding: 14px 16px; background: var(--surface-2); border: 1px solid var(--border-subtle); border-radius: 12px; }
+.finger-feedback-hand h4 { font-size: .9rem; margin: 0 0 10px; color: var(--text); }
+.finger-feedback-hand dl { margin: 0; }
+.finger-feedback-row { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; padding: 7px 0; font-size: .9rem; color: var(--text); }
+.finger-feedback-state { margin: 0; font-weight: 600; }
+.finger-feedback-state[data-state='correct'] { color: var(--success); }
+.finger-feedback-state[data-state='almost'] { color: var(--text); }
+.finger-feedback-state[data-state='wrong'] { color: var(--text); }
