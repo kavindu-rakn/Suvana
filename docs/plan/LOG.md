@@ -781,3 +781,11 @@ Rules:
 - L-25 follow-up sent to the Learn window: on phones the sticky experimental label must stop covering the "Choose another sentence" button in Recall.
 - I-10 stays in progress: the hosted Recognize URL is wired after D-04 (18 Oct).
 - Board: L-25 done; I-10 in-progress.
+
+### 2026-10-16 19:20 | claude-code-thesis | T-04 learner-model worked example
+- What: done. New test apps/learn/src/learner/workedExample.test.ts runs one placeholder sign (SIGN-A, not a corpus gloss) through Try 30, Try 50, Try 76, unrevealed Recall 66 and a check 5 days later, using the real mastery.ts, game.ts, nextExercise.ts and startUnitSession; it prints and asserts two tables (EWMA, need, due, stars; next exercise, Path session order, reason). No product code changed. The tables are copied unedited into Thesis\final-source\04-design.md (new folder) as Tables 4.4 and 4.5, with section 4.4.5's learner-model text rewritten to the merged L-13 rules; rubric renumbered 4.6.
+- Branch @ sha: agent/claude/T-04-worked-example (final SHA in git log), from origin/main 82592a3.
+- Gates: Learn npm ci, lint 0 warnings/errors, tests 331 passed + 13 skipped, build ok (main JS 149.27 kB gzip), tsc ok; sync guard 182.
+- Screenshots: n/a.
+- Needs kvn: merge the branch. Optional: at the 5-day check the reason reads "review: score dropped" (Recall 66 below Try 76) rather than "not practised for 5 days"; this follows the literal rules and the thesis explains it. Plan correction: 09 section 3 says stars use 60/85; the code uses Try 60/70 and Recall 60 (60/85 is the label scale).
+- Next: T-07 commercialisation, T-02 Ch1/4/5 (DN-16, app screenshots in the thesis, is still open: kvn is asked before T-02 relies on it), T-03, L-28.
