@@ -788,3 +788,15 @@ Rules:
 - Gates: npm@10.9.9 ci Learn/screens; lint zero warnings/errors; Vitest 330 passed, 13 skipped; production build main JS 149.27 kB gzip; full browser suite 64 passed (including two new both-theme phone Recall regressions); sync guard 182; diff check clean.
 - Renders: .agent-local/screens/L-25-notice-layout/index.html; paired Recall at 390x844 and 360x800 plus working chooser renders. Notice no longer covers the chooser; all control hit points and pointer/Enter activation verified. Supplemental 1280x800 Recall PNGs byte-identical. No page errors/overflow. Synthetic unlock/camera fixtures disclosed; screenshots ignored.
 - Handoff: handoffs/L-25-notice-layout.md; r26_port yes. Needs kvn: adopt/reject renders, merge/push and check hosted CI; later R26 milestone port. No agent push, merge, deploy or external messages.
+
+### 2026-10-16 19:15 | kvn (recorded by claude-code) | L-25 notice layout merged
+- kvn merged agent/codex/L-25-notice-layout into main (fast-forward to 75f51ac) and pushed, after adopting its renders: on phones the sentence challenge's experimental label no longer covers "Choose another sentence". Checked by the previous integrator: lint 0, 330 tests + 13 skipped, build 149.27 kB gzip, browser suite 64 passed, sync guard 182.
+- Board: no change (follow-up to L-25, which is done).
+
+### 2026-10-16 19:50 | claude-code | R-03 M1 port to R26
+- What: ported merged Suvana main 75f51ac into the R26 working tree with `sync.mjs port learn` (78 add / 44 modify / 0 delete in learn-ssl-module/web; package.json unchanged). Started a day early at kvn's request; rehearsed first in a throwaway clone. Nothing committed in R26.
+- Branch @ sha: agent/claude/R-03-m1-port (handoff and this entry only); R26 base 761ec32.
+- Gates: in learn-ssl-module/web npm@10 ci, 338 tests passed + 5 skipped, oxlint exit 0, build ok (main JS 148.82 kB gzip), no `/learn/` in dist. The test run rewrites calibration-report.md and weight-fit-report.md with the current scorer's figures (L-30); both restored from R26 HEAD so R26 matches Suvana. Refreshing them is kvn's call (L-28).
+- Screenshots: .agent-local/screens/R-03/index.html (claude worktree): live site before, R26 build after, landing page, Path and end of Path, desktop and phone; no errors or overflow.
+- Needs kvn: commit in R26 with the two blocks in handoffs/R-03.md, push, then D-07 redeploy; afterwards codex records ported sha 75f51ac in upstreams.json.
+- Next: R-04 (M2) on 19 Oct.
