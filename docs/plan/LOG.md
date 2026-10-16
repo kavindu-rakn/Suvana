@@ -710,3 +710,10 @@ Rules:
 - Gates: Learn npm@10 ci, lint 0 warnings, tests 320 passed + 13 skipped, build ok, main JS 150.17 kB gzip; tools/ci tests 6 passed, brand check 128 files, Suvana dist check; sync guard 181; browser suite 46 passed (45 on port 5174, plus camera.spec on 5194 because one test hard-codes that port).
 - Checks (light): no brand names, figures, secrets or protected-file changes; the new learner text is the notice, credits and one Preview line. L-20 renders spot-checked.
 - Needs kvn: adopt L-20 from .agent-local/review/2026-10-16/ (integration worktree); merge and push; then check that GitHub Actions passes on main (Q-03 is done only when hosted CI is green). Follow-up for the Learn window: camera.spec.ts should use the configured base URL instead of port 5194.
+
+### 2026-10-16 14:40 | kvn (recorded by claude-code) | 16 Oct approvals; K-07 and Q-03 done
+- kvn adopted L-20's learner notice and Path Preview from the renders in .agent-local/review/2026-10-16/ (integration worktree), merged integration/2026-10-16 into main and pushed. Hosted CI on main 34f43cc passed (GitHub Actions, push run), so Q-03 is done.
+- K-07 (run by claude-code at kvn's request, 16 Oct): the converter (R26 learn-ssl-module/tools venv, MediaPipe 1.0.1) turned 19 of the 20 labelled "SSL Sentences" clips into kaggle_sent_*.json references with the dataset's own labels, CC0 licence and provenance. Skipped: "doctor koheda inne.mp4" (hands in 70% of frames, below the 0.7 coverage bar) and the unnamed ".mp4". Staged outside the repo at C:\Users\User\Documents\Suvana-wt\_staging\K-07-sentences (3.1 MB; log K-07-convert.log); the first Codex window copies them in on L-22b.
+- kvn sent the Learn window the three small fixes (focus box only for keyboard users, Watch zoomed to the hands on phones, two rendered options for the "Mastered" wording) and the camera.spec.ts port fix; the first window started L-22b.
+- Lahiru and Lithira: no reply yet (both due 16 Oct).
+- Board: Q-03 and K-07 done.

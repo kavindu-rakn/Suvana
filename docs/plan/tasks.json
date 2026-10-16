@@ -161,7 +161,7 @@
     "deps": [
       "L-22a"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a (files handed to the L-22b branch)",
     "r26_port": "yes",
     "screenshots": "no",
@@ -847,7 +847,7 @@
       "I-01",
       "I-02"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/Q-03-ci",
     "r26_port": "no",
     "screenshots": "no",

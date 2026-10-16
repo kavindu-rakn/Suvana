@@ -19,7 +19,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | K-04 | Create accounts and secrets: three Vercel projects, Atlas M0, Cloudinary, NEXTAUTH_SECRET, optional Gemini key | kvn | 2026-10-13 to 2026-10-14 | M | K-01 | todo | `n/a` | no | no | - |
 | K-05 | Approve the starter curriculum, verify a batch of meanings, decide a third scenario | kvn | 2026-10-15 | M | L-09 | done | `kvn's own branch, or tell an agent` | yes | no | DN-19 |
 | K-06 | Export the permitted Kaggle clips and upload them to Cloudinary (only if DN-05 allows video) | kvn | 2026-10-16 | M | L-15a, K-04 | cancelled | `n/a` | no | no | DN-05, DN-06 |
-| K-07 | Convert the Kaggle 'SSL Sentences' clips into references | kvn | 2026-10-16 | S | L-22a | todo | `n/a (files handed to the L-22b branch)` | yes | no | DN-08 |
+| K-07 | Convert the Kaggle 'SSL Sentences' clips into references | kvn | 2026-10-16 | S | L-22a | done | `n/a (files handed to the L-22b branch)` | yes | no | DN-08 |
 | K-08 | Buy suvana.help | kvn | 2026-10-20 | S | D-03, D-04 | todo | `n/a` | no | no | - |
 | K-09 | Ask the supervisor whether any informal usability check is allowed without ethics approval | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
 | K-10 | Daily review, screenshot adoption and merge window | kvn | daily 2026-10-13 to 2026-10-21 | S | K-01 | todo | `n/a` | no | no | - |
@@ -47,7 +47,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | Q-00 | Screenshot tooling: Playwright shooter, contact sheet, fake-camera clips, dev-only fixtures page | antigravity | 2026-10-13 | M | K-01 | done | `agent/antigravity/Q-00-screens` | no | no | - |
 | Q-01 | Agent instruction files: root AGENTS.md as single source, slim CLAUDE.md, per-module AGENTS.md | claude-code | 2026-10-13 | M | K-01 | done | `agent/claude/Q-01-agents-md` | no | no | DN-12 |
 | Q-02 | .gitattributes for line endings and a union merge for LOG.md | antigravity | 2026-10-14 | S | K-01 | done | `agent/antigravity/Q-02-gitattributes` | no | no | - |
-| Q-03 | Close CI gaps: concurrency, Docker build, R26-form Learn build, dist smoke, extended brand grep | codex | 2026-10-20 | M | R-01, I-01, I-02 | todo | `agent/codex/Q-03-ci` | no | no | - |
+| Q-03 | Close CI gaps: concurrency, Docker build, R26-form Learn build, dist smoke, extended brand grep | codex | 2026-10-20 | M | R-01, I-01, I-02 | done | `agent/codex/Q-03-ci` | no | no | - |
 | Q-04 | Playwright smoke for Learn (keyboard, storage failure, onboarding) | antigravity | 2026-10-15 | M | Q-00, L-02, L-05, L-07 | done | `agent/antigravity/Q-04-e2e` | no | no | - |
 | Q-05 | DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check | codex | 2026-10-20 | S | D-03, D-04 | todo | `agent/codex/Q-05-demo` | no | no | - |
 | Q-06 | Full real-device matrix (iPhone Safari, Android Chrome, laptop) | kvn | 2026-10-19 | M | Q-06a, L-16b | todo | `n/a` | no | no | - |
