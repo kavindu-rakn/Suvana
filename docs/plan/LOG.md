@@ -788,3 +788,11 @@ Rules:
 - Gates: npm@10.9.9 ci Learn/screens; lint zero warnings/errors; Vitest 330 passed, 13 skipped; production build main JS 149.27 kB gzip; full browser suite 64 passed (including two new both-theme phone Recall regressions); sync guard 182; diff check clean.
 - Renders: .agent-local/screens/L-25-notice-layout/index.html; paired Recall at 390x844 and 360x800 plus working chooser renders. Notice no longer covers the chooser; all control hit points and pointer/Enter activation verified. Supplemental 1280x800 Recall PNGs byte-identical. No page errors/overflow. Synthetic unlock/camera fixtures disclosed; screenshots ignored.
 - Handoff: handoffs/L-25-notice-layout.md; r26_port yes. Needs kvn: adopt/reject renders, merge/push and check hosted CI; later R26 milestone port. No agent push, merge, deploy or external messages.
+
+### 2026-10-16 20:10 | claude-code-thesis | T-07 commercialisation write-up
+- What: done (early; board day 19 Oct). New docs/commercialisation.md: open core as a roadmap only (DN-04 (a), DN-15: no prices, no paid offering), licences (360 of 501 single-sign references CC BY-NC-SA; cc0 build is a preview, not a cleared edition; video provenance), privacy (Learn and Alerts on-device; Recognize uploads camera frames to its server), costs with source and date, competitor table re-checked 16 Oct with URLs, and a checklist before any commercial step.
+- Branch @ sha: agent/claude/T-07-commercialisation (final SHA in git log), from origin/main 82592a3; independent of T-04.
+- Gates: sync guard 182; brand check passed; docs only.
+- Screenshots: n/a.
+- Needs kvn: merge. Three CHECKs, not blocking: no licence file at the repo root (needed for "open core"); teammates' upstream licences not recorded; Cloudinary plan not recorded. Thesis 7.7 exists, so T-03 updates it from this document.
+- Next: T-02 (Ch1/4/5) needs DN-16 (app screenshots in the thesis), which is still open.
