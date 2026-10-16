@@ -717,3 +717,11 @@ Rules:
 - kvn sent the Learn window the three small fixes (focus box only for keyboard users, Watch zoomed to the hands on phones, two rendered options for the "Mastered" wording) and the camera.spec.ts port fix; the first window started L-22b.
 - Lahiru and Lithira: no reply yet (both due 16 Oct).
 - Board: Q-03 and K-07 done.
+
+### 2026-10-16 | codex | L-22b experimental sentence data (early)
+- What: copied only 19 K-07 kaggle_sent_*.json files byte-for-byte; regenerated real manifest 501 -> 520 without copying staging manifest. Exact source labels/IDs/files preserved in sentences.ts; optional meanings only from unchanged translations.ts; exported exact experimental label. No unnamed clip or skipped doctor reference added.
+- Isolation: normal loader/picker and single-sign recommendation queues exclude sentences; explicit sentence loader shares the edition-filtered index/frame API. Curriculum generator and original single-sign regression contracts retain their corpus; index fills null sentence attribution only from the unique existing matching dataset/source/licence credit, preserving raw JSON bytes.
+- Branch: agent/codex/L-22b-sentences, fresh origin/main 34f43cc, rebased cleanly to plan-only b0ce3d4. Explicit chat starts the task on 16 Oct after K-07 instead of 18 Oct; board/tasks/decisions untouched.
+- Gates: npm 10 ci, lint 0 warnings/errors; 334 tests passed/5 skipped; Suvana 149.23 kB gzip, standalone R26 148.79 kB, both dist checks 4 HTML assets/2 WASM files; curriculum --check without writes; sync guard 181; diff check. Six-second/151-frame real-excerpt scoreAttempt benchmark local warmed median 7.914 ms, observed p90/max 10.612 ms; CI enforces median <50 ms, hosted branch CI still pending.
+- Evidence: 19 identical copied files, 3,267,878 bytes and 2,834 frames; source labels, SHA256s, timings and logs in ignored .agent-local/L-22b/. Handoff: handoffs/L-22b.md; r26_port yes at next milestone. No UI changes/screenshots, scoring changes, invented meanings/translations, video or L-25 work.
+- Needs kvn: review/merge/push branch and require hosted CI green; include data/logic in next R26 mirror. L-25's D-A24 priority/go-no-go remains separate. No agent push, merge, deploy or external messages.

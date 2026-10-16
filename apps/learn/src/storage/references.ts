@@ -4,7 +4,12 @@
  * bundled index, a locally-recorded sign described by `toMeta`, or a richer
  * object a caller wants back unchanged (hence the generic).
  */
+import { isSentenceReference, isSentenceGloss } from '../data/sentences'
+
 interface Pickable {
+  id?: string
+  file?: string
+  sourceCategory?: string
   gloss: string
   provisional?: boolean
   createdAt: string
@@ -23,6 +28,7 @@ interface Pickable {
 export function pickReferences<T extends Pickable>(recordings: T[]): Map<string, T> {
   const byGloss = new Map<string, T>()
   for (const rec of recordings) {
+    if (isSentenceReference(rec) || isSentenceGloss(rec.gloss)) continue
     const incumbent = byGloss.get(rec.gloss)
     if (!incumbent || beats(rec, incumbent)) byGloss.set(rec.gloss, rec)
   }

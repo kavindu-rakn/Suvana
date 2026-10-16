@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { RecordingMeta } from '../vision/types'
 import { contentCoverage, filterContentIndex } from '../storage/bundledReferences'
 import { CURRICULUM_UNITS } from './curriculum'
+import { isSentenceReference } from './sentences'
 
 const packed = JSON.parse(readFileSync('public/reference-index.json', 'utf8')) as {
   sources: Record<string, Partial<RecordingMeta>>
@@ -59,7 +60,7 @@ describe('content edition', () => {
     vi.stubGlobal('fetch', fetchMock)
     const { loadReferenceIndex, loadReferenceFrames } = await import('../storage/bundledReferences')
     const selected = await loadReferenceIndex()
-    expect(selected).toEqual(filterContentIndex(index, 'cc0'))
+    expect(selected).toEqual(filterContentIndex(index, 'cc0').filter(rec => !isSentenceReference(rec)))
     const excluded = index.find((rec) => rec.file?.startsWith('yohan_'))!
     expect(await loadReferenceFrames(excluded.file!)).toBeNull()
     expect(await loadReferenceFrames('not-in-index.json')).toBeNull()

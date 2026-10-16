@@ -37,7 +37,7 @@ const sources = indexRaw.sources || {}
 const recordings = (indexRaw.recordings || []).map((r) => {
   const shared = r.source ? sources[r.source] : {}
   return { ...shared, ...r }
-})
+}).filter(r => r.sourceCategory !== 'SSL Sentences' && !r.file?.startsWith('kaggle_sent_'))
 
 // 2. Read verified translations
 const translationsSrc = readFileSync(translationsPath, 'utf8')

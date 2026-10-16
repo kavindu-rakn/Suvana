@@ -1,4 +1,5 @@
 import { isDueReview, practiceNeed, recommendationFor } from './mastery'
+import { isSentenceGloss } from '../data/sentences'
 import type { GlossMastery, PracticeRecommendation } from './mastery'
 import { isSymbolLabel } from '../data/categories'
 import type { CurriculumUnit } from '../data/curriculum'
@@ -81,7 +82,8 @@ export function buildSessionPlan(
 ): PracticeRecommendation[] {
   if (!Number.isFinite(size) || size < 1) return []
   const limit = Math.floor(size)
-  const unique = [...new Map(summaries.map((summary) => [summary.gloss, summary])).values()]
+  const unique = [...new Map(summaries.filter(summary => !isSentenceGloss(summary.gloss))
+    .map((summary) => [summary.gloss, summary])).values()]
   const rank = (a: GlossMastery, b: GlossMastery) =>
     practiceNeed(b, now) - practiceNeed(a, now) || a.gloss.localeCompare(b.gloss)
   const reviews = unique.filter((summary) => isDueReview(summary, now)).sort(rank)

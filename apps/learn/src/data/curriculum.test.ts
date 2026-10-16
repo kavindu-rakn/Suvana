@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { CURRICULUM_UNITS, getStarterUnit, getUnit } from './curriculum'
 import { translationOf } from './translations'
+import { isSentenceReference } from './sentences'
 import indexRaw from '../../public/reference-index.json'
 
 interface Reference {
@@ -18,7 +19,7 @@ interface Reference {
 const sources = indexRaw.sources as Record<string, Partial<Reference>>
 const recordings: Reference[] = indexRaw.recordings.map(r => ({
   ...(r.source ? sources[r.source] : {}), ...r,
-}))
+})).filter(rec => !isSentenceReference(rec))
 const months = new Set(['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
   'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'])
 const groupTitle = (title: string) => title.replace(/ \d+$/, '')

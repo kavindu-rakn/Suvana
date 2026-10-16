@@ -1,4 +1,5 @@
 import type { AttemptLogEntry } from './attemptLog'
+import { isSentenceGloss } from '../data/sentences'
 
 // Rule-based by design. BKT/learned adaptation needs real learner data and
 // teacher judgments first; no learned model or learning gains are claimed.
@@ -123,6 +124,7 @@ export function recommendationFor(summary: GlossMastery, now: Date): PracticeRec
 export function recommendNext(
   summaries: readonly GlossMastery[], now: Date = new Date(), newOrder?: readonly string[],
 ): PracticeRecommendation | null {
+  summaries = summaries.filter(summary => !isSentenceGloss(summary.gloss))
   const rank = (a: GlossMastery, b: GlossMastery) =>
     practiceNeed(b, now) - practiceNeed(a, now) || a.gloss.localeCompare(b.gloss)
   const due = summaries.filter((summary) => isDueReview(summary, now)).sort(rank)
