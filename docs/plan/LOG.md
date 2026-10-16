@@ -796,3 +796,11 @@ Rules:
 - Screenshots: n/a.
 - Needs kvn: (1) DN-16 app screenshots, open, needed 19 Oct; (2) the 1.4 claim is narrowed because shipped Learn hides per-finger corrections (D-A15); (3) for Ch6: L-30 moved separation from 74.6% to 75.7% (same 65.4% baseline; AUC not re-measured), so choose which scorer Ch6 reports. Plan corrections in handoffs/T-02.md (09 sections 2 and 3 out of date on finger states, L-30 and star thresholds).
 - Next: T-02 refresh 19 Oct; T-03 Ch6/7/8 on 20 Oct after Q-09; L-28 Learn docs on 20 Oct.
+
+### 2026-10-16 21:45 | kvn (recorded by claude-code-thesis) | DN-16 decided: no app screenshots in the thesis
+- What: decision. kvn in chat: "DN-16: no app screenshots in the thesis." CC-T removed the screenshot slot comment from Thesis\final-source\04-design.md 4.4.5; no other draft text depended on it.
+- Branch @ sha: agent/claude/T-02-thesis-ch1-4-5 (handoff T-02 updated; final SHA in git log).
+- Gates: n/a.
+- Screenshots: n/a.
+- Needs kvn: record DN-16 = no in DECISIONS.md (agents don't edit it). Still open for T-03: which separation figure Ch6 reports (74.6% before L-30, 75.7% after; same 65.4% baseline).
+- Next: T-02 refresh 19 Oct; T-03 and L-28 on 20 Oct.
