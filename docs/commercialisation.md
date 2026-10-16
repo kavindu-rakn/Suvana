@@ -24,7 +24,7 @@ Suvana is one brand over four modules, each owned by a team member:
 
 | Module | Owner | What it does | Where it runs |
 |---|---|---|---|
-| Learn | kvn | Practise named SSL signs; each attempt gets a 0-100 match score against one signer's reference, with finger-level hints | In the browser; hand landmarks computed on the device |
+| Learn | kvn | Practise named SSL signs; each attempt gets a 0-100 match score against one signer's reference, short tips and a side-by-side replay | In the browser; hand landmarks computed on the device |
 | Recognize | Lahiru | Recognises signs from the camera and speaks them in Sinhala | Camera frames go to a server (Railway Hobby from 18 Oct) |
 | Communicate | Lithira | Accounts; speech or text to sign with an avatar | Next.js app; MongoDB Atlas and Cloudinary on kvn's accounts; speech service on kvn's laptop |
 | Alerts | Karindra | Sound awareness on an Android phone | On the phone, offline after installation (APK v1.0.0) |
@@ -41,8 +41,13 @@ From `docs/plan/02-learn-vision.md` section 6:
 1. To our knowledge, the only SSL learning tool that grades the learner's own
    production of a named sign. ("To our knowledge": the store search was
    partial.) It grades a specified sign; it does not recognise signs.
-2. Finger-level, explainable hints, read from where the attempt and the
-   reference differ.
+2. Explainable feedback read from the measured comparison: a missing hand,
+   a hand path that differs, signing too fast or too slow, and a replay of the
+   take beside the reference that pauses where they differ most. Per-finger
+   corrections are computed but **not shown**: a same-sign vs different-sign
+   check found that a correct take's finger deviations overlap a wrong sign's
+   (D-A15, `fingerStates.calibration.test.ts`, L-30 handoff). Do not claim
+   per-finger feedback (02-learn-vision.md section 6 item 2 is out of date).
 3. Learn is on-device: landmarks are computed in the browser and no video is
    uploaded. Median scoring time is 1.8 ms on the measured machine.
 4. Built on open SSL corpora, with per-file licence provenance enforced by a
