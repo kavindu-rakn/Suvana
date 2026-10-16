@@ -858,3 +858,11 @@ Rules:
 - Held until the result: the copy fix for the landing page's per-finger lines (Hero.tsx subline and the "Joint-Level DTW Feedback" card), on Suvana and learn-ssl-module.
 - kvn sends the L-33 brief to the Learn window.
 - Board: L-33 added (codex, 17 Oct, todo).
+
+### 2026-10-16 | codex | L-33 Phase 1 PASS; Phase 2 awaits go
+- Branch agent/codex/L-33-finger-cutoffs from fetched origin/main 430e8c7. New opt-in read-only fingerCutoffs.calibration.test.ts; no scorer, score values, runtime labels or UI changes.
+- Fixed before results: Wrong p98, Almost p90, nearest rank / strict >; four take-level folds, first training reference per sign/fold. Clear fingers selected only from training cross-sign mean > both signs' own same-sign p95; anatomical fingers only, no authored SSL labels.
+- Separation on one signer's recordings, never learner accuracy: 67/506 correct attempts with any Wrong (13.24% <=20%); 8,021/11,353 clearly different fingers caught (70.65% >=50%): preset aggregate PASS. All different-sign fingers Wrong 29,395/72,900 (40.32%); earlier L-17/L-30 sampling differs. 23 eligible signs, all on Path. Only 12 individually <=20% false alarms; aggregate pass is not individual validation.
+- JANUARY Kaggle spot check only: no Wrong/Almost on one recording against four fold references; not four independent takes or acceptance evidence. Corpus read in place, before/after hash equal; no corpus or reports written/copied/regenerated. Rules, all denominators, missing-hand exclusions, per-sign rates, fingerprint and reproduction in handoffs/L-33.md.
+- Gates: npm 10 ci, lint, 333 tests passed / 14 skipped; build 149.27 kB gzip; sync guard 182 passed. Separate opt-in measurement passed; sandbox temp-rename restriction required approved rerun. No screenshots (Phase 1 only), hot files, push, merge, deploy or messages. r26_port: yes, future R-04 after review/merge.
+- Needs kvn: review Phase 1 handoff and explicitly say go in chat before Phase 2. Labels stay hidden pending that decision.
