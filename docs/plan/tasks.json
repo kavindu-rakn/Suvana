@@ -1744,7 +1744,7 @@
     "deps": [
       "K-07"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-22b-sentences",
     "r26_port": "yes",
     "screenshots": "no",

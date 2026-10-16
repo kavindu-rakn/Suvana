@@ -747,3 +747,9 @@ Rules:
 - Gates: Learn npm@10 ci, lint 0 warnings, tests 326 passed + 13 skipped, build ok, main JS 149.25 kB gzip; tools/ci tests 6 passed, brand check, Suvana dist check; sync guard 181; browser suite 52 passed on port 5174 (the camera test no longer needs 5194).
 - Checks (light): no protected files, brand names, figures or binaries; sentences.ts holds the dataset labels verbatim and takes meanings only from translations.ts (none added). Spot-checked the phone Watch, Path badge and session-complete renders.
 - Needs kvn: adopt from .agent-local/review/2026-10-16b/ (integration worktree); merge and push; check GitHub Actions on main. Next: L-25 (sentence challenge UI) is unblocked for the Learn window under D-A24.
+
+### 2026-10-16 15:30 | kvn (recorded by claude-code) | 16 Oct afternoon approvals; L-22b done
+- kvn adopted the three small Learn fixes from the renders in .agent-local/review/2026-10-16b/ (integration worktree): no outline on headings the app focuses (keyboard outlines kept); Watch starts zoomed to the hands on phones; unit badge option B (Passed until all stars, then Mastered). Merged integration/2026-10-16b into main and pushed; hosted CI on 83c01dd passed.
+- L-22b done: 19 sentence references in Learn's data, kept out of single-sign flows.
+- Next (kvn's messages to codex): L-25 sentence challenge UI in the Learn window under D-A24; the Alerts download part of I-10 in the first window (Recognize URL waits for D-04).
+- Board: L-22b done.

@@ -79,7 +79,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | L-20 | Licence mode (VITE_CONTENT=cc0) and an attribution panel | codex | 2026-10-18 | M | L-10 | done | `agent/codex/L-20-licence-mode` | yes | yes | DN-04 |
 | L-21 | Feedback UI: side-by-side synced replay, typed hints, fading hints | codex | 2026-10-19 | M | L-16b, L-17, L-18 | done | `agent/codex/L-21-replay` | yes | yes | - |
 | L-22a | List the Kaggle sentence labels and prepare the converter command | codex | 2026-10-15 | S | - | done | `agent/codex/L-22a-sentence-labels` | yes | no | - |
-| L-22b | Sentence data, exclusion from single-sign flows, long-sequence perf test | codex | 2026-10-18 | S | K-07 | todo | `agent/codex/L-22b-sentences` | yes | no | DN-08 |
+| L-22b | Sentence data, exclusion from single-sign flows, long-sequence perf test | codex | 2026-10-18 | S | K-07 | done | `agent/codex/L-22b-sentences` | yes | no | DN-08 |
 | L-23a | Demo profile and reset at the storage layer | codex | 2026-10-17 | S | - | done | `agent/codex/L-23a-profile` | yes | no | - |
 | L-23 | Progress dashboard: units, stars, streak, due today, explainers, reset and demo profile UI | codex | 2026-10-18 | M | L-23a, L-12, L-13 | done | `agent/codex/L-23-progress` | yes | yes | - |
 | L-24 | Hero CTA straight to the first sign; session-complete screen | codex | 2026-10-18 | S | L-11 | done | `agent/codex/L-24-cta-complete` | yes | yes | - |
