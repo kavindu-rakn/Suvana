@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { CURRICULUM_UNITS } from '../data/curriculum'
+import { SENTENCE_EXPERIMENTAL_LABEL } from '../data/sentences'
 import { glossLabel } from '../data/translations'
 import { listAttempts } from '../learner/attemptLog'
 import type { AttemptLogEntry } from '../learner/attemptLog'
@@ -17,6 +18,9 @@ import { toMeta } from '../vision/types'
 import type { RecordingMeta, SignRecording } from '../vision/types'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import './PathView.css'
+import './SentenceView.css'
+
+const SentenceView = lazy(() => import('./SentenceView').then(module => ({ default: module.SentenceView })))
 
 export function PathView({ onPractise, onSession }: {
   onPractise: (gloss: string) => void
@@ -64,6 +68,12 @@ export function PathView({ onPractise, onSession }: {
     setNotice(full ? '' : 'This reference could not load. Try again.')
   }
   if (loading) return <p role="status" className="empty-state">Loading your path…</p>
+  const lastUnit = CURRICULUM_UNITS[CURRICULUM_UNITS.length - 1]
+  const lastState = lastUnit ? pathUnitState(lastUnit, CURRICULUM_UNITS, attempts, contentIndex) : 'locked'
+  const sentencesUnlocked = lastState === 'passed' || lastState === 'mastered'
+  if (detail === 'sentence-challenge' && sentencesUnlocked) return <Suspense fallback={<p role="status">{SENTENCE_EXPERIMENTAL_LABEL} — Loading…</p>}>
+    <SentenceView onBack={() => setDetail(null)} />
+  </Suspense>
   return <section className="path-view" aria-labelledby="path-title">
     {!unit && <header className="path-heading">
       <p className="pane-label">One step at a time</p>
@@ -105,6 +115,10 @@ export function PathView({ onPractise, onSession }: {
         <span className="path-card-copy"><strong>{item.title}</strong><span>{item.description}</span><span>{item.signs.length} signs · {stars}/{item.signs.length * 3} stars</span>{coverage.preview && <span>Preview: {coverage.covered} of {coverage.total} signs available</span>}</span>
         <span className="path-state">{{ preview: 'Preview', locked: 'Locked', open: 'Open', passed: stars === item.signs.length * 3 ? 'Mastered' : 'Passed', mastered: stars === item.signs.length * 3 ? 'Mastered' : 'Passed' }[state]}</span>
       </button></li>
-    })}</ol>}
+    })}<li><button className="path-card sentence-entry" data-state={sentencesUnlocked ? 'open' : 'locked'} disabled={!sentencesUnlocked} onClick={() => setDetail('sentence-challenge')}>
+      <span className="path-number" aria-hidden="true">{String(CURRICULUM_UNITS.length + 1).padStart(2, '0')}</span>
+      <span className="path-card-copy"><strong>Sentence challenge</strong><span>{SENTENCE_EXPERIMENTAL_LABEL}</span><span>{sentencesUnlocked ? 'Watch, try, then practise from the dataset label.' : `Pass ${lastUnit?.title ?? 'the earlier units'} to open this challenge.`}</span></span>
+      <span className="path-state">{sentencesUnlocked ? 'Open' : 'Locked'}</span>
+    </button></li></ol>}
   </section>
 }
