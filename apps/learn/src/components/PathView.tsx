@@ -103,7 +103,7 @@ export function PathView({ onPractise, onSession }: {
       return <li key={item.id}><button className="path-card" data-state={state} onClick={() => { setDetail(item.id); setPreview(null); setNotice('') }}>
         <span className="path-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
         <span className="path-card-copy"><strong>{item.title}</strong><span>{item.description}</span><span>{item.signs.length} signs · {stars}/{item.signs.length * 3} stars</span>{coverage.preview && <span>Preview: {coverage.covered} of {coverage.total} signs available</span>}</span>
-        <span className="path-state">{{ preview: 'Preview', locked: 'Locked', open: 'Open', passed: 'Passed', mastered: 'Mastered' }[state]}</span>
+        <span className="path-state">{{ preview: 'Preview', locked: 'Locked', open: 'Open', passed: stars === item.signs.length * 3 ? 'Mastered' : 'Passed', mastered: stars === item.signs.length * 3 ? 'Mastered' : 'Passed' }[state]}</span>
       </button></li>
     })}</ol>}
   </section>

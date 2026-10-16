@@ -83,11 +83,11 @@ test('manual stop revokes return intent and Watch also releases the stream', asy
   await expect.poll(() => page.evaluate(() => window.cameraStreams.flatMap(stream => stream.getTracks()).every(track => track.readyState === 'ended'))).toBe(true)
 })
 
-test('hover guidance stays off on a touch tablet', async ({ browser }) => {
-  const context = await browser.newContext({ viewport: { width: 1024, height: 768 }, isMobile: true, hasTouch: true })
+test('hover guidance stays off on a touch tablet', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ baseURL, viewport: { width: 1024, height: 768 }, isMobile: true, hasTouch: true })
   const page = await context.newPage()
   await page.addInitScript(() => sessionStorage.setItem('suvana.learn.entered', '1'))
-  await page.goto('http://localhost:5194/learn/')
+  await page.goto('./')
   expect(await page.evaluate(() => matchMedia('(hover: hover)').matches)).toBe(false)
   await expect(page.locator('.practice-hover-hint')).not.toBeVisible()
   await context.close()

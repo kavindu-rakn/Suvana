@@ -950,6 +950,7 @@ export function PracticeView({
                     videoWidth={reference.videoWidth}
                     videoHeight={reference.videoHeight}
                     colorOverride="#e6eeec"
+                    fitToFrame={watching && window.innerWidth < 768}
                     autoSpeedUp={!watching}
                   />
                 ) : refFailed ? (

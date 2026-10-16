@@ -581,7 +581,7 @@ export function ProgressView({
             {CURRICULUM_UNITS.map(unit => {
               const earned = unit.signs.reduce((sum, gloss) => sum + starsFor(gloss, attempts), 0)
               const state = unit.status === 'approved' ? unitState(unit, approvedUnits, attempts) : 'proposed'
-              const labels = { proposed: 'Plan preview', locked: 'Later', open: 'Ready', passed: 'Finished', mastered: 'Mastered' }
+              const labels = { proposed: 'Plan preview', locked: 'Later', open: 'Ready', passed: earned === unit.signs.length * 3 ? 'Mastered' : 'Passed', mastered: earned === unit.signs.length * 3 ? 'Mastered' : 'Passed' }
               return <li key={unit.id}>
                 <div><strong>{unit.title}</strong><span>{unit.signs.length} signs · {labels[state]}</span></div>
                 <span>{earned}/{unit.signs.length * 3} stars</span>
@@ -603,7 +603,7 @@ export function ProgressView({
           <p>85–100: {band(85).label}. 60–84: {band(60).label}. Below 60: {band(0).label}.</p>
           <p>In Try, {TRY_FIRST_STAR} earns one star and {TRY_SECOND_STAR} earns two. After two stars, Recall (try from memory) can earn a third with a score of {RECALL_THIRD_STAR} or more, without showing the sign first.</p>
           <p>Finish a unit by earning at least one star on each sign. Stars are match rewards. They do not prove that a sign is correct.</p>
-          <p>The match history estimate uses your scores, with newer tries counting more. Mastered means at least three tries and an estimate of 85 or more. It is a label for your match history.</p>
+          <p>The match history estimate uses your scores, with newer tries counting more. For an individual sign, Mastered means at least three tries and an estimate of 85 or more. It is a label for your match history. A unit's Mastered badge means every star is earned.</p>
           <p>Do {DAILY_GOAL} scored tries in a day to meet your goal. Your goal streak counts days in a row when you met that goal.</p>
         </details>
       </section>
