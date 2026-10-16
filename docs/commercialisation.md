@@ -24,7 +24,7 @@ Suvana is one brand over four modules, each owned by a team member:
 
 | Module | Owner | What it does | Where it runs |
 |---|---|---|---|
-| Learn | kvn | Practise named SSL signs; each attempt gets a 0-100 match score against one signer's reference, short tips and a side-by-side replay | In the browser; hand landmarks computed on the device |
+| Learn | kvn | Practise named SSL signs; each attempt gets a 0-100 match score against one signer's reference, short tips, a side-by-side replay, and finger labels for 22 signs (L-33) | In the browser; hand landmarks computed on the device |
 | Recognize | Lahiru | Recognises signs from the camera and speaks them in Sinhala | Camera frames go to a server (Railway Hobby from 18 Oct) |
 | Communicate | Lithira | Accounts; speech or text to sign with an avatar | Next.js app; MongoDB Atlas and Cloudinary on kvn's accounts; speech service on kvn's laptop |
 | Alerts | Karindra | Sound awareness on an Android phone | On the phone, offline after installation (APK v1.0.0) |
@@ -43,11 +43,13 @@ From `docs/plan/02-learn-vision.md` section 6:
    partial.) It grades a specified sign; it does not recognise signs.
 2. Explainable feedback read from the measured comparison: a missing hand,
    a hand path that differs, signing too fast or too slow, and a replay of the
-   take beside the reference that pauses where they differ most. Per-finger
-   corrections are computed but **not shown**: a same-sign vs different-sign
-   check found that a correct take's finger deviations overlap a wrong sign's
-   (D-A15, `fingerStates.calibration.test.ts`, L-30 handoff). Do not claim
-   per-finger feedback (02-learn-vision.md section 6 item 2 is out of date).
+   take beside the reference that pauses where they differ most. With L-33
+   (adopted by kvn 16 Oct), the 22 Path signs with fitted per-sign cut-offs
+   also show each finger as Correct, Almost or Wrong; other signs show no
+   finger labels. Say "finger feedback for signs with enough recordings",
+   never "for every sign". Its figures come from one signer's recordings,
+   not learner accuracy; quote them only with the wording rules in
+   `docs/plan/handoffs/L-33.md`.
 3. Learn is on-device: landmarks are computed in the browser and no video is
    uploaded. Median scoring time is 1.8 ms on the measured machine.
 4. Built on open SSL corpora, with per-file licence provenance enforced by a
@@ -106,7 +108,9 @@ document matches it; no prices are added (DN-15).
 
 So 360 of the 501 single-sign references are non-commercial. While any
 `yohan_*` file is served, Suvana cannot be commercialised
-(`apps/learn/public/references/LICENSES.md`).
+(`apps/learn/public/references/LICENSES.md`). The finger labels added by
+L-33 are fitted to `yohan_*` references only, so a CC0-only edition has no
+finger labels (L-33 handoff).
 
 ### 4.2 The `cc0` build is not a commercial edition
 

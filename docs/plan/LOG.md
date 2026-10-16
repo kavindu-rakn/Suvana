@@ -858,3 +858,11 @@ Rules:
 - Held until the result: the copy fix for the landing page's per-finger lines (Hero.tsx subline and the "Joint-Level DTW Feedback" card), on Suvana and learn-ssl-module.
 - kvn sends the L-33 brief to the Learn window.
 - Board: L-33 added (codex, 17 Oct, todo).
+
+### 2026-10-17 00:10 | claude-code-thesis | T-07 follow-up: L-33 finger labels
+- What: done. docs/commercialisation.md no longer says "do not claim per-finger feedback": it says the 22 Path signs with fitted cut-offs show Correct/Almost/Wrong finger labels (L-33, adopted by kvn 16 Oct), other signs none, wording "finger feedback for signs with enough recordings", figures only under handoffs/L-33.md's rules; and the labels are fitted to yohan_* (NC) references only, so a CC0-only edition has none.
+- Branch @ sha: agent/claude/T-07-l33-finger-labels (final SHA in git log), from origin/main 430e8c7; merge with or after integration/2026-10-16e.
+- Gates: sync guard 182; brand check passed; docs only.
+- Screenshots: n/a.
+- Needs kvn: merge after integration/2026-10-16e. Thesis Ch1/4/5 drafts (outside the repo) are flagged and get the L-33 text in the 19 Oct T-02 refresh.
+- Next: T-02 refresh 19 Oct; T-03 and L-28 20 Oct.
