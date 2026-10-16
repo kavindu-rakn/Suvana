@@ -1331,7 +1331,7 @@
       "L-12",
       "K-05"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-11-path",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1511,7 +1511,7 @@
       "L-12",
       "L-13"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-16a-watch-try",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1542,7 +1542,7 @@
     "deps": [
       "L-16a"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-16b-recall",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1658,7 +1658,7 @@
     "deps": [
       "L-10"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-20-licence-mode",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1692,7 +1692,7 @@
       "L-17",
       "L-18"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-21-replay",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1827,7 +1827,7 @@
     "deps": [
       "L-11"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-24-cta-complete",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1890,7 +1890,7 @@
       "L-23",
       "L-25"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-26-polish",
     "r26_port": "yes",
     "screenshots": "yes",
@@ -1920,7 +1920,7 @@
       "L-04",
       "L-16b"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/L-27-camera-off",
     "r26_port": "yes",
     "screenshots": "no",
@@ -2426,7 +2426,7 @@
     "deps": [
       "I-04"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/I-08-recognition-container",
     "r26_port": "no",
     "screenshots": "yes",
@@ -2452,7 +2452,7 @@
     "day": "2026-10-19",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/I-09-speech-container",
     "r26_port": "no",
     "screenshots": "no",
