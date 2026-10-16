@@ -1,5 +1,6 @@
 import type { RecordingMeta, SignRecording } from '../vision/types'
 import { withAssetVersion } from '../app/assetVersion'
+import { isSentenceReference } from '../data/sentences'
 
 /**
  * Bundled reference recordings ship with the app in public/references/.
@@ -43,6 +44,7 @@ export function contentCoverage(signs: readonly string[], index: RecordingMeta[]
 // Module-level, so the four views share one request no matter how many mount
 // concurrently or how often the learner switches tabs.
 let indexPromise: Promise<RecordingMeta[]> | null = null
+let singleSignIndexPromise: Promise<RecordingMeta[]> | null = null
 
 /**
  * The on-disk index shape. Provenance fields that are constant within a corpus
@@ -74,7 +76,7 @@ function unpack(raw: PackedIndex | RecordingMeta[]): RecordingMeta[] {
 }
 
 /** Metadata for every bundled reference. Fetched once per page load. */
-export function loadReferenceIndex(): Promise<RecordingMeta[]> {
+function loadContentIndex(): Promise<RecordingMeta[]> {
   indexPromise ??= fetch(INDEX_URL)
     .then((r) => {
       if (!r.ok) throw new Error(`${r.status} ${r.statusText}`)
@@ -84,10 +86,22 @@ export function loadReferenceIndex(): Promise<RecordingMeta[]> {
       // Allow a retry: a transient failure should not leave the app with an
       // empty corpus for the rest of the session.
       indexPromise = null
+      singleSignIndexPromise = null
       console.error('Could not load the reference index', e)
       return [] as RecordingMeta[]
     })
   return indexPromise
+}
+
+/** Normal browse and recommendations receive isolated signs only. */
+export function loadReferenceIndex(): Promise<RecordingMeta[]> {
+  singleSignIndexPromise ??= loadContentIndex().then(index => index.filter(rec => !isSentenceReference(rec)))
+  return singleSignIndexPromise
+}
+
+/** Separate opt-in data API for L-25; respects the same licence edition. */
+export function loadSentenceReferenceIndex(): Promise<RecordingMeta[]> {
+  return loadContentIndex().then(index => index.filter(isSentenceReference))
 }
 
 /**
@@ -104,7 +118,7 @@ const frameCache = new Map<string, Promise<SignRecording | null>>()
 export function loadReferenceFrames(file: string): Promise<SignRecording | null> {
   // A stale selection must not bypass the filtered index in the CC0 preview.
   if (CONTENT_EDITION === 'cc0') {
-    return loadReferenceIndex().then((index) =>
+    return loadContentIndex().then((index) =>
       index.some((rec) => rec.file === file) ? fetchReferenceFrames(file) : null,
     )
   }

@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { scoreAttempt } from './score'
 import type { SignRecording } from '../vision/types'
+import { SENTENCES } from '../data/sentences'
 
 /**
  * Guards the converted dataset references (tools/convert_references.py).
@@ -43,6 +44,16 @@ const hasReferences = references.length > 0
 const describeRefs = hasReferences ? describe : describe.skip
 
 describeRefs('bundled reference recordings', () => {
+  it('lists every experimental sentence with its original category and CC0 licence', () => {
+    for (const sentence of SENTENCES) {
+      expect(manifest.files).toContain(sentence.file)
+      const raw = JSON.parse(readFileSync(join(REFERENCE_DIR, sentence.file), 'utf8'))
+      expect(raw.sourceCategory).toBe('SSL Sentences')
+      expect(raw.sourceLabel).toBe(sentence.datasetLabel)
+      expect(raw.licence).toBe('CC0-1.0')
+      expect(raw.sourceDataset).toBe('dckahawearachchi/sinhala-sign-language-dataset')
+    }
+  })
   it('are all listed in the manifest the app fetches', () => {
     const onDisk = readdirSync(REFERENCE_DIR)
       .filter((n) => n.endsWith('.json') && n !== 'manifest.json')

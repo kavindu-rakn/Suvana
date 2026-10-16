@@ -3,6 +3,7 @@ import { gzipSync } from 'node:zlib'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import type { RecordingMeta } from '../vision/types'
+import { isSentenceReference } from '../data/sentences'
 
 // Guards the contract between scripts/build-reference-index.mjs and the app:
 // the index is what every view reads instead of 18.5 MB of frames, so if it
@@ -111,7 +112,7 @@ describe.skipIf(!indexExists)('reference index', () => {
 
   it('matches the corpus size the hero advertises to the learner', () => {
     const hero = readFileSync(join(process.cwd(), 'src', 'components', 'Hero.tsx'), 'utf8')
-    const distinctGlosses = new Set(index.map((e) => e.gloss)).size
+    const distinctGlosses = new Set(index.filter(e => !isSentenceReference(e)).map((e) => e.gloss)).size
 
     expect(hero, `hero should advertise ${distinctGlosses}+ signs`).toContain(
       `${distinctGlosses}+`,

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { isSentenceReference } from '../data/sentences'
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { join } from 'node:path'
@@ -130,6 +131,8 @@ describe('L-30 reference-hand classification', () => {
     const index = JSON.parse(readFileSync(join(process.cwd(), 'public/reference-index.json'), 'utf8')) as {
       recordings: Array<{ file: string; hands: 1 | 2 }>
     }
+    // L-30's numeric baseline is the unchanged isolated-sign corpus.
+    index.recordings = index.recordings.filter(meta => !isSentenceReference(meta))
     const refs = index.recordings.map((meta) => JSON.parse(readFileSync(join(process.cwd(), 'public/references', meta.file), 'utf8')) as SignRecording)
     const path = join(L30_EVIDENCE, 'reference-baseline.json')
     const baseline = existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) as Array<{

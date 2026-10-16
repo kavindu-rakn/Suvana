@@ -225,6 +225,18 @@ if (missing.length > 0) {
 // Stable order so the output does not churn between builds.
 entries.sort((a, b) => a.file.localeCompare(b.file))
 
+// K-07's CC0 sentence exports omit optional attribution. Preserve their raw
+// JSON; reuse an existing credit only for the exact same source/dataset/licence.
+for (const entry of entries) {
+  if (!entry.file.startsWith('kaggle_sent_') || entry.attribution != null) continue
+  const credits = new Set(entries.filter(other => other.source === entry.source
+    && other.sourceDataset === entry.sourceDataset && other.licence === entry.licence
+    && typeof other.attribution === 'string' && other.attribution.length > 0)
+    .map(other => other.attribution))
+  if (credits.size !== 1) throw new Error(`No unambiguous existing dataset credit for ${entry.file}`)
+  entry.attribution = [...credits][0]
+}
+
 /**
  * Hoist per-source constants out of the entries.
  *
