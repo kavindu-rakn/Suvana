@@ -881,3 +881,10 @@ Rules:
 - Checks (light): no protected files, brand names or figures in learner text (headings, finger names, D-A12 labels only); hot file PracticeView.tsx touched for prop wiring only, as declared.
 - For kvn's adoption: per-sign false-Wrong rates vary widely (about 5% for HELLO, THANK YOU, HOUSE, GREEN; CHOOSE 4/8); the sign-by-sign mean is 19.5%. Real learners will see more false Wrongs than the signer's own takes. About 1 in 4 correct attempts shows Almost or Wrong somewhere. "Great match" can appear beside a Wrong finger. JANUARY qualifies but shows no labels (the app picks its Kaggle recording).
 - Needs kvn: adopt or reject from .agent-local/review/2026-10-16e/ (integration worktree); if adopted, merge and push, then the landing-page wording follow-up and R-04 port.
+
+### 2026-10-16 23:30 | kvn (recorded by claude-code) | L-33 adopted; finger labels back for 22 signs
+- kvn adopted L-33 as built from the renders in .agent-local/review/2026-10-16e/ (integration worktree) and merged integration/2026-10-16e into main: Correct / Almost / Wrong per finger on the result card for the 22 Path signs with fitted cut-offs; other signs show no finger labels.
+- Evidence (D-A31 bar, held-out takes, one signer, never learner accuracy): false Wrong on 13.24% of correct attempts (bar <=20%; sign-by-sign mean 19.5%); 70.65% of clearly different fingers Wrong (bar >=50%); 40.32% of all different-sign fingers. Reproduced independently by claude-code.
+- Demo: use a sign with few false Wrongs (HELLO, THANK YOU, HOUSE or GREEN).
+- Follow-ups: the landing-page wording (Hero.tsx subline and the "Joint-Level DTW Feedback" card) to say finger feedback covers signs with enough recordings (Learn window, from renders); docs and thesis that say "no per-finger feedback" (02-learn-vision.md, 09-thesis-final.md, docs/commercialisation.md, thesis Ch1 1.4) are now out of date (thesis lane, T-02 refresh, T-03, L-28); R-04 port on 19 Oct.
+- Board: L-33 done.

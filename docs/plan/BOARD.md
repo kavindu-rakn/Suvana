@@ -91,7 +91,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | L-30 | Score one-handed references as one-handed (ignore stray hand labels) | codex | 2026-10-16 | S | - | done | `agent/codex/L-30-stray-hands` | yes | no | - |
 | L-31 | Third scenario from corpus signs (optional, only if kvn approves DN-19) | codex | backlog (earliest 2026-10-19) | M | K-05 | cancelled | `agent/codex/L-31-scenario3` | yes | yes | DN-19 |
 | L-32 | Sequence-from-memory level (only if Lithira's mapper supplies an order) | codex | backlog | M | K-03 | todo | `agent/codex/L-32-sequence` | yes | yes | DN-08 |
-| L-33 | Per-sign finger cut-offs: one time-boxed test; labels return only if they pass the bar | codex | 2026-10-17 | M | L-17, L-30 | todo | `agent/codex/L-33-finger-cutoffs` | yes | yes | - |
+| L-33 | Per-sign finger cut-offs: one time-boxed test; labels return only if they pass the bar | codex | 2026-10-17 | M | L-17, L-30 | done | `agent/codex/L-33-finger-cutoffs` | yes | yes | - |
 | R-00 | M0: manual port of the merged blocker fixes into the R26 working tree | claude-code | 2026-10-14 | S | L-01, L-02, L-04, L-05, L-06, K-01 | done | `none (R26 working tree; never commit)` | no | yes | - |
 | R-01 | Portability refactor: base and Suvana-only code driven by suvana.config.json | codex | 2026-10-14 | M | L-06 | done | `agent/codex/R-01-portability` | yes | yes | DN-01 |
 | R-02 | sync.mjs `port learn --to <R26>` with --check | codex | 2026-10-16 | S | R-01 | done | `agent/codex/R-02-port-command` | no | no | - |
