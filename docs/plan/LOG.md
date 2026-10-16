@@ -845,3 +845,9 @@ Rules:
 - Correction to handoffs/R-03.md: shipped Learn shows no "Focus on" finger chips (only the dev fixtures page has them; worstFingers is logged, not shown). So Learn's landing line "with corrections down to individual fingers" (Hero.tsx subline) and the "Joint-Level DTW Feedback" card ("feedback down to individual fingers") are not true today, on Suvana and on learn-ssl-module (M1). Shipped feedback is the score, timing (too fast or too slow), hand path and the side-by-side replay. The fix is a copy change in the Learn window (kvn adopts from renders), then a port.
 - Noticed: docs/commercialisation.md quotes the old scorer's 74.6%; which figure to report (74.6% before L-30, 75.7% after, same 65.4% baseline) is kvn's open choice for Ch6, and this document should follow it.
 - Needs kvn: merge integration/2026-10-16d and push; then the records patch (T-04 and T-07 done, T-02 in progress, DN-16 decided).
+
+### 2026-10-16 22:20 | kvn (recorded by claude-code) | Thesis lane merged; T-04 and T-07 done; DN-16 recorded
+- kvn merged integration/2026-10-16d into main: the thesis lane's T-04 worked-example test, T-07 commercialisation write-up and T-02 handoff.
+- DN-16 recorded in DECISIONS.md as D-A30: no app screenshots in the final thesis (kvn's answer in chat with the thesis lane, 16 Oct).
+- Still open for kvn: which separation figure the thesis and docs report (74.6% before L-30, 75.7% after, same 65.4% baseline); a root licence file for "open core" (T-07 CHECK); the Learn landing page's per-finger claim (copy fix in the Learn window, adopted from renders).
+- Board: T-04 and T-07 done; T-02 in-progress (refresh on 19 Oct).

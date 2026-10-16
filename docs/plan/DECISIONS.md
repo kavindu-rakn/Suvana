@@ -34,6 +34,7 @@ Only kvn (or a planner session he starts) edits this file, on `main`. If kvn ans
 | D-A27 | 14 Oct | DN-15: open-core Roadmap page with **no prices and no paid offering** (I-06, adopted by kvn from the renders). | kvn |
 | D-A28 | 15 Oct | DN-20: **yes**: a second Claude Code session runs the thesis/docs lane (CC-T) from 17 Oct in `Suvana-wt\claude-thesis`. | kvn |
 | D-A29 | 15 Oct | DN-14 follow-up: kvn rebuilt Alerts under his own Expo account regardless of any later reply from Karindra; the APK is GitHub Release alerts-v1.0.0 (I-12 done). | kvn |
+| D-A30 | 16 Oct | DN-16: **no** app screenshots in the final thesis (kvn in chat with the thesis lane; T-02 removed the screenshot slot from 4.4.5). | kvn |
 | D-A10 | 10 Oct | Upstream changes that alter product behaviour go to kvn before they are taken (e.g. Lithira closing registration was not taken). UI changes are decided from rendered before/after screenshots, desktop and phone. | Suvana CLAUDE.md |
 
 ## B. Plan defaults forced by hard rules (kvn may overturn; agents may not)
@@ -123,7 +124,7 @@ Each has a **needed-by** date (the first task that consumes it). If kvn has not 
 
 ### DN-16: App screenshots in the final thesis? (needed by 19 Oct)
 - Options: none (as in the draft); 2-3 key screens (Path, Recall, replay).
-- Recommendation: **2-3 if adopted by 19 Oct**, captions honest (Hero cards decorative). Status: open.
+- Recommendation: **2-3 if adopted by 19 Oct**, captions honest (Hero cards decorative). Status: decided 16 Oct: no screenshots (D-A30).
 
 ### DN-17: Per-finger feedback form (needed by 13 Oct; L-01)
 - Options: qualitative on/close/off from measured deviation; measured deviation numbers labelled "deviation".

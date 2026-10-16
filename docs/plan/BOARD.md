@@ -27,11 +27,11 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | K-12 | Final demo and thesis submission | kvn | 2026-10-22 | M | T-08, K-11 | todo | `n/a` | no | no | - |
 | K-13 | Record two hand-fixture clips for automated screenshots | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
 | T-01 | Create the final-thesis working copy; the uploaded draft stays untouched | kvn | 2026-10-13 | S | - | done | `n/a` | no | no | - |
-| T-02 | Draft revised Ch1/Ch4/Ch5 text for what was actually built | claude-code-thesis | 2026-10-19 | M | T-01 | todo | `none (writes outside the repo)` | no | no | DN-16 |
+| T-02 | Draft revised Ch1/Ch4/Ch5 text for what was actually built | claude-code-thesis | 2026-10-19 | M | T-01 | in-progress | `none (writes outside the repo)` | no | no | DN-16 |
 | T-03 | Draft Ch6/Ch7/Ch8: objectives table, panel responses, limitations, future work | claude-code-thesis | 2026-10-20 | M | T-02, Q-09, L-13 | todo | `none (writes outside the repo)` | no | no | - |
-| T-04 | Learner-model worked example computed with the real code | claude-code-thesis | 2026-10-17 | S | L-13 | todo | `agent/claude/T-04-worked-example` | yes | no | - |
+| T-04 | Learner-model worked example computed with the real code | claude-code-thesis | 2026-10-17 | S | L-13 | done | `agent/claude/T-04-worked-example` | yes | no | - |
 | T-05 | Figures, placeholders, chart titles, accessibility and Appendix B | kvn | 2026-10-21 | M | T-02, T-03 | todo | `n/a` | no | no | DN-16 |
-| T-07 | Commercialisation write-up (open core, licences, costs, competitors) | claude-code-thesis | 2026-10-19 | S | - | todo | `agent/claude/T-07-commercialisation` | no | no | DN-04, DN-15 |
+| T-07 | Commercialisation write-up (open core, licences, costs, competitors) | claude-code-thesis | 2026-10-19 | S | - | done | `agent/claude/T-07-commercialisation` | no | no | DN-04, DN-15 |
 | T-08 | Turnitin report and final PDF | kvn | 2026-10-22 | M | T-05, T-09 | todo | `n/a` | no | no | - |
 | T-09 | Own-words pass on chapters that will not change | kvn | 2026-10-16 to 2026-10-18 | M | T-01 | todo | `n/a` | no | no | - |
 | D-01 | Deployment smoke script and DEPLOYMENT.md refresh | antigravity | 2026-10-17 | S | L-06 | done | `agent/antigravity/D-01-smoke` | no | no | - |

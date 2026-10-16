@@ -344,7 +344,7 @@
     "deps": [
       "T-01"
     ],
-    "status": "todo",
+    "status": "in-progress",
     "branch": "none (writes outside the repo)",
     "r26_port": "no",
     "screenshots": "no",
@@ -402,7 +402,7 @@
     "deps": [
       "L-13"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/claude/T-04-worked-example",
     "r26_port": "yes",
     "screenshots": "no",
@@ -450,7 +450,7 @@
     "day": "2026-10-19",
     "size": "S",
     "deps": [],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/claude/T-07-commercialisation",
     "r26_port": "no",
     "screenshots": "no",
