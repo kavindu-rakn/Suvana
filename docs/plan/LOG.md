@@ -788,3 +788,11 @@ Rules:
 - Gates: npm@10.9.9 ci Learn/screens; lint zero warnings/errors; Vitest 330 passed, 13 skipped; production build main JS 149.27 kB gzip; full browser suite 64 passed (including two new both-theme phone Recall regressions); sync guard 182; diff check clean.
 - Renders: .agent-local/screens/L-25-notice-layout/index.html; paired Recall at 390x844 and 360x800 plus working chooser renders. Notice no longer covers the chooser; all control hit points and pointer/Enter activation verified. Supplemental 1280x800 Recall PNGs byte-identical. No page errors/overflow. Synthetic unlock/camera fixtures disclosed; screenshots ignored.
 - Handoff: handoffs/L-25-notice-layout.md; r26_port yes. Needs kvn: adopt/reject renders, merge/push and check hosted CI; later R26 milestone port. No agent push, merge, deploy or external messages.
+
+### 2026-10-16 21:30 | claude-code-thesis | T-02 Ch1/Ch4/Ch5 draft (early)
+- What: partial (drafted early; refresh on 19 Oct after 09:00). Thesis\final-source\01-introduction.md, 04-design.md and 05-implementation.md rewritten from the draft sources for what is merged: learning path (53 units, 490 signs), Watch/Try/Recall, stars/goal/streak, tips and replay, capture change without recalibration, two-hand rule, scenarios with Recall mode, experimental sentence challenge, Suvana deployment, tests/CI, caching; Q-06/Q-08/Q-09/D-09/D-10/I-14 placeholders. Every change marked CHANGED; README.md explains the folder.
+- Branch @ sha: agent/claude/T-02-thesis-ch1-4-5 (handoff + LOG only; final SHA in git log), from origin/main 75f51ac.
+- Gates: n/a (text outside the repo); self-check: no recognition accuracy, participants or sub-brands; 74.6% only with 65.4%.
+- Screenshots: n/a.
+- Needs kvn: (1) DN-16 app screenshots, open, needed 19 Oct; (2) the 1.4 claim is narrowed because shipped Learn hides per-finger corrections (D-A15); (3) for Ch6: L-30 moved separation from 74.6% to 75.7% (same 65.4% baseline; AUC not re-measured), so choose which scorer Ch6 reports. Plan corrections in handoffs/T-02.md (09 sections 2 and 3 out of date on finger states, L-30 and star thresholds).
+- Next: T-02 refresh 19 Oct; T-03 Ch6/7/8 on 20 Oct after Q-09; L-28 Learn docs on 20 Oct.
