@@ -3,12 +3,13 @@ import { CURRICULUM_UNITS } from '../data/curriculum'
 import { glossLabel } from '../data/translations'
 import { listAttempts } from '../learner/attemptLog'
 import type { AttemptLogEntry } from '../learner/attemptLog'
-import { starsFor, unitState } from '../learner/game'
+import { starsFor } from '../learner/game'
+import { pathUnitState } from '../learner/pathContent'
 import { summarizeAll } from '../learner/mastery'
 import { clearSession, startUnitSession } from '../learner/session'
 import type { PracticeSession } from '../learner/session'
 import { listRecordings } from '../storage/recordingStore'
-import { loadReferenceFrames, loadReferenceIndex } from '../storage/bundledReferences'
+import { contentCoverage, loadReferenceFrames, loadReferenceIndex } from '../storage/bundledReferences'
 import { pickReferenceList } from '../storage/references'
 import { safeLoad } from '../storage/safeLoad'
 import { StorageNotice } from '../storage/StorageNotice'
@@ -23,6 +24,7 @@ export function PathView({ onPractise, onSession }: {
 }) {
   const [attempts, setAttempts] = useState<AttemptLogEntry[]>([])
   const [references, setReferences] = useState<RecordingMeta[]>([])
+  const [contentIndex, setContentIndex] = useState<RecordingMeta[]>([])
   const [locals, setLocals] = useState<SignRecording[]>([])
   const [loading, setLoading] = useState(true)
   const [storageOk, setStorageOk] = useState(true)
@@ -38,7 +40,9 @@ export function PathView({ onPractise, onSession }: {
     void safeLoad(listRecordings, loadReferenceIndex, listAttempts).then(({ data: [local, index, log], storageOk: ok }) => {
       if (cancelled) return
       setLocals(local)
-      setReferences(pickReferenceList([...local.map(toMeta), ...index]))
+      setContentIndex(index)
+      const available = new Set(index.map(rec => rec.gloss))
+      setReferences(pickReferenceList([...local.map(toMeta), ...index]).filter(rec => available.has(rec.gloss)))
       setAttempts(log)
       setStorageOk(ok)
       setLoading(false)
@@ -46,8 +50,9 @@ export function PathView({ onPractise, onSession }: {
     return () => { cancelled = true }
   }, [])
   const unit = CURRICULUM_UNITS.find(item => item.id === detail)
-  const available = new Set(references.map(rec => rec.gloss))
-  const ready = (signs: string[]) => signs.every(gloss => available.has(gloss))
+  const available = new Set(contentIndex.map(rec => rec.gloss))
+  const state = unit ? pathUnitState(unit, CURRICULUM_UNITS, attempts, contentIndex) : null
+  const coverage = unit ? contentCoverage(unit.signs, contentIndex) : null
   const watch = async (gloss: string) => {
     const request = ++previewRequest.current
     setPreview(null)
@@ -70,14 +75,15 @@ export function PathView({ onPractise, onSession }: {
     {unit ? <div className="path-detail">
       <button className="btn ghost" onClick={() => { previewRequest.current++; setDetail(null); setPreview(null); setNotice('') }}>Back to path</button>
       <h2 id="path-title">{unit.title}</h2><p>{unit.description}</p>
-      {unitState(unit, CURRICULUM_UNITS, attempts) === 'locked' && <p>Pass the earlier units to practise this one. You can watch its signs now.</p>}
-      <button className="btn" disabled={unitState(unit, CURRICULUM_UNITS, attempts) === 'locked' || !ready(unit.signs) || unit.status !== 'approved'} onClick={() => {
-        onSession(startUnitSession(unit, summarizeAll(references.map(rec => rec.gloss), attempts)))
+      {coverage?.preview && <p>Preview: {coverage.covered} of {coverage.total} signs available</p>}
+      {state === 'locked' && <p>Pass the earlier units to practise this one. You can watch its signs now.</p>}
+      <button className="btn" disabled={state === 'locked' || state === 'preview'} onClick={() => {
+        onSession(startUnitSession(unit, summarizeAll(contentIndex.map(rec => rec.gloss), attempts)))
       }}>Practise this unit</button>
       <p className="path-note">Up to 8 signs, with reviews mixed in. One scored try finishes each step.</p>
       <ul className="path-signs">{unit.signs.map(gloss => {
         const stars = starsFor(gloss, attempts)
-        const locked = unitState(unit, CURRICULUM_UNITS, attempts) === 'locked'
+        const locked = state === 'locked'
         return <li key={gloss}>
           <div><strong>{glossLabel(gloss)}</strong><span aria-label={`${stars} of 3 stars`}>{'★'.repeat(stars)}{'☆'.repeat(3 - stars)}</span></div>
           <div className="path-actions">
@@ -91,12 +97,13 @@ export function PathView({ onPractise, onSession }: {
         <h3 ref={previewTitle} tabIndex={-1}>{glossLabel(preview.gloss)}</h3><SkeletonPlayer frames={preview.frames} videoWidth={preview.videoWidth} videoHeight={preview.videoHeight} />
       </section>}
     </div> : <ol className="path-units">{CURRICULUM_UNITS.map((item, index) => {
-      const state = unitState(item, CURRICULUM_UNITS, attempts)
+      const state = pathUnitState(item, CURRICULUM_UNITS, attempts, contentIndex)
+      const coverage = contentCoverage(item.signs, contentIndex)
       const stars = item.signs.reduce((sum, gloss) => sum + starsFor(gloss, attempts), 0)
       return <li key={item.id}><button className="path-card" data-state={state} onClick={() => { setDetail(item.id); setPreview(null); setNotice('') }}>
         <span className="path-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-        <span className="path-card-copy"><strong>{item.title}</strong><span>{item.description}</span><span>{item.signs.length} signs · {stars}/{item.signs.length * 3} stars</span></span>
-        <span className="path-state">{!ready(item.signs) || item.status !== 'approved' ? 'Preview' : { locked: 'Locked', open: 'Open', passed: 'Passed', mastered: 'Mastered' }[state]}</span>
+        <span className="path-card-copy"><strong>{item.title}</strong><span>{item.description}</span><span>{item.signs.length} signs · {stars}/{item.signs.length * 3} stars</span>{coverage.preview && <span>Preview: {coverage.covered} of {coverage.total} signs available</span>}</span>
+        <span className="path-state">{{ preview: 'Preview', locked: 'Locked', open: 'Open', passed: 'Passed', mastered: 'Mastered' }[state]}</span>
       </button></li>
     })}</ol>}
   </section>

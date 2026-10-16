@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Tab } from '../app/tabs'
 import { ThemeToggle } from './ThemeToggle'
+import { ContentNotice } from './Attribution'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
@@ -212,6 +213,7 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
         <p className="aww-subline">
           Point your camera and sign. Every attempt is scored against recordings of real signers — with corrections down to individual fingers.
         </p>
+        <ContentNotice />
 
         <div className="aww-hero-cta">
           <button className="btn massive" disabled={starting} onClick={() => void startLearning()}>{starting ? 'Loading your first sign…' : 'Start practising'}</button>
