@@ -683,3 +683,8 @@ Rules:
 - Board: L-11, L-16a, L-24, L-16b, L-27, L-21, L-26, I-08, I-09 and L-20 done.
 - Still open from these tasks: kvn's phone checks on the deployed Learn (iPhone camera after app switch with L-27; landing to first Record under 30 s for L-24); the learner-facing NC notice and Path Preview from handoffs/L-20.md (Learn window); I-08's proposed sync declarations (first window); I-09 emotion path (ASR-only unless Lithira sends his classifier); the three small points in the review page (focus outline on "Nice work!", Watch zoom on phones, "Mastered" beside 14/21 stars), kvn to decide.
 - Next for claude-code: R-03, the M1 port of Learn into the R26 working tree (17 Oct).
+### 2026-10-16 | codex | I-08-sync-guard
+- What: applied I-08's exact merged sync proposal: two coupling entries, two Suvana-only paths, four guards. Existing declarations and synced/recorded retained.
+- Branch: agent/codex/I-08-sync-guard, fresh origin/main 72cd406; explicitly requested by kvn.
+- Gates: sync guard 181 passed; parsed manifest equals HEAD plus I-08's three proposal blocks; diff check passed. Runtime/assets unchanged; screenshots n/a; r26_port no.
+- Needs kvn: review and merge before stacked Q-03. No push, merge or deployment. L-22b still waits for K-07.

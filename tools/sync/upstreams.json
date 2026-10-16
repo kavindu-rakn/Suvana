@@ -131,13 +131,16 @@
       "policy": "DN-18: take source model/recognizer/server code and tests only. Keep Suvana HTTP/WebSocket contracts, trained runtime model and label order. Skip extra models, training artefacts/scripts/notebooks and unverified reports; out-of-bound main/utils changes are proposed in I-04 handoff.",
       "couplings": {
         "webapp/assistant.py": "five user-visible strings rebranded plus a system-prompt rule (1968cf2); take upstream logic, re-apply the strings",
-        "README.md": "Lahiru's '(Unit Testing)' label kept as a comment above a pytest command that still runs",
+        "README.md": "Keep the existing pytest/local setup correction plus I-08's CPU container, network boundary, theme and synthetic WebSocket benchmark instructions.",
+        "webapp/server.py": "I-08 adds labels, backend and model filename to /api/info while preserving the original fields and upstream JPEG WebSocket protocol.",
         ".gitignore": "anchored data rules so labels.npy / sinhala_labels.json can be committed (c5b5b3b)",
         "requirements.txt": "Suvana pins fastapi 0.103.2 / uvicorn 0.23.2 / websockets 11.0.3 (8ecb443, reason not recorded); upstream and Lahiru's venv run 0.141.1 / 0.52.1 / 16.1.1 — verify the Docker build before converging"
       },
       "suvanaOnly": {
         "DEPLOY-SUVANA.md": "runbook for the recognize. subdomain",
         "Dockerfile": "container build for the service",
+        "requirements-runtime.txt": "I-08 pinned CPU HTTP/WebSocket dependencies; full upstream requirements.txt remains for desktop/training.",
+        "tools/benchmark_websocket.py": "I-08 reproducible local 50-window backend comparison and additive API/model class-count checks; synthetic blank JPEGs, no signer/accuracy claim.",
         ".dockerignore": "container build context",
         "data/processed/labels.npy": "label order matching the trained model's outputs — never regenerate from the corpus",
         "data/processed/metadata.json": "companion to labels.npy",
@@ -203,6 +206,27 @@
             "self.engine.predict_class(input_sequence, self.confidence_threshold)"
           ],
           "why": "Server-supplied inference engines are reused by each stream"
+        },
+        {
+          "file": "Dockerfile",
+          "has": ["requirements-runtime.txt", "pip check", "COPY --chown=user data/processed/labels.npy", "COPY --chown=user models/saved_models/best_model.h5", "HEALTHCHECK"],
+          "lacks": ["COPY --chown=user . ."],
+          "why": "I-08 preserves explicit runtime contents and the 171-class health check"
+        },
+        {
+          "file": "requirements-runtime.txt",
+          "has": ["tensorflow-cpu==2.13.0", "mediapipe==0.10.7", "fastapi==0.103.2", "pydantic==1.10.13", "websockets==11.0.3"],
+          "why": "I-08 uses the tested CPU serving stack without replacing upstream training requirements"
+        },
+        {
+          "file": "webapp/server.py",
+          "has": ["\"labels\": unique_labels", "\"backend\": getattr(fast_engine", "\"model\": Path(config['model']['model_path']).name"],
+          "why": "I-08 additive service diagnostics survive upstream merges"
+        },
+        {
+          "file": "webapp/static/index.html",
+          "has": ["Back to Suvana", "https://suvana-shell.vercel.app/", "document.documentElement.dataset.theme", ":root[data-theme=\"light\"]"],
+          "why": "I-08 return navigation and shell-selected theme survive frontend syncs"
         }
       ]
     },
