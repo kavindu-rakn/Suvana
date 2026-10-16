@@ -3,11 +3,11 @@ started 2026-10-16 by codex (Asia/Colombo)
 
 Branch: agent/codex/learn-small-fixes
 Base: origin/main b0ce3d408cd88de2fa7ca17d9b454d04c4b6e710 (fresh from 34f43cc, metadata-only rebase)
-Status: review (fixes ready; badge choice pending kvn)
+Status: review (all fixes ready; kvn selected badge option B in chat)
 r26_port: yes
 
 kvn explicitly authorized heading focus styling, phone Watch's initial framing,
-two rendered unit-badge choices (selection pending), and the camera E2E base URL
+two rendered unit-badge choices (B subsequently selected), and the camera E2E base URL
 fix. This covers the necessary index.css/PracticeView.tsx edits. Game rules,
 curriculum, scoring and SSL content stay unchanged. L-25 waits for L-22b.
 
@@ -29,7 +29,7 @@ curriculum, scoring and SSL content stay unchanged. L-25 waits for L-22b.
   session-complete E2E to check retained heading focus/no outline, then Tab to
   Keep practising with a visible keyboard outline.
 
-### Badge options (not adopted)
+### Badge options (kvn selected B on 16 Oct)
 - A: rename the unit's existing mastered badge to **Well practised**. The
   separate match-history estimate still determines that badge; 14/21 and 21/21
   can both show Well practised.
@@ -39,10 +39,11 @@ curriculum, scoring and SSL content stay unchanged. L-25 waits for L-22b.
   precedence. Individual-sign mastery labels and their existing explanation
   in Progress remain separate from the unit badge.
 - Both were compiled from real temporary source patches in PathView.tsx and
-  ProgressView.tsx (unit plan only), rendered, and then restored. Neither is
-  selected in committed production code while kvn chooses. Exact patches below.
+  ProgressView.tsx (unit plan only), rendered, and then restored for the first
+  increment ec7e5f8. kvn then selected B in chat; its exact badge patch is now
+  applied in the second increment, with a matching Progress explainer sentence.
 
-### Gates and evidence
+### First increment gates and evidence (ec7e5f8)
 - Node v24.12.0; npm@10.9.9 ci --offline passed in Learn and tools/screens using
   the normal user cache; no dependency/lockfile changes.
 - Learn lint: zero warnings/errors. Vitest: 320 passed, 13 skipped, 44 passed
@@ -73,8 +74,8 @@ curriculum, scoring and SSL content stay unchanged. L-25 waits for L-22b.
 - Screenshots, preview builds, patches and test output stay ignored.
 
 ### Remaining
-- kvn chooses A or B from rendered screenshots, then the exact selected patch
-  can be applied/tested as the next increment. No guessed choice adopted.
+- Badge choice resolved: B, as explicitly selected by kvn from the rendered
+  options. Final source was rendered again at all three requested sizes.
 - kvn reviews/merges; agents did not push, merge, deploy or message anyone.
   r26_port: yes (later milestone from merged main).
 - Plan correction: direct chat authorizes this small-fixes branch and its hot
@@ -90,7 +91,29 @@ Fix Learn heading focus and phone Watch framing
 - Start phone Watch zoomed and preserve the learner's framing toggle
 - Use configured camera-test URLs and hand off two rendered badge options
 
-### Exact unadopted badge patches
+### Second increment: selected B
+- kvn explicitly selected "B — Passed until all stars, then Mastered" in chat.
+- Applied the reviewed two-line badge patch to Path/Progress unit rows. Added
+  one explainer sentence distinguishing unit stars from individual-sign match
+  history. No game/scoring/mastery/curriculum or unlock logic changed.
+- Added unit-badge.spec.ts: 14/21 stars with internal mastered state displays
+  Passed; adding valid 60-score unrevealed Recalls yields 21/21 and displays
+  Mastered even though the history estimate drops to internal passed. The next
+  unit stays open in both cases. Checks both Path and Progress.
+- Final source renders: after-*-badge-selected-B.png and
+  after-*-progress-selected-B.png at 1280x800, 390x844, 360x800; refreshed
+  after-*-all-stars-B.png at 21/21. Captures remain explicitly synthetic
+  progress, with actual corpus references for Watch. Same contact sheet.
+- Learn lint zero warnings/errors; Vitest 320 passed, 13 skipped; final build
+  150.19 kB gzip; sync guard 181 passed; diff check clean.
+- Final full Playwright suite: 52 passed on configured port 5197. Additional
+  before/after unit-explainer renders at all three sizes show the clarified copy.
+- Commit message (second increment): Apply the approved star-based unit badge labels
+  - Show Passed until all unit stars are earned, then Mastered
+  - Clarify unit badges and preserve individual mastery and unlock rules
+  - Verify both badge transitions and refresh all three viewport renders
+
+### Reviewed badge patches (A unadopted; B applied)
 
 Option A:
 

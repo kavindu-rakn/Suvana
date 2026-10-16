@@ -726,3 +726,11 @@ Rules:
 - Badge choice pending: A shows Well practised; B shows Passed until all stars then Mastered. Both source-built options rendered on Path and Progress, with 14/21 and 21/21-star fixtures; exact unadopted patches in handoffs/learn-small-fixes.md. Neither option selected in production while kvn chooses.
 - Needs kvn: choose A/B from the renders, then review/merge the branch. No push/merge/deploy. r26_port yes at a later milestone. Plan correction: direct chat authorizes these hot-file fixes; board/decision files untouched.
 - Next: L-22b is in the first Codex window after K-07; L-25 waits for it to land.
+
+### 2026-10-16 | codex | Learn small fixes: kvn selects badge B
+- Decision: kvn selected B in chat after rendered comparison: Passed until all stars, then Mastered.
+- What: applied the reviewed label patch in Path and Progress; clarified the separate individual-sign mastery explanation. No star/mastery/game/scoring/unlock rules changed.
+- Branch: agent/codex/learn-small-fixes, second increment after ec7e5f8 (final SHA in git log).
+- Gates: lint zero warnings/errors; Vitest 320 passed, 13 skipped; final build 150.19 kB gzip; full Playwright 52 passed on configured port 5197; sync guard 181; diff check clean. New regression proves internal mastered at 14/21 displays Passed, internal passed at 21/21 displays Mastered, and successors still unlock under existing rules.
+- Renders: .agent-local/screens/learn-small-fixes/index.html refreshed with final selected-B Path/Progress and 21/21 states at 1280x800, 390x844, 360x800; added before/after explanatory copy. Synthetic progress remains disclosed; screenshots ignored.
+- Needs kvn: review/merge the completed branch. No push, merge or deploy. Handoff learn-small-fixes.md updated; r26_port yes. L-25 still waits for L-22b to land.
