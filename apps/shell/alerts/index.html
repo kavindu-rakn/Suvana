@@ -41,7 +41,6 @@
         <nav class="nav-links" aria-label="Page sections">
           <a href="/#modules-wrapper">Modules</a>
           <a href="#install">Install</a>
-          <a href="#connect">Connect</a>
         </nav>
         <div class="nav-right">
           <button id="theme-toggle" class="theme-toggle" type="button"></button>
@@ -61,8 +60,8 @@
             and it can raise an SOS with their location when something goes wrong.
           </p>
           <div class="module-hero-foot">
-            <a class="btn" href="#install">How to install it</a>
-            <span class="badge soon">Android · dev build required</span>
+            <a class="btn" href="https://github.com/kavindu-rakn/Suvana/releases/download/alerts-v1.0.0/suvana-alerts-1.0.0.apk" aria-label="Download Suvana Alerts for Android (APK, 267 MB)">Download Android APK</a>
+            <span class="badge">Android only · 267 MB</span>
           </div>
         </div>
         <div class="module-hero-art" aria-hidden="true">
@@ -110,7 +109,7 @@
                 understood in a shop, a clinic or a classroom.
               </p>
               <ul class="alerts-points">
-                <li>Speech recognition on the device</li>
+                <li>Offline captions depend on your device and installed language pack</li>
                 <li>Sized for reading at arm's length, not for a transcript archive</li>
                 <li>Hands the microphone back to Listen the moment it is closed</li>
               </ul>
@@ -137,91 +136,39 @@
         <div class="alerts-container">
           <div class="alerts-intro">
             <p class="kicker">Installing</p>
-            <h2>Why there is no download button.</h2>
+            <h2>Install Alerts on Android.</h2>
             <p>
-              Alerts uses three custom native modules — the ONNX inference runtime,
-              on-device speech recognition, and a foreground service that keeps
-              listening with the screen off. <strong>Expo Go cannot load any of
-              them</strong>, so the app has to be built into its own APK first.
-              That is a real constraint, not a missing feature: the same
-              capabilities are what make it useful.
+              Download the APK and install it on your phone. No computer is needed.
+              Sound awareness works offline after installation. Live captions may
+              need internet unless on-device recognition is enabled with an
+              offline language pack.
             </p>
           </div>
 
           <ol class="alerts-steps">
             <li>
-              <h3>Build the dev client once</h3>
+              <h3>Download Suvana Alerts</h3>
               <p>
-                From <code>apps/alerts</code>, with an Android device connected and
-                USB debugging on. This compiles the native modules and installs the
-                app.
+                Open this page on your Android phone and download the APK.
+                Version 1.0.0 · 267 MB · Android only.
               </p>
-              <pre><code>npx expo run:android</code></pre>
-              <p class="alerts-fine">
-                A cloud build works too — <code>eas build --profile development
-                --platform android</code> — and gives you an APK to sideload
-                instead.
+              <a class="btn" href="https://github.com/kavindu-rakn/Suvana/releases/download/alerts-v1.0.0/suvana-alerts-1.0.0.apk" aria-label="Download Suvana Alerts for Android (APK, 267 MB)">Download Android APK</a>
+            </li>
+            <li>
+              <h3>Install on your phone</h3>
+              <p>
+                Open the downloaded file. If Android asks, allow your browser to
+                install apps, then tap Install.
               </p>
             </li>
             <li>
-              <h3>Start the bundler</h3>
+              <h3>Open Alerts and start listening</h3>
               <p>
-                Afterwards, the installed app only needs the JavaScript bundle, so
-                day-to-day it is one command. The phone and this computer must be on
-                the same network.
-              </p>
-              <pre><code>npx expo start --dev-client</code></pre>
-            </li>
-            <li>
-              <h3>Point the app at this machine</h3>
-              <p>
-                Scan the code below with the installed Suvana app, or open the link
-                on the phone.
+                Allow microphone access for sound awareness. The app listens on
+                your phone and works without a computer or internet connection.
               </p>
             </li>
           </ol>
-        </div>
-      </section>
-
-      <section class="alerts-connect" id="connect">
-        <div class="alerts-container">
-          <div class="alerts-intro">
-            <p class="kicker">Connect</p>
-            <h2>Pair a phone with this machine.</h2>
-            <p>
-              Expo prints a URL like <code>exp://192.168.1.5:8081</code> when the
-              bundler starts. Paste it — or just the IP address — and the code is
-              generated here in the browser.
-            </p>
-          </div>
-
-          <div class="connect-panel">
-            <div class="connect-form">
-              <label class="connect-field">
-                <span>Bundler address</span>
-                <input
-                  type="text"
-                  id="metro-url"
-                  autocomplete="off"
-                  spellcheck="false"
-                  placeholder="exp://192.168.1.5:8081"
-                />
-              </label>
-              <p class="connect-status" id="connect-status">
-                Waiting for an address.
-              </p>
-              <p class="alerts-fine">
-                Nothing is sent anywhere — the code is drawn in this page from the
-                address you type.
-              </p>
-            </div>
-            <div class="connect-qr">
-              <div class="qr-frame" id="qr-frame" aria-live="polite">
-                <p class="qr-empty">The code appears here</p>
-              </div>
-              <a class="qr-link" id="qr-link" href="#" hidden>Open on this device</a>
-            </div>
-          </div>
         </div>
       </section>
     </main>
