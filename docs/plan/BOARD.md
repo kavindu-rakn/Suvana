@@ -7,7 +7,7 @@ Status values: `todo`, `in-progress`, `review` (handoff written, waiting for kvn
 Owners: `kvn`; `claude-code` (Claude Code, UI lane); `codex` (OpenAI Codex, logic and platform lane); `antigravity` (Google Antigravity, shell/Communicate/Alerts/tools lane); `claude-code-thesis` (a second Claude Code session for thesis and docs, subject to DN-20).
 Sizes: S < 2 h, M < half a day, L < 1 day. "r26_port: yes" means the change must reach R26 `learn-ssl-module/web` at the next milestone port (07-r26-mirror.md). "screenshots: yes" means desktop 1280x800 and phone 390x844 before/after renders are required, and kvn adopts or rejects from them before merge.
 
-Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 11, codex 41; total 99.
+Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 11, codex 42; total 100.
 
 ## Table
 
@@ -91,6 +91,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | L-30 | Score one-handed references as one-handed (ignore stray hand labels) | codex | 2026-10-16 | S | - | done | `agent/codex/L-30-stray-hands` | yes | no | - |
 | L-31 | Third scenario from corpus signs (optional, only if kvn approves DN-19) | codex | backlog (earliest 2026-10-19) | M | K-05 | cancelled | `agent/codex/L-31-scenario3` | yes | yes | DN-19 |
 | L-32 | Sequence-from-memory level (only if Lithira's mapper supplies an order) | codex | backlog | M | K-03 | todo | `agent/codex/L-32-sequence` | yes | yes | DN-08 |
+| L-33 | Per-sign finger cut-offs: one time-boxed test; labels return only if they pass the bar | codex | 2026-10-17 | M | L-17, L-30 | todo | `agent/codex/L-33-finger-cutoffs` | yes | yes | - |
 | R-00 | M0: manual port of the merged blocker fixes into the R26 working tree | claude-code | 2026-10-14 | S | L-01, L-02, L-04, L-05, L-06, K-01 | done | `none (R26 working tree; never commit)` | no | yes | - |
 | R-01 | Portability refactor: base and Suvana-only code driven by suvana.config.json | codex | 2026-10-14 | M | L-06 | done | `agent/codex/R-01-portability` | yes | yes | DN-01 |
 | R-02 | sync.mjs `port learn --to <R26>` with --check | codex | 2026-10-16 | S | R-01 | done | `agent/codex/R-02-port-command` | no | no | - |
@@ -1116,6 +1117,21 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
   - [ ] Only built if Lithira's mapper output arrives; each sequence cites the mapper output verbatim
   - [ ] 2-3 signs in the given order, each graded on its own; labelled 'order from Communicate's mapper'
   - [ ] If never built, the thesis says the 'set of words' request is only partly answered
+
+### L-33: Per-sign finger cut-offs: one time-boxed test; labels return only if they pass the bar
+
+- **Owner / day / size:** codex / 2026-10-17 / M
+- **Depends on:** L-17, L-30; decisions D-A31
+- **Branch:** `agent/codex/L-33-finger-cutoffs` | **r26_port:** yes | **screenshots:** yes
+- **Why:** Per-finger feedback is one of Learn's novelties, hidden by D-A15 because one global cut-off failed (L-17: 14.5% of different-sign fingers flagged at a 5% false-alarm cut-off; L-30: 17.2%). kvn chose one time-boxed try with per-sign cut-offs against a pass bar set before the run (D-A31).
+- **Files:** `apps/learn/src/scoring/fingerCutoffs.calibration.test.ts`, `apps/learn/src/scoring/fingerCutoffs.ts`, `apps/learn/src/scoring/fingerStates.ts`, `apps/learn/src/components/ScoreBadge.tsx` (Phase 2 only), `apps/learn/src/components/PracticeView.tsx and views.css` (Phase 2 only; hot files, declared in the handoff)
+- **Acceptance:**
+  - [ ] Phase 1 (17 Oct, measurement only): opt-in calibration test reading the corpus in place via CALIBRATION_DIR (never copied, committed or regenerated); the scorer and score values unchanged
+  - [ ] Per-sign, per-finger Wrong and Almost cut-offs from that sign's own same-sign deviations, at percentiles fixed before testing; only signs with at least 8 takes; cross-validated by take
+  - [ ] Reports on held-out takes: false alarms (% of correct attempts with Wrong on any finger, plus per finger and for Almost); catch rate on clearly different fingers, defined from the data only (no hand-written handshape labels); % of all different-sign fingers flagged, for comparison with L-17/L-30; coverage (qualifying signs, how many on the Path); JANUARY Kaggle spot check (not evidence)
+  - [ ] Passes only if false alarms are at most 20% of correct attempts AND the catch rate is at least 50% (D-A31); otherwise finger labels stay hidden and no UI work is done
+  - [ ] Phase 2 (by 18 Oct, only after a pass and kvn's go in chat): Correct/Almost/Wrong (D-A12 wording, no numbers) on the result card for qualifying signs only; cut-offs ship as a generated table with provenance; before/after renders desktop 1280x800 and phone 390x844
+  - [ ] Every number is separation on one signer's recordings, never learner accuracy; no new figures or claims in learner text
 
 ### R-00: M0: manual port of the merged blocker fixes into the R26 working tree
 

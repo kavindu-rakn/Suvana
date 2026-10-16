@@ -35,6 +35,7 @@ Only kvn (or a planner session he starts) edits this file, on `main`. If kvn ans
 | D-A28 | 15 Oct | DN-20: **yes**: a second Claude Code session runs the thesis/docs lane (CC-T) from 17 Oct in `Suvana-wt\claude-thesis`. | kvn |
 | D-A29 | 15 Oct | DN-14 follow-up: kvn rebuilt Alerts under his own Expo account regardless of any later reply from Karindra; the APK is GitHub Release alerts-v1.0.0 (I-12 done). | kvn |
 | D-A30 | 16 Oct | DN-16: **no** app screenshots in the final thesis (kvn in chat with the thesis lane; T-02 removed the screenshot slot from 4.4.5). | kvn |
+| D-A31 | 16 Oct | Per-finger labels (follow-up to D-A15): one time-boxed per-sign cut-off test (L-33, by 18 Oct). Labels return only if, on held-out takes, at most **20% of correct attempts** show a false Wrong and at least **50% of clearly different fingers** are labelled Wrong; then only for the signs that qualify, adopted from renders. The landing page's per-finger wording is held until the result. | kvn |
 | D-A10 | 10 Oct | Upstream changes that alter product behaviour go to kvn before they are taken (e.g. Lithira closing registration was not taken). UI changes are decided from rendered before/after screenshots, desktop and phone. | Suvana CLAUDE.md |
 
 ## B. Plan defaults forced by hard rules (kvn may overturn; agents may not)

@@ -851,3 +851,10 @@ Rules:
 - DN-16 recorded in DECISIONS.md as D-A30: no app screenshots in the final thesis (kvn's answer in chat with the thesis lane, 16 Oct).
 - Still open for kvn: which separation figure the thesis and docs report (74.6% before L-30, 75.7% after, same 65.4% baseline); a root licence file for "open core" (T-07 CHECK); the Learn landing page's per-finger claim (copy fix in the Learn window, adopted from renders).
 - Board: T-04 and T-07 done; T-02 in-progress (refresh on 19 Oct).
+
+### 2026-10-16 22:45 | kvn (recorded by claude-code) | Finger feedback: L-33 test and pass bar (D-A31)
+- Decision (kvn in chat): per-finger feedback is one of Learn's novelties, so instead of dropping it, run one time-boxed test of per-sign, per-finger cut-offs (L-33, Learn window, Phase 1 on 17 Oct, Phase 2 by 18 Oct only after a pass and kvn's go). Pass bar set before the run: at most 20% of correct attempts show a false Wrong, and at least 50% of clearly different fingers are labelled Wrong, on held-out takes (D-A31).
+- Context: one global cut-off failed twice (L-17: 14.5% of different-sign fingers flagged at a 5% false-alarm cut-off; L-30: 17.2%), and L-21 removed the old "Focus on" chips, so shipped Learn shows no finger feedback today. Only 23 of the 33 calibration signs have at least 8 takes, so labels could appear on those signs at most.
+- Held until the result: the copy fix for the landing page's per-finger lines (Hero.tsx subline and the "Joint-Level DTW Feedback" card), on Suvana and learn-ssl-module.
+- kvn sends the L-33 brief to the Learn window.
+- Board: L-33 added (codex, 17 Oct, todo).

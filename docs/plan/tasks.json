@@ -2068,6 +2068,38 @@
     ]
   },
   {
+    "id": "L-33",
+    "title": "Per-sign finger cut-offs: one time-boxed test; labels return only if they pass the bar",
+    "owner": "codex",
+    "day": "2026-10-17",
+    "size": "M",
+    "deps": [
+      "L-17",
+      "L-30"
+    ],
+    "status": "todo",
+    "branch": "agent/codex/L-33-finger-cutoffs",
+    "r26_port": "yes",
+    "screenshots": "yes",
+    "decisions": [],
+    "why": "Per-finger feedback is one of Learn's novelties, hidden by D-A15 because one global cut-off failed (L-17: 14.5% of different-sign fingers flagged at a 5% false-alarm cut-off; L-30: 17.2%). kvn chose one time-boxed try with per-sign cut-offs against a pass bar set before the run (D-A31).",
+    "files": [
+      "apps/learn/src/scoring/fingerCutoffs.calibration.test.ts",
+      "apps/learn/src/scoring/fingerCutoffs.ts",
+      "apps/learn/src/scoring/fingerStates.ts",
+      "apps/learn/src/components/ScoreBadge.tsx (Phase 2 only)",
+      "apps/learn/src/components/PracticeView.tsx and views.css (Phase 2 only; hot files, declared in the handoff)"
+    ],
+    "acceptance": [
+      "Phase 1 (17 Oct, measurement only): opt-in calibration test reading the corpus in place via CALIBRATION_DIR (never copied, committed or regenerated); the scorer and score values unchanged",
+      "Per-sign, per-finger Wrong and Almost cut-offs from that sign's own same-sign deviations, at percentiles fixed before testing; only signs with at least 8 takes; cross-validated by take",
+      "Reports on held-out takes: false alarms (% of correct attempts with Wrong on any finger, plus per finger and for Almost); catch rate on clearly different fingers, defined from the data only (no hand-written handshape labels); % of all different-sign fingers flagged, for comparison with L-17/L-30; coverage (qualifying signs, how many on the Path); JANUARY Kaggle spot check (not evidence)",
+      "Passes only if false alarms are at most 20% of correct attempts AND the catch rate is at least 50% (D-A31); otherwise finger labels stay hidden and no UI work is done",
+      "Phase 2 (by 18 Oct, only after a pass and kvn's go in chat): Correct/Almost/Wrong (D-A12 wording, no numbers) on the result card for qualifying signs only; cut-offs ship as a generated table with provenance; before/after renders desktop 1280x800 and phone 390x844",
+      "Every number is separation on one signer's recordings, never learner accuracy; no new figures or claims in learner text"
+    ]
+  },
+  {
     "id": "R-00",
     "title": "M0: manual port of the merged blocker fixes into the R26 working tree",
     "owner": "claude-code",
