@@ -1,10 +1,15 @@
 import { band } from '../scoring/band'
+import { FINGER_STATE_LABEL } from '../scoring/fingerStates'
+import type { FingerReading } from '../scoring/fingerStates'
+import './ScoreBadge.css'
 
 /** One scored hand: its measured match score, or that it was not seen. */
 export interface HandFeedback {
   handedness: 'Left' | 'Right'
   score: number
   missing?: boolean
+  /** L-33 calibrated readings only; omitted for unsupported references. */
+  fingers?: FingerReading[]
 }
 
 interface ScoreBadgeProps {
@@ -19,9 +24,7 @@ interface ScoreBadgeProps {
    * Measured per-hand scores. Shown only for a two-handed sign (with one hand
    * the hand score is the overall score). Omit it and no hand row is shown.
    *
-   * There are deliberately no per-finger states here: fixed cut-offs on the
-   * per-finger deviation could not tell a correct take from a wrong sign
-   * (fingerStates.ts; kvn 13 Oct), so nothing per finger is shown.
+   * Finger readings are supplied only after the L-33 reference eligibility check.
    */
   hands?: HandFeedback[]
 }
@@ -111,6 +114,29 @@ export function ScoreBadge({
             ))}
           </div>
         </div>
+      )}
+      {hands.some((h) => !h.missing && h.fingers?.length) && (
+        <section className="finger-feedback" aria-label="Finger feedback">
+          <div className="finger-feedback-heading">
+            <h3>Fingers</h3>
+            <p>Compared with this reference</p>
+          </div>
+          <div className="finger-feedback-hands">
+            {hands.filter((h) => !h.missing && h.fingers?.length).map((h) => (
+              <div className="finger-feedback-hand" key={h.handedness}>
+                <h4>{h.handedness} hand</h4>
+                <dl>
+                  {h.fingers!.map(({ finger, state }) => (
+                    <div className="finger-feedback-row" key={finger}>
+                      <dt>{finger === 'pinky' ? 'Little finger' : finger[0].toUpperCase() + finger.slice(1)}</dt>
+                      <dd className="finger-feedback-state" data-state={state}>{FINGER_STATE_LABEL[state]}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
     </div>
   )

@@ -57,6 +57,7 @@ import { cameraIntentTransition, initialCameraIntent } from './practiceCamera'
 import type { PracticeCameraEvent } from './practiceCamera'
 import { ReplayCompare } from './ReplayCompare'
 import { feedbackTip } from './feedbackTips'
+import { calibratedFingerStates } from '../scoring/fingerStates'
 
 const COUNTDOWN_S = 3
 /**
@@ -633,11 +634,11 @@ export function PracticeView({
       handedness: result.mirrored ? (h.handedness === 'Left' ? 'Right' : 'Left') : h.handedness,
       score: h.score,
       missing: h.missing,
+      fingers: reference ? calibratedFingerStates(h, reference) : [],
     }))
-  }, [result])
+  }, [result, reference])
 
-  // D-A15/L-30: finger correctness states and highlights remain unvalidated.
-  // Keep the measured hand scores, without adding per-finger judgments.
+  // L-33/D-A31: calibrated reference IDs only; scores/replay remain unchanged.
   const fadeTips = useMemo(() => selected ? ['improving', 'mastered'].includes(summarizeGloss(selected.gloss, entries).level) : false, [selected, entries])
 
   const progress = useMemo(() => {
