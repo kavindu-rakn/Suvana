@@ -753,3 +753,10 @@ Rules:
 - L-22b done: 19 sentence references in Learn's data, kept out of single-sign flows.
 - Next (kvn's messages to codex): L-25 sentence challenge UI in the Learn window under D-A24; the Alerts download part of I-10 in the first window (Recognize URL waits for D-04).
 - Board: L-22b done.
+
+### 2026-10-16 | codex | I-10 Alerts download portion
+- What: /alerts/ now links kvn's v1.0.0 Android APK from the hero and installation section, labelled Android only and 267 MB. Replaced dev-build/bundler/pairing flow with phone download/install/microphone steps. Sound awareness is offline after installation; captions retain the device/language-pack caveat. Only alerts/index.html changed in product code.
+- Branch: agent/codex/I-10-shell-wiring, refreshed onto merged integration main 83c01dd after kvn's correction, then rebased cleanly to plan-only 7a7f7a0. Explicitly authorized Alerts-only scope early; hosted Recognize URL remains deferred until D-04 on 18 Oct. Full I-10 remains partial; board/tasks/decisions untouched.
+- Gates: npm 10 ci; Shell 44 tests passed; type-check/build passed with Vite's >500 kB chunk warning; brand scan 128 files; sync guard 181; diff check. APK HTTP HEAD returned 200, Android package content type, 267194102 bytes; no APK body downloaded or fresh native install test.
+- Renders: .agent-local/screens/I-10/index.html, 24 before/after PNGs of hero and actual installation section at desktop 1280x800, phone 390x844, narrow 360x800, light/dark. Six browser combinations per phase: no horizontal overflow/page errors; after asserts exact links/copy and keyboard focus. Visually inspected desktop/phone/narrow samples; existing fixed assistant overlap at a lower 360 scroll position noted in handoff, download buttons unobscured. Evidence ignored/uncommitted.
+- Handoff: handoffs/I-10.md; r26_port no; no SSL content/accuracy claims, JS/CSS/config/landing-page changes, deployment, push, merge or messages. Needs kvn: adopt/reject renders, review/merge/push branch and check hosted CI/deployed page; Recognize follow-up after D-04.
