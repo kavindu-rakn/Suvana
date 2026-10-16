@@ -26,7 +26,7 @@ const STEPS = [
   {
     n: '03',
     title: 'Joint-Level DTW Feedback',
-    body: 'Dynamic time warping compares your signing with recordings from real signers. Get a score and tips on timing and hand movement within the 300 ms target, plus a side-by-side replay. Signs with enough recordings also show finger labels.',
+    body: 'Learn compares each attempt with recordings from real signers using dynamic time warping. Get a score and tips on timing and hand movement within the 300 ms target. Watch both tries side by side. Some signs also show finger labels.',
   },
   {
     n: '04',
@@ -211,7 +211,7 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
         </div>
 
         <p className="aww-subline">
-          Every attempt gets a score against recordings from real signers, tips on timing and hand movement, and a side-by-side replay. Signs with enough recordings also show finger labels.
+          Sign to your camera. Get a score against recordings from real signers, tips on timing and hand movement, and a side-by-side replay. Some signs also show finger labels.
         </p>
         <ContentNotice />
 
