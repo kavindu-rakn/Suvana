@@ -1,6 +1,8 @@
 import type { NextAuthConfig } from "next-auth";
 import type { Role } from "@/models/User";
 import { BASE_PATH } from "@/lib/basePath";
+import { accountLink } from "@/lib/accountPaths";
+import { suvanaOrigin } from "@/lib/suvanaOrigin";
 
 /**
  * Edge-safe Auth.js config (no Mongoose/bcrypt here — those need the Node
@@ -16,7 +18,7 @@ import { BASE_PATH } from "@/lib/basePath";
  * in components/Providers.tsx (URLs the client fetches).
  */
 export const authConfig: NextAuthConfig = {
-  pages: { signIn: `${BASE_PATH}/login` },
+  pages: { signIn: "/login" },
   session: { strategy: "jwt" },
   providers: [],
   callbacks: {
@@ -27,8 +29,12 @@ export const authConfig: NextAuthConfig = {
       // Both are "must be signed in". The admin area's *role* check cannot
       // happen here — this runs on the edge runtime, where the database is
       // not reachable — so app/admin/page.tsx re-checks server-side.
-      if (pathname.startsWith("/dashboard")) return isLoggedIn;
-      if (pathname.startsWith("/admin")) return isLoggedIn;
+      if (!isLoggedIn && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"))) {
+        // Auth.js's default NextURL redirect re-applies basePath and supplies
+        // an absolute callback. Use one root account URL and a relative return.
+        const callbackUrl = `${BASE_PATH}${pathname}${request.nextUrl.search}`;
+        return Response.redirect(new URL(accountLink("login", callbackUrl), suvanaOrigin()), 307);
+      }
       return true;
     },
     jwt({ token, user }) {

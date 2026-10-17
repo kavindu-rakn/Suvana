@@ -3,14 +3,13 @@
 import { apiPath } from "@/lib/basePath";
 import { type FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { accountLink, safeCallbackUrl } from "@/lib/accountPaths";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-export function RegisterForm() {
-  const router = useRouter();
+export function RegisterForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
+  const destination = safeCallbackUrl(callbackUrl);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,16 +37,15 @@ export function RegisterForm() {
       }
 
       // Auto sign-in right after successful registration.
-      const signInRes = await signIn("credentials", { email, password, redirect: false });
+      const signInRes = await signIn("credentials", { email, password, redirect: false, redirectTo: destination });
       setLoading(false);
 
-      if (signInRes?.error) {
-        router.push("/login");
+      if (!signInRes || signInRes.error) {
+        window.location.assign(accountLink("login", destination));
         return;
       }
 
-      router.push("/dashboard");
-      router.refresh();
+      window.location.assign(destination);
     } catch {
       setLoading(false);
       setError("Network error. Please try again.");
@@ -98,9 +96,9 @@ export function RegisterForm() {
       </form>
       <p className="mt-6 text-center text-sm text-foreground-muted">
         Already have an account?{" "}
-        <Link href="/login" className="text-accent hover:underline">
+        <a href={accountLink("login", destination)} className="text-accent hover:underline">
           Log in
-        </Link>
+        </a>
       </p>
     </>
   );

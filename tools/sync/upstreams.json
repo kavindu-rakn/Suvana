@@ -10,6 +10,47 @@
       "branch": "main"
     }
   },
+  "guards": [
+    {
+      "file": "apps/shell/vercel.json",
+      "has": [
+        "\"source\": \"/login\"",
+        "\"source\": \"/register\"",
+        "\"type\": \"host\"",
+        "https://suvana.help/:path*",
+        "\"destination\": \"/api/login\""
+      ],
+      "why": "D-A32/D-A33 root account HTML routing and canonical legacy host"
+    },
+    {
+      "file": "apps/shell/src/accountProxy.ts",
+      "has": [
+        "x-suvana-account-origin",
+        "redirect: 'manual'",
+        "process.env.SUVANA_ORIGIN",
+        "'private, no-store'"
+      ],
+      "why": "D-A33 explicit Shell routing marker without relying on normalized Host headers"
+    },
+    {
+      "file": "apps/shell/api/login.ts",
+      "has": [
+        "proxyAccountPage",
+        "runtime: 'edge'",
+        "'login'"
+      ],
+      "why": "D-A33 account-HTML proxy entry point must survive routing maintenance"
+    },
+    {
+      "file": "apps/shell/api/register.ts",
+      "has": [
+        "proxyAccountPage",
+        "runtime: 'edge'",
+        "'register'"
+      ],
+      "why": "D-A33 account-HTML proxy entry point must survive routing maintenance"
+    }
+  ],
   "components": [
     {
       "id": "learn",
@@ -340,12 +381,12 @@
       "recorded": "2026-10-10",
       "policy": "Three-way merge everything. Upstream changes that alter product behaviour come to kvn first: 7948c4a (registration closed) was NOT taken — Lithira closed it because friends with accounts had recorded audio samples, and they have no Suvana access.",
       "couplings": {
-        "app/register/page.tsx": "registration stays open in Suvana (decided 2026-10-10, see policy); Suvana title",
-        "components/Navbar.tsx": "keeps the Sign-up button (see policy); Suvana name, theme toggle, admin link",
-        "next.config.ts": "basePath from NEXT_PUBLIC_BASE_PATH — served under /communicate",
+        "app/register/page.tsx": "D-A32/D-A33 Suvana-only root registration, kept open, server session/host redirects and platform metadata",
+        "components/Navbar.tsx": "D-A32 Suvana-only homepage brand link and root account links; keep theme/admin navigation",
+        "next.config.ts": "basePath from NEXT_PUBLIC_BASE_PATH; D-A33 Suvana-only root account aliases on the direct Communicate host redirect to SUVANA_ORIGIN",
         "components/Providers.tsx": "SessionProvider under the base path",
         "components/LogoutButton.tsx": "sign-out under the base path",
-        "app/register/RegisterForm.tsx": "API calls through apiPath()",
+        "app/register/RegisterForm.tsx": "D-A32 Suvana-only safe return after registration and auto sign-in; registration API retains apiPath()",
         "app/contribute/ContributeClient.tsx": "API calls through apiPath()",
         "app/dashboard/settings/SettingsClient.tsx": "API calls through apiPath()",
         "app/dashboard/sign-model/SignModelClient.tsx": "API calls through apiPath()",
@@ -355,36 +396,46 @@
         "app/api/animations/route.ts": "writes are admin-only (3e07d2f)",
         "app/api/animations/upload/route.ts": "writes are admin-only (3e07d2f)",
         "app/api/models/route.ts": "writes are admin-only (3e07d2f)",
-        "lib/auth.config.ts": "role carried through the session (3e07d2f)",
+        "lib/auth.config.ts": "D-A32 Suvana-only root signIn address and protected-route callback; preserve existing JWT roles",
         "lib/auth.ts": "role carried through the session; ADMIN_EMAILS bootstrap (3e07d2f)",
         "models/User.ts": "role field (3e07d2f)",
         "types/next-auth.d.ts": "role on the session type (3e07d2f)",
         "proxy.ts": "guards /admin (3e07d2f)",
         "app/layout.tsx": "Suvana identity, Noto Serif, theme bootstrap",
         "app/globals.css": "Suvana palette, dark/light theme",
-        "app/login/page.tsx": "Suvana title",
+        "app/login/page.tsx": "D-A32/D-A33 Suvana-only root account page, server session/host redirects and platform metadata",
         "app/contribute/page.tsx": "Suvana title",
         "app/dashboard/*/page.tsx": "Suvana titles",
         "components/Footer.tsx": "Suvana identity",
-        "components/auth/AuthShell.tsx": "Suvana identity",
+        "components/auth/AuthShell.tsx": "D-A32 Suvana-only platform account copy shared by Learn, Communicate, Recognize; no emotion claims",
         "components/home/*.tsx": "Suvana copy",
         "components/gloss/GlossSequenceList.tsx": "Suvana palette",
         "components/audio/AudioFilePicker.tsx": "brand typeface",
         "components/ui/Button.tsx": "brand typeface",
         ".gitignore": "ships .env.local.example",
         "package-lock.json": "npm 10 output (CI's npm) — regenerate with `npx -y npm@10 install` if upstream changes package.json",
-        "components/three/SignAvatar.tsx": "animation fetch through apiPath() (missed until the sync guard caught it, 2026-10-10)"
+        "components/three/SignAvatar.tsx": "animation fetch through apiPath() (missed until the sync guard caught it, 2026-10-10)",
+        "app/login/LoginForm.tsx": "D-A32 Suvana-only safe return path and plain root account navigation without Next basePath",
+        "components/home/HeroSection.tsx": "D-A32 Suvana-only root registration link; module content unchanged",
+        "components/home/CTASection.tsx": "D-A32 Suvana-only root registration link; module content unchanged"
       },
       "suvanaOnly": {
         "lib/basePath.ts": "apiPath() / BASE_PATH — every client fetch goes through it",
         "lib/requireAdmin.ts": "server-side admin check",
         "lib/roles.ts": "roles and ADMIN_EMAILS",
-        "app/admin/page.tsx": "admin area",
+        "app/admin/page.tsx": "Suvana admin area; D-A32 unauthenticated navigation uses root account URL with safe return path",
         "app/api/admin/users/route.ts": "admin user list and role change",
         "components/admin/AdminUsers.tsx": "admin area UI",
         "components/ThemeToggle.tsx": "platform-wide theme toggle",
         "app/icon.png": "the Suvana mark as favicon",
-        ".env.local.example": "the env template the README's setup step copies"
+        ".env.local.example": "the env template the README's setup step copies",
+        "lib/accountPaths.ts": "D-A32 shared safe relative callback and root account-link helpers",
+        "lib/accountPaths.test.mjs": "D-A32 callback validation and redirect-loop regression tests",
+        "lib/accountPage.ts": "D-A32/D-A33 server account-entry gate; direct origin visits redirect and signed-in users skip forms",
+        "lib/suvanaOrigin.ts": "D-A33 non-secret SUVANA_ORIGIN and explicit Shell account-HTML routing marker",
+        "lib/suvanaOrigin.test.mjs": "D-A33 configured origin and ambiguous Host/forwarded-host regression tests",
+        "components/auth/accountCopy.ts": "D-A32 two rendered platform account wording options for kvn review",
+        "components/auth/AccountLinks.tsx": "D-A32 root account anchors preserving current module location without basePath injection"
       },
       "skip": {
         ".claude/**": "Lithira's local agent settings",
@@ -460,9 +511,160 @@
         {
           "file": "components/Navbar.tsx",
           "has": [
-            "href=\"/register\""
+            "AccountLinks"
           ],
-          "why": "Sign-up stays in the navbar; upstream 7948c4a removes it and merges cleanly, so only this guard notices"
+          "why": "D-A32 keep root Sign up / Log in links through AccountLinks, replacing basePath-prefixed Next links"
+        },
+        {
+          "file": "app/login/page.tsx",
+          "has": [
+            "accountPage(\"login\", searchParams)",
+            "LoginForm callbackUrl={callbackUrl}",
+            "One Suvana account"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "app/register/page.tsx",
+          "has": [
+            "accountPage(\"register\", searchParams)",
+            "RegisterForm callbackUrl={callbackUrl}",
+            "One Suvana account"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "lib/auth.config.ts",
+          "has": [
+            "signIn: \"/login\"",
+            "accountLink(\"login\", callbackUrl)",
+            "Response.redirect"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "lib/accountPage.ts",
+          "has": [
+            "isShellAccountRequest(requestHeaders)",
+            "safeCallbackUrl(params.callbackUrl)",
+            "if (session?.user)",
+            "redirect(url.href)"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "lib/accountPaths.ts",
+          "has": [
+            "value.startsWith(\"//\")",
+            "url.origin !== \"https://callback.invalid\"",
+            "decodeURIComponent(url.pathname)",
+            "/communicate/register"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "lib/suvanaOrigin.ts",
+          "has": [
+            "process.env.SUVANA_ORIGIN",
+            "https://suvana.help",
+            "x-suvana-account-origin"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "components/auth/accountCopy.ts",
+          "has": [
+            "Learn, Communicate and Recognize",
+            "Alerts works without an account",
+            "accountCopyOptions"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "components/auth/AccountLinks.tsx",
+          "has": [
+            "usePathname()",
+            "useSearchParams()",
+            "accountLink(\"login\", callbackUrl)",
+            "accountLink(\"register\", callbackUrl)"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "components/auth/AuthShell.tsx",
+          "has": [
+            "accountCopy.description",
+            "accountCopy.heading"
+          ],
+          "lacks": [
+            "detected emotion",
+            "Turn speech into"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "app/login/LoginForm.tsx",
+          "has": [
+            "safeCallbackUrl(callbackUrl)",
+            "window.location.assign(destination)",
+            "accountLink(\"register\", destination)"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "app/register/RegisterForm.tsx",
+          "has": [
+            "safeCallbackUrl(callbackUrl)",
+            "window.location.assign(destination)",
+            "accountLink(\"login\", destination)"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "app/admin/page.tsx",
+          "has": [
+            "accountLink(\"login\", `${BASE_PATH}/admin`)"
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "components/home/HeroSection.tsx",
+          "has": [
+            "href=\"/register?callbackUrl=%2Fcommunicate%2Fdashboard\""
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "components/home/CTASection.tsx",
+          "has": [
+            "href=\"/register?callbackUrl=%2Fcommunicate%2Fdashboard\""
+          ],
+          "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "next.config.ts",
+          "has": [
+            "suvanaOrigin()",
+            "basePath: false",
+            "suvana-communicate.vercel.app"
+          ],
+          "why": "D-A33 direct-host root account aliases must not become a second sign-in address"
+        },
+        {
+          "file": "lib/accountPaths.test.mjs",
+          "has": [
+            "safeCallbackUrl",
+            "rejects external"
+          ],
+          "why": "D-A32 preserve callback boundary regression coverage"
+        },
+        {
+          "file": "lib/suvanaOrigin.test.mjs",
+          "has": [
+            "isShellAccountRequest",
+            "Host and x-forwarded-host"
+          ],
+          "why": "D-A33 preserve explicit routing marker coverage"
         }
       ]
     }

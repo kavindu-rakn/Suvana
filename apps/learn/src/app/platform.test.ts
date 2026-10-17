@@ -25,7 +25,7 @@ it('preserves platform navigation and base-prefixed branding in Suvana', () => {
   vi.stubEnv('VITE_SUVANA', '1')
   vi.stubEnv('BASE_URL', '/learn/')
   const account = renderToStaticMarkup(createElement(AccountButton, { user: null }))
-  expect(account).toContain('/communicate/login?callbackUrl=%2Flearn%2F')
+  expect(account).toContain('/login?callbackUrl=%2Flearn%2F')
   const hero = renderToStaticMarkup(createElement(Hero, { onEnter: vi.fn() }))
   expect(hero).toContain('Back to Home')
   expect(hero).toContain('<a href="/" class="nav-left brand">')

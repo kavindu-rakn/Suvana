@@ -1,5 +1,6 @@
 import { Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
+import { accountCopy } from "./accountCopy";
 
 export function AuthShell({
   title,
@@ -23,13 +24,10 @@ export function AuthShell({
 
         <div className="relative z-10">
           <p className="text-3xl font-semibold leading-tight">
-            Turn speech into
-            <br />
-            <span className="text-accent">sign language</span>, instantly.
+            {accountCopy.heading}
           </p>
           <p className="mt-4 max-w-sm text-foreground-muted">
-            Record or upload audio, get an instant transcript with detected emotion, then watch a
-            3D avatar sign it back to you.
+            {accountCopy.description}
           </p>
         </div>
 
@@ -42,6 +40,7 @@ export function AuthShell({
         <div className="w-full max-w-md">
           <h1 className="text-2xl font-semibold">{title}</h1>
           {subtitle && <p className="mt-1 text-sm text-foreground-muted">{subtitle}</p>}
+          <p className="mt-3 text-sm text-foreground-muted lg:hidden">{accountCopy.description}</p>
           <div className="mt-6">{children}</div>
         </div>
       </div>

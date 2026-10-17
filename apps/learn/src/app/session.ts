@@ -2,7 +2,8 @@
  * The signed-in Suvana account, as seen from the Learn module.
  *
  * Identity lives in the Communicate module — it has the database, Auth.js and
- * the sign-in pages. Because the shell serves /learn/* and /communicate/* from
+ * the account pages, exposed at the Shell's /login and /register. Because the
+ * shell serves /learn/* and /communicate/* from
  * one origin, that module's session cookie is visible here and a single
  * same-origin fetch is the whole integration.
  *
@@ -22,7 +23,7 @@ export interface SuvanaUser {
 /** Where Communicate is mounted on the Suvana domain. */
 const COMMUNICATE = '/communicate'
 
-export const SIGN_IN_URL = `${COMMUNICATE}/login?callbackUrl=${encodeURIComponent('/learn/')}`
+export const SIGN_IN_URL = `/login?callbackUrl=${encodeURIComponent('/learn/')}`
 export const ACCOUNT_URL = `${COMMUNICATE}/dashboard`
 
 /**

@@ -63,9 +63,9 @@ export function HeroSection() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link href="/register" className={`hero-cta ${buttonVariants("primary", "lg")}`}>
+            <a href="/register?callbackUrl=%2Fcommunicate%2Fdashboard" className={`hero-cta ${buttonVariants("primary", "lg")}`}>
               Get started free
-            </Link>
+            </a>
             <Link href="#how-it-works" className={`hero-cta ${buttonVariants("outline", "lg")}`}>
               See how it works
             </Link>

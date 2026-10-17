@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { AdminUsers } from "@/components/admin/AdminUsers";
 import { BASE_PATH } from "@/lib/basePath";
+import { accountLink } from "@/lib/accountPaths";
+import { suvanaOrigin } from "@/lib/suvanaOrigin";
 
 export const metadata: Metadata = { title: "Admin — සුවණ Suvana" };
 
@@ -16,7 +18,7 @@ export const metadata: Metadata = { title: "Admin — සුවණ Suvana" };
  */
 export default async function AdminPage() {
   const session = await auth();
-  if (!session?.user) redirect(`${BASE_PATH}/login`);
+  if (!session?.user) redirect(new URL(accountLink("login", `${BASE_PATH}/admin`), suvanaOrigin()).href);
   if (session.user.role !== "admin") redirect(`${BASE_PATH}/dashboard`);
 
   return (
