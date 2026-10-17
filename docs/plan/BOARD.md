@@ -16,7 +16,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | K-01 | Merge the re-sync branch and this plan into main; set up local excludes and pull R26 | kvn | 2026-10-12 | S | - | done | `n/a (kvn, GitHub Desktop)` | no | no | - |
 | K-02 | Decide the open decisions by their needed-by dates | kvn | 2026-10-12 to 2026-10-19 | S | - | todo | `n/a` | no | no | DN-01..DN-20 |
 | K-03 | Send the teammate asks to Lithira, Lahiru and Karindra | kvn | 2026-10-13 | S | - | done | `n/a` | no | no | - |
-| K-04 | Create accounts and secrets: three Vercel projects, Atlas M0, Cloudinary, NEXTAUTH_SECRET, optional Gemini key | kvn | 2026-10-13 to 2026-10-14 | M | K-01 | todo | `n/a` | no | no | - |
+| K-04 | Create accounts and secrets: three Vercel projects, Atlas M0, Cloudinary, NEXTAUTH_SECRET, optional Gemini key | kvn | 2026-10-13 to 2026-10-14 | M | K-01 | done | `n/a` | no | no | - |
 | K-05 | Approve the starter curriculum, verify a batch of meanings, decide a third scenario | kvn | 2026-10-15 | M | L-09 | done | `kvn's own branch, or tell an agent` | yes | no | DN-19 |
 | K-06 | Export the permitted Kaggle clips and upload them to Cloudinary (only if DN-05 allows video) | kvn | 2026-10-16 | M | L-15a, K-04 | cancelled | `n/a` | no | no | DN-05, DN-06 |
 | K-07 | Convert the Kaggle 'SSL Sentences' clips into references | kvn | 2026-10-16 | S | L-22a | done | `n/a (files handed to the L-22b branch)` | yes | no | DN-08 |
@@ -36,7 +36,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | T-09 | Own-words pass on chapters that will not change | kvn | 2026-10-16 to 2026-10-18 | M | T-01 | todo | `n/a` | no | no | - |
 | D-01 | Deployment smoke script and DEPLOYMENT.md refresh | antigravity | 2026-10-17 | S | L-06 | done | `agent/antigravity/D-01-smoke` | no | no | - |
 | D-02 | Deploy suvana-learn (.vercel.app) from current main | kvn | 2026-10-14 | S | K-01, K-04 | done | `n/a` | no | no | - |
-| D-03 | Deploy suvana-communicate, then suvana-shell | kvn | 2026-10-17 | M | D-02, I-01, I-07, K-04 | todo | `n/a` | no | no | DN-13 |
+| D-03 | Deploy suvana-communicate, then suvana-shell | kvn | 2026-10-17 | M | D-02, I-01, I-07, K-04 | done | `n/a` | no | no | DN-13 |
 | D-04 | Host Recognize on the chosen platform with an uptime ping | kvn | 2026-10-18 | M | I-08 | todo | `n/a` | no | no | DN-02 |
 | D-05 | Speech service: laptop-only by default; host only if DN-03 says so | kvn | 2026-10-19 | S | I-09 | todo | `n/a` | no | no | DN-03 |
 | D-06 | Commit the R26 M0 port and redeploy learn-ssl-module.vercel.app | kvn | 2026-10-14 | S | R-00 | done | `n/a (R26: kvn commits)` | no | no | - |

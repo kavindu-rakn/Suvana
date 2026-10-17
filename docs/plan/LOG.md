@@ -919,3 +919,11 @@ Rules:
 - Plan correction: kvn directly assigned this unscheduled hotfix and authorized apps/shell/vercel.json today. Board/tasks/decisions untouched.
 - Needs kvn: review/merge/push and deployment, then coordinate claude-code to rerun node tools/smoke/smoke.mjs https://suvana-shell.vercel.app and explicitly verify /communicate/ plus existing routes. Extensionless legal-page support is unchanged. Production repair remains unverified locally. No push, merge, deploy or external messages by this agent.
 - Handoff: docs/plan/handoffs/shell-trailing-slash.md.
+
+### 2026-10-17 21:30 | kvn (recorded by claude-code) | K-04 and D-03 done: Communicate and the Shell are live
+- K-04: kvn created the MongoDB Atlas M0 cluster (Network Access open to Vercel), a Cloudinary account and the secrets, and the Vercel projects suvana-communicate (prj_NUUARnkxBDvw4jVyCAl5QpH1FUqr) and suvana-shell (prj_3itANrMlBkyllH49fw29y6gaw93w) beside suvana-learn, with the env vars in 06-deploy.md section 2 (NEXTAUTH_URL unset; GEMINI_API_KEY and VITE_RECOGNIZE_URL unset for now). Secrets live only in Vercel.
+- D-03: Communicate builds with base path /communicate; kvn registered and signed in on its own URL, so the Atlas connection works. No seed was run, so the production database holds no placeholder animations.
+- Shell hotfix (no board ID): /learn/ and /communicate/ returned 404 on the Shell because the wildcard rewrites miss the bare trailing slash, which broke the landing page's Learn buttons and Learn's sign-in return link. codex added two explicit rewrites (agent/codex/shell-trailing-slash, checked by claude-code: Shell 44 tests, build, brand check, sync guard 182); kvn merged it; production dpl_2ZFGumVWJMfq1oUQtBDFdWsgDUNJ.
+- Smoke (claude-code, tools/smoke/smoke.mjs on https://suvana-shell.vercel.app with the standalone Learn check): 10 passed, 0 failed. Its 4 warnings are /privacy, /terms, /contact and /pricing: the Shell links those pages as *.html, which load (200); clean URLs are optional.
+- Next: I-11 (shared sign-in across the Shell, first Codex window); D-04 Recognize on Railway on 18 Oct after Lahiru's OK, then I-10 sets VITE_RECOGNIZE_URL.
+- Board: K-04 and D-03 done.
