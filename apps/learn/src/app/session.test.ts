@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { fetchSession } from './session'
+import { fetchSession, SIGN_IN_URL } from './session'
 
 afterEach(() => {
   vi.unstubAllEnvs()
@@ -7,6 +7,9 @@ afterEach(() => {
 })
 
 describe('platform session', () => {
+  it('returns from the root account page to Learn', () => {
+    expect(SIGN_IN_URL).toBe('/login?callbackUrl=%2Flearn%2F')
+  })
   it.each(['', undefined])('never contacts Communicate in standalone mode (%s)', async (flag) => {
     vi.stubEnv('VITE_SUVANA', flag)
     const fetch = vi.fn()

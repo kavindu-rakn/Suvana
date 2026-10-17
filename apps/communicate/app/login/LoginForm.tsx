@@ -2,16 +2,13 @@
 
 import { type FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { accountLink, safeCallbackUrl } from "@/lib/accountPaths";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-export function LoginForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+export function LoginForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
+  const destination = safeCallbackUrl(callbackUrl);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,17 +20,19 @@ export function LoginForm() {
     setError(null);
     setLoading(true);
 
-    const res = await signIn("credentials", { email, password, redirect: false });
-
-    setLoading(false);
-
-    if (res?.error) {
-      setError("Invalid email or password.");
-      return;
+    try {
+      const res = await signIn("credentials", { email, password, redirect: false, redirectTo: destination });
+      if (!res || res.error) {
+        setError("Invalid email or password.");
+        return;
+      }
+      // Full navigation reaches Shell/Learn too; Next's router adds basePath.
+      window.location.assign(destination);
+    } catch {
+      setError("Unable to sign in. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    router.push(callbackUrl);
-    router.refresh();
   }
 
   return (
@@ -70,9 +69,9 @@ export function LoginForm() {
       </form>
       <p className="mt-6 text-center text-sm text-foreground-muted">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="text-accent hover:underline">
+        <a href={accountLink("register", destination)} className="text-accent hover:underline">
           Sign up
-        </Link>
+        </a>
       </p>
     </>
   );

@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { auth } from "@/lib/auth";
-import { buttonVariants } from "@/components/ui/Button";
 import { LogoutButton } from "@/components/LogoutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { AccountLinks } from "@/components/auth/AccountLinks";
 
 export async function Navbar() {
   const session = await auth();
@@ -11,10 +11,11 @@ export async function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Shell owns /; Link would add /communicate. */}
+        <a href="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <Sparkles size={18} className="text-accent" />
           Suvana
-        </Link>
+        </a>
 
         <nav className="hidden items-center gap-8 text-sm text-foreground-muted sm:flex">
           <Link href="/#features" className="transition-colors hover:text-foreground">
@@ -45,14 +46,7 @@ export async function Navbar() {
               <LogoutButton />
             </>
           ) : (
-            <>
-              <Link href="/login" className={buttonVariants("ghost", "md")}>
-                Log in
-              </Link>
-              <Link href="/register" className={buttonVariants("primary", "md")}>
-                Sign up
-              </Link>
-            </>
+            <AccountLinks />
           )}
         </div>
       </div>

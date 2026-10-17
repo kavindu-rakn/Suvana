@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { buttonVariants } from "@/components/ui/Button";
@@ -42,9 +41,9 @@ export function CTASection() {
           <p className="max-w-md text-foreground-muted">
             Create a free account and start translating audio into sign language in minutes.
           </p>
-          <Link href="/register" className={buttonVariants("primary", "lg")}>
+          <a href="/register?callbackUrl=%2Fcommunicate%2Fdashboard" className={buttonVariants("primary", "lg")}>
             Create your account
-          </Link>
+          </a>
         </div>
       </div>
     </section>

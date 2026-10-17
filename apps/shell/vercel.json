@@ -3,7 +3,21 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "suvana-shell.vercel.app" }],
+      "destination": "https://suvana.help/:path*",
+      "permanent": true
+    },
+    { "source": "/communicate/login", "destination": "/login", "permanent": true },
+    { "source": "/communicate/register", "destination": "/register", "permanent": true },
+    { "source": "/api/login", "destination": "/login", "permanent": true },
+    { "source": "/api/register", "destination": "/register", "permanent": true }
+  ],
   "rewrites": [
+    { "source": "/login", "destination": "/api/login" },
+    { "source": "/register", "destination": "/api/register" },
     {
       "source": "/learn",
       "destination": "https://suvana-learn.vercel.app/learn"
