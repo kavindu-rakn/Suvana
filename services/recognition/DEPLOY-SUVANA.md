@@ -3,16 +3,28 @@
 Suvana-specific notes. `README.md` in this folder is Lahiru's original and
 still describes local development accurately.
 
-## Why this one is not behind the shell's `/api/*` rewrite
+## Suvana HTTP path and direct WebSocket
 
 The browser streams camera frames to `/ws/recognize` over a **WebSocket**.
-Vercel's rewrites do not proxy WebSocket upgrades, so — unlike
-`apps/communicate` — this module cannot be mounted on a path of the shell
-domain. It runs on **its own origin** (a subdomain such as
-`recognize.<suvana-domain>`, or the container host's URL).
+Vercel's rewrites do not proxy WebSocket upgrades. Suvana therefore serves the
+page, static files and HTTP APIs through `/recognize/`, while the browser opens
+the WebSocket directly to the recognition service's public origin.
 
-That is also why it needs no CORS configuration: the page and the WebSocket
-are served by this same service, so every request is same-origin.
+The Shell rewrites add `suvana_mount=recognize`, a non-secret rendering hint.
+Only the HTML entry uses it to set a static `/recognize/` asset base before
+browser preloading. Without that hint, the service serves its normal root HTML.
+
+On Railway, set the non-secret `RECOGNIZE_PUBLIC_ORIGIN` to
+`https://suvana-production.up.railway.app`. `/api/info` then adds `publicOrigin`;
+the browser derives `wss://.../ws/recognize` from it. HTTP calls stay on Suvana.
+The existing WebSocket endpoint accepts the Suvana Origin; its JPEG/reset
+protocol is unchanged. No HTTP CORS change is needed for the proxied API.
+
+With the setting unset and the page served at its own root, the API/socket URLs,
+theme and return link stay as before. The account adapter makes no request and
+shows no account controls there. Under `/recognize/` it reads the same-origin
+Suvana session, but signing in is optional. Nothing in this integration is
+ported to the R26 repository.
 
 The capture itself is browser-side (`getUserMedia` → JPEG data URL → WebSocket),
 so unlike the old Flask/OpenCV version this works off localhost.

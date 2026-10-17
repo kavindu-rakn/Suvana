@@ -561,7 +561,7 @@
   // ---------------------------------------------------------------------------
   async function fetchSoundGuardInfo() {
     try {
-      const res = await fetch(`/api/soundguard/info?port=${currentPort}`);
+      const res = await fetch(window.SuvanaRecognize.apiPath(`/api/soundguard/info?port=${currentPort}`));
       if (res.ok) {
         const data = await res.json();
         if (data.primaryIp) currentIp = data.primaryIp;

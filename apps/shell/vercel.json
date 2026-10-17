@@ -19,6 +19,18 @@
     { "source": "/login", "destination": "/api/login" },
     { "source": "/register", "destination": "/api/register" },
     {
+      "source": "/recognize",
+      "destination": "https://suvana-production.up.railway.app/?suvana_mount=recognize"
+    },
+    {
+      "source": "/recognize/",
+      "destination": "https://suvana-production.up.railway.app/?suvana_mount=recognize"
+    },
+    {
+      "source": "/recognize/:path*",
+      "destination": "https://suvana-production.up.railway.app/:path*?suvana_mount=recognize"
+    },
+    {
       "source": "/learn",
       "destination": "https://suvana-learn.vercel.app/learn"
     },
