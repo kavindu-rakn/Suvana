@@ -895,3 +895,12 @@ Rules:
 - Screenshots: n/a.
 - Needs kvn: merge after integration/2026-10-16e. Thesis Ch1/4/5 drafts (outside the repo) are flagged and get the L-33 text in the 19 Oct T-02 refresh.
 - Next: T-02 refresh 19 Oct; T-03 and L-28 20 Oct.
+
+### 2026-10-17 10:30 | claude-code (integration prep, light) | integration/2026-10-17a; hosted CI fix
+- Hosted CI on main failed for f6bc524 and a15c7b0 (16 Oct evening): Learn's fingerCutoffs.generate.test.ts compared the stored scorer fingerprint with one computed on Linux. The stored value (e4e3e37) came from Windows working copies where dtw.ts and landmarks.ts still hold CRLF although git stores LF; hosted CI computed the true value (2024785c). Local Windows gates, including integration/2026-10-16e, could not see this.
+- Fix (agent/claude/L-33-ci-eol, outside the board, for kvn to accept or reject): the test hashes the scorer files with LF line endings and the table stores 2024785c. No scorer, cut-off or UI change; the opt-in table check against the corpus regenerates the shipped table exactly (2/2). All 23 reference fingerprints already matched git.
+- Also merged with --no-ff onto main a15c7b0: agent/claude/T-07-l33-finger-labels (docs/commercialisation.md describes the L-33 labels; docs only) and agent/codex/L-33-landing-copy at option B (63967f6; option A is c6fd5d0). Hero.tsx only, two strings; no handoff file or LOG entry on that branch (its review notes are in .agent-local).
+- Gates: Learn npm@10 ci, lint 0, tests 341 passed + 15 skipped, build ok (main JS 155.11 kB gzip); tools/ci tests 6 passed, brand check 128 files, Suvana dist check; sync guard 182; browser suite 64 passed on port 5174.
+- Checks (light): no protected files, figures or brand names; both wording options claim only what ships (score, timing and movement tips, replay, finger labels on some signs); decorative cards untouched (D-A4).
+- Noticed: apps/learn/AGENTS.md still says finger states stay hidden (out of date since L-33; for L-28).
+- Needs kvn: choose A or B from .agent-local/review/2026-10-17a/ (integration worktree); if A, claude-code switches Hero.tsx to c6fd5d0 with one commit; then merge, push and check that hosted CI is green again.
