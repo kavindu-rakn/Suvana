@@ -10,6 +10,16 @@ it('redirects only the legacy Shell host and preserves the wildcard path', () =>
     destination: 'https://suvana.help/:path*', permanent: true })
 })
 
+// The wildcard above does not match "/" or paths ending in "/" on Vercel
+// (seen on production 18 Oct: /, /learn/, /alerts/ still served on the legacy host).
+it.each([
+  ['/', 'https://suvana.help/'],
+  ['/:path*/', 'https://suvana.help/:path*/'],
+])('also redirects legacy-host %s to the same place on suvana.help', (source, destination) => {
+  expect(config.redirects).toContainEqual({ source,
+    has: [{ type: 'host', value: 'suvana-shell.vercel.app' }], destination, permanent: true })
+})
+
 it.each(['login', 'register'])('routes root %s through the marked HTML proxy before wildcards', page => {
   const index = config.rewrites.findIndex((r: {source: string}) => r.source === `/${page}`)
   const wildcard = config.rewrites.findIndex((r: {source: string}) => r.source === '/communicate/:path*')

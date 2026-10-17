@@ -10,6 +10,8 @@
       "destination": "https://suvana.help/:path*",
       "permanent": true
     },
+    { "source": "/", "has": [{ "type": "host", "value": "suvana-shell.vercel.app" }], "destination": "https://suvana.help/", "permanent": true },
+    { "source": "/:path*/", "has": [{ "type": "host", "value": "suvana-shell.vercel.app" }], "destination": "https://suvana.help/:path*/", "permanent": true },
     { "source": "/communicate/login", "destination": "/login", "permanent": true },
     { "source": "/communicate/register", "destination": "/register", "permanent": true },
     { "source": "/api/login", "destination": "/login", "permanent": true },
