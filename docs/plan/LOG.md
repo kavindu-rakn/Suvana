@@ -904,3 +904,9 @@ Rules:
 - Checks (light): no protected files, figures or brand names; both wording options claim only what ships (score, timing and movement tips, replay, finger labels on some signs); decorative cards untouched (D-A4).
 - Noticed: apps/learn/AGENTS.md still says finger states stay hidden (out of date since L-33; for L-28).
 - Needs kvn: choose A or B from .agent-local/review/2026-10-17a/ (integration worktree); if A, claude-code switches Hero.tsx to c6fd5d0 with one commit; then merge, push and check that hosted CI is green again.
+
+### 2026-10-17 10:45 | kvn (recorded by claude-code) | Landing wording B adopted; CI fix accepted
+- kvn chose option B for Learn's landing page from the renders in .agent-local/review/2026-10-17a/ (integration worktree): "Sign to your camera. Get a score against recordings from real signers, tips on timing and hand movement, and a side-by-side replay. Some signs also show finger labels." (card 03 says the same), and merged integration/2026-10-17a into main.
+- Also merged: claude-code's fix for the red hosted CI (L-33 scorer fingerprint taken from CRLF working copies; now line-ending independent) and the thesis lane's T-07 follow-up (docs/commercialisation.md describes the L-33 finger labels).
+- Next: confirm hosted CI is green on main; R-04 port on 19 Oct carries L-33, the wording and the fix to R26.
+- Board: no change (follow-ups to L-33 and T-07, both done).
