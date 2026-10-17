@@ -927,3 +927,12 @@ Rules:
 - Smoke (claude-code, tools/smoke/smoke.mjs on https://suvana-shell.vercel.app with the standalone Learn check): 10 passed, 0 failed. Its 4 warnings are /privacy, /terms, /contact and /pricing: the Shell links those pages as *.html, which load (200); clean URLs are optional.
 - Next: I-11 (shared sign-in across the Shell, first Codex window); D-04 Recognize on Railway on 18 Oct after Lahiru's OK, then I-10 sets VITE_RECOGNIZE_URL.
 - Board: K-04 and D-03 done.
+
+### 2026-10-18 10:30 | kvn (recorded by claude-code) | Sign-in at the homepage, Recognize at /recognize, suvana.help now; Safe Browsing flag
+- I-11: kvn's check on 17 Oct passed (signed in at suvana-shell.vercel.app/communicate/login; the session shows on /, /learn/ and /communicate). No code change needed.
+- Google Safe Browsing flags suvana-shell.vercel.app; Search Console (verified by kvn) names it "Possible Phishing Detected on User Login" with no sample URLs: Chrome saw a password saved for suvana-communicate.vercel.app (where kvn first registered, as claude-code had instructed) typed into suvana-shell.vercel.app/communicate/login. Cause: our own sign-in page reachable on two of our own hosts. suvana-communicate.vercel.app and suvana-learn.vercel.app have no record; Lithira's site is clean. kvn reported the false positive; the review request waits until sign-in exists on suvana.help only (account task), so the "fixed" answer is true.
+- Decisions (kvn in chat): D-A32, sign-in belongs to the homepage (/login and /register); D-A33, Recognize at suvana.help/recognize with the R26-safety rule. kvn bought suvana.help on 18 Oct (Vercel: $1.99 first year, $32.12 renewal), attached it to suvana-shell and verified it in Search Console (no issues), instead of on 20 Oct (K-08).
+- Checked by claude-code for R26 safety: sync.mjs can only port Learn to R26; every other component flows R26 -> Suvana only. kvn's R26 commits since Lahiru's last (12 Oct) are the two Learn ports, which touched nothing outside learn-ssl-module/web. Learn's account code is off in R26 (no suvana.config.json).
+- Found: the sign-in page and the Shell landing claim emotion detection, but Suvana's speech is speech-to-text only (D-A22, I-09); fixed in the account task.
+- Board: I-11 done.
+- Next: codex "Suvana account at the front door" (first window); D-04 Railway after Lahiru's OK, then codex "Recognize at /recognize".

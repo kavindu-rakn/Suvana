@@ -108,7 +108,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | I-08 | Recognition container: Docker build, latency comparison, /api/info, back link and theme | codex | 2026-10-17 | M | I-04 | done | `agent/codex/I-08-recognition-container` | no | yes | - |
 | I-09 | Speech container: build check and readiness notes | codex | 2026-10-19 | S | - | done | `agent/codex/I-09-speech-container` | no | no | - |
 | I-10 | Shell: wire the hosted Recognize URL, Alerts download section, phone pass | codex | 2026-10-19 | S | D-04, I-01 | in-progress | `agent/codex/I-10-shell-wiring` | no | yes | - |
-| I-11 | Verify the shared session behind the Vercel rewrite; fix if needed | codex | 2026-10-19 | S | D-03 | todo | `agent/codex/I-11-auth-rewrite` | no | no | - |
+| I-11 | Verify the shared session behind the Vercel rewrite; fix if needed | codex | 2026-10-19 | S | D-03 | done | `agent/codex/I-11-auth-rewrite` | no | no | - |
 | I-12a | Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild) | codex | 2026-10-16 | S | I-02 | done | `agent/codex/I-12a-alerts-eas` | no | no | DN-14 |
 | I-12 | Alerts APK: Karindra builds from Suvana's tree, or kvn rebuilds under his EAS | kvn | 2026-10-17 to 2026-10-19 | M | K-03, I-02 | done | `n/a` | no | no | DN-14 |
 | I-13 | Import Lithira's glosses and animations into kvn's Atlas and Cloudinary | kvn | 2026-10-20 | M | I-07, K-03 | todo | `n/a` | no | no | - |

@@ -2533,7 +2533,7 @@
     "deps": [
       "D-03"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/I-11-auth-rewrite",
     "r26_port": "no",
     "screenshots": "no",
