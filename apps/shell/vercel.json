@@ -9,11 +9,19 @@
       "destination": "https://suvana-learn.vercel.app/learn"
     },
     {
+      "source": "/learn/",
+      "destination": "https://suvana-learn.vercel.app/learn/"
+    },
+    {
       "source": "/learn/:path*",
       "destination": "https://suvana-learn.vercel.app/learn/:path*"
     },
     {
       "source": "/communicate",
+      "destination": "https://suvana-communicate.vercel.app/communicate"
+    },
+    {
+      "source": "/communicate/",
       "destination": "https://suvana-communicate.vercel.app/communicate"
     },
     {

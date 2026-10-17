@@ -910,3 +910,12 @@ Rules:
 - Also merged: claude-code's fix for the red hosted CI (L-33 scorer fingerprint taken from CRLF working copies; now line-ending independent) and the thesis lane's T-07 follow-up (docs/commercialisation.md describes the L-33 finger labels).
 - Next: confirm hosted CI is green on main; R-04 port on 19 Oct carries L-33, the wording and the fix to R26.
 - Board: no change (follow-ups to L-33 and T-07, both done).
+
+### 2026-10-17 22:13 | codex | Shell trailing-slash hotfix
+- What: added explicit /learn/ and /communicate/ rewrites before their wildcard rules in apps/shell/vercel.json; exact destinations supplied by kvn. Existing config preserved; optional cleanUrls left unset.
+- Branch: agent/codex/shell-trailing-slash, fresh origin/main 5342b436e4d0f4e47d6333ed8ab9f021cafcfbda; final SHA in git log.
+- Gates: npm 10.9.9 ci; routing assertions 3 passed; Shell tests 44 passed after sandbox EPERM elevated retry; typecheck/build passed (existing >500 kB chunk warning); brand check 128 files; sync guard 182; diff check clean. Install reported existing Lenis deprecation and one high-severity audit finding; no dependency changes.
+- Screenshots: n/a, config-only fix. Product diff is only eight lines in vercel.json; handoff contains the reproducible Node test and production URL checklist. No SSL content or research figures touched; r26_port no.
+- Plan correction: kvn directly assigned this unscheduled hotfix and authorized apps/shell/vercel.json today. Board/tasks/decisions untouched.
+- Needs kvn: review/merge/push and deployment, then coordinate claude-code to rerun node tools/smoke/smoke.mjs https://suvana-shell.vercel.app and explicitly verify /communicate/ plus existing routes. Extensionless legal-page support is unchanged. Production repair remains unverified locally. No push, merge, deploy or external messages by this agent.
+- Handoff: docs/plan/handoffs/shell-trailing-slash.md.
