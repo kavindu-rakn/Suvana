@@ -982,3 +982,13 @@ Rules:
 - Google: kvn submitted the Search Console review for suvana-shell.vercel.app ("Possible Phishing Detected on User Login"), now that sign-in exists only on suvana.help.
 - Housekeeping: codex's superseded first account attempt is still in the shared git stash (stash@{0}); drop it when convenient.
 - Board: D-04, K-08, D-09 and I-10 done.
+
+### 2026-10-18 | codex | Q-05 demo runbook and live assistant check
+- What: DEMO.md now has a 12-minute script, 18 Oct canonical routes/hosting, honest claims, Learn profile/reset preparation, device plan, local/offline/tunnel/hotspot/rollback/Chrome-warning fallbacks and rehearsal checklist. Docs only; r26_port no.
+- Branch: agent/codex/Q-05-demo, fresh origin/main 4d52d987e966503c3cf133103e183d1985442647; final SHA in git log.
+- Gates: sync guard 228/228; documentation assertions passed (11 continuous timed steps = 720 seconds, four local links, exact prompts/results and paired thesis figures); whitespace/scope review. No runtime tests/builds or full device/fallback rehearsal claimed.
+- Live: signed-out suvana.help assistant answered literal “how do I sign X”, “translate Y to SSL”, “describe the handshape for Z” with dataset-letter cards and unsupported guidance; 0/3 refusals, FAIL. Actual replies recorded as failure evidence in DEMO.md section 7; assistant excluded as a live SSL teacher. Homepage also visibly contains recognition accuracy and testimonial claims contrary to plan evidence limits; recorded for separate correction, no UI changed.
+- Plan correction: kvn assigned Q-05 early (board says 20 Oct) and explicitly authorized hot file DEMO.md on 18 Oct; supplied live routes, Railway Singapore and Safe Browsing review status supersede stale plan/runbook statements. No BOARD/tasks/DECISIONS edits.
+- Screenshots: n/a (docs-only task, board no); browser accessibility output is live assistant evidence, not real-signing or learner evidence.
+- Needs kvn: review/merge/push; obtain/fill TODO(Lahiru) confirmed signs, rehearse laptop/Android and fallbacks, verify rollback targets/account/warning state, and assign assistant/homepage corrections separately. No guessed signs, invented SSL instructions or research results. No push, merge, deploy, rollback or external messages by agent.
+- Handoff: docs/plan/handoffs/Q-05.md.
