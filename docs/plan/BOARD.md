@@ -20,7 +20,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | K-05 | Approve the starter curriculum, verify a batch of meanings, decide a third scenario | kvn | 2026-10-15 | M | L-09 | done | `kvn's own branch, or tell an agent` | yes | no | DN-19 |
 | K-06 | Export the permitted Kaggle clips and upload them to Cloudinary (only if DN-05 allows video) | kvn | 2026-10-16 | M | L-15a, K-04 | cancelled | `n/a` | no | no | DN-05, DN-06 |
 | K-07 | Convert the Kaggle 'SSL Sentences' clips into references | kvn | 2026-10-16 | S | L-22a | done | `n/a (files handed to the L-22b branch)` | yes | no | DN-08 |
-| K-08 | Buy suvana.help | kvn | 2026-10-20 | S | D-03, D-04 | todo | `n/a` | no | no | - |
+| K-08 | Buy suvana.help | kvn | 2026-10-20 | S | D-03, D-04 | done | `n/a` | no | no | - |
 | K-09 | Ask the supervisor whether any informal usability check is allowed without ethics approval | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
 | K-10 | Daily review, screenshot adoption and merge window | kvn | daily 2026-10-13 to 2026-10-21 | S | K-01 | todo | `n/a` | no | no | - |
 | K-11 | Demo rehearsals, including the laptop fallback | kvn | 2026-10-20 and 2026-10-21 | M | Q-05, D-04 | todo | `n/a` | no | no | - |
@@ -37,12 +37,12 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | D-01 | Deployment smoke script and DEPLOYMENT.md refresh | antigravity | 2026-10-17 | S | L-06 | done | `agent/antigravity/D-01-smoke` | no | no | - |
 | D-02 | Deploy suvana-learn (.vercel.app) from current main | kvn | 2026-10-14 | S | K-01, K-04 | done | `n/a` | no | no | - |
 | D-03 | Deploy suvana-communicate, then suvana-shell | kvn | 2026-10-17 | M | D-02, I-01, I-07, K-04 | done | `n/a` | no | no | DN-13 |
-| D-04 | Host Recognize on the chosen platform with an uptime ping | kvn | 2026-10-18 | M | I-08 | todo | `n/a` | no | no | DN-02 |
+| D-04 | Host Recognize on the chosen platform with an uptime ping | kvn | 2026-10-18 | M | I-08 | done | `n/a` | no | no | DN-02 |
 | D-05 | Speech service: laptop-only by default; host only if DN-03 says so | kvn | 2026-10-19 | S | I-09 | todo | `n/a` | no | no | DN-03 |
 | D-06 | Commit the R26 M0 port and redeploy learn-ssl-module.vercel.app | kvn | 2026-10-14 | S | R-00 | done | `n/a (R26: kvn commits)` | no | no | - |
 | D-07 | Commit the R26 M1 port and redeploy learn-ssl-module | kvn | 2026-10-17 | S | R-03 | done | `n/a (R26)` | no | no | - |
 | D-08 | Commit the R26 M2 port and redeploy learn-ssl-module | kvn | 2026-10-19 | S | R-04 | todo | `n/a (R26)` | no | no | - |
-| D-09 | Attach suvana.help to suvana-shell and re-run the smoke | kvn | 2026-10-20 | S | K-08 | todo | `n/a` | no | no | - |
+| D-09 | Attach suvana.help to suvana-shell and re-run the smoke | kvn | 2026-10-20 | S | K-08 | done | `n/a` | no | no | - |
 | D-10 | Final R26 commit and learn-ssl-module redeploy | kvn | 2026-10-21 | S | R-05 | todo | `n/a (R26)` | no | no | - |
 | Q-00 | Screenshot tooling: Playwright shooter, contact sheet, fake-camera clips, dev-only fixtures page | antigravity | 2026-10-13 | M | K-01 | done | `agent/antigravity/Q-00-screens` | no | no | - |
 | Q-01 | Agent instruction files: root AGENTS.md as single source, slim CLAUDE.md, per-module AGENTS.md | claude-code | 2026-10-13 | M | K-01 | done | `agent/claude/Q-01-agents-md` | no | no | DN-12 |
@@ -107,7 +107,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | I-07 | Communicate own instance: placeholder-seed guard, gloss import script, env example | antigravity | 2026-10-16 | S | - | done | `agent/antigravity/I-07-communicate-scripts` | no | no | - |
 | I-08 | Recognition container: Docker build, latency comparison, /api/info, back link and theme | codex | 2026-10-17 | M | I-04 | done | `agent/codex/I-08-recognition-container` | no | yes | - |
 | I-09 | Speech container: build check and readiness notes | codex | 2026-10-19 | S | - | done | `agent/codex/I-09-speech-container` | no | no | - |
-| I-10 | Shell: wire the hosted Recognize URL, Alerts download section, phone pass | codex | 2026-10-19 | S | D-04, I-01 | in-progress | `agent/codex/I-10-shell-wiring` | no | yes | - |
+| I-10 | Shell: wire the hosted Recognize URL, Alerts download section, phone pass | codex | 2026-10-19 | S | D-04, I-01 | done | `agent/codex/I-10-shell-wiring` | no | yes | - |
 | I-11 | Verify the shared session behind the Vercel rewrite; fix if needed | codex | 2026-10-19 | S | D-03 | done | `agent/codex/I-11-auth-rewrite` | no | no | - |
 | I-12a | Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild) | codex | 2026-10-16 | S | I-02 | done | `agent/codex/I-12a-alerts-eas` | no | no | DN-14 |
 | I-12 | Alerts APK: Karindra builds from Suvana's tree, or kvn rebuilds under his EAS | kvn | 2026-10-17 to 2026-10-19 | M | K-03, I-02 | done | `n/a` | no | no | DN-14 |

@@ -972,3 +972,13 @@ Rules:
 - Sign-in now happens only on suvana.help, the cause of Google's flag.
 - Gap fixed here (agent/claude/shell-legacy-slash, kvn authorized apps/shell/vercel.json): the legacy-host rule "/:path*" missed "/" and paths ending in "/" on suvana-shell.vercel.app (/, /learn/, /alerts/, /recognize/ still served there). Two more host-conditioned redirects ("/" and "/:path*/"), plus a routing test. Shell 59 tests and build, brand check, sync guard 228.
 - Railway did not start a build for the merge (no deployment, none skipped), so Recognize still ran 83a5200 without RECOGNIZE_PUBLIC_ORIGIN; kvn triggers "Deploy Latest Commit". If later pushes also fail to trigger, deploy from the dashboard.
+
+### 2026-10-18 14:15 | kvn (recorded by claude-code) | suvana.help live with one sign-in and /recognize; D-04, K-08, D-09, I-10 done
+- kvn adopted the account pages with wording B and Recognize at /recognize from the renders in .agent-local/review/2026-10-18a/ (integration worktree), merged integration/2026-10-18a, then agent/claude/shell-legacy-slash; hosted CI green on 8c1ee98.
+- Railway (D-04): Recognize runs at https://suvana-production.up.railway.app in Singapore (asia-southeast1) with RECOGNIZE_PUBLIC_ORIGIN set; /api/info reports numClasses 171 and the public origin. Railway did not auto-build the merge, so kvn used Deploy Latest Commit. Uptime ping not set up: the Railway Hobby service is always on, and claude-code checks /api/info at each integration and on 20-21 Oct (plan correction for kvn to accept).
+- K-08 and D-09: kvn bought suvana.help (18 Oct), attached it to suvana-shell, verified it in Google Search Console (no issues); the smoke on https://suvana.help passed 11/11 (4 warnings: legal pages are linked as *.html).
+- I-10: the Shell's Recognize card opens /recognize/ (D-A33); the Alerts download part was done on 16 Oct. kvn's phone check: on suvana.help/recognize the top bar showed his name and a sign was recognised.
+- Account (D-A32): kvn's check: sign-in started from Learn's account button returned him to Learn. Every suvana-shell.vercel.app address and Communicate's own sign-in pages redirect to suvana.help.
+- Google: kvn submitted the Search Console review for suvana-shell.vercel.app ("Possible Phishing Detected on User Login"), now that sign-in exists only on suvana.help.
+- Housekeeping: codex's superseded first account attempt is still in the shared git stash (stash@{0}); drop it when convenient.
+- Board: D-04, K-08, D-09 and I-10 done.

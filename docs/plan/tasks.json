@@ -189,7 +189,7 @@
       "D-03",
       "D-04"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a",
     "r26_port": "no",
     "screenshots": "no",
@@ -597,7 +597,7 @@
     "deps": [
       "I-08"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a",
     "r26_port": "no",
     "screenshots": "no",
@@ -706,7 +706,7 @@
     "deps": [
       "K-08"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a",
     "r26_port": "no",
     "screenshots": "no",
@@ -2508,7 +2508,7 @@
       "D-04",
       "I-01"
     ],
-    "status": "in-progress",
+    "status": "done",
     "branch": "agent/codex/I-10-shell-wiring",
     "r26_port": "no",
     "screenshots": "yes",
