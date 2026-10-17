@@ -1,4 +1,4 @@
-// Both candidates are rendered for kvn's decision. A is the review default.
+// Both candidates were rendered; kvn chose B on 18 Oct.
 export const accountCopyOptions = {
   A: {
     heading: "One account. All of Suvana.",
@@ -14,4 +14,4 @@ export const accountCopyOptions = {
   },
 } as const;
 
-export const accountCopy = accountCopyOptions.A;
+export const accountCopy = accountCopyOptions.B;

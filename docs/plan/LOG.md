@@ -962,3 +962,7 @@ Rules:
 - Recognize vs R26 (sync.mjs status): Suvana's copy matches Lahiru's latest R26 code (ec2604a) apart from declared changes (Suvana page, container, faster tf_function run of the same best_model.h5, extra /api/info fields). Recognition quality is his model's; nothing here changes it.
 - Railway (D-04): live at https://suvana-production.up.railway.app in Singapore; /api/info numClasses 171, model best_model.h5; WebSocket answers; about 0.8 GB memory idle. kvn's check: it works, but recognition felt weak (quality is Lahiru's model; no figure measured).
 - Needs kvn: choose wording A or B from .agent-local/review/2026-10-18a/ (integration worktree); set RECOGNIZE_PUBLIC_ORIGIN on Railway before merging; merge and push; then claude-code runs the production checklist and kvn submits the Google review. Codex saved its superseded first account attempt in the shared git stash; drop it after the merge.
+
+### 2026-10-18 13:00 | kvn (recorded by claude-code) | Account wording B; Railway setting
+- kvn chose wording option B for the account pages from the renders in .agent-local/review/2026-10-18a/ ("Welcome to Suvana." / "Welcome back" / "Join Suvana"). claude-code switched accountCopy to B on integration/2026-10-18a; Communicate lint and build, sync guard 228 and brand check pass.
+- claude-code set RECOGNIZE_PUBLIC_ORIGIN=https://suvana-production.up.railway.app on the Railway service at kvn's request (non-secret, no redeploy); the merge's Recognize rebuild picks it up.
