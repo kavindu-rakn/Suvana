@@ -1,5 +1,6 @@
 (() => {
   "use strict";
+  const platform = window.SuvanaRecognize;
 
   // Full MediaPipe Holistic connection tables (extracted from
   // mediapipe.solutions.holistic.POSE_CONNECTIONS / FACEMESH_CONTOURS / HAND_CONNECTIONS)
@@ -401,7 +402,7 @@
   function processSpeechQueue() {
     if (speechPlaying || speechQueue.length === 0) return;
     const text = speechQueue.shift();
-    const url = `/api/speak?text=${encodeURIComponent(text)}`;
+    const url = platform.apiPath(`/api/speak?text=${encodeURIComponent(text)}`);
     const audioEl = new Audio(url);
     speechPlaying = true;
 
@@ -471,9 +472,10 @@
     }
   }
 
-  function connectSocket() {
-    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    ws = new WebSocket(`${protocol}://${window.location.host}/ws/recognize`);
+  async function connectSocket() {
+    const url = await platform.socketUrl();
+    if (!running) return;
+    ws = new WebSocket(url);
 
     ws.onopen = () => setConnectionState("connected", "Connected");
     ws.onclose = () => {
@@ -688,8 +690,7 @@
     faceVisible = toggleFace.checked;
   });
 
-  fetch("/api/info")
-    .then((r) => r.json())
+  platform.info
     .then((data) => {
       infoSeqLen.textContent = `${data.sequenceLength} frames`;
       if (guideSeqLen) guideSeqLen.textContent = `${data.sequenceLength} Frames`;
@@ -721,7 +722,7 @@
 
   labelSearch.addEventListener("input", () => renderLabels(labelSearch.value));
 
-  fetch("/api/labels")
+  fetch(platform.apiPath("/api/labels"))
     .then((r) => r.json())
     .then((data) => {
       allLabels = data.labels || [];

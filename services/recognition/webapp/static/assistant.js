@@ -19,11 +19,11 @@
 
   const STORE_KEY = "savana.assistant.v1";
   const API = {
-    meta: "/api/assistant/meta",
-    chat: "/api/assistant/chat",
-    verify: "/api/assistant/verify",
-    models: "/api/assistant/models",
-    speak: "/api/speak",
+    meta: window.SuvanaRecognize.apiPath("/api/assistant/meta"),
+    chat: window.SuvanaRecognize.apiPath("/api/assistant/chat"),
+    verify: window.SuvanaRecognize.apiPath("/api/assistant/verify"),
+    models: window.SuvanaRecognize.apiPath("/api/assistant/models"),
+    speak: window.SuvanaRecognize.apiPath("/api/speak"),
   };
 
   /* --------------------------------------------------------------- settings */

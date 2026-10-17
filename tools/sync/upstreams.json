@@ -49,6 +49,32 @@
         "'register'"
       ],
       "why": "D-A33 account-HTML proxy entry point must survive routing maintenance"
+    },
+    {
+      "file": "apps/shell/vercel.json",
+      "has": [
+        "\"source\": \"/recognize\"",
+        "\"source\": \"/recognize/\"", "suvana_mount=recognize",
+        "https://suvana-production.up.railway.app/:path*"
+      ],
+      "why": "D-A33 keep HTTP-only Railway path wiring"
+    },
+    {
+      "file": "apps/shell/src/main.ts",
+      "has": [
+        "link.href = '/recognize/'",
+        "recognizeTarget(configured, isLocal)"
+      ],
+      "why": "D-A33 default Recognize navigation stays on Suvana"
+    },
+    {
+      "file": "apps/shell/src/recognizeLink.ts",
+      "has": [
+        "fetch('/recognize/api/info'",
+        "return url.href",
+        "return '/recognize/'"
+      ],
+      "why": "D-A33 explicit service-origin setting is fallback only"
     }
   ],
   "components": [
@@ -173,12 +199,16 @@
       "couplings": {
         "webapp/assistant.py": "five user-visible strings rebranded plus a system-prompt rule (1968cf2); take upstream logic, re-apply the strings",
         "README.md": "Keep the existing pytest/local setup correction plus I-08's CPU container, network boundary, theme and synthetic WebSocket benchmark instructions.",
-        "webapp/server.py": "I-08 adds labels, backend and model filename to /api/info while preserving the original fields and upstream JPEG WebSocket protocol.",
+        "webapp/server.py": "I-08 adds labels, backend and model filename to /api/info while preserving the original fields and upstream JPEG WebSocket protocol. D-A33 adds optional RECOGNIZE_PUBLIC_ORIGIN metadata and a fixed prefixed-HTML render hint; no model, label, frame-processing or WebSocket protocol changes.",
         ".gitignore": "anchored data rules so labels.npy / sinhala_labels.json can be committed (c5b5b3b)",
-        "requirements.txt": "Suvana pins fastapi 0.103.2 / uvicorn 0.23.2 / websockets 11.0.3 (8ecb443, reason not recorded); upstream and Lahiru's venv run 0.141.1 / 0.52.1 / 16.1.1 — verify the Docker build before converging"
+        "requirements.txt": "Suvana pins fastapi 0.103.2 / uvicorn 0.23.2 / websockets 11.0.3 (8ecb443, reason not recorded); upstream and Lahiru's venv run 0.141.1 / 0.52.1 / 16.1.1 — verify the Docker build before converging",
+        "webapp/static/index.html": "D-A33 Suvana-only relative assets, bare/prefixed base URL, home navigation and non-gating shared account slot; preserve existing theme/branding",
+        "webapp/static/app.js": "D-A33 Suvana-only transport adapter for API/TTS paths and an environment-supplied direct socket origin; inference UI/protocol unchanged",
+        "webapp/static/assistant.js": "D-A33 Suvana-only prefixed assistant API/TTS URLs, retaining assistant logic and original storage keys",
+        "webapp/static/soundguard.js": "D-A33 Suvana-only prefixed mobile-discovery endpoint; internal identifiers and existing behavior preserved"
       },
       "suvanaOnly": {
-        "DEPLOY-SUVANA.md": "runbook for the recognize. subdomain",
+        "DEPLOY-SUVANA.md": "Suvana HTTP-prefix/direct-WebSocket deployment and optional public-origin instructions",
         "Dockerfile": "container build for the service",
         "requirements-runtime.txt": "I-08 pinned CPU HTTP/WebSocket dependencies; full upstream requirements.txt remains for desktop/training.",
         "tools/benchmark_websocket.py": "I-08 reproducible local 50-window backend comparison and additive API/model class-count checks; synthetic blank JPEGs, no signer/accuracy claim.",
@@ -188,7 +218,11 @@
         "webapp/data/sinhala_labels.json": "Sinhala script for each label",
         "webapp/static/suvana-logo.png": "Suvana branding",
         "AGENTS.md": "Suvana recognition instructions; not upstream runtime code",
-        "CLAUDE.md": "Imports the local single-source AGENTS.md for Claude"
+        "CLAUDE.md": "Imports the local single-source AGENTS.md for Claude",
+        "webapp/suvana_platform.py": "D-A33 optional public-origin env validation; unset returns no additional API fields",
+        "webapp/static/suvana-platform.js": "D-A33 HTTP/socket routing and optional same-origin account adapter; inert account behavior at service root",
+        "tests/test_suvana_platform.py": "D-A33 env-unset compatibility and configured-origin validation regressions",
+        "tests/suvana-platform.test.mjs": "D-A33 default-root transport/account inactivity and prefix/direct-socket browser regressions"
       },
       "skip": {
         "webapp/static/**": "Suvana-branded frontend; upstream's index.html embeds the other modules as panels, which the shell does here (b4ad381, 87a6d3a)",
@@ -250,24 +284,128 @@
         },
         {
           "file": "Dockerfile",
-          "has": ["requirements-runtime.txt", "pip check", "COPY --chown=user data/processed/labels.npy", "COPY --chown=user models/saved_models/best_model.h5", "HEALTHCHECK"],
-          "lacks": ["COPY --chown=user . ."],
+          "has": [
+            "requirements-runtime.txt",
+            "pip check",
+            "COPY --chown=user data/processed/labels.npy",
+            "COPY --chown=user models/saved_models/best_model.h5",
+            "HEALTHCHECK"
+          ],
+          "lacks": [
+            "COPY --chown=user . ."
+          ],
           "why": "I-08 preserves explicit runtime contents and the 171-class health check"
         },
         {
           "file": "requirements-runtime.txt",
-          "has": ["tensorflow-cpu==2.13.0", "mediapipe==0.10.7", "fastapi==0.103.2", "pydantic==1.10.13", "websockets==11.0.3"],
+          "has": [
+            "tensorflow-cpu==2.13.0",
+            "mediapipe==0.10.7",
+            "fastapi==0.103.2",
+            "pydantic==1.10.13",
+            "websockets==11.0.3"
+          ],
           "why": "I-08 uses the tested CPU serving stack without replacing upstream training requirements"
         },
         {
           "file": "webapp/server.py",
-          "has": ["\"labels\": unique_labels", "\"backend\": getattr(fast_engine", "\"model\": Path(config['model']['model_path']).name"],
+          "has": [
+            "\"labels\": unique_labels",
+            "\"backend\": getattr(fast_engine",
+            "\"model\": Path(config['model']['model_path']).name"
+          ],
           "why": "I-08 additive service diagnostics survive upstream merges"
         },
         {
           "file": "webapp/static/index.html",
-          "has": ["Back to Suvana", "https://suvana-shell.vercel.app/", "document.documentElement.dataset.theme", ":root[data-theme=\"light\"]"],
+          "has": [
+            "Back to Suvana",
+            "https://suvana-shell.vercel.app/",
+            "document.documentElement.dataset.theme",
+            ":root[data-theme=\"light\"]"
+          ],
           "why": "I-08 return navigation and shell-selected theme survive frontend syncs"
+        },
+        {
+          "file": "webapp/server.py",
+          "has": [
+            "public_connection_config()", "suvana_mount == \"recognize\""
+          ],
+          "why": "D-A33 publish configured direct socket origin without changing existing API fields"
+        },
+        {
+          "file": "webapp/suvana_platform.py",
+          "has": [
+            "RECOGNIZE_PUBLIC_ORIGIN",
+            "return {}",
+            "publicOrigin"
+          ],
+          "why": "D-A33 optional setting must remain disabled by default"
+        },
+        {
+          "file": "webapp/static/suvana-platform.js",
+          "has": [
+            "/recognize",
+            "/communicate/api/auth/session",
+            "/login?callbackUrl=%2Frecognize%2F",
+            "Signed in as",
+            "if (!mounted) return",
+            "settings?.publicOrigin || window.location.origin"
+          ],
+          "why": "D-A33 keep prefix routing, direct socket and root-inert optional account"
+        },
+        {
+          "file": "webapp/static/app.js",
+          "has": [
+            "platform.apiPath",
+            "platform.socketUrl()",
+            "platform.info"
+          ],
+          "lacks": [
+            "fetch(\"/api/info\")",
+            "new WebSocket(`${protocol}://${window.location.host}"
+          ],
+          "why": "D-A33 transport must not silently revert to unprefixed APIs or a socket through Vercel"
+        },
+        {
+          "file": "webapp/static/index.html",
+          "has": [
+            "<base href=\"/\" />",
+            "./suvana-platform.js",
+            "id=\"suvana-account\"",
+            "./app.js",
+            "./assistant.js"
+          ],
+          "why": "D-A33 root/bare/slash asset paths and account slot must survive upstream copies"
+        },
+        {
+          "file": "webapp/static/assistant.js",
+          "has": [
+            "window.SuvanaRecognize.apiPath"
+          ],
+          "why": "D-A33 preserve assistant HTTP prefix"
+        },
+        {
+          "file": "webapp/static/soundguard.js",
+          "has": [
+            "window.SuvanaRecognize.apiPath"
+          ],
+          "why": "D-A33 preserve mobile-discovery HTTP prefix"
+        },
+        {
+          "file": "tests/test_suvana_platform.py",
+          "has": [
+            "test_unset_setting_preserves_existing_info_contract"
+          ],
+          "why": "D-A33 default-root compatibility proof"
+        },
+        {
+          "file": "tests/suvana-platform.test.mjs",
+          "has": [
+            "unset setting at its own root",
+            "ws://localhost:8000/ws/recognize"
+          ],
+          "why": "D-A33 preserve original root socket/account behavior"
         }
       ]
     },

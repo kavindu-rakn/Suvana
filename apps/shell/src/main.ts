@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initWebGLBackground } from './webgl';
 import { initTheme } from './theme';
 import { mountAssistant } from './assistant/widget';
+import { recognizeTarget } from './recognizeLink';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -263,65 +264,20 @@ if (marqueeContent) {
   requestAnimationFrame(animateMarquee);
 }
 
-// 9. Recognize card
-// Recognition is the one module that is not a path on this domain — it needs
-// its own origin for the WebSocket (see the marked comment in index.html). The
-// card ships as "Ready to deploy" and only becomes a link once there is
-// somewhere for it to go, so the badge never claims more than is true.
+// 9. Recognize card: HTTP stays on Suvana; the page opens its socket directly.
 const recognizeFoot = document.querySelector<HTMLElement>('[data-recognize-foot]');
-
 if (recognizeFoot) {
   const configured = recognizeFoot.dataset.serviceUrl?.trim() || (import.meta.env.VITE_RECOGNIZE_URL as string | undefined)?.trim() || '';
   const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-  // Two local origins are plausible and both are documented: 8000 is the
-  // uvicorn command in the runbook, 7860 the Docker default in
-  // services/recognition/DEPLOY-SUVANA.md. Default to 8000 so the link works
-  // the moment the runbook is followed, then confirm by probe.
-  const LOCAL_PORTS = [8000, 7860];
-  const serviceUrl = configured || (isLocal ? `http://localhost:${LOCAL_PORTS[0]}` : '');
-
-  if (serviceUrl) {
-    const link = recognizeFoot.querySelector('a');
-    const badge = recognizeFoot.querySelector<HTMLElement>('[data-recognize-badge]');
-
-    if (link) {
-      link.href = serviceUrl;
-      link.hidden = false;
-    }
-    if (badge) {
-      // A deployed origin is a live service; the localhost fallback is a
-      // server someone started by hand, and saying so avoids a green "Live"
-      // badge on a port that may well be closed.
-      if (!configured) badge.textContent = `Local · port ${LOCAL_PORTS[0]}`;
-      badge.hidden = false;
-    }
-    recognizeFoot.querySelector('[data-recognize-placeholder]')?.remove();
-
-    // Find which port is actually answering. The service serves no CORS
-    // headers by design (it is same-origin with its own page), so the response
-    // cannot be read — but a no-cors fetch still settles: it resolves opaque
-    // when something replied and rejects when the connection was refused,
-    // which is exactly the liveness question being asked. It cannot tell what
-    // is listening, so it only ever picks between the two documented ports.
-    if (!configured && isLocal) {
-      const probe = (port: number) =>
-        fetch(`http://localhost:${port}/api/info`, {
-          mode: 'no-cors',
-          signal: AbortSignal.timeout(1500),
-        }).then(() => port);
-
-      void Promise.any(LOCAL_PORTS.map(probe))
-        .then((port) => {
-          if (link) link.href = `http://localhost:${port}`;
-          if (badge) badge.textContent = `Local · port ${port}`;
-        })
-        .catch(() => {
-          // Nothing is up yet. Leave the link on the runbook's port and say so
-          // rather than implying a running service.
-          if (badge) badge.textContent = 'Local · not running';
-        });
-    }
-  }
+  const link = recognizeFoot.querySelector('a');
+  const badge = recognizeFoot.querySelector<HTMLElement>('[data-recognize-badge]');
+  if (link) { link.href = '/recognize/'; link.hidden = false; }
+  if (badge) { badge.textContent = 'On Suvana'; badge.hidden = false; }
+  recognizeFoot.querySelector('[data-recognize-placeholder]')?.remove();
+  void recognizeTarget(configured, isLocal).then(target => {
+    if (link) link.href = target;
+    if (badge && target !== '/recognize/') badge.textContent = isLocal && !configured ? 'Local service' : 'Direct service';
+  });
 }
 
 // 10. Page Transitions (Outbound)

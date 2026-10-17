@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 import yaml
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.concurrency import run_in_threadpool
 
@@ -21,6 +21,8 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
+
+from webapp.suvana_platform import public_connection_config  # noqa: E402
 
 try:
     from data_preprocessing.frame_extractor import FrameExtractor  # noqa: E402
@@ -147,7 +149,13 @@ def _landmarks_to_points(landmark_list):
 
 
 @app.get("/")
-def index():
+@app.get("/index.html")
+def index(suvana_mount: str = ""):
+    if suvana_mount == "recognize":
+        # The rewrite strips /recognize. A fixed render hint avoids guessing
+        # forwarded headers, and sets the asset base before browser preloading.
+        html = (STATIC_DIR / "index.html").read_text(encoding="utf-8")
+        return HTMLResponse(html.replace('<base href="/" />', '<base href="/recognize/" />', 1))
     return FileResponse(str(STATIC_DIR / "index.html"))
 
 
@@ -160,6 +168,7 @@ def get_info():
         "labels": unique_labels,
         "backend": getattr(fast_engine, "backend", "keras_predict"),
         "model": Path(config['model']['model_path']).name,
+        **public_connection_config(),
     })
 
 

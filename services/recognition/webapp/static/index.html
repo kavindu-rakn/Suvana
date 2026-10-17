@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- The Shell's render hint replaces only this base, before browser preload. -->
+  <base href="/" />
+  <script src="./suvana-platform.js"></script>
   <title>Recognize — සුවණ Suvana</title>
   <script>
     // Recognize lives on its own origin; the shell passes its theme by URL.
@@ -10,7 +13,7 @@
     const suvanaTheme = new URLSearchParams(window.location.search).get('theme');
     document.documentElement.dataset.theme = suvanaTheme === 'light' ? 'light' : 'dark';
   </script>
-  <link rel="icon" type="image/png" href="/suvana-logo.png" />
+  <link rel="icon" type="image/png" href="./suvana-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Noto+Serif+Sinhala:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -3408,6 +3411,8 @@
     .suvana-return a { color: var(--text-dim); font-size: 13px; text-decoration: none; }
     .suvana-return a:hover { color: var(--text); text-decoration: underline; }
     .suvana-return a:focus-visible { outline: 2px solid var(--ring); outline-offset: 5px; }
+    .suvana-return.suvana-mounted { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; }
+    #suvana-account { color: var(--text-dim); font-size: 13px; overflow-wrap: anywhere; }
     :root[data-theme="dark"] { color-scheme: dark; }
     :root[data-theme="light"] {
       color-scheme: light;
@@ -3444,11 +3449,12 @@
     }
   </style>
   <!-- සුවණ AI assistant (additive; namespaced under .svn-ai*) -->
-  <link rel="stylesheet" href="/assistant.css" />
+  <link rel="stylesheet" href="./assistant.css" />
 </head>
 <body>
   <nav class="suvana-return" aria-label="Suvana navigation">
-    <a href="https://suvana-shell.vercel.app/">&larr; Back to Suvana</a>
+    <a id="suvana-home" href="https://suvana-shell.vercel.app/">&larr; Back to Suvana</a>
+    <span id="suvana-account" hidden></span>
   </nav>
   <!-- background layers -->
   <div class="bg-radial" aria-hidden="true"></div>
@@ -3462,7 +3468,7 @@
   <!-- PREMIUM HEADER -->
   <header class="app-header">
     <div class="brand">
-      <span class="brand-mark"><img src="/suvana-logo.png" alt="Suvana logo" /></span>
+      <span class="brand-mark"><img src="./suvana-logo.png" alt="Suvana logo" /></span>
       <div class="brand-text">
         <h1>
           <span class="sinhala-brand">සුවණ</span>
@@ -3624,7 +3630,7 @@
       <p>
         The recognition engine uses a multi-stage deep learning pipeline. Frames from your webcam are processed by MediaPipe Holistic to extract 3D spatial coordinate tensors across hands, pose, and face.
       </p>
-      <img src="/Working.png" alt="How Sign Language Recognition Works" class="guide-diagram" />
+      <img src="./Working.png" alt="How Sign Language Recognition Works" class="guide-diagram" />
     </div>
 
     <div class="guide-specs-grid">
@@ -3694,7 +3700,7 @@
   </aside>
   <div class="settings-scrim" id="settingsScrim"></div>
 
-  <script src="/app.js"></script>
+  <script src="./app.js"></script>
 
   <!-- Condensing header: toggles a single presentational class on scroll.
        Self-contained IIFE, passive listener, reads no app state. -->
@@ -3750,6 +3756,6 @@
   </script>
 
   <!-- සුවණ AI assistant — self-injecting widget, loads after the main app -->
-  <script src="/assistant.js" defer></script>
+  <script src="./assistant.js" defer></script>
 </body>
 </html>
