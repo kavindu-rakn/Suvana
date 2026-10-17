@@ -5,7 +5,7 @@ export const FINGER_CUTOFF_PROVENANCE = {
   "corpusSha256": "4f5297f493d2cd1ca85939000b7ef5098bc73fbe90f0e4e89ba76de5398d2239",
   "corpusTakes": 557,
   "corpusSigns": 33,
-  "scorerSha256": "e4e3e371c1fa9558b7e5aa3c79f9fea6767b805338b081448a6d30397fdddb2a",
+  "scorerSha256": "2024785cbdcbcbb63b5eedc77c02e5becd33b46559fe541f3e7ad20e714852a4",
   "wrongPercentile": 0.98,
   "almostPercentile": 0.9,
   "minimumTakes": 8,

@@ -9,8 +9,9 @@ import { FINGER_CUTOFF_PROVENANCE, SIGN_FINGER_CUTOFFS } from './fingerCutoffs'
 
 const sha = (bytes: string | Buffer) => createHash('sha256').update(bytes).digest('hex')
 const scoringFiles = ['score.ts', 'normalize.ts', 'dtw.ts', 'landmarks.ts']
+// Hash the scorer as git stores it (LF): Windows working copies may still hold CRLF.
 function scorerHash() {
-  return sha(scoringFiles.map((file) => readFileSync(join(process.cwd(), 'src/scoring', file), 'utf8')).join('\n'))
+  return sha(scoringFiles.map((file) => readFileSync(join(process.cwd(), 'src/scoring', file), 'utf8').replace(/\r\n/g, '\n')).join('\n'))
 }
 const enabled = process.env.L33_GENERATE === '1' || process.env.L33_VERIFY_TABLE === '1'
 
