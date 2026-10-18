@@ -319,6 +319,16 @@ document.body.addEventListener('click', (e) => {
   }
 });
 
+// Back/forward cache: on Back, the browser restores this page exactly as it
+// left it, still covered by the exit sweep above (a blank screen). Uncover it.
+window.addEventListener('pageshow', (e) => {
+  if (!e.persisted || !preloader) return;
+  gsap.killTweensOf(preloader);
+  preloader.style.display = 'none';
+  document.body.style.overflow = '';
+  lenis.start();
+});
+
 // 11. Section navigation
 // The landing is one long page, so the header carries jump links. Two pieces:
 // the scroll itself has to go through Lenis (a native anchor jump sets
