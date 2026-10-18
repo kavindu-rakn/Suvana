@@ -1,65 +1,52 @@
-"""Suvana content boundary; imports the assistant only, never inference/model code."""
+"""Fixed product questions, provenance and optional model boundary; no inference."""
+import json
 import sys
 from pathlib import Path
-
 import pytest
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "webapp"))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'webapp'))
 import assistant
+import suvana_assistant as engine
+CASES=json.loads((Path(__file__).parent/'assistant-questions.json').read_text(encoding='utf-8'))
 
+@pytest.mark.parametrize('case',CASES,ids=[c['question'] for c in CASES])
+def test_shared_questions(case):
+    result=assistant.local_answer(case['question'])
+    assert result['intent']==case['intent']
+    for text in case.get('contains',[]): assert text in result['text']
+    if case.get('card'): assert result['cards'][0]['label']==case['card']
+    if case.get('url'): assert any(link['url']==case['url'] for link in result['links'])
+    if case.get('noCards'): assert not result['cards']
+    if case.get('hasCards'): assert result['cards']
+    if 'recognize' in case: assert bool(result['cards'][0]['recognizeLabel'])==case['recognize']
+    if case.get('refused'): assert result['refused']
+    for phrase in engine.POLICY['forbiddenPhrases']: assert phrase not in json.dumps(result,ensure_ascii=False).lower()
 
-@pytest.mark.parametrize("message", [
-    "how do I sign X", "translate Y to SSL", "describe the handshape for Z", "how do I sign hello",
-    "How can I sign HELLO?", "please demonstrate the sign for HELLO",
-    "explain the movement for HELLO", "describe the position for HELLO",
-    "show me how to sign HELLO", "sign HELLO", "translate HELLO into sign language",
-    "HELLO සංඥා භාෂාවෙන් කොහොමද කරන්නේ?",
-    "සංඥා භාෂාවට පරිවර්තනය කරන්න", "අතේ පිහිටීම විස්තර කරන්න",
-])
-def test_requests_refuse_with_a_learn_link(message):
-    answer = assistant.local_answer(message)
-    assert answer["text"] == assistant.SIGNING_REFUSAL
-    assert answer["refused"] is True
-    assert answer["cards"] == []
-    assert answer["learnUrl"].startswith("https://suvana.help/learn/")
+def test_no_repeated_or_sign_form_tips():
+    for sign in engine.SIGNS:
+        assert engine.card(sign)['tips']==[]
+        for phrase in engine.POLICY['forbiddenPhrases']: assert phrase not in json.dumps(engine.card(sign)).lower()
 
+def test_declined_requests_do_not_call_a_model(monkeypatch):
+    def forbidden(*args,**kwargs): raise AssertionError('must not call model')
+    monkeypatch.setattr(assistant,'_resolve_model',forbidden)
+    monkeypatch.setattr(assistant,'_call_llm',forbidden)
+    for question in ['describe the handshape for A','translate my name is Daham to SSL']:
+        result=assistant.assistant_chat(assistant.ChatRequest(message=question,provider='gemini',apiKey='synthetic-key'))
+        assert result['refused'] and result['engine']=='local'
 
-@pytest.mark.parametrize("message, url", [
-    ("how do I sign HELLO", "?sign=HELLO"),
-    ("how do I sign BAG EKA", "?sign=BAG%20EKA"),
-    ("translate HELLO to sign language", "?sign=HELLO"),
-    ("how do I sign hello", ""),
-    ("how do I sign unknown", ""),
-    ("how do I sign THANK_YOU", ""),
-    ("how do I sign MAGE NAMA", ""),
-])
-def test_exact_glosses_only(message, url):
-    assert assistant.signing_refusal(message)["learnUrl"] == assistant.LEARN_URL + url
+def test_optional_model_cannot_add_facts_or_signing_instructions(monkeypatch):
+    monkeypatch.setattr(assistant,'_resolve_model',lambda *args:('test-model',None))
+    def model(provider,key,model,system,history,message):
+        assert 'APPROVED_ANSWER' in system and 'Never translate into SSL' in system
+        assert history==[]
+        return 'move your hand to your chest'
+    monkeypatch.setattr(assistant,'_call_llm',model)
+    question='how do I sign hello'
+    result=assistant.assistant_chat(assistant.ChatRequest(message=question,provider='gemini',apiKey='synthetic-key'))
+    assert result['text']==assistant.local_answer(question)['text']
+    assert result['links']==assistant.local_answer(question)['links']
 
-
-def test_missing_gloss_list_fails_closed(monkeypatch):
-    monkeypatch.setattr(assistant, "LEARN_GLOSSES", frozenset())
-    assert assistant.signing_refusal("how do I sign HELLO")["learnUrl"] == assistant.LEARN_URL
-
-
-def test_every_card_has_camera_advice_only():
-    for category in ["letter", "number", "month", "phrase"]:
-        tips = assistant.KB.card({"label": "fixture", "sinhala": "", "english": "", "category": category})["tips"]
-        assert tips == assistant.GENERAL_TIPS
-        assert not assistant.re.search(r"handshape|finger|palm|chest|pose|fingerspell|initialis|held|moved|neutral|motion|variant|letter|month|number", " ".join(tips), assistant.re.I)
-
-
-def test_refusal_precedes_any_cloud_call(monkeypatch):
-    def forbidden(*args, **kwargs):
-        raise AssertionError("A refused signing request must never call a model")
-    monkeypatch.setattr(assistant, "_resolve_model", forbidden)
-    monkeypatch.setattr(assistant, "_call_llm", forbidden)
-    answer = assistant.assistant_chat(assistant.ChatRequest(message="how do I sign HELLO", provider="gemini", apiKey="synthetic-test-key"))
-    assert answer["engine"] == "local"
-    assert answer["refused"] is True
-    assert "does not translate into SSL" in assistant.SYSTEM_PROMPT
-
-
-@pytest.mark.parametrize("message", ["hello", "show me the letters", "practice tips", "how do I improve camera lighting?"])
-def test_browsing_and_camera_advice_remain_available(message):
-    assert assistant.signing_refusal(message) is None
+def test_local_is_default_and_metadata_is_union(monkeypatch):
+    monkeypatch.setattr(assistant,'_call_llm',lambda *args:pytest.fail('local default must not call model'))
+    assert assistant.assistant_chat(assistant.ChatRequest(message='how do I sign hello'))['engine']=='local'
+    assert assistant.assistant_meta()['signCount']==530

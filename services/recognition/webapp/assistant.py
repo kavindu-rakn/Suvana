@@ -1,581 +1,28 @@
-"""Suvana AI Assistant -- a self-contained, zero-cost help engine for the web app.
+"""Suvana-only assistant routes; inference and label data remain unchanged.
 
-Rebranded from the team repo's copy: the standalone name this module was
-built under is a sub-brand, and Suvana carries no sub-brand names in UI copy.
-Suvana also refuses written signing/translation requests and uses camera-only
-tips. Re-apply this declared content-safety coupling on upstream sync.
-
-Design goals
-------------
-1. **Additive only.** Nothing in this module mutates or monkey-patches existing
-   application state. It exposes a FastAPI ``APIRouter`` that ``server.py``
-   includes; if this file is deleted the rest of the app still runs unchanged.
-
-2. **Free forever, offline first.** The default engine is a fully local
-   retrieval + intent engine built on the project's own ``sinhala_labels.json``.
-   No API key, no network call, no account, no quota. It answers instantly.
-
-3. **Optionally smarter.** If the user pastes a free API key (Google Gemini,
-   Groq or OpenRouter -- all have no-credit-card free tiers) the local engine
-   still runs first and its results are handed to the LLM as grounded context
-   (retrieval-augmented generation), so the model answers *about this project's
-   actual dataset* rather than hallucinating. If the key is missing, invalid,
-   rate-limited or the machine is offline, we silently fall back to the local
-   answer -- the assistant never hard-fails.
-
-The key is never written to disk by the server; the browser holds it in
-localStorage and sends it per request, and this module only forwards it.
+The default local router uses a generated, provenance-backed union of Learn
+references and Recognize labels. Optional models receive the approved local
+answer and may return only that wording; other output falls back locally.
+Keys are never written by this server. Keep the declared sync couplings.
 """
 
 from __future__ import annotations
 
-import difflib
 import json
-import random
 import re
-from pathlib import Path
-from urllib.parse import quote
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-DATA_PATH = Path(__file__).resolve().parent / "data" / "sinhala_labels.json"
-
 router = APIRouter(prefix="/api/assistant", tags=["assistant"])
 
 
-# ---------------------------------------------------------------------------
-# Knowledge base
-# ---------------------------------------------------------------------------
-
-# English glosses for the Romanised-Sinhala dataset labels. Only entries we are
-# confident about are listed -- an unglossed sign simply shows its Sinhala
-# script rather than a guessed translation, because a wrong gloss in a teaching
-# tool is worse than no gloss.
-ENGLISH_GLOSS: Dict[str, str] = {
-    "adinawa": "to pull",
-    "adum sodanawa": "to wash clothes",
-    "ahanawa": "to listen / to ask",
-    "ambaranawa": "to mix or knead",
-    "andanawa": "to cry",
-    "andinawa(draw)": "to draw",
-    "asniipai": "feeling ill",
-    "athu gaanawa": "to prune branches",
-    "awidinawa": "to walk",
-    "bag eka": "the bag",
-    "balanawa": "to look / to watch",
-    "bara kilogram 1 k ": "one kilogram of weight",
-    "beheth kiiyada": "how much is the medicine?",
-    "Bilpatha": "the bill",
-    "bonawa": "to drink",
-    "dakinawa": "to see",
-    "dakunata harenna": "turn right",
-    "dakunata(right)": "right (direction)",
-    "denawa": "to give",
-    "doctor koheda inne": "where is the doctor?",
-    "duwanawa": "to run",
-    "ellanawa": "to hang something up",
-    "gannawa": "to take / to get",
-    "gas kapanawa": "to cut down trees",
-    "gedara issaraha": "in front of the house",
-    "geyak hadanawa": "to build a house",
-    "haaranawa": "to dig",
-    "hatharamn handiya(4 way junction)": "four-way junction",
-    "hinawenawa(1st way)": "to laugh or smile",
-    "hinawenawa(2nd way)": "to laugh or smile (second variant)",
-    "iranawa": "to tear",
-    "ischole bag eka": "the school bag",
-    "Kadaya": "the shop",
-    "kadanawa": "to break",
-    "Kanda nagala bahinna": "climb the hill and come back down",
-    "kanawa": "to eat",
-    "kasanawa": "to scratch",
-    "kotanawa": "to pound or chop",
-    "kunu damanawa": "to throw out rubbish",
-    "laptop eka": "the laptop",
-    "liyanawa": "to write",
-    "Mage nama": "my name",
-    "Mage nama Daham": "my name is Daham",
-    "mage bage eke hoyanna udaw karanna": "please help me find my bag",
-    "mage lap eka hoyanna udaw karanna ": "please help me find my laptop",
-    "mage phone eka hoyanna udaw karanna": "please help me find my phone",
-    "makanawa": "to erase",
-    "mama oyata usaaviyedi nadu pawaranawa": "I will take you to court",
-    "mas maalu kapanawa": "to cut meat and fish",
-    "mata asaniipai": "I am feeling ill",
-    "mata beheth denna": "please give me medicine",
-    "miladii gannawa": "to buy",
-    "muuna kasanawa": "to scratch your face",
-    "muuna soodanawa": "to wash your face",
-    "naanawa": "to bathe",
-    "nagitinawa": "to stand up",
-    "nurse": "nurse",
-    "nurse mata beheth denna": "nurse, please give me medicine",
-    "nurse mata beheth ennath karanawa": "the nurse gives me an injection",
-    "oluwa kasanawa": "to scratch your head",
-    "osawanawa": "to lift",
-    "oyaage upandinaya kawadda": "when is your birthday?",
-    "paadam karanawa": "to study",
-    "paan(bread) kapanawa": "to cut bread",
-    "paara dige kelin gihilla wamata harenne": "go straight along the road, then turn left",
-    "paare idiriyata yanna": "go forward along the road",
-    "paninawa": "to jump",
-    "parimaawa liter 1 k": "one litre of volume",
-    "peenawa": "to be visible",
-    "phone eka": "the phone",
-    "pigana hodanawa": "to wash the dishes",
-    "pihinanawa": "to swim",
-    "pitipassata enna": "come back / move backwards",
-    "randu karagannawa": "to quarrel",
-    "sodanawa": "to wash",
-    "soynawa": "to search for",
-    "sudu kolayak": "a sheet of white paper",
-    "T shirt eke mila kiiyada": "how much is the T-shirt?",
-    "thattu karanawa": "to knock",
-    "thel liter 1 k": "one litre of oil",
-    "therum gannawa": "to understand",
-    "thoranawa": "to select or choose",
-    "udaw karanawa": "to help",
-    "uthuranawa": "to pour",
-    "waadi wenawa": "to sit down",
-    "wada karanawa": "to work",
-    "wama(left)": "left (direction)",
-    "wamaata harenna": "turn left",
-    "wamata U turn eken harenna": "take the U-turn and go left",
-    "wapuranawa": "to sow seed",
-    "wiyadam karanawa": "to spend money",
-    "yanawa": "to go",
-    "50 KM idiriyata yanna": "go 50 km ahead",
-    "50 meters": "fifty metres",
-    "100 meters": "one hundred metres",
-    "(ex- kunu)": "rubbish",
-    "(1st way)": "first variant of the sign",
-    "(2nd way)": "second variant of the sign",
-    "miliyanaya (meka pennaddigassala pennanna.)": "million",
-}
-
-# Spelled-out forms for the numeric labels, so "one hundred" and "five thousand"
-# resolve as reliably as "100" and "5000".
-_UNITS = {"1": "one", "2": "two", "3": "three", "4": "four", "5": "five",
-          "6": "six", "7": "seven", "8": "eight", "9": "nine"}
-_TENS = {"30": "thirty", "40": "forty", "50": "fifty", "60": "sixty",
-         "70": "seventy", "80": "eighty", "90": "ninety"}
-
-
-def _number_gloss(label: str) -> str:
-    """English words for the numeric labels in this dataset."""
-    s = label.strip()
-    if not s.isdigit():
-        return ""
-    if s in _TENS:
-        return _TENS[s]
-    for zeros, word in ((5, "lakh"), (3, "thousand"), (2, "hundred")):
-        tail = "0" * zeros
-        if s.endswith(tail) and len(s) > zeros:
-            head = s[: -zeros]
-            if head in _UNITS:
-                unit = _UNITS[head]
-                base = f"{unit} {word}"
-                if zeros == 5:
-                    return f"{base} / {unit} hundred thousand"
-                return base
-            if head == "10" and zeros == 3:
-                return "ten thousand"
-    return ""
-
-CATEGORY_LABEL = {
-    "letter": "Fingerspelling letter",
-    "number": "Number",
-    "month": "Calendar month",
-    "phrase": "Word / phrase",
-}
-
-# Suvana: camera setup only; category metadata cannot establish sign form.
-GENERAL_TIPS = [
-    "Stay about an arm's length from the camera and keep both hands in frame.",
-    "Use front lighting and avoid backlighting.",
-    "Keep recording for the full capture window.",
-    "Use a plain background.",
-]
-
-
-def _norm(text: str) -> str:
-    return re.sub(r"[^a-z0-9඀-෿ ]+", " ", (text or "").lower()).strip()
-
-
-def _tokens(text: str) -> List[str]:
-    return [t for t in _norm(text).split() if t]
-
-
-class SignKnowledgeBase:
-    """Loads the project's own label data and answers questions about it."""
-
-    def __init__(self, path: Path = DATA_PATH):
-        self.entries: List[Dict[str, Any]] = []
-        self.by_label: Dict[str, Dict[str, Any]] = {}
-        raw: Dict[str, Any] = {}
-        try:
-            if path.exists():
-                raw = json.loads(path.read_text(encoding="utf-8"))
-        except Exception as exc:  # pragma: no cover - defensive
-            print(f"[assistant] could not read {path}: {exc}")
-
-        for label, meta in raw.items():
-            entry = {
-                "label": label,
-                "sinhala": (meta or {}).get("sinhala", label),
-                "category": (meta or {}).get("category", "phrase"),
-                "speakText": (meta or {}).get("speakText", label),
-                "english": ENGLISH_GLOSS.get(label) or _number_gloss(label),
-            }
-            entry["_haystack"] = " ".join(
-                [_norm(label), _norm(entry["english"]), entry["sinhala"]]
-            )
-            self.entries.append(entry)
-            self.by_label[label] = entry
-
-        self.categories: Dict[str, List[Dict[str, Any]]] = {}
-        for e in self.entries:
-            self.categories.setdefault(e["category"], []).append(e)
-
-    # -- retrieval ---------------------------------------------------------
-
-    # A hit must clear this score before we claim it answers the question.
-    # Without a floor, fuzzy matching cheerfully returns a sign for "what is
-    # quantum physics" -- confidently wrong is the worst failure mode for a
-    # teaching tool, so below the floor we say "not in this dataset" instead.
-    MIN_SCORE = 38.0
-
-    def search(self, query: str, limit: int = 6) -> List[Dict[str, Any]]:
-        q = _norm(query)
-        if not q:
-            return []
-        q_tokens = set(_tokens(query))
-        scored = []
-        for e in self.entries:
-            label_n = _norm(e["label"])
-            eng_n = _norm(e["english"])
-            score = 0.0
-
-            if q == label_n or q == eng_n:
-                score += 120
-            # Substring credit only for queries long enough to be meaningful --
-            # a 1-2 char query like "b" is a substring of half the dataset.
-            if len(q) >= 3 and (q in label_n or (eng_n and q in eng_n)):
-                score += 55
-            if len(q) >= 2 and q in e["sinhala"]:
-                score += 60
-
-            overlap = q_tokens & set(_tokens(e["_haystack"]))
-            score += 18 * len(overlap)
-
-            # A short query that *is* a whole word of the label or gloss is a
-            # strong signal even though it's too short for substring credit --
-            # this is what makes "go", "K" and "eat" resolve correctly.
-            label_tokens = _tokens(label_n)
-            if q in label_tokens or q in _tokens(eng_n):
-                score += 45
-            if label_tokens and label_tokens[0] == q:
-                score += 30
-
-            # Tie-break toward the concise, canonical sign: "yanawa" (to go)
-            # should rank above "50 KM idiriyata yanna" for the query "go".
-            score += max(0, 12 - 2 * len(label_tokens))
-
-            # Fuzzy match rescues typos and half-remembered Romanisation.
-            ratio = difflib.SequenceMatcher(None, q, label_n).ratio()
-            if ratio > 0.62:
-                score += ratio * 45
-            if eng_n:
-                eratio = difflib.SequenceMatcher(None, q, eng_n).ratio()
-                if eratio > 0.68:
-                    score += eratio * 30
-
-            if score > 12:
-                scored.append((score, e))
-
-        if not scored:
-            return []
-
-        scored.sort(key=lambda pair: (-pair[0], pair[1]["label"].lower()))
-        if scored[0][0] < self.MIN_SCORE:
-            return []
-        # Keep only results in the same quality band as the best one, so a
-        # strong match isn't padded out with weak noise.
-        cutoff = max(self.MIN_SCORE * 0.62, scored[0][0] * 0.42)
-        return [e for s, e in scored[:limit] if s >= cutoff]
-
-    def card(self, entry: Dict[str, Any]) -> Dict[str, Any]:
-        return {
-            "label": entry["label"],
-            "sinhala": entry["sinhala"],
-            "english": entry["english"],
-            "category": entry["category"],
-            "categoryLabel": CATEGORY_LABEL.get(entry["category"], "Sign"),
-            "tips": list(GENERAL_TIPS),
-        }
-
-    def stats_line(self) -> str:
-        parts = [
-            f"{len(self.categories.get(c, []))} {CATEGORY_LABEL.get(c, c).lower()}s"
-            for c in ("letter", "number", "month", "phrase")
-            if self.categories.get(c)
-        ]
-        return f"{len(self.entries)} signs in total — " + ", ".join(parts)
-
-
-KB = SignKnowledgeBase()
-
-# Suvana-only, generated from Learn reference metadata; no English/Sinhala
-# translation or fuzzy recognition-label mapping is used to make a Learn URL.
-LEARN_URL = "https://suvana.help/learn/"
-LEARN_GLOSSES_PATH = Path(__file__).resolve().parent / "static" / "learn-glosses.json"
+# Suvana-only union and intent policy; no inference or label mutations.
 try:
-    LEARN_GLOSSES = frozenset(json.loads(LEARN_GLOSSES_PATH.read_text(encoding="utf-8"))["glosses"])
-except (OSError, ValueError, KeyError, TypeError):
-    LEARN_GLOSSES = frozenset()  # Missing metadata can only produce the generic Learn URL.
-
-SIGNING_REFUSAL = "Suvana does not describe how signs are made and does not translate into SSL. Use Learn to watch the reference recording instead."
-SIGNING_REQUESTS = [
-    re.compile(pattern, re.I) for pattern in [
-        r"\bhow\b[^.!?]*\b(sign|signed|signing|fingerspell)\b",
-        r"\b(describe|explain|demonstrate|show|teach|perform|make)\b[^.!?]*\b(sign|signs|signing|fingerspell\w*|handshape|hand\s*(position|shape|movement)|finger\s*position|palm|pose|position|location|movement|orientation)\b",
-        r"\b(handshape|finger\s*position|hand\s*(position|shape|movement))\b",
-        r"^\s*(please\s+)?sign\s+\S",
-        r"\btranslat\w*\b[^.!?]*\b(ssl|sign\s*language|signing|sinhala\s*sign)\b",
-    ]
-]
-
-
-def signing_refusal(message: str) -> Optional[Dict[str, Any]]:
-    sinhala = (re.search(r"සංඥා|අත්හැඩ|අත් හැඩ|අතේ පිහිටීම|ඇඟිලි පිහිටීම", message)
-               and re.search(r"කෙසේ|කොහොම|පෙන්ව|විස්තර|පැහැදිලි|පරිවර්ත|කරන්න|කියන්න", message))
-    if not sinhala and not any(pattern.search(message) for pattern in SIGNING_REQUESTS):
-        return None
-    target = (re.search(r"\btranslate\s+(.+?)\s+(?:in)?to\s+(?:ssl|(?:sinhala\s+)?sign\s*language)[?.!]*$", message, re.I)
-              or re.search(r"\b(?:sign|fingerspell)\s+(.+?)[?.!]*$", message, re.I)
-              or re.search(r"\b(?:handshape|position|movement)\s+(?:for|of)\s+(.+?)[?.!]*$", message, re.I))
-    candidate = re.sub(r'''^["'“‘](.*)["'”’]$''', r"\1", target.group(1).strip()) if target else None
-    url = f"{LEARN_URL}?sign={quote(candidate, safe='')}" if candidate in LEARN_GLOSSES else LEARN_URL
-    return {"text": SIGNING_REFUSAL, "learnUrl": url, "refused": True, "cards": [], "chips": []}
-
-
-# ---------------------------------------------------------------------------
-# Local intent engine
-# ---------------------------------------------------------------------------
-
-# NOTE: the Sinhala alternatives are matched without a trailing \b -- Sinhala
-# words often end in a combining mark (e.g. the hal kirima in ආයුබෝවන්), which
-# is not a word character, so \b never fires there.
-GREETING_RE = re.compile(
-    r"^(hi|hey|hello|yo|hola|ayubowan|aayubowan|good (morning|evening|afternoon))\b"
-    r"|^\s*(ආයුබෝවන්|ආයුබෝවන|හෙලෝ)",
-    re.I,
-)
-
-THANKS_RE = re.compile(r"^\s*(thanks|thank you|thx|ty|cheers|nice|great|awesome|cool|perfect|බොහොම ස්තූතියි|ස්තූතියි)\b|^\s*(ස්තූතියි|බොහොම ස්තූතියි)", re.I)
-
-CATEGORY_QUERY = [
-    (re.compile(r"\b(letters?|alphabets?|fingerspell\w*|අකුරු)\b", re.I), "letter"),
-    (re.compile(r"\b(numbers?|digits?|numerals?|counting|ඉලක්කම්|අංක)\b", re.I), "number"),
-    (re.compile(r"\b(months?|calendar|මාස)\b", re.I), "month"),
-    (re.compile(r"\b(phrases?|sentences?|verbs?|වචන)\b", re.I), "phrase"),
-]
-
-LIST_VERB_RE = re.compile(r"\b(show|list|all|which|what|browse|give|see|display|know)\b", re.I)
-
-RANDOM_RE = re.compile(
-    r"\b(random|surprise me|quiz me|something new|teach me (a|any|some)|"
-    r"give me (a|any) sign|any sign to practi[cs]e)\b",
-    re.I,
-)
-
-CAPABILITY_RE = re.compile(
-    r"\b(what can you do|what do you do|who are you|your name|capabilit\w+|"
-    r"what do you know|how can you help|what are you)\b",
-    re.I,
-)
-
-TIPS_RE = [
-    re.compile(r"\b(tips?|advice|guidance)\b", re.I),
-    re.compile(r"\b(confiden\w+|accura\w+|detect\w+|recogni\w+)\b[^.?!]{0,24}\b(low|bad|poor|not|isn'?t|won'?t|never|fail\w*)\b", re.I),
-    re.compile(r"\b(low|bad|poor|improve|increase|better|raise)\b[^.?!]{0,24}\b(confiden\w+|accura\w+|detect\w+|recogni\w+|result\w*|score)\b", re.I),
-    re.compile(r"\b(model|it|camera)\b[^.?!]{0,20}\b(can'?t|cannot|won'?t|doesn'?t|not)\b[^.?!]{0,20}\b(see|read|detect|recogni\w+)\b", re.I),
-]
-
-# Words that describe *how* the user is asking rather than *what* they're
-# asking about. Removing them is what turns "how do I sign to eat?" into the
-# search query "eat".
-STOPWORDS = {
-    "how", "do", "does", "did", "i", "you", "your", "sign", "signs", "signing",
-    "the", "a", "an", "for", "in", "on", "at", "what", "whats", "is", "are",
-    "s", "to", "say", "says", "show", "me", "my", "of", "please", "can",
-    "could", "would", "tell", "about", "mean", "means", "meaning", "make",
-    "makes", "perform", "teach", "learn", "gesture", "gestures", "sinhala",
-    "ssl", "language", "translate", "translation", "and", "with", "there",
-    "any", "give", "list", "explain", "some", "something", "random", "again",
-    "practice", "practise", "tip", "tips", "want", "need", "know",
-    "this", "that", "it", "sing",
-}
-
-
-def _strip_query(message: str) -> str:
-    """Reduce a natural question to the bare thing being asked about."""
-    toks = _tokens(message)
-    # "how do I sign the letter A" / "sign B" -- keep the single letter, which
-    # STOPWORDS would otherwise swallow ("a" is a stopword).
-    letter = re.search(r"\b(?:letters?|alphabets?|fingerspell\w*|signs?)\s+(?:the\s+)?(?:letter\s+)?([a-z])\b", message, re.I)
-    if letter:
-        return letter.group(1).lower()
-    if len(toks) == 1 and len(toks[0]) <= 2:
-        return toks[0]
-    kept = [t for t in toks if t not in STOPWORDS]
-    return " ".join(kept).strip()
-
-
-def local_answer(message: str) -> Dict[str, Any]:
-    """Answer purely from the local knowledge base. Never raises."""
-    msg = (message or "").strip()
-    low = msg.lower()
-    refusal = signing_refusal(msg)
-    if refusal:
-        return refusal
-
-    if not msg:
-        return {
-            "text": "Ask me about any sign in the dataset and I'll show you the Sinhala script, the meaning and how to practise it.",
-            "cards": [],
-            "chips": ["What signs do you know?", "Show me the letters", "How do I sign 'to eat'?"],
-        }
-
-    # 1. Greeting -----------------------------------------------------------
-    if GREETING_RE.search(low):
-        return {
-            "text": (
-                "ආයුබෝවන්! I'm **සුවණ Suvana AI**, your sign-language tutor for this app.\n\n"
-                f"I know all **{len(KB.entries)}** signs this model was trained on. "
-                "Ask me to look up a dataset label or browse reference recordings in Learn."
-            ),
-            "cards": [],
-            "chips": ["How do I sign 'to eat'?", "Show me the letters", "Teach me a random sign"],
-        }
-
-    # 1b. Thanks ------------------------------------------------------------
-    if THANKS_RE.search(msg) and len(_tokens(msg)) <= 3:
-        return {
-            "text": "Anytime! Keep practising — ask me for another sign whenever you're ready.",
-            "cards": [],
-            "chips": ["Teach me a random sign", "Practice tips", "Show me the letters"],
-        }
-
-    # 2. Capability / help --------------------------------------------------
-    if CAPABILITY_RE.search(low):
-        return {
-            "text": (
-                "I'm the built-in tutor for **සුවණ Suvana**. I can:\n\n"
-                "• **Look up dataset labels** — \"to drink\"\n"
-                "• **Read existing label metadata** — \"what does *gannawa* mean?\"\n"
-                "• **Browse by group** — \"show me the numbers\"\n"
-                "• **Give camera setup tips** for recording\n"
-                "• **Speak any sign aloud** — tap the speaker on any card\n\n"
-                f"_{KB.stats_line()}._"
-            ),
-            "cards": [],
-            "chips": ["Show me the months", "How do I sign 'to write'?", "Teach me a random sign"],
-        }
-
-    # 3. Dataset size -------------------------------------------------------
-    if re.search(r"\b(how many|how much|count|total)\b", low) and re.search(r"\b(sign|gesture|class|label|word)\w*\b", low):
-        return {
-            "text": (
-                f"This model recognises **{len(KB.entries)}** distinct signs.\n\n"
-                f"{KB.stats_line()}.\n\n"
-                "They are listed in the **Supported Signs** panel. Learn offers reference recordings."
-            ),
-            "cards": [],
-            "chips": ["Show me the letters", "Show me the numbers", "Teach me a random sign"],
-        }
-
-    # 4. Random / quiz ------------------------------------------------------
-    if RANDOM_RE.search(low) and KB.entries:
-        entry = random.choice(KB.entries)
-        gloss = f" (*{entry['english']}*)" if entry["english"] else ""
-        return {
-            "text": (
-                f"Here's one to practise — **{entry['sinhala']}**{gloss}.\n\n"
-                "Use Learn to watch reference recordings before camera practice."
-            ),
-            "cards": [KB.card(entry)],
-            "chips": ["Teach me another one", "Practice tips", "Show me the letters"],
-        }
-
-    # 5. Category listing ---------------------------------------------------
-    for pattern, cat in CATEGORY_QUERY:
-        m = pattern.search(low)
-        if m and (LIST_VERB_RE.search(low) or _norm(msg) == _norm(m.group(0))):
-            items = KB.categories.get(cat, [])
-            preview = items[:12]
-            return {
-                "text": (
-                    f"The dataset has **{len(items)}** {CATEGORY_LABEL.get(cat, cat).lower()}"
-                    f"{'s' if len(items) != 1 else ''}. "
-                    + ("Here are the first few — ask me about any one for the full breakdown." if len(items) > len(preview) else "Here they are.")
-                ),
-                "cards": [KB.card(e) for e in preview],
-                "chips": ["Practice tips", "Teach me a random sign", "How many signs do you know?"],
-            }
-
-    # 6. Practice tips ------------------------------------------------------
-    if any(p.search(low) for p in TIPS_RE):
-        bullets = "\n".join(f"• {t}" for t in GENERAL_TIPS)
-        return {
-            "text": f"**Getting a clean detection**\n\n{bullets}\n\nUse Learn to watch reference recordings.",
-            "cards": [],
-            "chips": ["Teach me a random sign", "Show me the letters", "How many signs do you know?"],
-        }
-
-    # 7. Sign lookup (the main path) ----------------------------------------
-    stripped = _strip_query(msg)
-    results = KB.search(stripped or msg, limit=6)
-    if not results and stripped != msg:
-        results = KB.search(msg, limit=6)
-
-    if results:
-        top = results[0]
-        rest = results[1:4]
-        gloss = f" — *{top['english']}*" if top["english"] else ""
-        text = (
-            f"**{top['sinhala']}**{gloss}\n\n"
-            f"Dataset label `{top['label']}` · {CATEGORY_LABEL.get(top['category'], 'Sign')}. "
-            "The card below has practice guidance, and the speaker button plays the Sinhala pronunciation."
-        )
-        if rest:
-            text += "\n\nClose matches: " + ", ".join(f"**{r['sinhala']}**" for r in rest) + "."
-        return {
-            "text": text,
-            "cards": [KB.card(e) for e in results[:4]],
-            "chips": ["Practice tips", "Teach me a random sign", "Show me the letters"],
-        }
-
-    # 8. Fallback -----------------------------------------------------------
-    sample = ", ".join(f"*{e['label']}*" for e in random.sample(KB.entries, min(3, len(KB.entries)))) if KB.entries else ""
-    return {
-        "text": (
-            "I couldn't match that to a sign in this dataset. I only know the "
-            f"**{len(KB.entries)}** signs the model was trained on — try the English meaning "
-            "(\"how do I sign *to walk*?\"), the Romanised Sinhala"
-            + (f" ({sample})" if sample else "")
-            + ", or Sinhala script."
-        ),
-        "cards": [],
-        "chips": ["What can you do?", "Show me the letters", "Teach me a random sign"],
-    }
-
-
-# ---------------------------------------------------------------------------
-# Optional free-tier LLM layer (retrieval-augmented)
-# ---------------------------------------------------------------------------
+    from .suvana_assistant import KNOWLEDGE, POLICY, SIGNS, local_answer, build_context
+except ImportError:  # direct module import used by local checks
+    from suvana_assistant import KNOWLEDGE, POLICY, SIGNS, local_answer, build_context
 
 PROVIDERS = {
     "gemini": {
@@ -595,34 +42,10 @@ PROVIDERS = {
     },
 }
 
-SYSTEM_PROMPT = """You are "Suvana AI", the built-in tutor inside the Recognize module of Suvana, a Sri Lankan Sign Language platform built as a university research project.
-
-Your job is to help the user learn and practise the signs this app's model recognises.
-
-Hard rules:
-- The CONTEXT block below is retrieved from the app's own dataset. It is the only ground truth about which signs exist. Never claim a sign exists if it is not in the dataset, and never invent a Sinhala translation.
-- Suvana does not describe how signs are made and does not translate into SSL. Refuse requests to describe, explain or demonstrate signing, handshape, position, location, orientation, movement, category behaviour, or to translate text/speech into SSL or sign language, including Sinhala requests. Never provide signing instructions, gloss order or inferred mappings. Offer https://suvana.help/learn/ to watch reference recordings; use an exact ?sign= URL only if supplied by the local refusal rule, never from a translation or fuzzy label match.
-- Camera setup advice only: distance, lighting, recording through the capture window and a plain background. A category label cannot establish how a sign is formed.
-- Keep answers short and warm — 2 to 5 sentences, or a tight bullet list. This is a chat bubble, not an essay.
-- Sinhala script may be used freely; the user reads Sinhala.
-- Use light markdown (**bold**, bullets with •). No headings, no code fences.
-- Never use a sub-brand name. The Suvana modules are Recognize, Communicate, Learn and Alerts.
-- If the retrieved context is empty and the question is about a specific sign, say plainly that it is not in this dataset."""
-
+SYSTEM_PROMPT = POLICY["modelPrompt"]
 
 def _build_context(message: str) -> str:
-    hits = KB.search(_strip_query(message) or message, limit=8)
-    if not hits:
-        return "CONTEXT: no matching signs found in the dataset.\n" + f"DATASET SIZE: {KB.stats_line()}."
-    lines = []
-    for e in hits:
-        gloss = f" | english: {e['english']}" if e["english"] else ""
-        lines.append(f"- label: {e['label']} | sinhala: {e['sinhala']} | type: {e['category']}{gloss}")
-    return (
-        f"DATASET SIZE: {KB.stats_line()}.\n"
-        "CONTEXT (signs retrieved from this app's dataset for the user's question):\n"
-        + "\n".join(lines)
-    )
+    return build_context(message)
 
 
 def _raise_for_api_error(resp, provider_name: str) -> None:
@@ -840,15 +263,16 @@ def assistant_meta():
     """Everything the UI needs to introduce itself, computed from real data."""
     return {
         "name": "සුවණ Suvana AI",
-        "signCount": len(KB.entries),
-        "summary": KB.stats_line(),
-        "categories": {c: len(v) for c, v in KB.categories.items()},
+        "greeting": local_answer(""),
+        "signCount": len(SIGNS),
+        "summary": f"Learn {KNOWLEDGE['facts']['learnCount']}; Recognize {KNOWLEDGE['facts']['recognitionCount']}",
+        "categories": {c: sum(s.get("recognizeCategory") == c for s in SIGNS) for c in ["letter", "month", "number", "phrase"]},
         "providers": [
             {"id": pid, "name": p["name"], "defaultModel": p["default_model"], "keysUrl": p["keys_url"]}
             for pid, p in PROVIDERS.items()
         ],
         "starters": [
-            "How do I sign 'to eat'?",
+            "How do I sign hello",
             "What does 'gannawa' mean?",
             "Show me the letters",
             "Teach me a random sign",
@@ -941,29 +365,28 @@ def assistant_chat(req: ChatRequest):
     provider = (req.provider or "").lower()
     api_key = (req.apiKey or "").strip()
 
-    if local.get("refused") or not api_key or provider not in PROVIDERS:
-        return {**local, "engine": "local", "engineLabel": "Offline engine"}
+    if local.get("refused") or local.get("intent") == "random" or not api_key or provider not in PROVIDERS:
+        return {**local, "engine": "local", "engineLabel": "Verified index"}
 
-    model, note = _resolve_model(provider, api_key, (req.model or "").strip())
-    model = model or PROVIDERS[provider]["default_model"]
     system = SYSTEM_PROMPT + "\n\n" + _build_context(message)
-    history = [{"role": t.role, "content": t.content} for t in req.history]
+    history = []  # Previous model/user text is not a verified knowledge source.
 
     try:
+        model, _note = _resolve_model(provider, api_key, (req.model or "").strip())
+        model = model or PROVIDERS[provider]["default_model"]
         text = _call_llm(provider, api_key, model, system, history, message)
         return {
-            "text": text,
-            "cards": local.get("cards", []),
-            "chips": local.get("chips", []),
+            **local,
+            "text": text.strip() if text.strip() == local["text"] else local["text"],
             "engine": provider,
             "engineLabel": f"{PROVIDERS[provider]['name']} · {model}",
             "modelId": model,
-            "notice": note,
+            "notice": None,
         }
     except Exception as exc:
         return {
             **local,
             "engine": "local",
-            "engineLabel": "Offline engine",
-            "notice": f"AI model unavailable ({_friendly_error(exc)}) — answered offline instead.",
+            "engineLabel": "Verified index",
+            "notice": "The optional model is unavailable; answered from the verified index.",
         }

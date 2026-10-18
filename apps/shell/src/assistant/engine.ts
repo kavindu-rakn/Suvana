@@ -1,270 +1,97 @@
-/**
- * The local intent engine — a port of `local_answer` in
- * `services/recognition/webapp/assistant.py`.
- *
- * This is the assistant's floor: it needs no API key, no network and no
- * backend, and it always answers. The optional Gemini layer in `gemini.ts`
- * sits on top of it and is fed by the same retrieval, so a key makes the
- * answers more fluent but never changes which signs are considered real.
- */
-
-import { GENERAL_TIPS, CATEGORY_LABEL, SignKnowledgeBase, norm, tokens } from './kb'
+/** Intent before retrieval; shares source data and answer policy with Python. */
+import policy from '../../../../services/recognition/webapp/static/assistant-policy.json'
+import { knowledge, SignKnowledgeBase } from './kb'
 import type { Sign, SignCard } from './kb'
-import { signingRefusal } from './signingSafety'
-
+export { policy }
 export interface Answer {
-  text: string
-  cards: SignCard[]
-  chips: string[]
-  /** Set when the reply came from the cloud model rather than the local engine. */
-  via?: 'gemini'
-  /** Set when a cloud call was attempted and fell back to the local answer. */
-  notice?: string
-  learnUrl?: string
-  refused?: boolean
+  intent: string; text: string; cards: SignCard[]; chips: string[];
+  links: Array<{label:string;url:string}>; refused?: boolean;
+  via?: 'gemini'; notice?: string; learnUrl?: string;
 }
-
-// NOTE: the Sinhala alternatives are matched without a trailing \b — Sinhala
-// words often end in a combining mark (e.g. the hal kirima in ආයුබෝවන්), which
-// is not a word character, so \b never fires there.
-const GREETING_RE =
-  /^(hi|hey|hello|yo|hola|ayubowan|aayubowan|good (morning|evening|afternoon))\b|^\s*(ආයුබෝවන්|ආයුබෝවන|හෙලෝ)/i
-
-const THANKS_RE =
-  /^\s*(thanks|thank you|thx|ty|cheers|nice|great|awesome|cool|perfect|බොහොම ස්තූතියි|ස්තූතියි)\b|^\s*(ස්තූතියි|බොහොම ස්තූතියි)/i
-
-const CATEGORY_QUERY: Array<[RegExp, string]> = [
-  [/\b(letters?|alphabets?|fingerspell\w*|අකුරු)\b/i, 'letter'],
-  [/\b(numbers?|digits?|numerals?|counting|ඉලක්කම්|අංක)\b/i, 'number'],
-  [/\b(months?|calendar|මාස)\b/i, 'month'],
-  [/\b(phrases?|sentences?|verbs?|වචන)\b/i, 'phrase'],
-]
-
-const LIST_VERB_RE = /\b(show|list|all|which|what|browse|give|see|display|know)\b/i
-
-const RANDOM_RE =
-  /\b(random|surprise me|quiz me|something new|teach me (a|any|some)|give me (a|any) sign|any sign to practi[cs]e)\b/i
-
-const CAPABILITY_RE =
-  /\b(what can you do|what do you do|who are you|your name|capabilit\w+|what do you know|how can you help|what are you)\b/i
-
-const TIPS_RE = [
-  /\b(tips?|advice|guidance)\b/i,
-  /\b(confiden\w+|accura\w+|detect\w+|recogni\w+)\b[^.?!]{0,24}\b(low|bad|poor|not|isn'?t|won'?t|never|fail\w*)\b/i,
-  /\b(low|bad|poor|improve|increase|better|raise)\b[^.?!]{0,24}\b(confiden\w+|accura\w+|detect\w+|recogni\w+|result\w*|score)\b/i,
-  /\b(model|it|camera)\b[^.?!]{0,20}\b(can'?t|cannot|won'?t|doesn'?t|not)\b[^.?!]{0,20}\b(see|read|detect|recogni\w+)\b/i,
-]
-
-const COUNT_RE = /\b(how many|how much|count|total)\b/i
-const COUNT_SUBJECT_RE = /\b(sign|gesture|class|label|word)\w*\b/i
-
-// Words that describe *how* the user is asking rather than *what* they're
-// asking about. Removing them is what turns "how do I sign to eat?" into the
-// search query "eat".
-const STOPWORDS = new Set([
-  'how', 'do', 'does', 'did', 'i', 'you', 'your', 'sign', 'signs', 'signing',
-  'the', 'a', 'an', 'for', 'in', 'on', 'at', 'what', 'whats', 'is', 'are',
-  's', 'to', 'say', 'says', 'show', 'me', 'my', 'of', 'please', 'can',
-  'could', 'would', 'tell', 'about', 'mean', 'means', 'meaning', 'make',
-  'makes', 'perform', 'teach', 'learn', 'gesture', 'gestures', 'sinhala',
-  'ssl', 'language', 'translate', 'translation', 'and', 'with', 'there',
-  'any', 'give', 'list', 'explain', 'some', 'something', 'random', 'again',
-  'practice', 'practise', 'tip', 'tips', 'want', 'need', 'know',
-  'this', 'that', 'it', 'sing',
-])
-
-/** Reduce a natural question to the bare thing being asked about. */
-export function stripQuery(message: string): string {
-  const toks = tokens(message)
-  // "how do I sign the letter A" / "sign B" — keep the single letter, which
-  // STOPWORDS would otherwise swallow ("a" is a stopword).
-  const letter = /\b(?:letters?|alphabets?|fingerspell\w*|signs?)\s+(?:the\s+)?(?:letter\s+)?([a-z])\b/i.exec(message)
-  if (letter) return letter[1].toLowerCase()
-  if (toks.length === 1 && toks[0].length <= 2) return toks[0]
-  return toks.filter((t) => !STOPWORDS.has(t)).join(' ').trim()
+function fill(template:string, values:Record<string,unknown> = {}):string {
+  const all:Record<string,unknown> = {...knowledge.facts,...values}
+  return template.replace(/\{(\w+)\}/g,(_,key)=>String(all[key] ?? ''))
 }
-
-function pick<T>(items: T[]): T {
-  return items[Math.floor(Math.random() * items.length)]
+function clean(value:string):string {
+  return value.trim().replace(/[?.!]+$/g,'').replace(/^["'“‘]|["'”’]$/g,'').trim()
 }
-
-function sample<T>(items: T[], n: number): T[] {
-  const pool = [...items]
-  const out: T[] = []
-  while (out.length < n && pool.length) {
-    out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0])
+export function stripQuery(message:string):string {
+  let q = clean(message)
+  const teach = new RegExp(policy.teachPattern,'i').exec(q)
+  if (teach) q = clean(teach[1])
+  else for (const pattern of policy.lookupPatterns) {
+    const hit = new RegExp(pattern,'i').exec(q)
+    if (hit) {q=clean(hit[1]);break}
   }
-  return out
+  for (const prefix of policy.stopTargets) if (q.toLowerCase().startsWith(prefix)) q=q.slice(prefix.length)
+  return clean(q)
 }
-
-/** Answer purely from the local knowledge base. Never throws. */
-export function localAnswer(kb: SignKnowledgeBase, message: string): Answer {
-  const msg = (message || '').trim()
-  const low = msg.toLowerCase()
-  const refusal = signingRefusal(msg)
-  if (refusal) return { ...refusal, cards: [], chips: [] }
-
-  if (!msg) {
-    return {
-      text: 'Ask me about any sign in the dataset and I’ll show you the Sinhala script, the meaning and how to practise it.',
-      cards: [],
-      chips: ['What signs do you know?', 'Show me the letters', "How do I sign 'to eat'?"],
-    }
-  }
-
-  // The knowledge base failed to load — say so instead of pretending the
-  // dataset is empty, which is what "0 signs" reads like to a user.
-  if (!kb.size) {
-    return {
-      text: 'I couldn’t load the sign index, so I have nothing to answer from right now. Reload the page — if it keeps happening, `public/data/signs.json` is missing from this deployment.',
-      cards: [],
-      chips: [],
-    }
-  }
-
-  // 1. Greeting -----------------------------------------------------------
-  if (GREETING_RE.test(low)) {
-    return {
-      text:
-        `ආයුබෝවන්! I'm **Suvana AI**, the tutor built into this platform.\n\n` +
-        `I know all **${kb.size}** signs the Recognize model was trained on. ` +
-        'Ask me to look up a dataset label or browse reference recordings in Learn.',
-      cards: [],
-      chips: ["How do I sign 'to eat'?", 'Show me the letters', 'Teach me a random sign'],
-    }
-  }
-
-  // 1b. Thanks ------------------------------------------------------------
-  if (THANKS_RE.test(msg) && tokens(msg).length <= 3) {
-    return {
-      text: 'Anytime! Keep practising — ask me for another sign whenever you’re ready.',
-      cards: [],
-      chips: ['Teach me a random sign', 'Practice tips', 'Show me the letters'],
-    }
-  }
-
-  // 2. Capability / help --------------------------------------------------
-  if (CAPABILITY_RE.test(low)) {
-    return {
-      text:
-        "I'm the built-in tutor for **Suvana**. I can:\n\n" +
-        '• **Look up dataset labels** — "to drink"\n' +
-        '• **Read existing label metadata** — "what does *gannawa* mean?"\n' +
-        '• **Browse by group** — "show me the numbers"\n' +
-        '• **Give camera setup tips** for recording\n' +
-        '• Send you straight to **Learn** to practise it with your camera\n\n' +
-        `_${kb.statsLine()}._`,
-      cards: [],
-      chips: ['Show me the months', "How do I sign 'to write'?", 'Teach me a random sign'],
-    }
-  }
-
-  // 3. Dataset size -------------------------------------------------------
-  if (COUNT_RE.test(low) && COUNT_SUBJECT_RE.test(low)) {
-    return {
-      text:
-        `The Recognize model reads **${kb.size}** distinct signs.\n\n` +
-        `${kb.statsLine()}.\n\n` +
-        'Learn offers reference recordings and scores attempts against those references.',
-      cards: [],
-      chips: ['Show me the letters', 'Show me the numbers', 'Teach me a random sign'],
-    }
-  }
-
-  // 4. Random / quiz ------------------------------------------------------
-  if (RANDOM_RE.test(low) && kb.size) {
-    const entry = pick(kb.entries)
-    const gloss = entry.english ? ` (*${entry.english}*)` : ''
-    return {
-      text:
-        `Here's one to practise — **${entry.sinhala}**${gloss}.\n\n` +
-        'Use Learn to watch reference recordings before camera practice.',
-      cards: [kb.card(entry)],
-      chips: ['Teach me another one', 'Practice tips', 'Show me the letters'],
-    }
-  }
-
-  // 5. Category listing ---------------------------------------------------
-  for (const [pattern, cat] of CATEGORY_QUERY) {
-    const m = pattern.exec(low)
-    if (m && (LIST_VERB_RE.test(low) || norm(msg) === norm(m[0]))) {
-      const items = kb.categories[cat] ?? []
-      const preview = items.slice(0, 12)
-      const noun = (CATEGORY_LABEL[cat] ?? cat).toLowerCase()
-      return {
-        text:
-          `The dataset has **${items.length}** ${noun}${items.length !== 1 ? 's' : ''}. ` +
-          (items.length > preview.length
-            ? 'Here are the first few — ask me about any one for the full breakdown.'
-            : 'Here they are.'),
-        cards: preview.map((e) => kb.card(e)),
-        chips: ['Practice tips', 'Teach me a random sign', 'How many signs do you know?'],
-      }
-    }
-  }
-
-  // 6. Practice tips ------------------------------------------------------
-  if (TIPS_RE.some((p) => p.test(low))) {
-    const bullets = GENERAL_TIPS.map((t) => `• ${t}`).join('\n')
-    return {
-      text: `**Getting a clean detection**\n\n${bullets}\n\nUse Learn to watch reference recordings.`,
-      cards: [],
-      chips: ['Teach me a random sign', 'Show me the letters', 'How many signs do you know?'],
-    }
-  }
-
-  // 7. Sign lookup (the main path) ----------------------------------------
-  const stripped = stripQuery(msg)
-  let results: Sign[] = kb.search(stripped || msg, 6)
-  if (!results.length && stripped !== msg) results = kb.search(msg, 6)
-
-  if (results.length) {
-    const top = results[0]
-    const rest = results.slice(1, 4)
-    const gloss = top.english ? ` — *${top.english}*` : ''
-    let text =
-      `**${top.sinhala}**${gloss}\n\n` +
-      `Dataset label \`${top.label}\` · ${CATEGORY_LABEL[top.category] ?? 'Sign'}. ` +
-      'The card has camera setup advice only.'
-    if (rest.length) {
-      text += '\n\nClose matches: ' + rest.map((r) => `**${r.sinhala}**`).join(', ') + '.'
-    }
-    return {
-      text,
-      cards: results.slice(0, 4).map((e) => kb.card(e)),
-      chips: ['Practice tips', 'Teach me a random sign', 'Show me the letters'],
-    }
-  }
-
-  // 8. Fallback -----------------------------------------------------------
-  const samples = sample(kb.entries, Math.min(3, kb.size))
-    .map((e) => `*${e.label}*`)
-    .join(', ')
-  return {
-    text:
-      'I couldn’t match that to a sign in this dataset. I only know the ' +
-      `**${kb.size}** signs the model was trained on — try the English meaning ` +
-      '("how do I sign *to walk*?"), the Romanised Sinhala' +
-      (samples ? ` (${samples})` : '') +
-      ', or Sinhala script.',
-    cards: [],
-    chips: ['What can you do?', 'Show me the letters', 'Teach me a random sign'],
-  }
+function answer(intent:string,text:string,cards:SignCard[]=[],url?:string,label='Browse Learn'):Answer {
+  return {intent,text,cards,chips:policy.chips,links:url?[{label,url}]:[]}
 }
-
-/** The grounded context handed to the cloud model, if one is configured. */
-export function buildContext(kb: SignKnowledgeBase, message: string): string {
-  const hits = kb.search(stripQuery(message) || message, 8)
-  if (!hits.length) {
-    return `CONTEXT: no matching signs found in the dataset.\nDATASET SIZE: ${kb.statsLine()}.`
+function support(sign:Sign):string {return sign.recognizeLabel ? policy.recognizeYes : policy.recognizeNo}
+function signAnswer(kb:SignKnowledgeBase, sign:Sign, teaching:boolean):Answer {
+  const meaning = sign.english ? fill(policy.meaning,{english:sign.english}) : policy.meaningUnknown
+  const text = teaching
+    ? (sign.learnUrl ? fill(policy.teach,{label:sign.label}) + '\n\n' + support(sign) : fill(policy.recognizeOnly,{label:sign.label}))
+    : `**${sign.label}**${sign.sinhala ? ` · ${sign.sinhala}`:''}\n\n${meaning}\n\n${sign.learnUrl ? 'Learn has an exact-name reference recording. ' : 'No exact-name single-sign recording in Learn. '}${support(sign)}`
+  return answer(teaching?'teach':'lookup',text,[kb.card(sign)],sign.learnUrl ?? '/learn/',sign.learnUrl?'Watch this sign in Learn':'Browse Learn')
+}
+export function localAnswer(kb:SignKnowledgeBase,message:string,randomValue=Math.random()):Answer {
+  const msg = clean(message || '')
+  const target = stripQuery(msg)
+  const signRequest = new RegExp(policy.teachPattern,'i').test(msg) || policy.lookupPatterns.some(pattern=>new RegExp(pattern,'i').test(msg))
+  const explicitSign = signRequest && kb.exact(target).length>0 && !/\bsign\s+in\b/i.test(msg)
+  for (const route of policy.routes) if (new RegExp(route.pattern,'i').test(msg)) {
+    if (explicitSign && !['translation','form','outside','camera','low-score','recognition-help'].includes(route.intent)) continue
+    const result = answer(route.intent,fill(route.text),[],route.url,route.action)
+    if ('refused' in route && route.refused) result.refused=true
+    if (route.intent==='form') {
+      const target = /(?:for|of)\s+(.+)$/i.exec(msg)?.[1]
+      const named = target ? kb.exact(clean(target)).find(s=>s.learnGloss?.toLowerCase()===clean(target).toLowerCase()) : undefined
+      if (named?.learnUrl) result.links=[{label:'Watch this sign in Learn',url:named.learnUrl}]
+    }
+    return result
   }
-  const lines = hits.map((e) => {
-    const gloss = e.english ? ` | english: ${e.english}` : ''
-    return `- label: ${e.label} | sinhala: ${e.sinhala} | type: ${e.category}${gloss}`
-  })
-  return (
-    `DATASET SIZE: ${kb.statsLine()}.\n` +
-    "CONTEXT (signs retrieved from this platform's dataset for the user's question):\n" +
-    lines.join('\n')
-  )
+  if (!kb.size) return answer('unavailable','The sign index is unavailable. Reload the page to try again.')
+  if (/\bhow many\b|\btotal signs\b|\bsign count\b/i.test(msg)) return answer('count',`${knowledge.facts.learnCount} Learn glosses and ${knowledge.facts.recognitionCount} Recognize labels form ${knowledge.signs.length} exact-name records. Shared names do not prove that both modules use the same recording.`,[],'/learn/')
+  if (/\b(random|surprise me|another one|another sign)\b/i.test(msg)) {
+    const pool=kb.entries.filter(s=>s.learnUrl)
+    if (!pool.length) return answer('unknown',policy.unknown,[],'/learn/')
+    return {...signAnswer(kb,pool[Math.min(pool.length-1,Math.max(0,Math.floor(randomValue*pool.length)))],true),intent:'random'}
+  }
+  for (const category of policy.categories) if (new RegExp(category.pattern,'i').test(msg) && /^(show|list|browse|what|which|all|months?|letters?|numbers?|මාස|අකුරු|ඉලක්කම්)/i.test(msg)) {
+    const related=knowledge.units.filter(unit=>category.sourceCategories.includes(unit.sourceCategory ?? ''))
+    const ordered=related.flatMap(unit=>unit.signs).map(gloss=>kb.entries.find(s=>s.learnGloss===gloss)).filter((s):s is Sign=>!!s)
+    const extra=kb.entries.filter(s=>s.recognizeCategory===category.key && !ordered.includes(s))
+    const items=[...new Set([...ordered,...extra])]
+    const page=Math.max(1,Number(/\bpage\s+(\d+)/i.exec(msg)?.[1] ?? (/\b(more|next)\b/i.test(msg)?2:1)))
+    const preview=items.slice((page-1)*12,page*12)
+    const detail=!preview.length ? 'No more names on this page. ' : items.length>12 ? `${page>1?'Next':'First'} ${preview.length} shown (page ${page}). `:''
+    const result=answer('browse',`${items.length} indexed names in ${category.title}. ${detail}Spellings follow the source; membership and verified meanings are on each card.`,preview.map(s=>kb.card(s)), '/learn/')
+    result.chips=[`Show ${category.title} page ${page*12<items.length?page+1:1}`,'Teach me a random sign']
+    return result
+  }
+  const q=stripQuery(msg)
+  const unit = knowledge.units.find(u=>u.title.toLowerCase()===q.toLowerCase())
+  if (unit && /^(show|list|browse)/i.test(msg)) {
+    const signs=unit.signs.map(gloss=>kb.entries.find(s=>s.learnGloss===gloss)).filter((s):s is Sign=>!!s)
+    return answer('browse',`Learn unit: ${unit.title}. These names follow the approved curriculum.`,signs.map(s=>kb.card(s)),'/learn/')
+  }
+  const teaching=new RegExp(policy.teachPattern,'i').test(msg) || /(සංඥා|භාෂා).*(කොහොම|කෙසේ|පෙන්ව)/u.test(msg)
+  const hits=kb.exact(q)
+  if (hits.length) {
+    if (hits.length===1) return signAnswer(kb,hits[0],teaching)
+    return answer('lookup','More than one listed name has that verified meaning; choose a card.',hits.map(s=>kb.card(s)), '/learn/')
+  }
+  if (!msg || /^(hi|hey|hello|thanks|thank you|help)$/i.test(msg)) return answer('help',policy.greeting,[],'/learn/')
+  const suggestions=kb.search(q,3)
+  return answer('unknown',`${policy.unknown} ${suggestions.length ? policy.suggestions:policy.unknownAction}`,suggestions.map(s=>kb.card(s)), '/learn/')
+}
+export function buildContext(kb:SignKnowledgeBase,message:string):string {
+  const approved=localAnswer(kb,message)
+  return JSON.stringify({facts:knowledge.facts, records:approved.cards, APPROVED_ANSWER:approved.text})
+}
+export function groundedModelText(candidate:string, approved:string):string {
+  return candidate.trim()===approved ? candidate.trim():approved
 }

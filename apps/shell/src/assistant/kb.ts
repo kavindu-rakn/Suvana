@@ -1,73 +1,21 @@
-/**
- * The assistant's knowledge base — the signs the recognition model was
- * trained on, and retrieval over them.
- *
- * This is a port of `SignKnowledgeBase` in
- * `services/recognition/webapp/assistant.py`, moved into the browser on
- * purpose. The Python original reads a **gitignored** data file that lives
- * beside a 3 GB TensorFlow service, which meant two things: the assistant
- * answered "0 signs" on any fresh checkout, and it died whenever the
- * recognition service was not running. Here the data ships as a committed
- * static asset (`public/data/signs.json`, built by
- * `scripts/build-sign-index.py`) and the retrieval runs client-side, so the
- * assistant works on the deployed static shell with no backend at all.
- *
- * Scoring is kept numerically identical to the Python version so that answers
- * do not drift between the two surfaces.
- */
-
+/** Generated union: no inferred names, meanings or cross-module mappings. */
+import knowledge from '../../../../services/recognition/webapp/static/suvana-knowledge.json'
+export { knowledge }
 export interface Sign {
-  label: string
-  sinhala: string
-  category: string
-  english: string
-  /** Precomputed search text: normalised label + gloss + Sinhala script. */
-  haystack: string
+  label: string; names?: string[]; sinhala: string; english: string; category?: string;
+  categories?: string[]; units?: Array<{id:string;title:string}>;
+  learnGloss?: string | null; learnUrl?: string | null; recognizeLabel?: string | null;
+  recognizeCategory?: string; editions?: string[];
 }
-
 export interface SignCard {
-  label: string
-  sinhala: string
-  english: string
-  category: string
-  categoryLabel: string
-  tips: string[]
+  label:string; sinhala:string; english:string; category:string; categoryLabel:string;
+  tips:string[]; learnUrl:string | null; recognizeLabel:string | null; units:string[];
 }
-
-export const CATEGORY_LABEL: Record<string, string> = {
-  letter: 'Fingerspelling letter',
-  number: 'Number',
-  month: 'Calendar month',
-  phrase: 'Word / phrase',
-}
-
-// Camera setup only. Category metadata is not evidence of how a sign is made.
-export const GENERAL_TIPS = [
-  'Stay about an arm’s length from the camera and keep both hands in frame.',
-  'Use front lighting and avoid backlighting.',
-  'Keep recording for the full capture window.',
-  'Use a plain background.',
-]
-
-/** Sinhala occupies U+0D80–U+0DFF; keep it alongside ASCII alphanumerics. */
-const NON_SEARCHABLE = /[^a-z0-9඀-෿ ]+/g
-
-export function norm(text: string): string {
-  return (text || '').toLowerCase().replace(NON_SEARCHABLE, ' ').trim()
-}
-
-export function tokens(text: string): string[] {
-  return norm(text).split(' ').filter(Boolean)
-}
-
-/**
- * `difflib.SequenceMatcher(...).ratio()`, ported.
- *
- * The Python scoring leans on this for typo tolerance, so an approximation
- * (Levenshtein, Dice) would quietly change which sign wins a query. CPython's
- * "autojunk" heuristic only engages at 200+ elements and every label here is
- * far shorter, so it is correctly absent.
- */
+export const CATEGORY_LABEL: Record<string,string> = {letter:'Letter',number:'Number',month:'Month',phrase:'Word / phrase'}
+export const GENERAL_TIPS = ['Use front lighting and a plain background.', 'Keep both hands visible for the full capture window.']
+export function norm(text:string):string { return (text || '').toLowerCase().replace(/[^a-z0-9඀-෿ ]+/g,' ').trim() }
+export function tokens(text:string):string[] { return norm(text).split(' ').filter(Boolean) }
+// SequenceMatcher retained for conservative typo suggestions, never a claimed exact match.
 export function ratio(a: string, b: string): number {
   const total = a.length + b.length
   if (!total) return 1
@@ -121,121 +69,36 @@ export function ratio(a: string, b: string): number {
 }
 
 export class SignKnowledgeBase {
-  readonly entries: Sign[] = []
-  readonly categories: Record<string, Sign[]> = {}
-
-  // A hit must clear this score before we claim it answers the question.
-  // Without a floor, fuzzy matching cheerfully returns a sign for "what is
-  // quantum physics" — confidently wrong is the worst failure mode for a
-  // teaching tool, so below the floor we say "not in this dataset" instead.
-  static readonly MIN_SCORE = 38.0
-
-  constructor(raw: Array<Omit<Sign, 'haystack'>> = []) {
-    for (const meta of raw) {
-      const entry: Sign = {
-        label: meta.label,
-        sinhala: meta.sinhala || meta.label,
-        category: meta.category || 'phrase',
-        english: meta.english || '',
-        haystack: '',
-      }
-      entry.haystack = [norm(entry.label), norm(entry.english), entry.sinhala].join(' ')
-      this.entries.push(entry)
-      ;(this.categories[entry.category] ??= []).push(entry)
+  readonly entries: Sign[]
+  readonly categories: Record<string,Sign[]> = {}
+  constructor(raw:Sign[] = knowledge.signs) {
+    this.entries = raw
+    for (const entry of raw) {
+      const cats = [...(entry.categories ?? []), entry.recognizeCategory ?? entry.category ?? '']
+      for (const cat of new Set(cats)) if (cat) (this.categories[cat] ??= []).push(entry)
     }
   }
-
-  get size(): number {
-    return this.entries.length
-  }
-
-  search(query: string, limit = 6): Sign[] {
-    const q = norm(query)
+  get size():number {return this.entries.length}
+  exact(query:string):Sign[] {
+    const q = query.trim().toLowerCase()
     if (!q) return []
-    const qTokens = new Set(tokens(query))
-    const scored: Array<[number, Sign]> = []
-
-    for (const e of this.entries) {
-      const labelN = norm(e.label)
-      const engN = norm(e.english)
-      let score = 0
-
-      if (q === labelN || q === engN) score += 120
-      // Substring credit only for queries long enough to be meaningful — a
-      // 1-2 char query like "b" is a substring of half the dataset.
-      if (q.length >= 3 && (labelN.includes(q) || (engN && engN.includes(q)))) score += 55
-      if (q.length >= 2 && e.sinhala.includes(q)) score += 60
-
-      let overlap = 0
-      for (const t of tokens(e.haystack)) if (qTokens.has(t)) overlap++
-      score += 18 * overlap
-
-      // A short query that *is* a whole word of the label or gloss is a strong
-      // signal even though it's too short for substring credit — this is what
-      // makes "go", "K" and "eat" resolve correctly.
-      const labelTokens = tokens(labelN)
-      if (labelTokens.includes(q) || tokens(engN).includes(q)) score += 45
-      if (labelTokens.length && labelTokens[0] === q) score += 30
-
-      // Tie-break toward the concise, canonical sign: "yanawa" (to go) should
-      // rank above "50 KM idiriyata yanna" for the query "go".
-      score += Math.max(0, 12 - 2 * labelTokens.length)
-
-      // Fuzzy match rescues typos and half-remembered Romanisation.
-      const r = ratio(q, labelN)
-      if (r > 0.62) score += r * 45
-      if (engN) {
-        const er = ratio(q, engN)
-        if (er > 0.68) score += er * 30
-      }
-
-      if (score > 12) scored.push([score, e])
-    }
-
-    if (!scored.length) return []
-
-    scored.sort((x, y) => y[0] - x[0] || x[1].label.toLowerCase().localeCompare(y[1].label.toLowerCase()))
-    if (scored[0][0] < SignKnowledgeBase.MIN_SCORE) return []
-
-    // Keep only results in the same quality band as the best one, so a strong
-    // match isn't padded out with weak noise.
-    const cutoff = Math.max(SignKnowledgeBase.MIN_SCORE * 0.62, scored[0][0] * 0.42)
-    return scored.slice(0, limit).filter(([s]) => s >= cutoff).map(([, e]) => e)
+    const named = this.entries.filter(e => [...(e.names ?? [e.label]),e.sinhala].some(n => n && n.toLowerCase() === q))
+    if (named.length) return named
+    return this.entries.filter(e => e.english && e.english.toLowerCase() === q)
   }
-
-  card(entry: Sign): SignCard {
-    return {
-      label: entry.label,
-      sinhala: entry.sinhala,
-      english: entry.english,
-      category: entry.category,
-      categoryLabel: CATEGORY_LABEL[entry.category] ?? 'Sign',
-      tips: [...GENERAL_TIPS],
-    }
+  search(query:string,limit=6):Sign[] {
+    const exact = this.exact(query)
+    if (exact.length) return exact.slice(0,limit)
+    const q = norm(query)
+    if (q.length < 4) return []
+    return this.entries.map(e => ({e,score:Math.max(...(e.names ?? [e.label]).filter(n => n.length >= 4).map(n=>ratio(q,norm(n))),0)}))
+      .filter(({score})=>score >= 0.82).sort((a,b)=>b.score-a.score || (a.e.label < b.e.label ? -1:1)).slice(0,limit).map(({e})=>e)
   }
-
-  statsLine(): string {
-    const parts: string[] = []
-    for (const c of ['letter', 'number', 'month', 'phrase']) {
-      const items = this.categories[c]
-      if (items?.length) parts.push(`${items.length} ${(CATEGORY_LABEL[c] ?? c).toLowerCase()}s`)
-    }
-    return `${this.entries.length} signs in total — ${parts.join(', ')}`
+  card(entry:Sign):SignCard {
+    const category = entry.recognizeCategory ?? entry.category ?? entry.categories?.[0] ?? 'Sign'
+    return {label:entry.label,sinhala:entry.sinhala,english:entry.english,category,categoryLabel:CATEGORY_LABEL[category] ?? category,
+      tips:[],learnUrl:entry.learnUrl ?? null,recognizeLabel:entry.recognizeLabel ?? null,units:(entry.units ?? []).map(u=>u.title)}
   }
+  statsLine():string {return `${this.size} indexed names; Learn ${knowledge.facts.learnCount}; Recognize ${knowledge.facts.recognitionCount}`}
 }
-
-/**
- * Load the committed sign index. A failure here is not fatal: the assistant
- * falls back to an empty knowledge base and says so, rather than throwing on
- * the landing page.
- */
-export async function loadKnowledgeBase(url: string): Promise<SignKnowledgeBase> {
-  try {
-    const res = await fetch(url, { cache: 'force-cache' })
-    if (!res.ok) throw new Error(`${res.status}`)
-    const data = await res.json()
-    return new SignKnowledgeBase(data?.signs ?? [])
-  } catch {
-    return new SignKnowledgeBase([])
-  }
-}
+export async function loadKnowledgeBase():Promise<SignKnowledgeBase> {return new SignKnowledgeBase()}
