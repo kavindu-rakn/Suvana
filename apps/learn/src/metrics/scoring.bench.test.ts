@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { cpus, release, totalmem } from 'node:os'
 import { describe, expect, it } from 'vitest'
 import { scoreAttempt } from '../scoring/score'
 import type { ScoreResult } from '../scoring/score'
@@ -56,10 +57,8 @@ const WARMUP = 3
  *  scheduler hiccup on one run cannot masquerade as a slow sign. */
 const REPEATS = 3
 
-/** The Practice and Scenario views both capture for this much longer than the
- *  reference, so a slightly slower attempt still fits inside the window. */
-const CAPTURE_HEADROOM_MS = 1500
-const MIN_CAPTURE_MS = 2500
+/** Shipped L-07 window, as used by Practice and Scenario capture. */
+const CAPTURE_HEADROOM_MS = 3000
 
 /**
  * Frame rate to build the stand-in attempt at.
@@ -98,7 +97,7 @@ const describeBench = references.length >= 5 ? describe : describe.skip
 /**
  * A stand-in for a learner's take, at the length one really has.
  *
- * A learner records for `reference.durationMs + 1500 ms`, so their take carries
+ * Capture lasts `max(2 × duration, duration + 3000 ms)`, so the stand-in carries
  * meaningfully more frames than the reference does — and DTW fills an n×m
  * matrix, so using a reference unchanged as the attempt would time a workload
  * roughly half the real size.
@@ -111,7 +110,7 @@ const describeBench = references.length >= 5 ? describe : describe.skip
  * be the wrong construction for measuring *scores*, and it is not used for any.
  */
 function syntheticTake(reference: SignRecording): SignRecording {
-  const captureMs = Math.max(reference.durationMs + CAPTURE_HEADROOM_MS, MIN_CAPTURE_MS)
+  const captureMs = Math.max(2 * reference.durationMs, reference.durationMs + CAPTURE_HEADROOM_MS)
   const frameMs = 1000 / ATTEMPT_FPS
   const wanted = Math.round(captureMs / frameMs)
 
@@ -154,6 +153,7 @@ function stats(values: number[]) {
   return {
     n: sorted.length,
     median: percentile(sorted, 50),
+    p90: percentile(sorted, 90),
     p95: percentile(sorted, 95),
     max: sorted[sorted.length - 1],
   }
@@ -230,15 +230,22 @@ describeBench('feedback-path scoring cost', () => {
         'in the Progress tab. **Do not quote the figures below as feedback latency.**',
         '',
         'Measured in Node on a development machine, not in a participant\'s browser.',
+        `Machine: ${cpus()[0]?.model}; ${cpus().length} logical CPUs; ${(totalmem() / 2 ** 30).toFixed(1)} GiB RAM;`,
+        `${process.platform} ${release()} ${process.arch}; Node ${process.version}; Vitest 4.1.10.`,
+        `Scorer snapshot: ${process.env.MEASUREMENT_SCORER_COMMIT ?? 'working tree (revision not supplied)'}.`,
         '',
         '## Results',
         '',
-        '| Path | n | median | p95 | max |',
-        '|---|---|---|---|---|',
-        `| Practice — one attempt vs one reference | ${p.n} | ${fmt(p.median)} | ${fmt(p.p95)} | ${fmt(p.max)} |`,
+        '| Path | n | median | p90 | p95 | max |',
+        '|---|---|---|---|---|---|',
+        `| Practice — one attempt vs one reference | ${p.n} | ${fmt(p.median)} | ${fmt(p.p90)} | ${fmt(p.p95)} | ${fmt(p.max)} |`,
         s
-          ? `| Scenario turn — plus appropriateness over ${vocabulary.length} signs | ${s.n} | ${fmt(s.median)} | ${fmt(s.p95)} | ${fmt(s.max)} |`
-          : '| Scenario turn | — | no scenario references on disk | | |',
+          ? `| Scenario turn — plus appropriateness over ${vocabulary.length} signs | ${s.n} | ${fmt(s.median)} | ${fmt(s.p90)} | ${fmt(s.p95)} | ${fmt(s.max)} |`
+          : '| Scenario turn | — | no scenario references on disk | | | |',
+        '',
+        'Historical comparison: **1.8 ms** practice median in the earlier report,',
+        'using the **shorter pre-L-07 take** (duration + 1500 ms, minimum 2500 ms).',
+        'That is a historical figure, not re-measured here or an improvement claim.',
         '',
         '## What was scored',
         '',
@@ -246,7 +253,7 @@ describeBench('feedback-path scoring cost', () => {
         `  ${twoHanded} of them two-handed, which runs two DTW alignments per attempt.`,
         '- DTW fills an n×m matrix, so both sequence lengths drive the cost:',
         `  - attempt (n): median ${f.median} frames, up to ${f.max} — the real capture`,
-        `    window (reference duration + ${CAPTURE_HEADROOM_MS} ms, minimum ${MIN_CAPTURE_MS} ms)`,
+        `    window max(2 × reference duration, reference duration + ${CAPTURE_HEADROOM_MS} ms)`,
         `    sampled at ${ATTEMPT_FPS} fps;`,
         `  - reference (m): median ${r.median} frames, up to ${r.max}.`,
         `- A participant whose webcam runs at 60 fps doubles n, and with it this cost.`,
@@ -255,9 +262,8 @@ describeBench('feedback-path scoring cost', () => {
         '',
         `Each figure is the median of ${REPEATS} runs per reference, taken after a`,
         'warm-up. That deliberately measures the **cost of the algorithm**, not what',
-        'a participant experiences: it strips out the JIT warming up and the odd GC',
-        'pause, which on a single cold run inflated the p95 here by roughly 8×. The',
-        'number a learner actually waits for is the live end-to-end measurement, and',
+        'a participant experiences: warm-up and repeated runs reduce JIT and GC noise.',
+        'The number a learner actually waits for is the live end-to-end measurement, and',
         'that one keeps its noise.',
         '',
         '## Reading this',
