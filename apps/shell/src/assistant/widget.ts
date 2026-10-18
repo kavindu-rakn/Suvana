@@ -3,34 +3,19 @@
  *
  * Re-skinned from the widget on the Recognize page into Suvana's own language
  * (teal/gold, Noto Serif, the light/dark token set), and rebuilt so it stands
- * on its own: the knowledge base is a static asset and the optional model call
- * goes straight to Google, so nothing here needs a Python service running.
+ * on its own: the verified knowledge base is a static asset and every reply
+ * is produced in this browser. No provider or assistant server is called.
  */
 
 import { loadKnowledgeBase, SignKnowledgeBase } from './kb'
 import type { SignCard } from './kb'
-import { buildContext, localAnswer } from './engine'
+import { localAnswer } from './engine'
 import type { Answer } from './engine'
-import {
-  KEYS_URL,
-  NoModelAccess,
-  PREFERRED_MODEL,
-  askAssistant,
-  probeProxy,
-  readKey,
-  readModelPreference,
-  verifyKey,
-  writeKey,
-  writeModelPreference,
-} from './gemini'
-import type { Turn } from './gemini'
 
 const ICON_SPARK =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg>'
 const ICON_CLOSE =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
-const ICON_GEAR =
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H4a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 5.6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H10a1.65 1.65 0 0 0 1-1.51V2a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>'
 const ICON_SEND =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>'
 const ICON_SPEAK =
@@ -42,7 +27,7 @@ function escapeHtml(s: string): string {
 
 /**
  * The narrow slice of markdown the answers actually use. Everything is escaped
- * first, so model output can never inject markup into the page.
+ * first, so answer text can never inject markup into the page.
  */
 function renderMarkdown(text: string): string {
   const html = escapeHtml(text)
@@ -99,7 +84,10 @@ export function mountAssistant(): void {
   let kb = new SignKnowledgeBase([])
   let open = false
   let busy = false
-  const history: Turn[] = []
+  // D-A37: remove credentials/preferences left by earlier widget versions.
+  for (const key of ['suvana.assistant.geminiKey', 'suvana.assistant.geminiModel', 'suvana.assistant.geminiResolved']) {
+    try { localStorage.removeItem(key) } catch { /* storage may be disabled */ }
+  }
 
   const root = document.createElement('div')
   root.className = 'svn-ai'
@@ -131,40 +119,9 @@ export function mountAssistant(): void {
           <p class="svn-ai-sub">Loading the sign index…</p>
         </div>
         <div class="svn-ai-head-actions">
-          <button class="svn-ai-icon" type="button" data-act="settings" aria-expanded="false" aria-label="Assistant settings">${ICON_GEAR}</button>
           <button class="svn-ai-icon" type="button" data-act="close" aria-label="Close assistant">${ICON_CLOSE}</button>
         </div>
       </header>
-
-      <div class="svn-ai-settings" hidden>
-        <p class="svn-ai-settings-lead" data-field="route">Checking how this deployment answers&hellip;</p>
-        <details class="svn-ai-advanced">
-          <summary>Use your own Gemini key instead</summary>
-          <p class="svn-ai-settings-lead">
-            Only needed when this deployment has no model access of its own.
-            The key stays in this browser and is sent only to Google &mdash; it
-            never reaches a Suvana server.
-          </p>
-        <label class="svn-ai-field">
-          <span>Gemini API key</span>
-          <input type="password" autocomplete="off" spellcheck="false" placeholder="AIza…" data-field="key" />
-        </label>
-        <label class="svn-ai-field">
-          <span>Model</span>
-          <input type="text" autocomplete="off" spellcheck="false" placeholder="${PREFERRED_MODEL}" data-field="model" />
-          <span class="svn-ai-field-hint">
-            A preference, not a requirement &mdash; model ids retire. If this one
-            isn&rsquo;t available to your key, the closest one that is gets used.
-          </span>
-        </label>
-        <div class="svn-ai-settings-actions">
-          <button class="svn-ai-btn" type="button" data-act="save-key">Save &amp; verify</button>
-          <button class="svn-ai-btn ghost" type="button" data-act="clear-key">Remove key</button>
-          <a class="svn-ai-link" href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get an API key &rarr;</a>
-        </div>
-        <p class="svn-ai-settings-note" data-field="key-status"></p>
-        </details>
-      </div>
 
       <div class="svn-ai-log" role="log" aria-live="polite"></div>
 
@@ -185,12 +142,6 @@ export function mountAssistant(): void {
   const chipRow = root.querySelector<HTMLElement>('.svn-ai-chips')!
   const form = root.querySelector<HTMLFormElement>('.svn-ai-composer')!
   const input = form.querySelector<HTMLInputElement>('input')!
-  const settings = root.querySelector<HTMLElement>('.svn-ai-settings')!
-  const keyInput = root.querySelector<HTMLInputElement>('[data-field="key"]')!
-  const modelInput = root.querySelector<HTMLInputElement>('[data-field="model"]')!
-  const keyStatus = root.querySelector<HTMLElement>('[data-field="key-status"]')!
-  const routeLine = root.querySelector<HTMLElement>('[data-field="route"]')!
-
   const scrollDown = () => { log.scrollTop = log.scrollHeight }
 
   function addUser(text: string) {
@@ -205,25 +156,14 @@ export function mountAssistant(): void {
     const canSpeak = !!sinhalaVoice()
     const el = document.createElement('div')
     el.className = 'svn-ai-msg is-ai'
-    const badge = answer.via === 'gemini' ? '<span class="svn-ai-via">Gemini</span>' : ''
     const notice = answer.notice ? `<p class="svn-ai-notice">${escapeHtml(answer.notice)}</p>` : ''
     el.innerHTML = `
       <div class="svn-ai-bubble">
-        ${badge}
         ${renderMarkdown(answer.text)}
         ${answer.links.map(link => `<p><a class="svn-ai-card-cta" href="${escapeHtml(link.url)}">${escapeHtml(link.label)} &rarr;</a></p>`).join('')}
         ${notice}
         ${answer.cards.map((c) => cardHtml(c, canSpeak)).join('')}
       </div>`
-    log.appendChild(el)
-    scrollDown()
-    return el
-  }
-
-  function addThinking(): HTMLElement {
-    const el = document.createElement('div')
-    el.className = 'svn-ai-msg is-ai'
-    el.innerHTML = '<div class="svn-ai-bubble"><span class="svn-ai-dots"><i></i><i></i><i></i></span></div>'
     log.appendChild(el)
     scrollDown()
     return el
@@ -235,61 +175,21 @@ export function mountAssistant(): void {
       .join('')
   }
 
-  async function ask(message: string) {
+  function ask(message: string) {
     if (busy || !message.trim()) return
     busy = true
     input.value = ''
     addUser(message)
-    setChips([])
-
-    const base = localAnswer(kb, message)
-
-    // With no index there is nothing to ground a model answer in, so do not
-    // spend a call on it — the local reply already explains the situation.
-    if (base.refused || base.intent==='random' || !kb.size || (!readKey() && !(await probeProxy()))) {
-      addAssistant(base)
-      setChips(base.chips)
-      history.push({ role: 'user', content: message }, { role: 'assistant', content: base.text })
-      busy = false
-      return
-    }
-
-    const thinking = addThinking()
-    try {
-      // Suvana's own model access first, then a personal key, then neither.
-      // Note this runs even with no key saved: the visitor path is the proxy,
-      // and short-circuiting on an empty key would mean it was never used.
-      const { text } = await askAssistant(message, history, buildContext(kb, message))
-      thinking.remove()
-      addAssistant({ ...base, text, via: 'gemini' })
-      history.push({ role: 'user', content: message }, { role: 'assistant', content: text })
-    } catch (err) {
-      thinking.remove()
-      if (err instanceof NoModelAccess) {
-        // No model access anywhere. That is a supported configuration, not a
-        // failure, so the local answer stands with no apology attached.
-        addAssistant(base)
-      } else {
-        // Never leave the user without a reply — fall back and say why, in one
-        // short line. Google's raw error is often a paragraph of migration
-        // advice, which is not what someone asking about a sign needs to read.
-        addAssistant({ ...base, notice: 'The optional model is unavailable. Answered from Suvana’s verified index.' })
-      }
-      history.push({ role: 'user', content: message }, { role: 'assistant', content: base.text })
-    } finally {
-      setChips(base.chips)
-      busy = false
-      input.focus()
-    }
+    const answer = localAnswer(kb, message)
+    addAssistant(answer)
+    setChips(answer.chips)
+    busy = false
+    input.focus()
   }
 
   function toggle(next = !open) {
     open = next
     panel.hidden = !open
-    if (!open) {
-      settings.hidden = true
-      root.classList.remove('is-settings')
-    }
     root.classList.toggle('is-open', open)
     launcher.setAttribute('aria-expanded', String(open))
     if (open) {
@@ -304,7 +204,7 @@ export function mountAssistant(): void {
 
   launcher.addEventListener('click', () => toggle())
 
-  root.addEventListener('click', async (e) => {
+  root.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-act], .svn-ai-chip, [data-speak]')
     if (!btn) return
 
@@ -328,56 +228,6 @@ export function mountAssistant(): void {
     switch (btn.dataset.act) {
       case 'close':
         toggle(false)
-        break
-      case 'settings':
-        settings.hidden = !settings.hidden
-        // Settings takes over the panel body instead of sharing it: sharing
-        // left the log a few pixels tall with the chip row overlapping the
-        // fields, which read as a broken layout rather than a drawer.
-        root.classList.toggle('is-settings', !settings.hidden)
-        btn.setAttribute('aria-expanded', String(!settings.hidden))
-        if (!settings.hidden) {
-          keyInput.value = readKey()
-          modelInput.value = readModelPreference()
-          keyInput.focus()
-          // Say plainly which of the two routes is answering, so nobody has to
-          // guess whether the key field matters on this deployment.
-          void probeProxy().then((ok) => {
-            routeLine.innerHTML = ok
-              ? 'Replies come from <strong>Suvana&rsquo;s own model access</strong>. ' +
-                'Nothing to set up &mdash; no key is needed here.'
-              : 'This deployment has no model access of its own, so replies come ' +
-                'from <strong>Suvana&rsquo;s sign index</strong> in fixed phrasing. ' +
-                'Optional model access uses the same verified answers.'
-          })
-        } else {
-          input.focus()
-        }
-        break
-      case 'save-key': {
-        const key = keyInput.value.trim()
-        if (!key) {
-          keyStatus.textContent = 'Paste a key first.'
-          keyStatus.dataset.tone = 'bad'
-          return
-        }
-        keyStatus.textContent = 'Checking…'
-        delete keyStatus.dataset.tone
-        // Saved before verifying: verifyKey resolves against this preference,
-        // so writing it afterwards would have checked the previous model.
-        writeModelPreference(modelInput.value.trim() || PREFERRED_MODEL)
-        const result = await verifyKey(key)
-        keyStatus.textContent = result.message
-        keyStatus.dataset.tone = result.ok ? 'good' : 'bad'
-        if (result.ok) writeKey(key)
-        break
-      }
-      case 'clear-key':
-        writeKey('')
-        keyInput.value = ''
-        modelInput.value = PREFERRED_MODEL
-        keyStatus.textContent = 'Key removed — answers come from Suvana’s own index.'
-        keyStatus.dataset.tone = 'good'
         break
     }
   })

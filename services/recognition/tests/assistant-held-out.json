@@ -13,12 +13,9 @@
   },
   {
     "question": "sign for mother",
-    "intent": "unknown",
-    "contains": [
-      "no verified match",
-      "Learn or Recognize",
-      "recordings"
-    ]
+    "intent": "lookup",
+    "card": "MOTHER",
+    "url": "/learn/?sign=MOTHER"
   },
   {
     "question": "how do I practise",
@@ -135,5 +132,101 @@
       "front lighting",
       "Android"
     ]
+  },
+  {
+    "question": "what is the sign for mother",
+    "intent": "lookup",
+    "card": "MOTHER",
+    "url": "/learn/?sign=MOTHER"
+  },
+  {
+    "question": "sign for hElLo",
+    "intent": "lookup",
+    "card": "HELLO",
+    "url": "/learn/?sign=HELLO"
+  },
+  {
+    "question": "what is the sign for bag eka",
+    "intent": "lookup",
+    "card": "BAG EKA",
+    "url": "/learn/?sign=BAG%20EKA"
+  },
+  {
+    "question": "sign for eat",
+    "intent": "lookup",
+    "card": "EAT",
+    "url": "/learn/?sign=EAT"
+  },
+  {
+    "question": "what is the sign for eat",
+    "intent": "lookup",
+    "card": "EAT",
+    "url": "/learn/?sign=EAT"
+  },
+  {
+    "question": "sign for definitely absent name",
+    "intent": "unknown",
+    "contains": [
+      "no verified match"
+    ],
+    "noCards": true
+  },
+  {
+    "question": "help",
+    "intent": "help",
+    "noCards": true,
+    "contains": [
+      "find real sign recordings"
+    ]
+  },
+  {
+    "question": "help me",
+    "intent": "help",
+    "noCards": true,
+    "contains": [
+      "find real sign recordings"
+    ]
+  },
+  {
+    "question": "how do i learn sign language",
+    "intent": "practice-help",
+    "noCards": true,
+    "contains": [
+      "Watch",
+      "My turn",
+      "Recall"
+    ],
+    "url": "/learn/?sign=BAG%20EKA"
+  },
+  {
+    "question": "teach me HELP",
+    "intent": "teach",
+    "card": "HELP"
+  },
+  {
+    "question": "is help a sign",
+    "intent": "lookup",
+    "card": "HELP"
+  },
+  {
+    "question": "sign for sign language",
+    "intent": "lookup",
+    "card": "SIGN LANGUAGE"
+  },
+  {
+    "question": "how do I sign SIGN LANGUAGE",
+    "intent": "teach",
+    "card": "SIGN LANGUAGE"
+  },
+  {
+    "question": "assistant privacy",
+    "intent": "privacy",
+    "contains": [
+      "in your browser",
+      "Recognize server",
+      "same index",
+      "No question goes to an AI provider."
+    ],
+    "noCards": true
   }
 ]

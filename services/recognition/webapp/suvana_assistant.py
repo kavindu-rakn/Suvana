@@ -139,12 +139,18 @@ def browse_answer(msg,target):
 
 def local_answer(message, random_value=None):
     msg = clean(message or "")
-    target = strip_query(msg)
+    named_request = match(POLICY['namedSignPattern'],msg)
+    target = clean(named_request[1]) if named_request else strip_query(msg)
     sign_request = match(POLICY['teachPattern'],msg) or any(match(p,msg) for p in POLICY['lookupPatterns'])
     explicit_sign = sign_request and exact(target) and not match(r'\bsign\s+in\b',msg)
     routes=[r for r in POLICY['routes'] if match(r['pattern'],msg)]
     critical=next((r for r in routes if r['intent'] in POLICY['criticalIntents']),None)
     if critical: return route_answer(critical,msg)
+    if match(POLICY['helpPattern'],msg): return answer('help',POLICY['greeting'],url='/learn/')
+    if match(POLICY['learnGuidePattern'],msg): return route_answer(next(r for r in POLICY['routes'] if r['intent']=='practice-help'),msg)
+    # A named recording wins before any English-meaning reverse lookup.
+    named = next((s for s in SIGNS if s['learnGloss'] and s['learnGloss'].lower()==target.lower()),None) if named_request else None
+    if named: return sign_answer(named,False)
     browsed=browse_answer(msg,target)
     if browsed: return browsed
     routed=next((r for r in routes if not explicit_sign),None)
@@ -159,7 +165,7 @@ def local_answer(message, random_value=None):
         return {**result, "intent":"random"}
     reverse=next((match(p,msg) for p in POLICY['reversePatterns'] if match(p,msg)),None)
     query=clean(reverse[1]) if reverse else target
-    teaching = bool(match(POLICY["teachPattern"], msg) or match(r'(සංඥා|භාෂා).*(කොහොම|කෙසේ|පෙන්ව)', msg))
+    teaching = not named_request and bool(match(POLICY["teachPattern"], msg) or match(r'(සංඥා|භාෂා).*(කොහොම|කෙසේ|පෙන්ව)', msg))
     hits = reverse_meaning(query) if reverse else exact(query)
     if len(hits) == 1:
         return sign_answer(hits[0], teaching)

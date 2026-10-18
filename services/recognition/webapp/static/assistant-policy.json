@@ -130,10 +130,14 @@
     {
       "intent": "privacy",
       "pattern": "\\b(privacy|private|upload[a-z]*|server|on.device|stored|storage|data safe)\\b",
-      "text": "Learn processes camera practice on your device and does not upload your camera video. Its progress stays in this browser. Recognize sends camera images to its server when you start it. Optional online assistant access sends your question to the selected provider.",
+      "text": "Learn processes camera practice on your device and does not upload your camera video. Its progress stays in this browser. Recognize sends camera images to its server when you start it. The homepage assistant answers in your browser from Suvana’s built-in verified index. The Recognize assistant sends your question and recent chat messages to the Recognize server, which answers from the same index. No question goes to an AI provider.",
       "url": "/privacy.html",
       "action": "Read privacy details",
-      "sources": []
+      "sources": [
+        "apps/shell/privacy.html",
+        "apps/shell/src/assistant/widget.ts",
+        "services/recognition/webapp/static/assistant.js"
+      ]
     },
     {
       "intent": "mastery",
@@ -308,7 +312,7 @@
   ],
   "browsePattern": "^(?:please\\s+)?(?:show|list|browse|teach|learn|what|which|all|months?|letters?|numbers?|greetings?|starter|මාස|අකුරු|ඉලක්කම්)",
   "reversePatterns": [
-    "^(?:what is (?:the )?sinhala(?: word)? for|sign for) (.+)$"
+    "^(?:what is (?:the )?sinhala(?: word)? for|(?:what is (?:the )?)?sign for) (.+)$"
   ],
   "criticalIntents": [
     "translation",
@@ -317,5 +321,8 @@
     "camera",
     "low-score",
     "recognition-help"
-  ]
+  ],
+  "namedSignPattern": "^(?:what is (?:the )?)?sign for (.+)$",
+  "helpPattern": "^help(?: me)?$",
+  "learnGuidePattern": "^how do i learn sign language$"
 }

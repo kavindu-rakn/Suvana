@@ -204,9 +204,10 @@
         "requirements.txt": "Suvana pins fastapi 0.103.2 / uvicorn 0.23.2 / websockets 11.0.3 (8ecb443, reason not recorded); upstream and Lahiru's venv run 0.141.1 / 0.52.1 / 16.1.1 — verify the Docker build before converging",
         "webapp/static/index.html": "D-A33 Suvana-only relative assets, bare/prefixed base URL, home navigation and non-gating shared account slot; preserve existing theme/branding",
         "webapp/static/app.js": "D-A33 Suvana-only transport adapter for API/TTS paths and an environment-supplied direct socket origin; inference UI/protocol unchanged",
-        "webapp/static/assistant.js": "Suvana-only prefixed assistant API/TTS, shared source-backed cards, exact Learn recording links and platform actions; preserve original storage keys.",
+        "webapp/static/assistant.js": "D-A37 Suvana-only verified-index panel: remove key controls, delete legacy provider settings on load, and send only message/history. Preserve prefixed assistant API/TTS, clear conversation and exact Learn links. No R26 port.",
         "webapp/static/soundguard.js": "D-A33 Suvana-only prefixed mobile-discovery endpoint; internal identifiers and existing behavior preserved",
-        "webapp/build_tts_cache.py": "D-A36 uses the same Suvana-only display/speech overlay and text-aware audio cache key as the server. Original labels remain unchanged; never port this coupling to R26."
+        "webapp/build_tts_cache.py": "D-A36 uses the same Suvana-only display/speech overlay and text-aware audio cache key as the server. Original labels remain unchanged; never port this coupling to R26.",
+        "webapp/static/assistant.css": "D-A37 Suvana-only assistant styling with provider-settings pane removed; page-level recognition settings remain independent. No R26 port."
       },
       "suvanaOnly": {
         "DEPLOY-SUVANA.md": "Suvana HTTP-prefix/direct-WebSocket deployment and optional public-origin instructions",
@@ -233,7 +234,7 @@
         "webapp/data/sinhala-corrections.json": "D-A36 exact-label spelling corrections provided by kvn on 18 Oct 2026, with provenance. Suvana display/speech only; never edit upstream labels or port to R26.",
         "webapp/suvana_labels.py": "D-A36 pure overlay loader and label/language/spoken-text TTS cache identity. No inference imports or mutations of source label data.",
         "tests/test_suvana_labels.py": "D-A36 original-label immutability, exact 13 corrections, no other label changes, display/speech/generator parity and stale-audio rejection checks.",
-        "tests/assistant-held-out.json": "Round-two 18-question regression set, separate from the original 65; shared by Python and TypeScript parity tests."
+        "tests/assistant-held-out.json": "Suvana-only held-out regressions including D-A37 exact named-gloss priority, help and phrase-level Learn guide; shared with TypeScript parity tests."
       },
       "skip": {
         "webapp/static/**": "Suvana-branded frontend; upstream's index.html embeds the other modules as panels, which the shell does here (b4ad381, 87a6d3a)",
@@ -552,6 +553,54 @@
             "COPY --chown=user webapp/data/sinhala-corrections.json webapp/data/sinhala-corrections.json"
           ],
           "why": "Package the Suvana-only overlay so built containers use D-A36 instead of failing or reverting spellings."
+        },
+        {
+          "file": "webapp/static/assistant.js",
+          "has": [
+            "localStorage.removeItem(STORE_KEY)",
+            "Verified index · ready",
+            "data-act=\"clear\"",
+            "history: history.slice(-8)"
+          ],
+          "lacks": [
+            "data-act=\"settings\"",
+            "API.verify",
+            "API.models",
+            "provider:",
+            "apiKey:",
+            "model:",
+            "localStorage.setItem",
+            "payload.engineLabel"
+          ],
+          "why": "D-A37 remove saved credentials, provider routes and key controls; keep verified-index status and conversation reset."
+        },
+        {
+          "file": "webapp/static/assistant.css",
+          "lacks": [
+            ".svn-ai-settings",
+            ".svn-ai-modelpick",
+            ".svn-ai-field"
+          ],
+          "why": "D-A37 prevent assistant provider-settings styles from returning."
+        },
+        {
+          "file": "webapp/suvana_assistant.py",
+          "has": [
+            "POLICY['namedSignPattern']",
+            "POLICY['helpPattern']",
+            "POLICY['learnGuidePattern']"
+          ],
+          "why": "D-A37 named recordings precede reverse meaning lookup; help and exact Learn-guide phrase precede sign lookup."
+        },
+        {
+          "file": "webapp/static/assistant-policy.json",
+          "has": [
+            "No question goes to an AI provider."
+          ],
+          "lacks": [
+            "Optional online assistant access sends your question"
+          ],
+          "why": "D-A37 privacy answer reflects local index routing in both widgets."
         }
       ]
     },

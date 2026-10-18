@@ -83,12 +83,18 @@ function browseAnswer(kb:SignKnowledgeBase,msg:string,target:string):Answer|null
 }
 export function localAnswer(kb:SignKnowledgeBase,message:string,randomValue=Math.random()):Answer {
   const msg = clean(message || '')
-  const target = stripQuery(msg)
+  const namedRequest = new RegExp(policy.namedSignPattern,'i').exec(msg)
+  const target = namedRequest ? clean(namedRequest[1]) : stripQuery(msg)
   const signRequest = new RegExp(policy.teachPattern,'i').test(msg) || policy.lookupPatterns.some(pattern=>new RegExp(pattern,'i').test(msg))
   const explicitSign = signRequest && kb.exact(target).length>0 && !/\bsign\s+in\b/i.test(msg)
   const routes=policy.routes.filter(route=>new RegExp(route.pattern,'i').test(msg))
   const critical=routes.find(route=>policy.criticalIntents.includes(route.intent))
   if (critical) return routeAnswer(kb,critical,msg)
+  if (new RegExp(policy.helpPattern,'i').test(msg)) return answer('help',policy.greeting,[],'/learn/')
+  if (new RegExp(policy.learnGuidePattern,'i').test(msg)) return routeAnswer(kb,policy.routes.find(route=>route.intent==='practice-help')!,msg)
+  // A named recording wins before any English-meaning reverse lookup.
+  const named = namedRequest ? kb.entries.find(sign=>sign.learnGloss?.toLowerCase()===target.toLowerCase()) : undefined
+  if (named) return signAnswer(kb,named,false)
   const browsed=browseAnswer(kb,msg,target)
   if (browsed) return browsed
   const routed=routes.find(()=>!explicitSign)
@@ -102,7 +108,7 @@ export function localAnswer(kb:SignKnowledgeBase,message:string,randomValue=Math
   }
   const reverse=policy.reversePatterns.map(pattern=>new RegExp(pattern,'i').exec(msg)).find(Boolean)
   const q=reverse ? clean(reverse[1]):target
-  const teaching=new RegExp(policy.teachPattern,'i').test(msg) || /(සංඥා|භාෂා).*(කොහොම|කෙසේ|පෙන්ව)/u.test(msg)
+  const teaching=!namedRequest && (new RegExp(policy.teachPattern,'i').test(msg) || /(සංඥා|භාෂා).*(කොහොම|කෙසේ|පෙන්ව)/u.test(msg))
   const hits=reverse ? kb.reverseMeaning(q):kb.exact(q)
   if (hits.length) {
     if (hits.length===1) return signAnswer(kb,hits[0],teaching)

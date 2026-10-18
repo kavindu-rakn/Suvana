@@ -18,14 +18,16 @@
     "apps/learn/src/components/practiceStages.ts": "46123f585461cbb47696eb7617d956432514ccbfe12b2d33c2b8419cdb32de54",
     "apps/learn/src/components/SkeletonPlayer.tsx": "53567051d9c81ed21e361282efe7adc9232c3c038d2a9903f03bda2390bc94c7",
     "apps/learn/src/components/PracticeView.tsx": "b49c3b47760037735d9a7f21b8586e161f816990e07a9c7db69a1ad06bda7d27",
-    "apps/shell/privacy.html": "8233763f1692d1e7effb9bb199993f6ac82d2245c8bfa46ab49efb2984e29899",
+    "apps/shell/privacy.html": "7d5b73c7590e82a783595e904e40d322ce0dafbbf9f8eee3e939baa640ad04b5",
     "apps/shell/alerts/index.html": "73e843f4b9e6e2863293ce878ff1ca2ca14aae4e10a2f7892f4e7b1df59581cf",
     "services/recognition/webapp/server.py": "2f6805763e40334d83142cd3ab461583392361e8ac351816986b79603b385d7a",
     "README.md": "08b3a6647c7482b74d6df46ebf88b63504b39418a201821c6bd0ae9cde704171",
-    "services/recognition/webapp/static/assistant-policy.json": "028692ecf7152d4c4a165776b6bbaa71a34b4534d67f488f5b3fc92ef57f022f",
+    "services/recognition/webapp/static/assistant-policy.json": "1a9a1a020f03bff04aa16e39b94fc6f997d939959b5aeadad386b45740d43ede",
     "services/recognition/webapp/static/index.html": "99019a9587aa3f3cec616e6e681dd18ec5d3f411ee37352cc9890862252afef6",
     "services/recognition/webapp/static/app.js": "36efe5093151fec23a3c144df6b245800d8a60fcf9f37ca6a7742a92c077f803",
-    "apps/learn/src/vision/cameraLifecycle.ts": "4dcaf63d7742dbe3734c2f5897b18ff0f392decbc9e6ae406bb545f83a32b1d4"
+    "apps/learn/src/vision/cameraLifecycle.ts": "4dcaf63d7742dbe3734c2f5897b18ff0f392decbc9e6ae406bb545f83a32b1d4",
+    "apps/shell/src/assistant/widget.ts": "2c6dd296e2d19c0807e91b91339cb6040c44d191299b53146e102c9b505d3d78",
+    "services/recognition/webapp/static/assistant.js": "aaaa5a8e17389b2af38526fdbf3ae889f5416e44ef81ae4c3137fca444c9cd22"
   },
   "facts": {
     "recognitionCount": 171,
