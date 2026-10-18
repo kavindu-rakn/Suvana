@@ -84,15 +84,18 @@
       "upstream": "r26",
       "from": "learn-ssl-module/web",
       "to": "apps/learn",
-      "synced": "334beba05e201acd4ecb2e64b75b915cac3cf8be",
-      "recorded": "2026-10-10",
+      "synced": "4265671ead48335381863505cda89c28c9551936",
+      "recorded": "2026-10-18",
+      "note": "R-04 M2 Learn port committed and pushed by kvn in R26 as 4265671 from Suvana 7a769ce8f967bbe55c0b56a30c8b0076eaaf036a; includes previously unrecorded M0 (761ec32) and M1 (d0bfd21) ports. R26 gates passed per docs/plan/handoffs/R-04.md.",
       "policy": "Learn is developed in Suvana and mirrored to R26 after milestones. All source files are shared; only suvana.config.json, vercel.json and package-lock.json differ. Source changes remain undeclared until ported; record learn only after the mirror gates pass.",
       "couplings": {
         "package-lock.json": "npm 10 output local to each repo; regenerate when package.json changes, never copy between repos"
       },
       "suvanaOnly": {
         "suvana.config.json": "Enables the /learn/ base, dist/learn output, Suvana account/home navigation and port 5174; absent in R26, which uses standalone defaults",
-        "vercel.json": "Suvana-only /learn/ headers and root redirect; never port to R26, which owns its standalone hosting config"
+        "vercel.json": "Suvana-only /learn/ headers and root redirect; never port to R26, which owns its standalone hosting config",
+        "AGENTS.md": "Suvana Learn agent instructions; excluded from R26 milestone ports by R-02",
+        "CLAUDE.md": "Imports Suvana Learn AGENTS.md; excluded from R26 milestone ports by R-02"
       },
       "guards": [
         {
