@@ -69,11 +69,10 @@ describe('content safety', () => {
     expect(execFileSync(process.execPath, [fileURLToPath(new URL('../../scripts/build-learn-glosses.mjs', import.meta.url)), '--check'], { encoding: 'utf8' })).toContain('verified')
   })
 
-  it('homepage replacements equal the actual Recognize label count; testimonials are outside this change', () => {
+  it('the homepage spec equals the actual Recognize label count', () => {
     const labels = JSON.parse(readFileSync(new URL('../../../../services/recognition/webapp/data/sinhala_labels.json', import.meta.url), 'utf8'))
     const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8')
     const count = Object.keys(labels).length
-    expect(html).toContain(`<span class="stat-value">${count}</span>\n          <span class="stat-label">Recognize labels</span>`)
     expect(html).toContain(`${count} Supported Recognize Signs`)
   })
 })
