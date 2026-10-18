@@ -59,11 +59,12 @@ From `docs/plan/02-learn-vision.md` section 6:
 The current scorer (after L-30) separates two takes of the same sign from two
 different signs at 75.7% at the best threshold, against a 65.4% majority-class
 baseline, on 1,516 pairs (524 same-sign, 992 different-sign) from one fluent
-signer (D-A35). The draft thesis's 74.6% came from the earlier scorer. ROC AUC
-for the current scorer: TODO(AUC), being re-measured; 0.744 belongs to the
-earlier scorer only. This is not accuracy or learner performance, the 1.1-point
-difference is not an improvement claim, and it is not the proposal's 90%
-agreement target, which was never evaluated.
+signer, with ROC AUC 0.758 on the same pairs (D-A35). The draft thesis's 74.6%
+and ROC AUC 0.744 came from the earlier scorer; both were reproduced exactly
+before the current scorer was measured (`docs/plan/handoffs/auc-remeasure.md`).
+This is not accuracy or learner performance, the difference is not an
+improvement claim, and it is not the proposal's 90% agreement target, which
+was never evaluated.
 
 Never claim: recognition accuracy (no figure from Recognize is a Suvana
 result), accuracy against experts, learning gains, users, or anything compared
