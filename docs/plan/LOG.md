@@ -1160,3 +1160,11 @@ Rules:
 - Screenshots: n/a.
 - Needs kvn: review; five CHECKs in handoffs/T-03.md (re-measure the other 6.1 tables or keep them labelled; regenerate figures; re-run the scoring bench at the shipped capture window; no sequence level; team landing page link).
 - Next: fill TODO(Q-09) when the latency run exists and TODO(Q-08)/TODO(D-10) on 21 Oct.
+
+### 2026-10-18 | kvn (recorded by claude-code-thesis) | Q-06 devices confirmed
+- What: decision/record. kvn in chat: the Q-06 device check used "iPhone in Safari, an Android phone in Chrome, and a laptop in Chrome". Thesis Ch5 5.4 and Ch6 Table 6.9 (final-source) name them; the check passed except Back to the homepage, fixed the same day.
+- Branch @ sha: agent/claude/T-02-refresh (handoff T-02 updated; final SHA in git log).
+- Gates: n/a.
+- Screenshots: n/a.
+- Needs kvn: none.
+- Next: TODO(Q-08), TODO(Q-09) and TODO(D-10) in the thesis drafts.
