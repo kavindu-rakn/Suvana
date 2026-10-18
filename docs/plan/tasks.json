@@ -344,7 +344,7 @@
     "deps": [
       "T-01"
     ],
-    "status": "in-progress",
+    "status": "done",
     "branch": "none (writes outside the repo)",
     "r26_port": "no",
     "screenshots": "no",
@@ -375,7 +375,7 @@
       "Q-09",
       "L-13"
     ],
-    "status": "todo",
+    "status": "in-progress",
     "branch": "none (writes outside the repo)",
     "r26_port": "no",
     "screenshots": "no",
@@ -1945,7 +1945,7 @@
     "deps": [
       "L-26"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/claude/L-28-learn-docs",
     "r26_port": "yes",
     "screenshots": "no",

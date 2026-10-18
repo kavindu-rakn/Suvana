@@ -27,8 +27,8 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | K-12 | Final demo and thesis submission | kvn | 2026-10-22 | M | T-08, K-11 | todo | `n/a` | no | no | - |
 | K-13 | Record two hand-fixture clips for automated screenshots | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
 | T-01 | Create the final-thesis working copy; the uploaded draft stays untouched | kvn | 2026-10-13 | S | - | done | `n/a` | no | no | - |
-| T-02 | Draft revised Ch1/Ch4/Ch5 text for what was actually built | claude-code-thesis | 2026-10-19 | M | T-01 | in-progress | `none (writes outside the repo)` | no | no | DN-16 |
-| T-03 | Draft Ch6/Ch7/Ch8: objectives table, panel responses, limitations, future work | claude-code-thesis | 2026-10-20 | M | T-02, Q-09, L-13 | todo | `none (writes outside the repo)` | no | no | - |
+| T-02 | Draft revised Ch1/Ch4/Ch5 text for what was actually built | claude-code-thesis | 2026-10-19 | M | T-01 | done | `none (writes outside the repo)` | no | no | DN-16 |
+| T-03 | Draft Ch6/Ch7/Ch8: objectives table, panel responses, limitations, future work | claude-code-thesis | 2026-10-20 | M | T-02, Q-09, L-13 | in-progress | `none (writes outside the repo)` | no | no | - |
 | T-04 | Learner-model worked example computed with the real code | claude-code-thesis | 2026-10-17 | S | L-13 | done | `agent/claude/T-04-worked-example` | yes | no | - |
 | T-05 | Figures, placeholders, chart titles, accessibility and Appendix B | kvn | 2026-10-21 | M | T-02, T-03 | todo | `n/a` | no | no | DN-16 |
 | T-07 | Commercialisation write-up (open core, licences, costs, competitors) | claude-code-thesis | 2026-10-19 | S | - | done | `agent/claude/T-07-commercialisation` | no | no | DN-04, DN-15 |
@@ -86,7 +86,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | L-25 | Sentence challenge UI (last unit on the Path) | codex | 2026-10-19 | M | L-22b, L-16b | done | `agent/codex/L-25-sentences-ui` | yes | yes | DN-08 |
 | L-26 | Phone, accessibility and polish pass across Learn | codex | 2026-10-20 | M | L-21, L-23, L-25 | done | `agent/codex/L-26-polish` | yes | yes | - |
 | L-27 | Camera off while browsing or hidden; hover hint only on hover devices; GSAP restore | codex | 2026-10-20 | S | L-04, L-16b | done | `agent/codex/L-27-camera-off` | yes | no | - |
-| L-28 | Learn docs match what shipped | claude-code-thesis | 2026-10-20 | S | L-26 | todo | `agent/claude/L-28-learn-docs` | yes | no | - |
+| L-28 | Learn docs match what shipped | claude-code-thesis | 2026-10-20 | S | L-26 | done | `agent/claude/L-28-learn-docs` | yes | no | - |
 | L-29 | iPhone: restart the camera automatically after an app switch | codex | 2026-10-16 | S | L-04 | done | `agent/codex/L-29-ios-camera-resume` | yes | no | - |
 | L-30 | Score one-handed references as one-handed (ignore stray hand labels) | codex | 2026-10-16 | S | - | done | `agent/codex/L-30-stray-hands` | yes | no | - |
 | L-31 | Third scenario from corpus signs (optional, only if kvn approves DN-19) | codex | backlog (earliest 2026-10-19) | M | K-05 | cancelled | `agent/codex/L-31-scenario3` | yes | yes | DN-19 |
