@@ -686,7 +686,7 @@
     "deps": [
       "R-04"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a (R26)",
     "r26_port": "no",
     "screenshots": "no",

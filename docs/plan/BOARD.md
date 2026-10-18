@@ -41,7 +41,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | D-05 | Speech service: laptop-only by default; host only if DN-03 says so | kvn | 2026-10-19 | S | I-09 | todo | `n/a` | no | no | DN-03 |
 | D-06 | Commit the R26 M0 port and redeploy learn-ssl-module.vercel.app | kvn | 2026-10-14 | S | R-00 | done | `n/a (R26: kvn commits)` | no | no | - |
 | D-07 | Commit the R26 M1 port and redeploy learn-ssl-module | kvn | 2026-10-17 | S | R-03 | done | `n/a (R26)` | no | no | - |
-| D-08 | Commit the R26 M2 port and redeploy learn-ssl-module | kvn | 2026-10-19 | S | R-04 | todo | `n/a (R26)` | no | no | - |
+| D-08 | Commit the R26 M2 port and redeploy learn-ssl-module | kvn | 2026-10-19 | S | R-04 | done | `n/a (R26)` | no | no | - |
 | D-09 | Attach suvana.help to suvana-shell and re-run the smoke | kvn | 2026-10-20 | S | K-08 | done | `n/a` | no | no | - |
 | D-10 | Final R26 commit and learn-ssl-module redeploy | kvn | 2026-10-21 | S | R-05 | todo | `n/a (R26)` | no | no | - |
 | Q-00 | Screenshot tooling: Playwright shooter, contact sheet, fake-camera clips, dev-only fixtures page | antigravity | 2026-10-13 | M | K-01 | done | `agent/antigravity/Q-00-screens` | no | no | - |
