@@ -1138,3 +1138,11 @@ Rules:
 - Status after: synced 4265671, upstream head 4265671, nothing new upstream; Everything matches its upstream. Old M0/M1/M2 backlog gone. Only informational identical package-lock coupling remains, retained intentionally.
 - Gates: sync guard 255/255; node --test tools/ci/*.test.mjs 6 passed/0 failed/0 skipped; diff check and exact manifest/LOG/scope preservation checks. Screenshots n/a, no UI/product/SSL/figure changes.
 - Needs kvn: normal Suvana branch review/merge/push. No push, merge, deploy or external messages by agent. Root README/owner-managed plan records/other handoffs untouched; handoff: docs/plan/handoffs/record-r04-port.md.
+
+### 2026-10-18 | claude-code-thesis | T-02 refresh: Ch1/Ch4/Ch5 ready for review
+- What: done (review), at kvn's request on 18 Oct. Thesis\final-source\01-introduction.md, 04-design.md and 05-implementation.md now describe main d17a561: L-33 finger labels for 22 signs (4.4.4 has the method and held-out figures under L-33's wording rules), D-A35 figures (75.7%, ROC AUC 0.758, 65.4% baseline; 74.6%/0.744 named once as the earlier scorer's), suvana.help with one homepage sign-in, /recognize, the ?sign= link, assistants on the verified index with no AI key, Q-06 result, the M2 port. OUT OF DATE banners removed; placeholders are [TODO(task): ...]. docs/commercialisation.md: TODO(AUC) -> 0.758.
+- Branch @ sha: agent/claude/T-02-refresh (final SHA in git log), from origin/main d17a561.
+- Gates: sync guard; brand check passed; no app code.
+- Screenshots: n/a.
+- Needs kvn: review the three chapters (README.md in final-source explains the markers); two CHECKs (1.4 claim wording; whether Component 1's landing page still links the standalone module). TODO(Q-08), TODO(Q-09) and TODO(D-10) wait on those tasks.
+- Next: L-28 Learn docs, then T-03 Ch6/7/8.
