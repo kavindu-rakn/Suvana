@@ -13,9 +13,9 @@
  * this is that server.
  */
 
-import { MAX_CONTEXT_CHARS, MAX_HISTORY_TURNS, MAX_MESSAGE_CHARS, askGemini } from './model'
-import type { Turn } from './model'
-import { signingRefusal } from './signingSafety'
+import { MAX_MESSAGE_CHARS, askGemini } from './model'
+import { buildContext, groundedModelText, localAnswer } from './engine'
+import { SignKnowledgeBase } from './kb'
 
 export interface AssistantRequest {
   message?: unknown
@@ -57,17 +57,6 @@ function rateLimited(client: string): boolean {
   return recent.length > RATE_LIMIT
 }
 
-function cleanHistory(raw: unknown): Turn[] {
-  if (!Array.isArray(raw)) return []
-  return raw
-    .slice(-MAX_HISTORY_TURNS)
-    .filter((t): t is Turn => !!t && typeof t === 'object' && typeof (t as Turn).content === 'string')
-    .map((t) => ({
-      role: t.role === 'assistant' ? 'assistant' : 'user',
-      content: String(t.content).slice(0, MAX_MESSAGE_CHARS),
-    }))
-}
-
 export async function handleAssistant(
   body: AssistantRequest,
   apiKey: string | undefined,
@@ -90,19 +79,20 @@ export async function handleAssistant(
     return { status: 429, body: { error: 'Too many requests — try again in a minute.' } }
   }
 
-  const refusal = signingRefusal(message)
-  if (refusal) return { status: 200, body: { ...refusal, model: 'local' } }
-
-  const context = typeof body.context === 'string' ? body.context.slice(0, MAX_CONTEXT_CHARS) : ''
+  const kb = new SignKnowledgeBase()
+  const approved = localAnswer(kb,message)
+  if (approved.refused || approved.intent==='random') return {status:200,body:{...approved,model:'local'}}
+  // Ignore client-supplied context and history: neither is a verified source.
+  const context = buildContext(kb,message)
 
   try {
     const { text, model } = await askGemini({
       key: apiKey,
       message,
-      history: cleanHistory(body.history),
+      history: [],
       context,
     })
-    return { status: 200, body: { text, model } }
+    return { status: 200, body: { ...approved, text: groundedModelText(text,approved.text), model } }
   } catch (err) {
     // Never echo the key, and never leak it through an error string.
     const raw = err instanceof Error ? err.message : 'The model call failed.'

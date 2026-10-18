@@ -18,6 +18,8 @@
 
 import { PREFERRED_MODEL, askGemini, listModels, pickModel } from './model'
 import type { Turn } from './model'
+import { buildContext, groundedModelText, localAnswer } from './engine'
+import { SignKnowledgeBase } from './kb'
 
 export { KEYS_URL, PREFERRED_MODEL, pickModel } from './model'
 export type { Turn } from './model'
@@ -133,9 +135,14 @@ export async function askAssistant(
   context: string,
   signal?: AbortSignal,
 ): Promise<{ text: string; model: string; via: 'suvana' | 'gemini' }> {
+  const kb = new SignKnowledgeBase()
+  const approved = localAnswer(kb,message)
+  if (approved.refused || approved.intent==='random') return {text:approved.text,model:'local',via:'suvana'}
+  context = buildContext(kb,message)
+  history = []
   if (proxyAvailable !== false) {
     const viaProxy = await askProxy(message, history, context, signal)
-    if (viaProxy) return { ...viaProxy, via: 'suvana' }
+    if (viaProxy) return { ...viaProxy, text:groundedModelText(viaProxy.text,approved.text), via: 'suvana' }
   }
 
   const key = readKey()
@@ -151,7 +158,7 @@ export async function askAssistant(
     signal,
     onResolved: (m) => write(RESOLVED_STORAGE, m),
   })
-  return { text, model, via: 'gemini' }
+  return { text:groundedModelText(text,approved.text), model, via: 'gemini' }
 }
 
 /** Whether this deployment can answer without the visitor bringing a key. */

@@ -25,8 +25,6 @@ import {
 } from './gemini'
 import type { Turn } from './gemini'
 
-const SIGNS_URL = '/data/signs.json'
-
 const ICON_SPARK =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg>'
 const ICON_CLOSE =
@@ -78,21 +76,22 @@ function sinhalaVoice(): SpeechSynthesisVoice | null {
 
 function cardHtml(card: SignCard, canSpeak: boolean): string {
   const gloss = card.english ? `<p class="svn-ai-card-gloss">${escapeHtml(card.english)}</p>` : ''
-  const speak = canSpeak
+  const speak = canSpeak && card.sinhala
     ? `<button class="svn-ai-speak" type="button" data-speak="${escapeHtml(card.sinhala)}" aria-label="Speak ${escapeHtml(card.sinhala)}">${ICON_SPEAK}</button>`
     : ''
   return `
     <article class="svn-ai-card">
       <div class="svn-ai-card-head">
         <div>
-          <p class="svn-ai-card-si" lang="si">${escapeHtml(card.sinhala)}</p>
+          <p class="svn-ai-card-si"${card.sinhala ? ' lang="si"' : ''}>${escapeHtml(card.sinhala || card.label)}</p>
           ${gloss}
         </div>
         ${speak}
       </div>
       <p class="svn-ai-card-meta"><span class="svn-ai-chip-tag">${escapeHtml(card.categoryLabel)}</span> <code>${escapeHtml(card.label)}</code></p>
-      <ul class="svn-ai-card-tips">${card.tips.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}</ul>
-      <a class="svn-ai-card-cta" href="/learn/">Practise this in Learn &rarr;</a>
+      ${card.units.length ? `<p class="svn-ai-card-meta">Learn: ${card.units.map(escapeHtml).join(', ')}</p>` : ''}
+      <p class="svn-ai-card-meta">${card.recognizeLabel ? 'Listed in Recognize' : 'Not listed in Recognize'}</p>
+      ${card.learnUrl ? `<a class="svn-ai-card-cta" href="${escapeHtml(card.learnUrl)}">Watch this sign in Learn &rarr;</a>` : '<p class="svn-ai-card-meta">No exact-name recording in Learn</p>'}
     </article>`
 }
 
@@ -161,7 +160,7 @@ export function mountAssistant(): void {
         <div class="svn-ai-settings-actions">
           <button class="svn-ai-btn" type="button" data-act="save-key">Save &amp; verify</button>
           <button class="svn-ai-btn ghost" type="button" data-act="clear-key">Remove key</button>
-          <a class="svn-ai-link" href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get a free key &rarr;</a>
+          <a class="svn-ai-link" href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get an API key &rarr;</a>
         </div>
         <p class="svn-ai-settings-note" data-field="key-status"></p>
         </details>
@@ -212,7 +211,7 @@ export function mountAssistant(): void {
       <div class="svn-ai-bubble">
         ${badge}
         ${renderMarkdown(answer.text)}
-        ${answer.learnUrl ? `<p><a class="svn-ai-card-cta" href="${escapeHtml(answer.learnUrl)}">Watch a recording in Learn &rarr;</a></p>` : ''}
+        ${answer.links.map(link => `<p><a class="svn-ai-card-cta" href="${escapeHtml(link.url)}">${escapeHtml(link.label)} &rarr;</a></p>`).join('')}
         ${notice}
         ${answer.cards.map((c) => cardHtml(c, canSpeak)).join('')}
       </div>`
@@ -247,7 +246,7 @@ export function mountAssistant(): void {
 
     // With no index there is nothing to ground a model answer in, so do not
     // spend a call on it — the local reply already explains the situation.
-    if (base.refused || !kb.size) {
+    if (base.refused || base.intent==='random' || !kb.size || (!readKey() && !(await probeProxy()))) {
       addAssistant(base)
       setChips(base.chips)
       history.push({ role: 'user', content: message }, { role: 'assistant', content: base.text })
@@ -274,9 +273,7 @@ export function mountAssistant(): void {
         // Never leave the user without a reply — fall back and say why, in one
         // short line. Google's raw error is often a paragraph of migration
         // advice, which is not what someone asking about a sign needs to read.
-        const raw = err instanceof Error ? err.message : ''
-        const why = raw.split(/(?<=[.!?])\s/)[0]?.trim() || 'The model call failed.'
-        addAssistant({ ...base, notice: `${why} Answered from Suvana’s own index.` })
+        addAssistant({ ...base, notice: 'The optional model is unavailable. Answered from Suvana’s verified index.' })
       }
       history.push({ role: 'user', content: message }, { role: 'assistant', content: base.text })
     } finally {
@@ -298,7 +295,7 @@ export function mountAssistant(): void {
     if (open) {
       input.focus()
       if (!log.childElementCount) {
-        const greeting = localAnswer(kb, 'hello')
+        const greeting = localAnswer(kb, '')
         addAssistant(greeting)
         setChips(greeting.chips)
       }
@@ -351,7 +348,7 @@ export function mountAssistant(): void {
                 'Nothing to set up &mdash; no key is needed here.'
               : 'This deployment has no model access of its own, so replies come ' +
                 'from <strong>Suvana&rsquo;s sign index</strong> in fixed phrasing. ' +
-                'Add a key below to make them conversational.'
+                'Optional model access uses the same verified answers.'
           })
         } else {
           input.focus()
@@ -400,10 +397,10 @@ export function mountAssistant(): void {
     window.speechSynthesis.onvoiceschanged = () => { /* getVoices() is warm now */ }
   }
 
-  void loadKnowledgeBase(SIGNS_URL).then((loaded) => {
+  void loadKnowledgeBase().then((loaded) => {
     kb = loaded
     sub.textContent = kb.size
-      ? `Tutor for all ${kb.size} signs Suvana recognises`
+      ? 'Recordings, module coverage and practice help'
       : 'Sign index unavailable'
   })
 }

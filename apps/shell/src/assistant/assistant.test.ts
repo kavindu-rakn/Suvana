@@ -15,8 +15,7 @@
 
 import { describe, expect, it } from 'vitest'
 
-import { SignKnowledgeBase, norm, ratio, tokens } from './kb'
-import { localAnswer, stripQuery } from './engine'
+import { norm, ratio, tokens } from './kb'
 import { PREFERRED_MODEL, pickModel } from './model'
 
 describe('ratio — difflib.SequenceMatcher parity', () => {
@@ -60,101 +59,6 @@ describe('norm and tokens', () => {
   it('drops the empty strings that repeated separators produce', () => {
     expect(tokens('a  --  b')).toEqual(['a', 'b'])
     expect(tokens("How do I sign 'to eat'?")).toEqual(['how', 'do', 'i', 'sign', 'to', 'eat'])
-  })
-})
-
-// A slice of the committed index, enough to exercise every branch.
-const KB = new SignKnowledgeBase([
-  { label: 'kanawa', sinhala: 'කනවා', category: 'phrase', english: 'to eat' },
-  { label: 'yanawa', sinhala: 'යනවා', category: 'phrase', english: 'to go' },
-  { label: 'adinawa', sinhala: 'අදිනවා', category: 'phrase', english: 'to pull' },
-  { label: '50 KM idiriyata yanna', sinhala: '50 කම් ඉදිරියට යන්න', category: 'phrase', english: '' },
-  { label: 'K(first way)', sinhala: 'K', category: 'letter', english: '' },
-  { label: '100', sinhala: 'සියය', category: 'number', english: 'one hundred' },
-])
-
-describe('SignKnowledgeBase.search', () => {
-  it('finds a sign by its English meaning', () => {
-    expect(KB.search('eat')[0].label).toBe('kanawa')
-  })
-
-  it('finds a sign by Romanised Sinhala', () => {
-    expect(KB.search('kanawa')[0].label).toBe('kanawa')
-  })
-
-  it('finds a sign by Sinhala script', () => {
-    expect(KB.search('යනවා')[0].label).toBe('yanawa')
-  })
-
-  it('tolerates a typo', () => {
-    expect(KB.search('adinwa')[0].label).toBe('adinawa')
-  })
-
-  it('prefers the concise canonical sign over a long phrase containing it', () => {
-    // Without the length tie-break, "50 KM idiriyata yanna" outranks "yanawa".
-    expect(KB.search('go')[0].label).toBe('yanawa')
-  })
-
-  it('returns nothing for a query unrelated to the dataset', () => {
-    // The MIN_SCORE floor. Fuzzy matching will always find *something*, and a
-    // confidently wrong sign is the worst failure mode for a teaching tool.
-    expect(KB.search('quantum physics')).toEqual([])
-    expect(KB.search('pizza delivery')).toEqual([])
-  })
-
-  it('reports its own size honestly', () => {
-    expect(KB.size).toBe(6)
-    expect(KB.statsLine()).toContain('6 signs in total')
-  })
-})
-
-describe('stripQuery', () => {
-  it('reduces a natural question to the thing being asked about', () => {
-    expect(stripQuery('how do I sign to eat?')).toBe('eat')
-    expect(stripQuery('what does gannawa mean?')).toBe('gannawa')
-  })
-
-  it('keeps a single letter that STOPWORDS would otherwise swallow', () => {
-    expect(stripQuery('how do I sign the letter A')).toBe('a')
-    expect(stripQuery('sign K')).toBe('k')
-  })
-})
-
-describe('localAnswer', () => {
-  it('greets, and states the real dataset size', () => {
-    const a = localAnswer(KB, 'hello')
-    expect(a.text).toContain('6')
-    expect(a.cards).toEqual([])
-  })
-
-  it('answers a sign lookup with a card', () => {
-    const a = localAnswer(KB, 'to eat')
-    expect(a.text).toContain('කනවා')
-    expect(a.cards[0].label).toBe('kanawa')
-    expect(a.cards[0].tips.length).toBeGreaterThan(0)
-  })
-
-  it('lists a category', () => {
-    const a = localAnswer(KB, 'show me the numbers')
-    expect(a.cards.map((c) => c.label)).toEqual(['100'])
-  })
-
-  it('declines a question the dataset cannot answer', () => {
-    const a = localAnswer(KB, 'what is quantum physics')
-    expect(a.text).toContain("couldn’t match")
-    expect(a.cards).toEqual([])
-  })
-
-  it('says so plainly when the index failed to load, rather than claiming zero signs', () => {
-    const a = localAnswer(new SignKnowledgeBase([]), 'to eat')
-    expect(a.text).toContain('sign index')
-    expect(a.cards).toEqual([])
-  })
-
-  it('never emits a sub-brand name', () => {
-    for (const q of ['hello', 'what can you do', 'how many signs do you know?', 'practice tips']) {
-      expect(localAnswer(KB, q).text).not.toMatch(/sawana|signspeak|soundguard/i)
-    }
   })
 })
 

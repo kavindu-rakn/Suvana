@@ -58,11 +58,12 @@ describe('handleAssistant', () => {
     expect(res.status).toBe(400)
   })
 
-  it('returns the model text on success', async () => {
+  it('keeps only the approved answer on model success', async () => {
     geminiOk('**කනවා** is "to eat".')
     const res = await handleAssistant({ message: 'what does kanawa mean?' }, KEY, 'client-ok')
     expect(res.status).toBe(200)
-    expect(res.body.text).toContain('කනවා')
+    expect(res.body.text).toContain('Verified English meaning: **eat**.')
+    expect(res.body.text).not.toContain('to eat')
   })
 
   it('rate limits a single client', async () => {

@@ -73,7 +73,7 @@
         <span class="svn-ai-avatar">${ICON.spark}</span>
         <span class="svn-ai-title">
           <strong>Suvana AI</strong>
-          <span><i></i><em data-role="engine">Offline engine · ready</em></span>
+          <span><i></i><em data-role="engine">Verified index · ready</em></span>
         </span>
         <button class="svn-ai-headbtn" type="button" data-act="clear" title="Clear conversation" aria-label="Clear conversation">${ICON.trash}</button>
         <button class="svn-ai-headbtn" type="button" data-act="settings" title="AI settings" aria-label="AI settings">${ICON.gear}</button>
@@ -87,18 +87,18 @@
           <textarea class="svn-ai-input" data-role="input" rows="1" placeholder="Ask about any sign…" aria-label="Message"></textarea>
           <button class="svn-ai-send" type="button" data-act="send" aria-label="Send" disabled>${ICON.send}</button>
         </div>
-        <div class="svn-ai-foot-note" data-role="note">Runs offline · no account, no cost</div>
+        <div class="svn-ai-foot-note" data-role="note">Verified sources · no account needed</div>
       </footer>
 
       <div class="svn-ai-settings" data-role="settings">
         <header class="svn-ai-head">
           <button class="svn-ai-headbtn" type="button" data-act="settings-back" aria-label="Back">${ICON.back}</button>
-          <span class="svn-ai-title"><strong>AI Settings</strong><span>Optional upgrade · always free</span></span>
+          <span class="svn-ai-title"><strong>AI Settings</strong><span>Optional model access</span></span>
         </header>
         <div class="svn-ai-set-body">
           <div class="svn-ai-set-intro">
-            Suvana AI already answers <strong>fully offline</strong> from this project's own sign dataset — no key needed.
-            <br><br>To upgrade it to a full conversational model, paste a <strong>free</strong> API key below. No credit card is required by any of these providers, and the key is stored only in this browser.
+            Suvana AI answers from <strong>verified Learn and Recognize sources</strong> — no model key needed.
+            <br><br>Optional model access uses the same verified answers and safety rules. Add a provider key below; it is stored in this browser and sent with assistant requests to this server and the provider.
           </div>
 
           <div class="svn-ai-field">
@@ -111,7 +111,7 @@
 
           <div class="svn-ai-field">
             <label>API key</label>
-            <input type="password" data-role="apikey" placeholder="Paste your free API key" autocomplete="off" spellcheck="false" />
+            <input type="password" data-role="apikey" placeholder="Paste your API key" autocomplete="off" spellcheck="false" />
           </div>
 
           <div class="svn-ai-field">
@@ -121,7 +121,7 @@
               <button class="svn-ai-btn compact" type="button" data-act="browse">Browse</button>
             </div>
             <select class="svn-ai-modelpick" data-role="modelpick" hidden aria-label="Available models"></select>
-            <small>Leave blank for the provider's recommended free model. This must be the model <b>id</b> (e.g. <code>liquid/lfm-2.5-2.6b:free</code>) — not the display name shown on the provider's website. <b>Browse</b> lists the real ids.</small>
+            <small>Leave blank for the provider's default model. This must be the model <b>id</b> (e.g. <code>liquid/lfm-2.5-2.6b:free</code>) — not the display name shown on the provider's website. <b>Browse</b> lists the real ids.</small>
           </div>
 
           <div class="svn-ai-set-status" data-role="status"></div>
@@ -235,12 +235,13 @@
       el.appendChild(b);
     }
 
-    if (payload.learnUrl && /^https:\/\/suvana\.help\/learn\/(?:\?sign=[^#]*)?$/.test(payload.learnUrl)) {
+    (payload.links || []).forEach((action) => {
+      if (!/^\/(?:learn\/(?:\?sign=[^#]*)?|recognize\/|alerts\/|login|privacy\.html)$/.test(action.url)) return;
       const link = document.createElement("a");
-      link.href = payload.learnUrl;
-      link.textContent = "Watch a recording in Learn →";
+      link.href = action.url;
+      link.textContent = action.label + " →";
       el.appendChild(link);
-    }
+    });
 
     if (payload.cards && payload.cards.length) {
       const wrap = document.createElement("div");
@@ -288,11 +289,30 @@
     speak.title = "Hear it in Sinhala";
     speak.setAttribute("aria-label", `Play pronunciation of ${c.sinhala || c.label}`);
     speak.innerHTML = ICON.speaker;
-    speak.addEventListener("click", () => play(c.label, speak));
+    speak.addEventListener("click", () => play(c.recognizeLabel, speak));
 
     top.appendChild(main);
-    top.appendChild(speak);
+    if (c.recognizeLabel && c.sinhala) top.appendChild(speak);
     card.appendChild(top);
+
+    const coverage = document.createElement("p");
+    coverage.textContent = c.recognizeLabel ? "Listed in Recognize" : "Not listed in Recognize";
+    card.appendChild(coverage);
+    if (c.units && c.units.length) {
+      const units = document.createElement("p");
+      units.textContent = "Learn: " + c.units.join(", ");
+      card.appendChild(units);
+    }
+    if (c.learnUrl && /^\/learn\/\?sign=[^#]+$/.test(c.learnUrl)) {
+      const learn = document.createElement("a");
+      learn.href = c.learnUrl;
+      learn.textContent = "Watch this sign in Learn →";
+      card.appendChild(learn);
+    } else {
+      const missing = document.createElement("p");
+      missing.textContent = "No exact-name recording in Learn";
+      card.appendChild(missing);
+    }
 
     if (c.tips && c.tips.length) {
       const toggle = document.createElement("button");
@@ -465,11 +485,11 @@
   function refreshKeyLink() {
     const p = (meta?.providers || []).find((x) => x.id === providerSel.value);
     if (!p) {
-      keyLink.innerHTML = "Works with zero setup. Pick a provider only if you want full conversational AI.";
+      keyLink.innerHTML = "Works with zero setup. Optional models use the same verified answers.";
       modelInput.placeholder = "default";
       return;
     }
-    keyLink.innerHTML = `Get a free ${esc(p.name)} key at <a href="${esc(p.keysUrl)}" target="_blank" rel="noopener">${esc(p.keysUrl.replace(/^https?:\/\//, ""))}</a> — no credit card.`;
+    keyLink.innerHTML = `Get a ${esc(p.name)} key at <a href="${esc(p.keysUrl)}" target="_blank" rel="noopener">${esc(p.keysUrl.replace(/^https?:\/\//, ""))}</a>.`;
     modelInput.placeholder = p.defaultModel;
   }
 
@@ -577,7 +597,7 @@
     }
     persist();
     updateEngineTag();
-    setStatus("ok", settings.provider && settings.apiKey ? "Saved. Suvana AI is now running on the cloud model." : "Saved. සුවණ AI is running fully offline.");
+    setStatus("ok", settings.provider && settings.apiKey ? "Saved. Suvana AI is now running on the cloud model." : "Saved. Suvana AI uses the verified local index.");
     setTimeout(() => settingsPane.classList.remove("is-open"), 900);
   }
 
@@ -587,20 +607,21 @@
       engineTag.textContent = `${p.name} · ready`;
       noteEl.textContent = `Grounded in this project's ${meta?.signCount ?? ""} signs`.trim();
     } else {
-      engineTag.textContent = "Offline engine · ready";
-      noteEl.textContent = "Runs offline · no account, no cost";
+      engineTag.textContent = "Verified index · ready";
+      noteEl.textContent = "Verified sources · no account needed";
     }
   }
 
   /* -------------------------------------------------------------- greeting */
 
   function greet() {
+    if (meta?.greeting) { addBot(meta.greeting); return; }
     const count = meta?.signCount;
     addBot({
       text:
-        `ආයුබෝවන් 👋 I'm **Suvana AI**, your built-in sign-language tutor.\n\n` +
+        `ආයුබෝවන් 👋 I'm **Suvana AI**, your built-in practice assistant.\n\n` +
         (count
-          ? `This model has **${count}** labels. Ask me to look up label metadata or browse reference recordings in Learn.`
+          ? `The shared index has **${count}** names from Learn and Recognize. Ask for a sign recording or platform help.`
           : `Ask me to look up label metadata or browse reference recordings in Learn.`),
       cards: [],
       chips: meta?.starters || [
