@@ -128,7 +128,7 @@ describe('localAnswer', () => {
   })
 
   it('answers a sign lookup with a card', () => {
-    const a = localAnswer(KB, 'how do I sign to eat?')
+    const a = localAnswer(KB, 'to eat')
     expect(a.text).toContain('කනවා')
     expect(a.cards[0].label).toBe('kanawa')
     expect(a.cards[0].tips.length).toBeGreaterThan(0)
@@ -146,7 +146,7 @@ describe('localAnswer', () => {
   })
 
   it('says so plainly when the index failed to load, rather than claiming zero signs', () => {
-    const a = localAnswer(new SignKnowledgeBase([]), 'how do I sign to eat?')
+    const a = localAnswer(new SignKnowledgeBase([]), 'to eat')
     expect(a.text).toContain('sign index')
     expect(a.cards).toEqual([])
   })

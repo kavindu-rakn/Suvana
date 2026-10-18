@@ -235,6 +235,13 @@
       el.appendChild(b);
     }
 
+    if (payload.learnUrl && /^https:\/\/suvana\.help\/learn\/(?:\?sign=[^#]*)?$/.test(payload.learnUrl)) {
+      const link = document.createElement("a");
+      link.href = payload.learnUrl;
+      link.textContent = "Watch a recording in Learn →";
+      el.appendChild(link);
+    }
+
     if (payload.cards && payload.cards.length) {
       const wrap = document.createElement("div");
       wrap.className = "svn-ai-cards";
@@ -593,8 +600,8 @@
       text:
         `ආයුබෝවන් 👋 I'm **Suvana AI**, your built-in sign-language tutor.\n\n` +
         (count
-          ? `I know all **${count}** signs this model was trained on. Ask me how to sign something, what a sign means, or ask for one to practise.`
-          : `Ask me how to sign something, what a sign means, or ask for one to practise.`),
+          ? `This model has **${count}** labels. Ask me to look up label metadata or browse reference recordings in Learn.`
+          : `Ask me to look up label metadata or browse reference recordings in Learn.`),
       cards: [],
       chips: meta?.starters || [
         "How do I sign 'to eat'?",

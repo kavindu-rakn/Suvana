@@ -60,7 +60,7 @@ describe('handleAssistant', () => {
 
   it('returns the model text on success', async () => {
     geminiOk('**කනවා** is "to eat".')
-    const res = await handleAssistant({ message: 'how do I sign to eat?' }, KEY, 'client-ok')
+    const res = await handleAssistant({ message: 'what does kanawa mean?' }, KEY, 'client-ok')
     expect(res.status).toBe(200)
     expect(res.body.text).toContain('කනවා')
   })
