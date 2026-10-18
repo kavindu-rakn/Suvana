@@ -1023,3 +1023,10 @@ Rules:
 - Checks (light): no model, label or protected files; Lahiru's assistant.py change declared Suvana-only with guards; R26 untouched.
 - Noticed for kvn: the stats row now shows 171 twice; the homepage Learn card still says "corrections down to individual fingers" (finger labels cover 22 signs).
 - Needs kvn: adopt from .agent-local/review/2026-10-18c/ (integration worktree); merge and push; then the hosted retest of the assistant prompts on suvana.help.
+
+### 2026-10-19 00:15 | kvn (recorded by claude-code) | Content safety live; testimonials kept (D-A34); Q-05 done, I-14 part 1 merged
+- kvn adopted and merged integration/2026-10-18b (I-14 part 1 deep link, Q-05 DEMO.md) and integration/2026-10-18c (content safety). D-A34: the three homepage testimonials stay; they are real quotes collected by Lahiru.
+- Live retest by claude-code on https://suvana.help (homepage assistant, browser, signed out, 19 Oct): 'how do I sign X', 'translate Y to SSL', 'describe the handshape for Z' and 'how do I sign hello' all returned "Suvana does not describe how signs are made and does not translate into SSL. Use Learn to watch the reference recording instead." (4/4 refusals); links go to /learn/?sign=X, ?sign=Y, ?sign=Z and /learn/ (lowercase "hello" is not an exact gloss). The homepage no longer shows 98.8% or 98%.
+- Railway again did not rebuild after the merge (the pushed head commit changes only LOG.md, so the watch path appears to skip it). kvn chose manual deploys: watch paths stay, claude-code flags when a click is needed after any merge that changes services/recognition, and claude-code added a health check (/api/info, 300 s) so a new copy only takes over once the model answers. kvn deployed 06c653e; the fixed Recognize assistant was live about 40 s later (/api/info still numClasses 171 with publicOrigin).
+- Live retest of the Recognize assistant on https://suvana.help/recognize/ (browser, signed out, 19 Oct): the same four prompts returned the same refusal (4/4) with the same Learn links.
+- Board: Q-05 done (Recognize sign list stays TODO(Lahiru) in DEMO.md); I-14 in-progress (part 2, 'Practise in Learn' in Communicate, waits for I-13).

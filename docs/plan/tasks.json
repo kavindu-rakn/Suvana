@@ -905,7 +905,7 @@
       "D-03",
       "D-04"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "agent/codex/Q-05-demo",
     "r26_port": "no",
     "screenshots": "no",
@@ -2633,7 +2633,7 @@
       "L-16a",
       "D-03"
     ],
-    "status": "todo",
+    "status": "in-progress",
     "branch": "agent/codex/I-14-deep-link",
     "r26_port": "yes",
     "screenshots": "yes",

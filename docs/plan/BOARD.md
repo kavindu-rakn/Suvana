@@ -49,7 +49,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | Q-02 | .gitattributes for line endings and a union merge for LOG.md | antigravity | 2026-10-14 | S | K-01 | done | `agent/antigravity/Q-02-gitattributes` | no | no | - |
 | Q-03 | Close CI gaps: concurrency, Docker build, R26-form Learn build, dist smoke, extended brand grep | codex | 2026-10-20 | M | R-01, I-01, I-02 | done | `agent/codex/Q-03-ci` | no | no | - |
 | Q-04 | Playwright smoke for Learn (keyboard, storage failure, onboarding) | antigravity | 2026-10-15 | M | Q-00, L-02, L-05, L-07 | done | `agent/antigravity/Q-04-e2e` | no | no | - |
-| Q-05 | DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check | codex | 2026-10-20 | S | D-03, D-04 | todo | `agent/codex/Q-05-demo` | no | no | - |
+| Q-05 | DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check | codex | 2026-10-20 | S | D-03, D-04 | done | `agent/codex/Q-05-demo` | no | no | - |
 | Q-06 | Full real-device matrix (iPhone Safari, Android Chrome, laptop) | kvn | 2026-10-19 | M | Q-06a, L-16b | todo | `n/a` | no | no | - |
 | Q-06a | Early phone check of the deployed Learn and device inventory | kvn | 2026-10-15 | S | D-02, L-04 | done | `n/a` | no | no | - |
 | Q-07 | Handedness reality check | kvn | 2026-10-14 | S | - | done | `n/a` | no | no | - |
@@ -112,7 +112,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | I-12a | Alerts rebuild config under kvn's EAS (only if DN-14 = rebuild) | codex | 2026-10-16 | S | I-02 | done | `agent/codex/I-12a-alerts-eas` | no | no | DN-14 |
 | I-12 | Alerts APK: Karindra builds from Suvana's tree, or kvn rebuilds under his EAS | kvn | 2026-10-17 to 2026-10-19 | M | K-03, I-02 | done | `n/a` | no | no | DN-14 |
 | I-13 | Import Lithira's glosses and animations into kvn's Atlas and Cloudinary | kvn | 2026-10-20 | M | I-07, K-03 | todo | `n/a` | no | no | - |
-| I-14 | Learn and Communicate bridge: /learn/?sign=GLOSS deep link | codex | 2026-10-20 | S | L-16a, D-03 | todo | `agent/codex/I-14-deep-link` | yes | yes | - |
+| I-14 | Learn and Communicate bridge: /learn/?sign=GLOSS deep link | codex | 2026-10-20 | S | L-16a, D-03 | in-progress | `agent/codex/I-14-deep-link` | yes | yes | - |
 
 ## Task details
 
