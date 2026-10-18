@@ -1079,3 +1079,11 @@ Rules:
 - Correction: the two claude-code entries above, D-A35 and codex's assistant-useful heading were dated 19 Oct; the true date is 18 Oct (commits 68d12f0 and d0e8165). Fixed in this commit.
 - Branches: seven merged local branches deleted at kvn's request (T-02-thesis-ch1-4-5, T-07-l33-finger-labels, I-10-shell-wiring, L-25-notice-layout, L-25-sentences-ui, Q-05-demo, content-safety); origin had only main.
 - Needs: Railway "Deploy Latest Commit" (services/recognition changed); claude-code then retests both assistants live.
+
+### 2026-10-18 | codex | Homepage finger wording, part 2
+- What: exactly two supplied replacements in apps/shell/index.html: Modules Learn paragraph and “Corrections, not just a score” paragraph now qualify finger labels with “Some signs”. No CSS/layout-rule, runtime, other copy, test or dependency changes; testimonials unchanged (D-A34).
+- Branch: agent/codex/homepage-fingers from origin/main 874196f203c5f8e139072c89d685570a36bb7777; integration/2026-10-18d verified merged first. Plan correction: kvn directly assigned this follow-up and explicitly authorized index.html for these two passages only. Owner-managed plan files untouched.
+- Gates: Shell baseline/final 117 tests each, typecheck/build passed (main 180.55 kB gzip; unchanged >500 kB advisory); brand check 140; sync guard 240; diff check; whole-file byte-preservation after only CRLF-to-LF normalization and exactly two supplied replacements. Testimonial section hash unchanged: 6de6976e1a82863a4363e15ba0fb3128464f08ef69ce3cceffd188e560f24946.
+- Renders: .agent-local/screens/homepage-fingers/index.html; eight inspected actual production before/after PNGs of both passages at 1280x800 and 390x844, complete target paragraphs visible, no CSS/content fixtures. Phone Chromium emulation only. Preview restarted outside sandbox after initial browser reachability timeout; no product workaround.
+- Needs kvn: rendered adoption and normal branch review/merge/push/deploy. No push, merge, deploy or external messages by agent. r26_port no; SSL content/research figures untouched.
+- Handoff: docs/plan/handoffs/homepage-fingers.md; preservation script and evidence ignored under .agent-local/homepage-fingers/.
