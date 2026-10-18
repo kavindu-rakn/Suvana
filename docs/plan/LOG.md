@@ -1052,3 +1052,11 @@ Rules:
 - Screenshots: n/a.
 - Needs kvn: merge; record D-A35 in DECISIONS.md if not already done. TODO(AUC) is replaced once agent/codex/auc-remeasure merges.
 - Next: T-02 refresh 19 Oct applies D-A35 and L-33 to the thesis drafts; T-03 and L-28 on 20 Oct.
+### 2026-10-18 11:31 | codex | Homepage copy follow-up ready for review
+- Branch: agent/codex/homepage-copy from origin/main 68d12f0bf4386d461ef711982b6652001dee6a46; re-fetched unchanged before commit; final SHA in git log.
+- What: removed only the duplicate Recognize labels stat tile; remaining stat markup unchanged. Replaced the exact quoted overview Learn-card paragraph with the full supplied option B copy, including Some signs also show finger labels. Existing auto-fit handles four tiles; no CSS change. Removed the obsolete existing test assertion requiring the deleted tile; actual spec-count test remains.
+- Inventory only: second Learn module description (index.html 257-259), Corrections feature paragraph (335-337), and Nadeesha Perera testimonial's qualitative accuracy/reliability wording (438). Other first-party claims and all testimonials remain unchanged; src/alerts contain no additional positive per-finger/accuracy claim. Details and lexical non-claims in handoffs/homepage-copy.md.
+- Gates: Shell 79 tests in 6 files, typecheck/build (main 180.55 kB gzip; existing size advisory), brand check 137 files, sync guard 233, diff check and exact HTML-only-transformation/preservation check passed. No new dependency, runtime logic, source content or accuracy figure.
+- Renders: .agent-local/screens/homepage-copy/index.html; 12 inspected before/after screenshots at desktop 1280x800 and phone 390x844 for overview cards, stats and the unchanged second Learn module card. Exact paragraph/four-tile assertions pass in both viewports. Testimonial region hash unchanged.
+- Plan correction: kvn directly assigned the hot-file exception; planner-owned records untouched. r26_port no. No push, merge, deploy, messages, R26 or upstream/model/label changes.
+- Needs kvn: adopt from renders and normal branch review/merge; any change to the other inventoried claims needs a separate instruction.
