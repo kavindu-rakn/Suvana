@@ -1030,3 +1030,11 @@ Rules:
 - Railway again did not rebuild after the merge (the pushed head commit changes only LOG.md, so the watch path appears to skip it). kvn chose manual deploys: watch paths stay, claude-code flags when a click is needed after any merge that changes services/recognition, and claude-code added a health check (/api/info, 300 s) so a new copy only takes over once the model answers. kvn deployed 06c653e; the fixed Recognize assistant was live about 40 s later (/api/info still numClasses 171 with publicOrigin).
 - Live retest of the Recognize assistant on https://suvana.help/recognize/ (browser, signed out, 19 Oct): the same four prompts returned the same refusal (4/4) with the same Learn links.
 - Board: Q-05 done (Recognize sign list stays TODO(Lahiru) in DEMO.md); I-14 in-progress (part 2, 'Practise in Learn' in Communicate, waits for I-13).
+
+### 2026-10-18 | claude-code-thesis | T-07 follow-up: separation per D-A35
+- What: done. docs/commercialisation.md now reports 75.7% separation for the current scorer (after L-30) with its 65.4% majority-class baseline on 1,516 pairs (524 same-sign, 992 different-sign) from one signer, one sentence that the draft's 74.6% came from the earlier scorer, and TODO(AUC) for the current scorer (0.744 is the earlier scorer's). Not accuracy, not an improvement claim.
+- Branch @ sha: agent/claude/T-07-separation-d-a35 (final SHA in git log), from origin/main 68d12f0.
+- Gates: sync guard; brand check passed; docs only.
+- Screenshots: n/a.
+- Needs kvn: merge; record D-A35 in DECISIONS.md if not already done. TODO(AUC) is replaced once agent/codex/auc-remeasure merges.
+- Next: T-02 refresh 19 Oct applies D-A35 and L-33 to the thesis drafts; T-03 and L-28 on 20 Oct.
