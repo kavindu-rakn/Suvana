@@ -2,6 +2,17 @@
 
 Written 31 Aug 2026. Branch: `fix/learn-progress-critique`.
 
+> **Status (18 Oct 2026, L-28): done; historical.** All five phases of §2
+> shipped (see the Status paragraph in §2). The view has changed since, so §1
+> describes the 31 Aug screen, not today's. L-23 (14 Oct) added stars, signs
+> learned, reviews due, the daily goal and goal-day streak, unit stars, short
+> explainers of scoring and adaptation, and the *My progress* / *Demo progress*
+> profiles with a reset that clears only the chosen profile; L-26 (15 Oct)
+> fitted the page to phones. Today's sections, in order: the stars-and-goal
+> band, *Practise next*, *Review*, *Your tries* (the activity heatmap), *Your
+> categories*, *Learning units* and *About your progress*
+> (`src/components/ProgressView.tsx`). Open items in this plan: none.
+
 Grounded in the six screenshots in `suvana-screenshots/learn-progress/` and a read of
 `ProgressView.tsx`, `views.css` (`.aww-progress-*`, `.aww-bento-*`, `.aww-command-*`,
 `.aww-accordion*`, `.aww-sign-*`), `learner/mastery.ts`, `learner/activity.ts`,
