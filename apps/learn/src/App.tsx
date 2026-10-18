@@ -22,6 +22,8 @@ import { AccountButton } from './app/AccountButton'
 import './components/views.css'
 import { currentGloss, saveSession } from './learner/session'
 import type { PracticeSession } from './learner/session'
+import { loadReferenceIndex } from './storage/bundledReferences'
+import { matchSignDeepLink } from './app/signDeepLink'
 
 /**
  * Whether the learner has passed the hero and is inside the tool.
@@ -43,6 +45,8 @@ function readEntered(): boolean {
 }
 
 function App() {
+  const [signSearch] = useState(() => window.location.search)
+  const [resolvingSign, setResolvingSign] = useState(() => Boolean(new URLSearchParams(signSearch).get('sign')))
   const [tab, setTab] = useState<Tab>('practice')
   const [mode, setModeState] = useState<AppMode>(readMode)
   const [entered, setEntered] = useState<boolean>(readEntered)
@@ -55,6 +59,22 @@ function App() {
   // which is fine. PracticeView clears it once it has selected the sign.
   const [practiceIntent, setPracticeIntent] = useState<string | null>(null)
   const [practiceKey, setPracticeKey] = useState(0)
+
+  useEffect(() => {
+    if (!new URLSearchParams(signSearch).get('sign')) return
+    let cancelled = false
+    void loadReferenceIndex().then(index => {
+      if (cancelled) return
+      const gloss = matchSignDeepLink(signSearch, index)
+      if (gloss) {
+        setPracticeIntent(gloss)
+        setEntered(true)
+        try { sessionStorage.setItem(ENTERED_KEY, '1') } catch { /* Non-fatal. */ }
+      }
+      setResolvingSign(false)
+    })
+    return () => { cancelled = true }
+  }, [signSearch])
 
   function openPractice(gloss?: string) {
     setPracticeIntent(gloss ?? null)
@@ -120,6 +140,10 @@ function App() {
     void fetchSession(ac.signal).then(setUser)
     return () => ac.abort()
   }, [])
+
+  // Resolve before mounting Hero or Practice so a valid link opens straight in
+  // Watch, including when a previous visit already passed the landing page.
+  if (resolvingSign) return <p className="empty-state" role="status">Loading…</p>
 
   if (!entered) {
     return (

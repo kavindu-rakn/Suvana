@@ -982,3 +982,12 @@ Rules:
 - Google: kvn submitted the Search Console review for suvana-shell.vercel.app ("Possible Phishing Detected on User Login"), now that sign-in exists only on suvana.help.
 - Housekeeping: codex's superseded first account attempt is still in the shared git stash (stash@{0}); drop it when convenient.
 - Board: D-04, K-08, D-09 and I-10 done.
+
+### 2026-10-18 04:58 | codex | I-14 part 1: Learn deep link ready for review
+- What: exact edition-filtered single-sign ?sign= entry opens Practice Watch; encoded spaces supported; invalid/empty/case/sentence/edition-missing values preserve normal startup. No Communicate button or gloss mapping.
+- Branch @ sha: agent/codex/I-14-deep-link (final SHA in git log), from origin/main 4d52d987e966503c3cf133103e183d1985442647; origin re-fetched unchanged before commit.
+- Gates: npm 10 ci; lint 0 warnings; 354 tests passed / 15 skipped; build 155.21 kB gzip; test typecheck passed; sync guard 228; full browser suite 67/67. No-config R26 full/CC0 builds passed (154.75/154.77 kB), same browser tests 3/3 at /, four actual edition cases passed with no account UI/requests; standalone JS has no account routes/code.
+- Screenshots: .agent-local/screens/I-14/index.html, before/after desktop 1280x800 and phone 390x844 for BAG EKA and unknown; actual references, existing guide closed, no synthetic attempts. Desktop unknown is byte-identical.
+- Overlap: local 35-token Communicate seed/notebook lists agree; exact intersections are 23 of 490 Learn glosses in full and 0 of 141 in CC0. Source-list measurement only; actual I-13 imported animation overlap is not measurable yet. Lists and method in handoffs/I-14.md.
+- Plan correction: kvn authorized part 1 today, App.tsx ownership and this supplied worktree in chat; old schedule/full-task scope predates that instruction. Part 2 waits for I-13; planner records untouched.
+- Needs kvn: review rendered startup change for adoption and normal branch review/merge; r26_port yes after merge. No push, merge, deploy, actual R26 port or messages performed.
