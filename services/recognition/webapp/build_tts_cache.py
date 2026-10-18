@@ -1,15 +1,17 @@
 """Pre-generate TTS audio for every known label so /api/speak never has to
 call gTTS live during real-time use. Uses the exact same cache naming and
-lookup logic as webapp/server.py's /api/speak route -- run this whenever
-sinhala_labels.json changes.
+lookup logic as webapp/server.py's /api/speak route, including Suvana's
+D-A36 overlay and a cache key containing the spoken text's hash.
 """
-import json
-import re
 import sys
 import time
 from pathlib import Path
 
 from gtts import gTTS
+try:
+    from .suvana_labels import load_sinhala_labels, tts_cache_name
+except ImportError:  # python webapp/build_tts_cache.py
+    from suvana_labels import load_sinhala_labels, tts_cache_name
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 WEBAPP_DIR = Path(__file__).resolve().parent
@@ -20,13 +22,8 @@ TTS_CACHE_DIR.mkdir(exist_ok=True)
 DEFAULT_LANG = "en"
 
 
-def _safe_cache_name(text):
-    slug = re.sub(r"[^A-Za-z0-9]+", "_", text).strip("_").lower()
-    return slug[:120] or "audio"
-
-
 def main():
-    sinhala_labels = json.loads(LABELS_PATH.read_text(encoding="utf-8"))
+    sinhala_labels = load_sinhala_labels(LABELS_PATH)
     labels = list(sinhala_labels.keys())
     print(f"{len(labels)} labels total")
 
@@ -39,7 +36,7 @@ def main():
         speak_text = entry.get("speakText") or label
         speak_lang = entry.get("speakLang") or DEFAULT_LANG
 
-        cache_path = TTS_CACHE_DIR / f"{_safe_cache_name(label)}_{speak_lang}.mp3"
+        cache_path = TTS_CACHE_DIR / tts_cache_name(label, speak_text, speak_lang)
         if cache_path.exists():
             skipped += 1
             continue

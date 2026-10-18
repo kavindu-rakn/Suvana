@@ -7,6 +7,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'webapp'))
 import assistant
 import suvana_assistant as engine
 CASES=json.loads((Path(__file__).parent/'assistant-questions.json').read_text(encoding='utf-8'))
+CASES+=json.loads((Path(__file__).parent/'assistant-held-out.json').read_text(encoding='utf-8'))
 
 @pytest.mark.parametrize('case',CASES,ids=[c['question'] for c in CASES])
 def test_shared_questions(case):
@@ -20,6 +21,10 @@ def test_shared_questions(case):
     if 'recognize' in case: assert bool(result['cards'][0]['recognizeLabel'])==case['recognize']
     if case.get('refused'): assert result['refused']
     for phrase in engine.POLICY['forbiddenPhrases']: assert phrase not in json.dumps(result,ensure_ascii=False).lower()
+    assert 'No verified English meaning' not in result['text']
+    if result['intent']=='unknown':
+        assert result['chips']==engine.POLICY['fallbackChips'] and result['links']
+        assert len(result['cards'])<=3
 
 def test_no_repeated_or_sign_form_tips():
     for sign in engine.SIGNS:
@@ -50,3 +55,15 @@ def test_local_is_default_and_metadata_is_union(monkeypatch):
     monkeypatch.setattr(assistant,'_call_llm',lambda *args:pytest.fail('local default must not call model'))
     assert assistant.assistant_chat(assistant.ChatRequest(message='how do I sign hello'))['engine']=='local'
     assert assistant.assistant_meta()['signCount']==530
+
+def test_reverse_lookup_and_category_priority():
+    assert engine.local_answer('teach me greetings')['intent']=='browse'
+    assert engine.local_answer('teach me numbers')['intent']=='browse'
+    for title in ['First numbers','Months 1']:
+        unit=next(u for u in engine.KNOWLEDGE['units'] if u['title']==title)
+        assert [c['label'] for c in engine.local_answer(f'teach me {title}')['cards']]==unit['signs']
+    assert engine.local_answer('what is the sinhala for sit')['cards'][0]['sinhala']=='වාඩි වෙනවා'
+    assert engine.local_answer('sign for eat')['cards'][0]['label']=='KANAWA'
+    assert engine.local_answer('අඬනවා')['cards'][0]['label']=='ANDANAWA'
+    for word in ['mother','water','head','wa','MOTHER']:
+        assert engine.local_answer(f'what is the sinhala for {word}')['intent']=='unknown'

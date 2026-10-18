@@ -17,8 +17,7 @@
     "question": "is hello a sign",
     "intent": "lookup",
     "contains": [
-      "HELLO",
-      "No verified English meaning"
+      "HELLO"
     ],
     "card": "HELLO",
     "url": "/learn/?sign=HELLO"
@@ -128,7 +127,7 @@
     "question": "how do I sign qzxvplm",
     "intent": "unknown",
     "contains": [
-      "cannot find"
+      "no verified match"
     ],
     "noCards": true
   },
@@ -148,9 +147,7 @@
   {
     "question": "what does HELLO mean?",
     "intent": "lookup",
-    "contains": [
-      "No verified English meaning"
-    ],
+    "contains": [],
     "card": "HELLO"
   },
   {
@@ -165,15 +162,17 @@
     "question": "cry",
     "intent": "lookup",
     "contains": [
-      "CRY",
-      "No verified English meaning"
+      "CRY"
     ],
     "card": "CRY"
   },
   {
     "question": "අන්දනවා",
-    "intent": "lookup",
-    "card": "ANDANAWA"
+    "intent": "unknown",
+    "noCards": true,
+    "contains": [
+      "no verified match"
+    ]
   },
   {
     "question": "show me the letters",
@@ -481,9 +480,7 @@
     "question": "what does K(first way) mean",
     "intent": "lookup",
     "card": "K(first way)",
-    "contains": [
-      "No verified English meaning"
-    ]
+    "contains": []
   },
   {
     "question": "show letters page 3",

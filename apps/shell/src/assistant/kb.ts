@@ -2,13 +2,14 @@
 import knowledge from '../../../../services/recognition/webapp/static/suvana-knowledge.json'
 export { knowledge }
 export interface Sign {
-  label: string; names?: string[]; sinhala: string; english: string; category?: string;
+  label: string; names?: string[]; sinhala: string; speakText?: string; english: string; category?: string;
+  provenance?: {meaning?:string|null};
   categories?: string[]; units?: Array<{id:string;title:string}>;
   learnGloss?: string | null; learnUrl?: string | null; recognizeLabel?: string | null;
   recognizeCategory?: string; editions?: string[];
 }
 export interface SignCard {
-  label:string; sinhala:string; english:string; category:string; categoryLabel:string;
+  label:string; sinhala:string; speakText:string; english:string; category:string; categoryLabel:string;
   tips:string[]; learnUrl:string | null; recognizeLabel:string | null; units:string[];
 }
 export const CATEGORY_LABEL: Record<string,string> = {letter:'Letter',number:'Number',month:'Month',phrase:'Word / phrase'}
@@ -86,6 +87,10 @@ export class SignKnowledgeBase {
     if (named.length) return named
     return this.entries.filter(e => e.english && e.english.toLowerCase() === q)
   }
+  reverseMeaning(query:string):Sign[] {
+    const q=query.trim().toLowerCase()
+    return this.entries.filter(s=>s.learnGloss && s.provenance?.meaning==='apps/learn/src/data/translations.ts' && s.english.toLowerCase()===q)
+  }
   search(query:string,limit=6):Sign[] {
     const exact = this.exact(query)
     if (exact.length) return exact.slice(0,limit)
@@ -96,7 +101,7 @@ export class SignKnowledgeBase {
   }
   card(entry:Sign):SignCard {
     const category = entry.recognizeCategory ?? entry.category ?? entry.categories?.[0] ?? 'Sign'
-    return {label:entry.label,sinhala:entry.sinhala,english:entry.english,category,categoryLabel:CATEGORY_LABEL[category] ?? category,
+    return {label:entry.label,sinhala:entry.sinhala,speakText:entry.speakText ?? entry.sinhala,english:entry.english,category,categoryLabel:CATEGORY_LABEL[category] ?? category,
       tips:[],learnUrl:entry.learnUrl ?? null,recognizeLabel:entry.recognizeLabel ?? null,units:(entry.units ?? []).map(u=>u.title)}
   }
   statsLine():string {return `${this.size} indexed names; Learn ${knowledge.facts.learnCount}; Recognize ${knowledge.facts.recognitionCount}`}

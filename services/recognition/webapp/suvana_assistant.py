@@ -41,6 +41,10 @@ def exact(query):
     return named or [s for s in SIGNS if s["english"] and s["english"].lower() == q]
 
 
+def reverse_meaning(query):
+    return [s for s in SIGNS if s['learnGloss'] and s['provenance'].get('meaning')=='apps/learn/src/data/translations.ts' and s['english'].lower()==query.strip().lower()]
+
+
 def suggestions(query):
     q = norm(query)
     if len(q) < 4:
@@ -51,7 +55,7 @@ def suggestions(query):
 
 def card(sign):
     category = sign.get("recognizeCategory") or (sign["categories"] or ["Sign"])[0]
-    return {"label": sign["label"], "sinhala": sign["sinhala"], "english": sign["english"],
+    return {"label": sign["label"], "sinhala": sign["sinhala"], "speakText":sign.get("speakText",sign["sinhala"]), "english": sign["english"],
             "category": category, "categoryLabel": {"letter":"Letter", "number":"Number", "month":"Month", "phrase":"Word / phrase"}.get(category, category),
             "tips": [], "learnUrl":sign["learnUrl"], "recognizeLabel":sign["recognizeLabel"], "units":[u["title"] for u in sign["units"]]}
 
@@ -65,11 +69,11 @@ def support(sign):
 
 
 def sign_answer(sign, teaching):
-    meaning = fill(POLICY["meaning"], english=sign["english"]) if sign["english"] else POLICY["meaningUnknown"]
+    meaning = fill(POLICY["meaning"], english=sign["english"]) if sign["english"] else ''
     if teaching:
         text = fill(POLICY["teach"], label=sign["label"]) + "\n\n" + support(sign) if sign["learnUrl"] else fill(POLICY["recognizeOnly"], label=sign["label"])
     else:
-        text = f'**{sign["label"]}**' + (f' · {sign["sinhala"]}' if sign["sinhala"] else '') + f'\n\n{meaning}\n\n'
+        text = f'**{sign["label"]}**' + (f' · {sign["sinhala"]}' if sign["sinhala"] else '') + '\n\n' + (meaning + '\n\n' if meaning else '')
         text += ("Learn has an exact-name reference recording. " if sign["learnUrl"] else "No exact-name single-sign recording in Learn. ") + support(sign)
     return answer("teach" if teaching else "lookup", text, [card(sign)], sign["learnUrl"] or "/learn/", "Watch this sign in Learn" if sign["learnUrl"] else "Browse Learn")
 
@@ -91,34 +95,31 @@ def strip_query(message):
     return clean(q)
 
 
-def local_answer(message, random_value=None):
-    msg = clean(message or "")
-    target = strip_query(msg)
-    sign_request = match(POLICY['teachPattern'],msg) or any(match(p,msg) for p in POLICY['lookupPatterns'])
-    explicit_sign = sign_request and exact(target) and not match(r'\bsign\s+in\b',msg)
-    for route in POLICY["routes"]:
-        if match(route["pattern"], msg):
-            if explicit_sign and route['intent'] not in ['translation','form','outside','camera','low-score','recognition-help']:
-                continue
-            result = answer(route["intent"], fill(route["text"]), url=route["url"], label=route["action"])
-            if route.get("refused"):
-                result["refused"] = True
-            if route["intent"] == "form":
-                hit = match(r'(?:for|of)\s+(.+)$', msg)
-                named = next((s for s in exact(clean(hit[1])) if s["learnGloss"] and s["learnGloss"].lower() == clean(hit[1]).lower()), None) if hit else None
-                if named:
-                    result["links"] = [{"label":"Watch this sign in Learn", "url":named["learnUrl"]}]
-            return result
-    if match(r'\bhow many\b|\btotal signs\b|\bsign count\b', msg):
-        facts = KNOWLEDGE["facts"]
-        return answer("count", f'{facts["learnCount"]} Learn glosses and {facts["recognitionCount"]} Recognize labels form {len(SIGNS)} exact-name records. Shared names do not prove that both modules use the same recording.', url="/learn/")
-    if match(r'\b(random|surprise me|another one|another sign)\b', msg):
-        pool = [s for s in SIGNS if s["learnUrl"]]
-        choice = random.random() if random_value is None else random_value
-        result = sign_answer(pool[min(len(pool)-1,max(0,int(choice*len(pool))))], True)
-        return {**result, "intent":"random"}
+def route_answer(route,msg):
+    result = answer(route["intent"], fill(route["text"]), url=route["url"], label=route["action"])
+    if route.get("refused"):
+        result["refused"] = True
+    if route["intent"] == "form":
+        hit = match(r'(?:for|of)\s+(.+)$', msg)
+        named = next((s for s in exact(clean(hit[1])) if s["learnGloss"] and s["learnGloss"].lower() == clean(hit[1]).lower()), None) if hit else None
+        if named:
+            result["links"] = [{"label":"Watch this sign in Learn", "url":named["learnUrl"]}]
+    if route['intent'] in ['starter-help','practice-help']:
+        unit=next((u for u in KNOWLEDGE['units'] if u['id']=='u1-starter'),None)
+        sign=next((s for s in SIGNS if unit and s['learnGloss']==unit['signs'][0]),None)
+        if sign: result['links']=[{'label':f'Start Starter: {sign["label"]}','url':sign['learnUrl']}]
+        result['chips']=POLICY['fallbackChips']
+    return result
+
+
+def browse_answer(msg,target):
+    query = target
+    unit = next((u for u in KNOWLEDGE['units'] if u['title'].lower()==query.lower()), None)
+    if unit and match(POLICY['browsePattern'],msg):
+        signs = [s for gloss in unit['signs'] for s in SIGNS if s['learnGloss']==gloss]
+        return answer('browse', f'Learn unit: {unit["title"]}. These names follow the approved curriculum.', [card(s) for s in signs], '/learn/')
     for category in POLICY["categories"]:
-        if match(category["pattern"], msg) and match(r'^(show|list|browse|what|which|all|months?|letters?|numbers?|මාස|අකුරු|ඉලක්කම්)', msg):
+        if match(category["pattern"], msg) and match(POLICY['browsePattern'],msg):
             related = [u for u in KNOWLEDGE['units'] if u['sourceCategory'] in category['sourceCategories']]
             items = []
             for unit in related:
@@ -133,13 +134,33 @@ def local_answer(message, random_value=None):
             result = answer("browse", f'{len(items)} indexed names in {category["title"]}. {detail}Spellings follow the source; membership and verified meanings are on each card.', [card(s) for s in preview], "/learn/")
             result["chips"] = [f'Show {category["title"]} page {page+1 if page*12<len(items) else 1}', "Teach me a random sign"]
             return result
-    query = strip_query(msg)
-    unit = next((u for u in KNOWLEDGE['units'] if u['title'].lower()==query.lower()), None)
-    if unit and match(r'^(show|list|browse)', msg):
-        signs = [s for gloss in unit['signs'] for s in SIGNS if s['learnGloss']==gloss]
-        return answer('browse', f'Learn unit: {unit["title"]}. These names follow the approved curriculum.', [card(s) for s in signs], '/learn/')
+    return None
+
+
+def local_answer(message, random_value=None):
+    msg = clean(message or "")
+    target = strip_query(msg)
+    sign_request = match(POLICY['teachPattern'],msg) or any(match(p,msg) for p in POLICY['lookupPatterns'])
+    explicit_sign = sign_request and exact(target) and not match(r'\bsign\s+in\b',msg)
+    routes=[r for r in POLICY['routes'] if match(r['pattern'],msg)]
+    critical=next((r for r in routes if r['intent'] in POLICY['criticalIntents']),None)
+    if critical: return route_answer(critical,msg)
+    browsed=browse_answer(msg,target)
+    if browsed: return browsed
+    routed=next((r for r in routes if not explicit_sign),None)
+    if routed: return route_answer(routed,msg)
+    if match(r'\bhow many\b|\btotal signs\b|\bsign count\b', msg):
+        facts = KNOWLEDGE["facts"]
+        return answer("count", f'{facts["learnCount"]} Learn glosses and {facts["recognitionCount"]} Recognize labels form {len(SIGNS)} exact-name records. Shared names do not prove that both modules use the same recording.', url="/learn/")
+    if match(r'\b(random|surprise me|another one|another sign)\b', msg):
+        pool = [s for s in SIGNS if s["learnUrl"]]
+        choice = random.random() if random_value is None else random_value
+        result = sign_answer(pool[min(len(pool)-1,max(0,int(choice*len(pool))))], True)
+        return {**result, "intent":"random"}
+    reverse=next((match(p,msg) for p in POLICY['reversePatterns'] if match(p,msg)),None)
+    query=clean(reverse[1]) if reverse else target
     teaching = bool(match(POLICY["teachPattern"], msg) or match(r'(සංඥා|භාෂා).*(කොහොම|කෙසේ|පෙන්ව)', msg))
-    hits = exact(query)
+    hits = reverse_meaning(query) if reverse else exact(query)
     if len(hits) == 1:
         return sign_answer(hits[0], teaching)
     if hits:
@@ -147,7 +168,9 @@ def local_answer(message, random_value=None):
     if not msg or match(r'^(hi|hey|hello|thanks|thank you|help)$', msg):
         return answer("help", POLICY["greeting"], url="/learn/")
     close = suggestions(query)
-    return answer("unknown", POLICY["unknown"] + " " + POLICY["suggestions" if close else "unknownAction"], [card(s) for s in close], "/learn/")
+    result=answer("unknown", POLICY["unknown"] + " " + POLICY["unknownAction"] + (" " + POLICY["suggestions"] if close else ""), [card(s) for s in close], "/learn/")
+    result["chips"]=POLICY["fallbackChips"]
+    return result
 
 
 def build_context(message):
