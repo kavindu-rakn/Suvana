@@ -322,7 +322,7 @@ wrong-sign attempt. `src/scoring/calibration.test.ts` measures both
 distributions over 557 takes of 32 signs (33 on disk; one has a single take).
 
 Distance distributions when the anchors were fitted (earlier scorer, before
-L-30; [`calibration-report.md`](calibration-report.md)):
+L-30; [`calibration-report.md`](calibration-report.md) now contains the current-scorer measurements):
 
 | pair | p10 | median | p90 |
 |---|---|---|---|
@@ -498,10 +498,9 @@ background are discarded.
 `src/metrics/scoring.bench.test.ts` times the **scoring stage** against the real
 reference corpus and regenerates [`latency-report.md`](latency-report.md).
 Quote it as *scoring cost*, never as feedback latency. Its figures are medians
-of repeated runs after a warm-up. **Open:** the bench still builds its stand-in
-take as `reference duration + 1500 ms`, the capture window before L-07; the
-shipped window is `max(2 × duration, duration + 3000 ms)`, so the bench's
-attempts are shorter than real ones and its cost figures are likely low.
+of repeated runs after a warm-up. The 18 Oct refresh sizes the stand-in take to
+the shipped window, `max(2 × duration, duration + 3000 ms)`; the report labels
+the historical 1.8 ms median as the shorter pre-L-07 take.
 
 ## Status (18 Oct 2026)
 
@@ -517,13 +516,12 @@ The standalone site runs the M2 port (R26 `4265671` from Suvana `7a769ce`).
 
 Open:
 
-- **Generated reports lag the scorer.** `calibration-report.md` and
-  `weight-fit-report.md` still show the earlier scorer and call separation
-  "accuracy"; the generators (`calibration.test.ts`, `weights.fit.test.ts`)
-  need the wording changed to "separation", with the 65.4% baseline, and a
-  re-run on a machine with the calibration corpus.
-- **Scoring bench window** (above): update the stand-in take to the shipped
-  capture window, then regenerate `latency-report.md`.
+- **Generated reports:** `calibration-report.md` and `weight-fit-report.md`
+  were refreshed for the current scorer on 18 Oct and report separation with
+  the 65.4% full-evaluation majority-class baseline (the weight-fit subset has
+  its own baseline); the anchor-fit numbers above remain the earlier scorer's.
+- **Scoring bench window** (above): refreshed at the shipped capture window
+  in `latency-report.md` on 18 Oct; end-to-end latency remains separate.
 - **End-to-end latency** (Q-09) not yet measured.
 - **Introductions vocabulary:** ME, NAME, WHAT, YOUR have no reference in
   either corpus; recording them needs signers.
