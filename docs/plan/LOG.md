@@ -1138,3 +1138,11 @@ Rules:
 - Status after: synced 4265671, upstream head 4265671, nothing new upstream; Everything matches its upstream. Old M0/M1/M2 backlog gone. Only informational identical package-lock coupling remains, retained intentionally.
 - Gates: sync guard 255/255; node --test tools/ci/*.test.mjs 6 passed/0 failed/0 skipped; diff check and exact manifest/LOG/scope preservation checks. Screenshots n/a, no UI/product/SSL/figure changes.
 - Needs kvn: normal Suvana branch review/merge/push. No push, merge, deploy or external messages by agent. Root README/owner-managed plan records/other handoffs untouched; handoff: docs/plan/handoffs/record-r04-port.md.
+
+### 2026-10-18 | claude-code-thesis | L-28 Learn docs match what shipped
+- What: done. apps/learn/README.md rewritten for main d17a561 (Path, Watch/Try/Recall, capture change, tips, replay, finger labels for 22 signs, stars/goal/streak, ADAPTATION.md link, scenarios with Recall mode, experimental sentence challenge, ?sign=, licence mode, no video, account and profiles; caching and ASSET_VERSION rule; downloads 155.2/25.3/24.3 kB gzip; D-A35 figures; L-33 under its wording rules). PROGRESS-CRITIQUE.md and RECORD-UIUX-PLAN.md got dated done/historical status notes.
+- Branch @ sha: agent/claude/L-28-learn-docs (final SHA in git log), from origin/main d17a561.
+- Gates: docs only; base run: lint 0, 354 passed + 16 skipped, build ok; sync guard 255; brand check passed.
+- Screenshots: n/a.
+- Needs kvn: merge (r26_port yes). Found, not fixed (outside L-28's files): generated calibration/weight-fit reports still say "74.6% accuracy" for the earlier scorer; the scoring bench still uses the pre-L-07 capture window, so the thesis's 1.8 ms scoring cost comes from shorter takes; the study export lacks stage/reveal columns. Details in handoffs/L-28.md.
+- Next: T-03 Ch6/7/8 drafts.

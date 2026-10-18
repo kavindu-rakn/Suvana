@@ -1,5 +1,11 @@
 # Record tab (MoCap Studio) — critique and fix plan
 
+> **Status (18 Oct 2026, L-28): done; historical.** Phases A–E are all done
+> (each is marked in §3). Later changes outside this plan: L-19 (14 Oct) shows
+> the Record tip to authors only, and L-26 (15 Oct) made the author tabs fit
+> phones and compact desktops. Record remains an author tool that learners never
+> see. Open items in this plan: none.
+
 Written 31 Aug 2026. Scope: the **Record** author tab only (`RecordView.tsx`,
 its `.aww-studio-*` / `.studio-*` / `.aww-hud*` CSS, and its use of the shared
 `CameraStage` / `CategorySignNavigator`). Screenshots reviewed:
