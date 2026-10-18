@@ -1195,3 +1195,11 @@ Rules:
 - Gates: Learn npm ci, lint, 354 tests passed/16 skipped, build 155.21 kB gzip; sync guard 255; new spec TypeScript and report syntax checks pass. Sandbox network/temporary-rename failures were resolved by authorized execution outside the sandbox. Existing Playwright full run: 66 pass, 1 local-preview ERR_CONNECTION_REFUSED at sentence.spec.ts:77, 1 skip (new opt-in benchmark). Exact failing case passed 1/1 on a fresh-preview isolated recheck; all 67 existing cases passed across the run/recheck. The four original smoke.spec.ts cases passed in the full run.
 - Plan correction: kvn moves Q-09 to today for viva Tue 20 Oct 2026 13:00 Asia/Colombo and supplies this antigravity checkout for Codex; planner-owned records untouched.
 - Needs kvn: resolve why the recorded clip does not reach real hand readiness before a new benchmark. T-03 retains O1 as unverified by Q-09. Review/merge remains kvn's action. No push, merge, deploy, messages or R26 changes.
+
+### 2026-10-18 | kvn (recorded by claude-code) | integration/2026-10-18h: evaluation refresh, Q-09 tooling; thesis paused
+- kvn merged integration/2026-10-18h: agent/codex/eval-refresh (the earlier scorer reproduced the thesis's Tables 6.1, 6.5, 6.6 and per-sign values first; current-scorer values for all of them are in handoffs/eval-refresh.md; scoring benchmark at the shipped capture window; generated reports say separation with the 65.4% baseline and are written only on opt-in; r26_port yes) and agent/codex/Q-09-latency (opt-in latency benchmark and report script).
+- Q-09 measured nothing: with kvn's K-13 clip, Learn's hands-ready check never passed, so Record stayed disabled and no trial ran (handoffs/Q-09.md). Cause unconfirmed. O1 (300 ms) stays unverified; fix the clip after the viva.
+- Gates: Learn lint, 354 tests passed + 16 skipped, build 155.21 kB gzip; sync guard 255; tools/ci 6; diff check clean.
+- Thesis paused until after the viva (kvn): final thesis due Wed 28 Oct; the thesis lane resumes only when kvn says so.
+- Lahiru has not yet sent his demo sign list (DEMO.md TODO(Lahiru)).
+- Board: K-13 done (clips recorded and converted); Q-09 in-progress (blocked on the clip).

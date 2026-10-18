@@ -25,7 +25,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | K-10 | Daily review, screenshot adoption and merge window | kvn | daily 2026-10-13 to 2026-10-21 | S | K-01 | todo | `n/a` | no | no | - |
 | K-11 | Demo rehearsals, including the laptop fallback | kvn | 2026-10-20 and 2026-10-21 | M | Q-05, D-04 | todo | `n/a` | no | no | - |
 | K-12 | Final demo and thesis submission | kvn | 2026-10-22 | M | T-08, K-11 | todo | `n/a` | no | no | - |
-| K-13 | Record two hand-fixture clips for automated screenshots | kvn | 2026-10-13 | S | - | todo | `n/a` | no | no | - |
+| K-13 | Record two hand-fixture clips for automated screenshots | kvn | 2026-10-13 | S | - | done | `n/a` | no | no | - |
 | T-01 | Create the final-thesis working copy; the uploaded draft stays untouched | kvn | 2026-10-13 | S | - | done | `n/a` | no | no | - |
 | T-02 | Draft revised Ch1/Ch4/Ch5 text for what was actually built | claude-code-thesis | 2026-10-19 | M | T-01 | done | `none (writes outside the repo)` | no | no | DN-16 |
 | T-03 | Draft Ch6/Ch7/Ch8: objectives table, panel responses, limitations, future work | claude-code-thesis | 2026-10-20 | M | T-02, Q-09, L-13 | in-progress | `none (writes outside the repo)` | no | no | - |
@@ -54,7 +54,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | Q-06a | Early phone check of the deployed Learn and device inventory | kvn | 2026-10-15 | S | D-02, L-04 | done | `n/a` | no | no | - |
 | Q-07 | Handedness reality check | kvn | 2026-10-14 | S | - | done | `n/a` | no | no | - |
 | Q-08 | Demo-ready gate run and release tag proposal | claude-code | 2026-10-21 | S | L-26, L-27 | todo | `agent/claude/Q-08-gates` | no | no | - |
-| Q-09 | Measure end-to-end feedback latency (capture end to result shown) | codex | 2026-10-19 | S | L-16a, Q-00, K-13 | todo | `agent/codex/Q-09-latency` | no | no | - |
+| Q-09 | Measure end-to-end feedback latency (capture end to result shown) | codex | 2026-10-19 | S | L-16a, Q-00, K-13 | in-progress | `agent/codex/Q-09-latency` | no | no | - |
 | L-01 | Replace invented per-finger percentages with measured Correct/Almost/Wrong states (DN-17); one label scale | claude-code | 2026-10-13 | S | L-02 | done | `agent/claude/L-01-finger-states` | yes | yes | DN-17 |
 | L-02 | Keyboard: Esc no longer exits to the Hero; Enter/Space respect the focused control | claude-code | 2026-10-13 | S | - | done | `agent/claude/L-02-keyboard` | yes | no | - |
 | L-03 | Practice capture robustness: wall-clock backstop, safe initial load, no empty-reference logging | claude-code | 2026-10-14 | S | - | done | `agent/claude/L-03-capture-robustness` | yes | no | - |
