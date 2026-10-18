@@ -1045,3 +1045,10 @@ Rules:
 - Gates: npm10.9.9 ci, lint no warnings; routine suite 360 passed/10 skipped (new opt-in AUC skipped; two existing report writers explicitly skipped to honor no-write boundary, remaining calibration assertions ran); build 155.21 kB gzip; sync guard 233; two separate AUC runs 1/1 each. Sandbox Vitest EPERM occurred before tests; approved normal-environment retry passed. Whitespace/scope/append-only checks before commit.
 - Screenshots: n/a (no UI); SSL content none; r26_port yes (one inert test only). No push, merge, deploy, report/thesis edits or messages.
 - Needs kvn: review/merge/push and let thesis lane use AUC 0.758 with 75.7% separation / 65.4% baseline and one-signer limitation. Handoff: docs/plan/handoffs/auc-remeasure.md, exact rows/provenance/reproduction commands and gate limitations.
+### 2026-10-18 | claude-code-thesis | T-07 follow-up: separation per D-A35
+- What: done. docs/commercialisation.md now reports 75.7% separation for the current scorer (after L-30) with its 65.4% majority-class baseline on 1,516 pairs (524 same-sign, 992 different-sign) from one signer, one sentence that the draft's 74.6% came from the earlier scorer, and TODO(AUC) for the current scorer (0.744 is the earlier scorer's). Not accuracy, not an improvement claim.
+- Branch @ sha: agent/claude/T-07-separation-d-a35 (final SHA in git log), from origin/main 68d12f0.
+- Gates: sync guard; brand check passed; docs only.
+- Screenshots: n/a.
+- Needs kvn: merge; record D-A35 in DECISIONS.md if not already done. TODO(AUC) is replaced once agent/codex/auc-remeasure merges.
+- Next: T-02 refresh 19 Oct applies D-A35 and L-33 to the thesis drafts; T-03 and L-28 on 20 Oct.
