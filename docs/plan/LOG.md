@@ -1146,3 +1146,11 @@ Rules:
 - Screenshots: n/a.
 - Needs kvn: review the three chapters (README.md in final-source explains the markers); two CHECKs (1.4 claim wording; whether Component 1's landing page still links the standalone module). TODO(Q-08), TODO(Q-09) and TODO(D-10) wait on those tasks.
 - Next: L-28 Learn docs, then T-03 Ch6/7/8.
+
+### 2026-10-18 | kvn (recorded by claude-code-thesis) | Q-06 devices confirmed
+- What: decision/record. kvn in chat: the Q-06 device check used "iPhone in Safari, an Android phone in Chrome, and a laptop in Chrome". Thesis Ch5 5.4 and Ch6 Table 6.9 (final-source) name them; the check passed except Back to the homepage, fixed the same day.
+- Branch @ sha: agent/claude/T-02-refresh (handoff T-02 updated; final SHA in git log).
+- Gates: n/a.
+- Screenshots: n/a.
+- Needs kvn: none.
+- Next: TODO(Q-08), TODO(Q-09) and TODO(D-10) in the thesis drafts.
