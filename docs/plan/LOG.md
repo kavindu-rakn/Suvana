@@ -1016,3 +1016,10 @@ Rules:
 - Renders: .agent-local/screens/content-safety/index.html, 16 inspected before/after desktop 1280x800 and phone 390x844 images for stats/spec and each hello reply. Existing phone loader/hero pointer interception required keyboard activation in both captures; no CSS change.
 - Plan correction: directly assigned by kvn with hot-file/DEMO authorization; planner records untouched. Handoff: docs/plan/handoffs/content-safety.md. r26_port no; R26/model/labels untouched. No push, merge, deploy or messages.
 - Needs kvn: rendered adoption and branch review/merge, then deploy Shell and Recognition and rerun the four prompts on both hosted surfaces; local pass is not deployment acceptance.
+
+### 2026-10-18 23:30 | claude-code (integration prep, light) | integration/2026-10-18c
+- What: merged with --no-ff onto main 76a31f2: agent/codex/content-safety (both assistants refuse to describe how signs are made or translate into SSL and link the exact Learn sign via ?sign=; CATEGORY_TIPS removed from apps/shell/src/assistant/kb.ts and services/recognition/webapp/assistant.py; generated list of Learn's 490 single-sign glosses for exact links; homepage "98.8% Sequence test accuracy" and "98% Sequence Accuracy" replaced by Recognize's label count 171; testimonials untouched by kvn's decision, 18 Oct: real quotes collected by Lahiru; DEMO.md section 7 records the local retest, 8/8 refusals).
+- Gates: Shell npm@10 ci, 79 tests, build; gloss list --check 490; recognition pytest 63 passed (with the pinned fastapi/pydantic from requirements-runtime.txt) and 3 page tests; brand check 137 files; sync guard 233. Removed tip phrases: no tracked source matches outside LOG/handoffs.
+- Checks (light): no model, label or protected files; Lahiru's assistant.py change declared Suvana-only with guards; R26 untouched.
+- Noticed for kvn: the stats row now shows 171 twice; the homepage Learn card still says "corrections down to individual fingers" (finger labels cover 22 signs).
+- Needs kvn: adopt from .agent-local/review/2026-10-18c/ (integration worktree); merge and push; then the hosted retest of the assistant prompts on suvana.help.
