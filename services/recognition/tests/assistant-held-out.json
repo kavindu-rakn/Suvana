@@ -1,0 +1,139 @@
+[
+  {
+    "question": "is hello a sign",
+    "intent": "lookup",
+    "card": "HELLO",
+    "url": "/learn/?sign=HELLO"
+  },
+  {
+    "question": "what is the sign for thank you",
+    "intent": "lookup",
+    "card": "THANK YOU",
+    "url": "/learn/?sign=THANK%20YOU"
+  },
+  {
+    "question": "sign for mother",
+    "intent": "unknown",
+    "contains": [
+      "no verified match",
+      "Learn or Recognize",
+      "recordings"
+    ]
+  },
+  {
+    "question": "how do I practise",
+    "intent": "practice-help",
+    "contains": [
+      "Watch",
+      "My turn",
+      "Recall"
+    ],
+    "url": "/learn/?sign=BAG%20EKA",
+    "noCards": true
+  },
+  {
+    "question": "what is suvana",
+    "intent": "modules",
+    "contains": [
+      "Learn",
+      "Recognize",
+      "Communicate",
+      "Alerts"
+    ]
+  },
+  {
+    "question": "how do I use recognize",
+    "intent": "recognize-use",
+    "contains": [
+      "Start Camera",
+      "allow camera access",
+      "30-frame",
+      "Stop Camera"
+    ]
+  },
+  {
+    "question": "teach me numbers",
+    "intent": "browse",
+    "contains": [
+      "numbers"
+    ],
+    "hasCards": true
+  },
+  {
+    "question": "what does amma mean",
+    "intent": "unknown",
+    "contains": [
+      "no verified match",
+      "Learn or Recognize"
+    ]
+  },
+  {
+    "question": "hi",
+    "intent": "help"
+  },
+  {
+    "question": "thank you",
+    "intent": "thanks"
+  },
+  {
+    "question": "how many signs can you recognise",
+    "intent": "count",
+    "contains": [
+      "171"
+    ]
+  },
+  {
+    "question": "my camera is not working",
+    "intent": "camera",
+    "contains": [
+      "Allow camera access"
+    ]
+  },
+  {
+    "question": "show me greetings",
+    "intent": "browse",
+    "contains": [
+      "Greetings"
+    ],
+    "hasCards": true
+  },
+  {
+    "question": "how do I sign good morning",
+    "intent": "teach",
+    "card": "GOOD MORNING"
+  },
+  {
+    "question": "what is the sinhala for water",
+    "intent": "unknown",
+    "contains": [
+      "no verified match",
+      "Learn or Recognize"
+    ]
+  },
+  {
+    "question": "how do I sign I love you",
+    "intent": "unknown",
+    "contains": [
+      "no verified match",
+      "Learn or Recognize"
+    ]
+  },
+  {
+    "question": "which signs are easiest",
+    "intent": "starter-help",
+    "contains": [
+      "Starter"
+    ],
+    "url": "/learn/?sign=BAG%20EKA"
+  },
+  {
+    "question": "can I use this on my phone",
+    "intent": "phone-use",
+    "contains": [
+      "phone browser",
+      "camera access",
+      "front lighting",
+      "Android"
+    ]
+  }
+]

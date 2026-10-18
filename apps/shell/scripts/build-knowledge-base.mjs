@@ -7,10 +7,11 @@ import { fileURLToPath } from 'node:url'
 
 const root = new URL('../../../', import.meta.url)
 const sources = {}
-// Learn's reference index is gitignored; rebuild it as Learn's pretest does, so a fresh checkout (CI) has it.
+// Learn's ignored metadata index must also exist on fresh checkouts (117539a).
 execFileSync(process.execPath, [fileURLToPath(new URL('apps/learn/scripts/build-reference-index.mjs', root))], { stdio: 'ignore' })
-// Hash sources as git stores them (LF): Windows working copies may still hold CRLF.
 function read(path) {
+  // Hash canonical Git text, independent of an existing Windows CRLF checkout.
+  // This never rewrites the protected labels or any other source file.
   const text = readFileSync(new URL(path, root), 'utf8').replace(/\r\n/g, '\n')
   sources[path] = createHash('sha256').update(text).digest('hex')
   return text
@@ -24,6 +25,7 @@ const sourcePaths = {
   cutoffs: 'apps/learn/src/scoring/fingerCutoffs.ts',
   rules: 'apps/learn/src/learner/game.ts',
   labels: 'services/recognition/webapp/data/sinhala_labels.json',
+  corrections: 'services/recognition/webapp/data/sinhala-corrections.json',
 }
 for (const path of Object.values(sourcePaths)) read(path)
 const imports = [
@@ -38,12 +40,18 @@ const bundle = await build({ stdin: {
 const data = await import(`data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString('base64')}`)
 const index = JSON.parse(read(sourcePaths.index))
 const labels = JSON.parse(read(sourcePaths.labels))
+const corrections = JSON.parse(read(sourcePaths.corrections))
+for (const [label, fields] of Object.entries(corrections)) {
+  if (label === '_source') continue
+  if (!labels[label] || Object.keys(fields).sort().join(',') !== 'sinhala,speakText') throw new Error(`Invalid correction: ${label}`)
+  labels[label] = {...labels[label], ...fields}
+}
 const picked = data.pickReferenceList(index.recordings)
 const signs = new Map()
 for (const ref of picked) {
   const units = data.CURRICULUM_UNITS.filter(unit => unit.signs.includes(ref.gloss))
   signs.set(ref.gloss.toLowerCase(), {
-    label: ref.gloss, names: [ref.gloss], sinhala: '', english: data.GLOSS_TRANSLATIONS[ref.gloss] ?? '',
+    label: ref.gloss, names: [ref.gloss], sinhala: '', speakText:'', english: data.GLOSS_TRANSLATIONS[ref.gloss] ?? '',
     learnGloss: ref.gloss, learnUrl: `/learn/?sign=${encodeURIComponent(ref.gloss)}`,
     recognizeLabel: null, recognizeEnglish: null,
     categories: [...new Set(units.map(unit => unit.sourceCategory).filter(Boolean))],
@@ -57,10 +65,12 @@ for (const [label, meta] of Object.entries(labels)) {
   const sign = signs.get(key) ?? {label, names:[label], sinhala:'', english:meta.english ?? '', learnGloss:null, learnUrl:null, recognizeLabel:null, recognizeEnglish:null, categories:[], units:[], editions:[], provenance:{}}
   if (!sign.names.includes(label)) sign.names.push(label)
   sign.sinhala = meta.sinhala ?? ''
+  sign.speakText = meta.speakText ?? sign.sinhala
   sign.recognizeLabel = label
   sign.recognizeEnglish = meta.english ?? null
   sign.recognizeCategory = meta.category
   sign.provenance.recognize = sourcePaths.labels
+  if (corrections[label]) sign.provenance.sinhala = sourcePaths.corrections
   if (!sign.english && meta.english) sign.english = meta.english
   if (!sign.provenance.meaning && meta.english) sign.provenance.meaning = sourcePaths.labels
   signs.set(key, sign)
@@ -74,6 +84,9 @@ const fingerSigns = picked.filter(ref => data.SIGN_FINGER_CUTOFFS[ref.id]).map(r
 if (fingerSigns.length !== 22) throw new Error(`Finger coverage changed (${fingerSigns.length}); review the assistant claim`)
 // These are product controls and published rules, never descriptions of a sign.
 for (const path of ['apps/learn/src/components/ProgressView.tsx', 'apps/learn/src/components/PathView.tsx', 'apps/learn/src/learner/pathContent.ts', 'apps/learn/src/components/practiceStages.ts', 'apps/learn/src/components/SkeletonPlayer.tsx', 'apps/learn/src/components/PracticeView.tsx', 'apps/shell/privacy.html', 'apps/shell/alerts/index.html', 'services/recognition/webapp/server.py', 'README.md']) read(path)
+// Every newly authored help route names the app pages/code supporting its facts.
+const policy = JSON.parse(read('services/recognition/webapp/static/assistant-policy.json'))
+for (const route of policy.routes) for (const source of route.sources ?? []) read(source.split('#')[0])
 const facts = {
   recognitionCount: Object.keys(labels).length, learnCount: picked.length,
   frames, confidencePercent: confidence * 100, fingerCount: fingerSigns.length, fingerSigns,
@@ -89,7 +102,7 @@ const target = new URL('services/recognition/webapp/static/suvana-knowledge.json
 // old, unverified assistant-authored English map without changing that count.
 const compatibility = JSON.stringify({
   _generator: output.generator, _source: sourcePaths.labels, sources,
-  signs: Object.entries(labels).map(([label,meta]) => ({label,sinhala:meta.sinhala ?? '',category:meta.category,english:signs.get(label.toLowerCase()).english})),
+  signs: Object.entries(labels).map(([label,meta]) => ({label,sinhala:meta.sinhala ?? '',speakText:meta.speakText ?? meta.sinhala ?? '',category:meta.category,english:signs.get(label.toLowerCase()).english})),
 }) + '\n'
 for (const [file, content] of [[target,text], [new URL('apps/shell/public/data/signs.json',root),compatibility]]) {
   if (process.argv.includes('--check')) {

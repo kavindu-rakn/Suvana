@@ -1,0 +1,16 @@
+{
+  "_source": {"decision":"D-A36", "author":"kvn", "date":"2026-10-18", "scope":"Suvana-only display and speech overlay; original label files and R26 remain unchanged."},
+  "100 meters": {"sinhala":"මීටර් 100", "speakText":"මීටර් 100"},
+  "50 meters": {"sinhala":"මීටර් 50", "speakText":"මීටර් 50"},
+  "ambaranawa": {"sinhala":"අඹරනවා", "speakText":"අඹරනවා"},
+  "andanawa": {"sinhala":"අඬනවා", "speakText":"අඬනවා"},
+  "bag eka": {"sinhala":"බෑග් එක", "speakText":"බෑග් එක"},
+  "nurse": {"sinhala":"හෙදිය/නර්ස්", "speakText":"හෙදිය"},
+  "peenawa": {"sinhala":"පේනවා", "speakText":"පේනවා"},
+  "phone eka": {"sinhala":"ෆෝන් එක", "speakText":"ෆෝන් එක"},
+  "pigana hodanawa": {"sinhala":"පිඟාන හෝදනවා", "speakText":"පිඟාන හෝදනවා"},
+  "randu karagannawa": {"sinhala":"රණ්ඩු කරනවා", "speakText":"රණ්ඩු කරනවා"},
+  "waadi wenawa": {"sinhala":"වාඩි වෙනවා", "speakText":"වාඩි වෙනවා"},
+  "wamaata harenna": {"sinhala":"වමට හැරෙන්න", "speakText":"වමට හැරෙන්න"},
+  "wamata U turn eken harenna": {"sinhala":"වමට යූ ටර්න් එකෙන් හැරෙන්න", "speakText":"වමට යූ ටර්න් එකෙන් හැරෙන්න"}
+}

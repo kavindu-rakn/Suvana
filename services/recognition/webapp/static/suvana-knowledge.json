@@ -10,6 +10,7 @@
     "apps/learn/src/scoring/fingerCutoffs.ts": "d594a2a55736f6d07126fdae2a45451f5918cd9d1680ddeb8e679ed773969d62",
     "apps/learn/src/learner/game.ts": "5f2b5b08fa517afb210cce176c3888595540adab02d4b2565778491c19a112e8",
     "services/recognition/webapp/data/sinhala_labels.json": "a6e3fd91e88d68deb9bb37861bd656dbcbee66e741512e047cb7ec0021cae84a",
+    "services/recognition/webapp/data/sinhala-corrections.json": "4978d0faabbc15cd37470a5a7c03e6d4840788edcf62f68626f93ae5e569876d",
     "services/recognition/config/config.yaml": "31304559edfb61b200e46e073ad75ee724897e1ebef8467e007c63a30ba4b683",
     "apps/learn/src/components/ProgressView.tsx": "dc70d0e6c527247e3d2c96d1a2ead1153e49818d6d5b033344b45b6148bd2249",
     "apps/learn/src/components/PathView.tsx": "5e7ca7032b9a9c6bbeaece38176bba0cfab2156d67eb368083f1b9fb69042797",
@@ -19,8 +20,12 @@
     "apps/learn/src/components/PracticeView.tsx": "b49c3b47760037735d9a7f21b8586e161f816990e07a9c7db69a1ad06bda7d27",
     "apps/shell/privacy.html": "8233763f1692d1e7effb9bb199993f6ac82d2245c8bfa46ab49efb2984e29899",
     "apps/shell/alerts/index.html": "73e843f4b9e6e2863293ce878ff1ca2ca14aae4e10a2f7892f4e7b1df59581cf",
-    "services/recognition/webapp/server.py": "4172aca4ecbeccc7fab0f3d70e95377c2a65930206740481809595f24c1cc08a",
-    "README.md": "08b3a6647c7482b74d6df46ebf88b63504b39418a201821c6bd0ae9cde704171"
+    "services/recognition/webapp/server.py": "2f6805763e40334d83142cd3ab461583392361e8ac351816986b79603b385d7a",
+    "README.md": "08b3a6647c7482b74d6df46ebf88b63504b39418a201821c6bd0ae9cde704171",
+    "services/recognition/webapp/static/assistant-policy.json": "028692ecf7152d4c4a165776b6bbaa71a34b4534d67f488f5b3fc92ef57f022f",
+    "services/recognition/webapp/static/index.html": "99019a9587aa3f3cec616e6e681dd18ec5d3f411ee37352cc9890862252afef6",
+    "services/recognition/webapp/static/app.js": "36efe5093151fec23a3c144df6b245800d8a60fcf9f37ca6a7742a92c077f803",
+    "apps/learn/src/vision/cameraLifecycle.ts": "4dcaf63d7742dbe3734c2f5897b18ff0f392decbc9e6ae406bb545f83a32b1d4"
   },
   "facts": {
     "recognitionCount": 171,
@@ -952,6 +957,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "පළමු ක්‍රමය",
       "recognizeCategory": "phrase"
     },
     {
@@ -971,6 +977,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "දෙවන ක්‍රමය",
       "recognizeCategory": "phrase"
     },
     {
@@ -990,6 +997,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "කුණු",
       "recognizeCategory": "phrase"
     },
     {
@@ -998,6 +1006,7 @@
         "1"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "1",
       "learnUrl": "/learn/?sign=1",
@@ -1027,6 +1036,7 @@
         "100"
       ],
       "sinhala": "සියය",
+      "speakText": "සියය",
       "english": "",
       "learnGloss": "100",
       "learnUrl": "/learn/?sign=100",
@@ -1058,7 +1068,8 @@
         "100 METERS",
         "100 meters"
       ],
-      "sinhala": "100 මෙටෙර්ස්",
+      "sinhala": "මීටර් 100",
+      "speakText": "මීටර් 100",
       "english": "100 meters",
       "learnGloss": "100 METERS",
       "learnUrl": "/learn/?sign=100%20METERS",
@@ -1080,7 +1091,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -1090,6 +1102,7 @@
         "1000"
       ],
       "sinhala": "දහස",
+      "speakText": "දහස",
       "english": "",
       "learnGloss": "1000",
       "learnUrl": "/learn/?sign=1000",
@@ -1121,6 +1134,7 @@
         "10000"
       ],
       "sinhala": "දහ දහස්",
+      "speakText": "දහ දහස්",
       "english": "",
       "learnGloss": "10000",
       "learnUrl": "/learn/?sign=10000",
@@ -1152,6 +1166,7 @@
         "100000"
       ],
       "sinhala": "ලක්ෂය",
+      "speakText": "ලක්ෂය",
       "english": "",
       "learnGloss": "100000",
       "learnUrl": "/learn/?sign=100000",
@@ -1183,6 +1198,7 @@
         "2"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "2",
       "learnUrl": "/learn/?sign=2",
@@ -1212,6 +1228,7 @@
         "200"
       ],
       "sinhala": "දෙසීය",
+      "speakText": "දෙසීය",
       "english": "",
       "learnGloss": "200",
       "learnUrl": "/learn/?sign=200",
@@ -1243,6 +1260,7 @@
         "2000"
       ],
       "sinhala": "දෙදහස්",
+      "speakText": "දෙදහස්",
       "english": "",
       "learnGloss": "2000",
       "learnUrl": "/learn/?sign=2000",
@@ -1274,6 +1292,7 @@
         "200000"
       ],
       "sinhala": "දෙලක්ෂය",
+      "speakText": "දෙලක්ෂය",
       "english": "",
       "learnGloss": "200000",
       "learnUrl": "/learn/?sign=200000",
@@ -1305,6 +1324,7 @@
         "30"
       ],
       "sinhala": "තිහ",
+      "speakText": "තිහ",
       "english": "",
       "learnGloss": "30",
       "learnUrl": "/learn/?sign=30",
@@ -1336,6 +1356,7 @@
         "300"
       ],
       "sinhala": "තුන් සීය",
+      "speakText": "තුන් සීය",
       "english": "",
       "learnGloss": "300",
       "learnUrl": "/learn/?sign=300",
@@ -1367,6 +1388,7 @@
         "3000"
       ],
       "sinhala": "තුන් දහස්",
+      "speakText": "තුන් දහස්",
       "english": "",
       "learnGloss": "3000",
       "learnUrl": "/learn/?sign=3000",
@@ -1398,6 +1420,7 @@
         "300000"
       ],
       "sinhala": "තුන් ලක්ෂය",
+      "speakText": "තුන් ලක්ෂය",
       "english": "",
       "learnGloss": "300000",
       "learnUrl": "/learn/?sign=300000",
@@ -1429,6 +1452,7 @@
         "4"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "4",
       "learnUrl": "/learn/?sign=4",
@@ -1458,6 +1482,7 @@
         "40"
       ],
       "sinhala": "හතළිහ",
+      "speakText": "හතළිහ",
       "english": "",
       "learnGloss": "40",
       "learnUrl": "/learn/?sign=40",
@@ -1489,6 +1514,7 @@
         "400"
       ],
       "sinhala": "හතර සීය",
+      "speakText": "හතර සීය",
       "english": "",
       "learnGloss": "400",
       "learnUrl": "/learn/?sign=400",
@@ -1520,6 +1546,7 @@
         "4000"
       ],
       "sinhala": "හතර දහස්",
+      "speakText": "හතර දහස්",
       "english": "",
       "learnGloss": "4000",
       "learnUrl": "/learn/?sign=4000",
@@ -1551,6 +1578,7 @@
         "5"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "5",
       "learnUrl": "/learn/?sign=5",
@@ -1580,6 +1608,7 @@
         "50"
       ],
       "sinhala": "පනහ",
+      "speakText": "පනහ",
       "english": "",
       "learnGloss": "50",
       "learnUrl": "/learn/?sign=50",
@@ -1627,6 +1656,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "50 කම් ඉදිරියට යන්න",
       "recognizeCategory": "phrase"
     },
     {
@@ -1635,7 +1665,8 @@
         "50 METERS",
         "50 meters"
       ],
-      "sinhala": "50 මෙටෙර්ස්",
+      "sinhala": "මීටර් 50",
+      "speakText": "මීටර් 50",
       "english": "50 meters",
       "learnGloss": "50 METERS",
       "learnUrl": "/learn/?sign=50%20METERS",
@@ -1657,7 +1688,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -1667,6 +1699,7 @@
         "500"
       ],
       "sinhala": "පන් සීය",
+      "speakText": "පන් සීය",
       "english": "",
       "learnGloss": "500",
       "learnUrl": "/learn/?sign=500",
@@ -1703,6 +1736,7 @@
         "5000"
       ],
       "sinhala": "පන් දහස්",
+      "speakText": "පන් දහස්",
       "english": "",
       "learnGloss": "5000",
       "learnUrl": "/learn/?sign=5000",
@@ -1734,6 +1768,7 @@
         "60"
       ],
       "sinhala": "හැට",
+      "speakText": "හැට",
       "english": "",
       "learnGloss": "60",
       "learnUrl": "/learn/?sign=60",
@@ -1765,6 +1800,7 @@
         "600"
       ],
       "sinhala": "හය සීය",
+      "speakText": "හය සීය",
       "english": "",
       "learnGloss": "600",
       "learnUrl": "/learn/?sign=600",
@@ -1796,6 +1832,7 @@
         "6000"
       ],
       "sinhala": "හය දහස්",
+      "speakText": "හය දහස්",
       "english": "",
       "learnGloss": "6000",
       "learnUrl": "/learn/?sign=6000",
@@ -1827,6 +1864,7 @@
         "70"
       ],
       "sinhala": "හැත්තෑව",
+      "speakText": "හැත්තෑව",
       "english": "",
       "learnGloss": "70",
       "learnUrl": "/learn/?sign=70",
@@ -1858,6 +1896,7 @@
         "700"
       ],
       "sinhala": "හත සීය",
+      "speakText": "හත සීය",
       "english": "",
       "learnGloss": "700",
       "learnUrl": "/learn/?sign=700",
@@ -1889,6 +1928,7 @@
         "7000"
       ],
       "sinhala": "හත් දහස්",
+      "speakText": "හත් දහස්",
       "english": "",
       "learnGloss": "7000",
       "learnUrl": "/learn/?sign=7000",
@@ -1920,6 +1960,7 @@
         "80"
       ],
       "sinhala": "අසූව",
+      "speakText": "අසූව",
       "english": "",
       "learnGloss": "80",
       "learnUrl": "/learn/?sign=80",
@@ -1951,6 +1992,7 @@
         "800"
       ],
       "sinhala": "අට සීය",
+      "speakText": "අට සීය",
       "english": "",
       "learnGloss": "800",
       "learnUrl": "/learn/?sign=800",
@@ -1982,6 +2024,7 @@
         "8000"
       ],
       "sinhala": "අට දහස්",
+      "speakText": "අට දහස්",
       "english": "",
       "learnGloss": "8000",
       "learnUrl": "/learn/?sign=8000",
@@ -2013,6 +2056,7 @@
         "90"
       ],
       "sinhala": "අනූව",
+      "speakText": "අනූව",
       "english": "",
       "learnGloss": "90",
       "learnUrl": "/learn/?sign=90",
@@ -2044,6 +2088,7 @@
         "900"
       ],
       "sinhala": "නවය සීය",
+      "speakText": "නවය සීය",
       "english": "",
       "learnGloss": "900",
       "learnUrl": "/learn/?sign=900",
@@ -2075,6 +2120,7 @@
         "9000"
       ],
       "sinhala": "නවය දහස්",
+      "speakText": "නවය දහස්",
       "english": "",
       "learnGloss": "9000",
       "learnUrl": "/learn/?sign=9000",
@@ -2106,6 +2152,7 @@
         "A"
       ],
       "sinhala": "A",
+      "speakText": "A",
       "english": "",
       "learnGloss": "A",
       "learnUrl": "/learn/?sign=A",
@@ -2138,6 +2185,7 @@
         "adinawa"
       ],
       "sinhala": "අදිනවා",
+      "speakText": "අදිනවා",
       "english": "pull",
       "learnGloss": "ADINAWA",
       "learnUrl": "/learn/?sign=ADINAWA",
@@ -2170,6 +2218,7 @@
         "adum sodanawa"
       ],
       "sinhala": "ඇදුම් සෝදනවා",
+      "speakText": "ඇදුම් සෝදනවා",
       "english": "wash clothes",
       "learnGloss": "ADUM SODANAWA",
       "learnUrl": "/learn/?sign=ADUM%20SODANAWA",
@@ -2201,6 +2250,7 @@
         "AFTER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "AFTER",
       "learnUrl": "/learn/?sign=AFTER",
@@ -2230,6 +2280,7 @@
         "AGAIN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "AGAIN",
       "learnUrl": "/learn/?sign=AGAIN",
@@ -2260,6 +2311,7 @@
         "ahanawa"
       ],
       "sinhala": "අහනවා",
+      "speakText": "අහනවා",
       "english": "ask",
       "learnGloss": "AHANAWA",
       "learnUrl": "/learn/?sign=AHANAWA",
@@ -2291,6 +2343,7 @@
         "ALLOW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ALLOW",
       "learnUrl": "/learn/?sign=ALLOW",
@@ -2320,6 +2373,7 @@
         "ALRIGHT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ALRIGHT",
       "learnUrl": "/learn/?sign=ALRIGHT",
@@ -2349,6 +2403,7 @@
         "ALSO"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ALSO",
       "learnUrl": "/learn/?sign=ALSO",
@@ -2378,7 +2433,8 @@
         "AMBARANAWA",
         "ambaranawa"
       ],
-      "sinhala": "අම්බරනවා",
+      "sinhala": "අඹරනවා",
+      "speakText": "අඹරනවා",
       "english": "grind",
       "learnGloss": "AMBARANAWA",
       "learnUrl": "/learn/?sign=AMBARANAWA",
@@ -2400,7 +2456,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -2410,7 +2467,8 @@
         "ANDANAWA",
         "andanawa"
       ],
-      "sinhala": "අන්දනවා",
+      "sinhala": "අඬනවා",
+      "speakText": "අඬනවා",
       "english": "cry",
       "learnGloss": "ANDANAWA",
       "learnUrl": "/learn/?sign=ANDANAWA",
@@ -2437,7 +2495,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -2447,6 +2506,7 @@
         "ANDINAWA"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "wear",
       "learnGloss": "ANDINAWA",
       "learnUrl": "/learn/?sign=ANDINAWA",
@@ -2477,6 +2537,7 @@
         "April"
       ],
       "sinhala": "අප්‍රේල්",
+      "speakText": "අප්‍රේල්",
       "english": "",
       "learnGloss": "APRIL",
       "learnUrl": "/learn/?sign=APRIL",
@@ -2509,6 +2570,7 @@
         "AROUND"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "AROUND",
       "learnUrl": "/learn/?sign=AROUND",
@@ -2538,6 +2600,7 @@
         "ARTICLE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ARTICLE",
       "learnUrl": "/learn/?sign=ARTICLE",
@@ -2568,6 +2631,7 @@
         "asniipai"
       ],
       "sinhala": "අසනීපයි",
+      "speakText": "අසනීපයි",
       "english": "sick",
       "learnGloss": "ASNIIPAI",
       "learnUrl": "/learn/?sign=ASNIIPAI",
@@ -2600,6 +2664,7 @@
         "athu gaanawa"
       ],
       "sinhala": "අතු ගානවා",
+      "speakText": "අතු ගානවා",
       "english": "clean",
       "learnGloss": "ATHU GAANAWA",
       "learnUrl": "/learn/?sign=ATHU%20GAANAWA",
@@ -2632,6 +2697,7 @@
         "August"
       ],
       "sinhala": "අගෝස්තු",
+      "speakText": "අගෝස්තු",
       "english": "",
       "learnGloss": "AUGUST",
       "learnUrl": "/learn/?sign=AUGUST",
@@ -2663,6 +2729,7 @@
         "AUNT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "AUNT",
       "learnUrl": "/learn/?sign=AUNT",
@@ -2693,6 +2760,7 @@
         "awidinawa"
       ],
       "sinhala": "ඇවිදිනවා",
+      "speakText": "ඇවිදිනවා",
       "english": "walk",
       "learnGloss": "AWIDINAWA",
       "learnUrl": "/learn/?sign=AWIDINAWA",
@@ -2724,6 +2792,7 @@
         "AYUBOWAN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "AYUBOWAN",
       "learnUrl": "/learn/?sign=AYUBOWAN",
@@ -2753,6 +2822,7 @@
         "B"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "B",
       "learnUrl": "/learn/?sign=B",
@@ -2793,6 +2863,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "B",
       "recognizeCategory": "letter"
     },
     {
@@ -2812,6 +2883,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "B",
       "recognizeCategory": "letter"
     },
     {
@@ -2820,6 +2892,7 @@
         "BABY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BABY",
       "learnUrl": "/learn/?sign=BABY",
@@ -2849,6 +2922,7 @@
         "BAD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BAD",
       "learnUrl": "/learn/?sign=BAD",
@@ -2878,6 +2952,7 @@
         "BAG"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BAG",
       "learnUrl": "/learn/?sign=BAG",
@@ -2907,7 +2982,8 @@
         "BAG EKA",
         "bag eka"
       ],
-      "sinhala": "බග් එක",
+      "sinhala": "බෑග් එක",
+      "speakText": "බෑග් එක",
       "english": "bag",
       "learnGloss": "BAG EKA",
       "learnUrl": "/learn/?sign=BAG%20EKA",
@@ -2934,7 +3010,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -2945,6 +3022,7 @@
         "balanawa"
       ],
       "sinhala": "බලනවා",
+      "speakText": "බලනවා",
       "english": "look",
       "learnGloss": "BALANAWA",
       "learnUrl": "/learn/?sign=BALANAWA",
@@ -2976,6 +3054,7 @@
         "BANK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BANK",
       "learnUrl": "/learn/?sign=BANK",
@@ -3005,6 +3084,7 @@
         "BATHE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BATHE",
       "learnUrl": "/learn/?sign=BATHE",
@@ -3034,6 +3114,7 @@
         "BEAUTIFUL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BEAUTIFUL",
       "learnUrl": "/learn/?sign=BEAUTIFUL",
@@ -3063,6 +3144,7 @@
         "BED"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BED",
       "learnUrl": "/learn/?sign=BED",
@@ -3092,6 +3174,7 @@
         "BICYCLE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BICYCLE",
       "learnUrl": "/learn/?sign=BICYCLE",
@@ -3122,6 +3205,7 @@
         "Bilpatha"
       ],
       "sinhala": "බිල්පත",
+      "speakText": "බිල්පත",
       "english": "bill",
       "learnGloss": "BILPATHA",
       "learnUrl": "/learn/?sign=BILPATHA",
@@ -3158,6 +3242,7 @@
         "BLACK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BLACK",
       "learnUrl": "/learn/?sign=BLACK",
@@ -3187,6 +3272,7 @@
         "BLUE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BLUE",
       "learnUrl": "/learn/?sign=BLUE",
@@ -3216,6 +3302,7 @@
         "BOAT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BOAT",
       "learnUrl": "/learn/?sign=BOAT",
@@ -3246,6 +3333,7 @@
         "bonawa"
       ],
       "sinhala": "බොනවා",
+      "speakText": "බොනවා",
       "english": "drink",
       "learnGloss": "BONAWA",
       "learnUrl": "/learn/?sign=BONAWA",
@@ -3282,6 +3370,7 @@
         "BOOK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BOOK",
       "learnUrl": "/learn/?sign=BOOK",
@@ -3311,6 +3400,7 @@
         "BREAK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BREAK",
       "learnUrl": "/learn/?sign=BREAK",
@@ -3340,6 +3430,7 @@
         "BRING"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BRING",
       "learnUrl": "/learn/?sign=BRING",
@@ -3369,6 +3460,7 @@
         "BRO"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BRO",
       "learnUrl": "/learn/?sign=BRO",
@@ -3398,6 +3490,7 @@
         "BROTHER IN LAW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BROTHER IN LAW",
       "learnUrl": "/learn/?sign=BROTHER%20IN%20LAW",
@@ -3427,6 +3520,7 @@
         "BROWN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BROWN",
       "learnUrl": "/learn/?sign=BROWN",
@@ -3456,6 +3550,7 @@
         "BUS"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BUS",
       "learnUrl": "/learn/?sign=BUS",
@@ -3485,6 +3580,7 @@
         "BUS STATION"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BUS STATION",
       "learnUrl": "/learn/?sign=BUS%20STATION",
@@ -3514,6 +3610,7 @@
         "BUY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "BUY",
       "learnUrl": "/learn/?sign=BUY",
@@ -3543,6 +3640,7 @@
         "C"
       ],
       "sinhala": "C",
+      "speakText": "C",
       "english": "",
       "learnGloss": "C",
       "learnUrl": "/learn/?sign=C",
@@ -3579,6 +3677,7 @@
         "CAMERA"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CAMERA",
       "learnUrl": "/learn/?sign=CAMERA",
@@ -3608,6 +3707,7 @@
         "CAN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CAN",
       "learnUrl": "/learn/?sign=CAN",
@@ -3637,6 +3737,7 @@
         "CANT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CANT",
       "learnUrl": "/learn/?sign=CANT",
@@ -3666,6 +3767,7 @@
         "CAR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CAR",
       "learnUrl": "/learn/?sign=CAR",
@@ -3695,6 +3797,7 @@
         "CARD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CARD",
       "learnUrl": "/learn/?sign=CARD",
@@ -3724,6 +3827,7 @@
         "CAREFUL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CAREFUL",
       "learnUrl": "/learn/?sign=CAREFUL",
@@ -3753,6 +3857,7 @@
         "CARRY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CARRY",
       "learnUrl": "/learn/?sign=CARRY",
@@ -3782,6 +3887,7 @@
         "CAT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CAT",
       "learnUrl": "/learn/?sign=CAT",
@@ -3811,6 +3917,7 @@
         "CEILING FAN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CEILING FAN",
       "learnUrl": "/learn/?sign=CEILING%20FAN",
@@ -3840,6 +3947,7 @@
         "CELL PHONE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CELL PHONE",
       "learnUrl": "/learn/?sign=CELL%20PHONE",
@@ -3869,6 +3977,7 @@
         "CHAIN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CHAIN",
       "learnUrl": "/learn/?sign=CHAIN",
@@ -3898,6 +4007,7 @@
         "CHANGE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CHANGE",
       "learnUrl": "/learn/?sign=CHANGE",
@@ -3927,6 +4037,7 @@
         "CHILD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CHILD",
       "learnUrl": "/learn/?sign=CHILD",
@@ -3956,6 +4067,7 @@
         "CHILDREN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CHILDREN",
       "learnUrl": "/learn/?sign=CHILDREN",
@@ -3985,6 +4097,7 @@
         "CHOICE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CHOICE",
       "learnUrl": "/learn/?sign=CHOICE",
@@ -4014,6 +4127,7 @@
         "CHOOSE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CHOOSE",
       "learnUrl": "/learn/?sign=CHOOSE",
@@ -4043,6 +4157,7 @@
         "CHURCH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CHURCH",
       "learnUrl": "/learn/?sign=CHURCH",
@@ -4072,6 +4187,7 @@
         "CLEARLY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CLEARLY",
       "learnUrl": "/learn/?sign=CLEARLY",
@@ -4101,6 +4217,7 @@
         "CLICK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CLICK",
       "learnUrl": "/learn/?sign=CLICK",
@@ -4130,6 +4247,7 @@
         "CLOTHING"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CLOTHING",
       "learnUrl": "/learn/?sign=CLOTHING",
@@ -4159,6 +4277,7 @@
         "COLD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "COLD",
       "learnUrl": "/learn/?sign=COLD",
@@ -4188,6 +4307,7 @@
         "COLOR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "COLOR",
       "learnUrl": "/learn/?sign=COLOR",
@@ -4217,6 +4337,7 @@
         "COME"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "COME",
       "learnUrl": "/learn/?sign=COME",
@@ -4246,6 +4367,7 @@
         "COMPUTER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "COMPUTER",
       "learnUrl": "/learn/?sign=COMPUTER",
@@ -4275,6 +4397,7 @@
         "CONNECT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CONNECT",
       "learnUrl": "/learn/?sign=CONNECT",
@@ -4304,6 +4427,7 @@
         "COOK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "COOK",
       "learnUrl": "/learn/?sign=COOK",
@@ -4333,6 +4457,7 @@
         "COPY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "COPY",
       "learnUrl": "/learn/?sign=COPY",
@@ -4362,6 +4487,7 @@
         "COUGH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "COUGH",
       "learnUrl": "/learn/?sign=COUGH",
@@ -4391,6 +4517,7 @@
         "COVER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "COVER",
       "learnUrl": "/learn/?sign=COVER",
@@ -4420,6 +4547,7 @@
         "COW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "COW",
       "learnUrl": "/learn/?sign=COW",
@@ -4449,6 +4577,7 @@
         "CROCODILE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CROCODILE",
       "learnUrl": "/learn/?sign=CROCODILE",
@@ -4478,6 +4607,7 @@
         "CRY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CRY",
       "learnUrl": "/learn/?sign=CRY",
@@ -4507,6 +4637,7 @@
         "CULTURE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CULTURE",
       "learnUrl": "/learn/?sign=CULTURE",
@@ -4536,6 +4667,7 @@
         "CUT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "CUT",
       "learnUrl": "/learn/?sign=CUT",
@@ -4565,6 +4697,7 @@
         "D"
       ],
       "sinhala": "D",
+      "speakText": "D",
       "english": "",
       "learnGloss": "D",
       "learnUrl": "/learn/?sign=D",
@@ -4597,6 +4730,7 @@
         "dakinawa"
       ],
       "sinhala": "දකිනවා",
+      "speakText": "දකිනවා",
       "english": "see",
       "learnGloss": "DAKINAWA",
       "learnUrl": "/learn/?sign=DAKINAWA",
@@ -4628,6 +4762,7 @@
         "DAKUNATA"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "to the right",
       "learnGloss": "DAKUNATA",
       "learnUrl": "/learn/?sign=DAKUNATA",
@@ -4658,6 +4793,7 @@
         "dakunata harenna"
       ],
       "sinhala": "දකුණට හැරෙන්න",
+      "speakText": "දකුණට හැරෙන්න",
       "english": "turn right",
       "learnGloss": "DAKUNATA HARENNA",
       "learnUrl": "/learn/?sign=DAKUNATA%20HARENNA",
@@ -4689,6 +4825,7 @@
         "DANCE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DANCE",
       "learnUrl": "/learn/?sign=DANCE",
@@ -4718,6 +4855,7 @@
         "DAUGHTER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DAUGHTER",
       "learnUrl": "/learn/?sign=DAUGHTER",
@@ -4747,6 +4885,7 @@
         "DAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DAY",
       "learnUrl": "/learn/?sign=DAY",
@@ -4776,6 +4915,7 @@
         "DAY AFTER TOMORROW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DAY AFTER TOMORROW",
       "learnUrl": "/learn/?sign=DAY%20AFTER%20TOMORROW",
@@ -4805,6 +4945,7 @@
         "DEAF"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DEAF",
       "learnUrl": "/learn/?sign=DEAF",
@@ -4835,6 +4976,7 @@
         "December"
       ],
       "sinhala": "දෙසැම්බර්",
+      "speakText": "දෙසැම්බර්",
       "english": "",
       "learnGloss": "DECEMBER",
       "learnUrl": "/learn/?sign=DECEMBER",
@@ -4867,6 +5009,7 @@
         "DEEP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DEEP",
       "learnUrl": "/learn/?sign=DEEP",
@@ -4897,6 +5040,7 @@
         "denawa"
       ],
       "sinhala": "දෙනවා",
+      "speakText": "දෙනවා",
       "english": "give",
       "learnGloss": "DENAWA",
       "learnUrl": "/learn/?sign=DENAWA",
@@ -4928,6 +5072,7 @@
         "DIFFERENT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DIFFERENT",
       "learnUrl": "/learn/?sign=DIFFERENT",
@@ -4957,6 +5102,7 @@
         "DIFFICULT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DIFFICULT",
       "learnUrl": "/learn/?sign=DIFFICULT",
@@ -4986,6 +5132,7 @@
         "DOCTOR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DOCTOR",
       "learnUrl": "/learn/?sign=DOCTOR",
@@ -5015,6 +5162,7 @@
         "DONE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DONE",
       "learnUrl": "/learn/?sign=DONE",
@@ -5044,6 +5192,7 @@
         "DONT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DONT",
       "learnUrl": "/learn/?sign=DONT",
@@ -5073,6 +5222,7 @@
         "DONT KNOW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DONT KNOW",
       "learnUrl": "/learn/?sign=DONT%20KNOW",
@@ -5102,6 +5252,7 @@
         "DOOR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DOOR",
       "learnUrl": "/learn/?sign=DOOR",
@@ -5131,6 +5282,7 @@
         "DOUBLE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DOUBLE",
       "learnUrl": "/learn/?sign=DOUBLE",
@@ -5160,6 +5312,7 @@
         "DRAW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DRAW",
       "learnUrl": "/learn/?sign=DRAW",
@@ -5189,6 +5342,7 @@
         "DRINK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "DRINK",
       "learnUrl": "/learn/?sign=DRINK",
@@ -5219,6 +5373,7 @@
         "duwanawa"
       ],
       "sinhala": "දුවනවා",
+      "speakText": "දුවනවා",
       "english": "run",
       "learnGloss": "DUWANAWA",
       "learnUrl": "/learn/?sign=DUWANAWA",
@@ -5250,6 +5405,7 @@
         "E"
       ],
       "sinhala": "E",
+      "speakText": "E",
       "english": "",
       "learnGloss": "E",
       "learnUrl": "/learn/?sign=E",
@@ -5281,6 +5437,7 @@
         "EAT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "EAT",
       "learnUrl": "/learn/?sign=EAT",
@@ -5310,6 +5467,7 @@
         "ELDER BRO"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ELDER BRO",
       "learnUrl": "/learn/?sign=ELDER%20BRO",
@@ -5339,6 +5497,7 @@
         "ELDER SISTER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ELDER SISTER",
       "learnUrl": "/learn/?sign=ELDER%20SISTER",
@@ -5368,6 +5527,7 @@
         "ELEPHANT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ELEPHANT",
       "learnUrl": "/learn/?sign=ELEPHANT",
@@ -5398,6 +5558,7 @@
         "ellanawa"
       ],
       "sinhala": "එල්ලනවා",
+      "speakText": "එල්ලනවා",
       "english": "hang",
       "learnGloss": "ELLANAWA",
       "learnUrl": "/learn/?sign=ELLANAWA",
@@ -5429,6 +5590,7 @@
         "ENTER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ENTER",
       "learnUrl": "/learn/?sign=ENTER",
@@ -5458,6 +5620,7 @@
         "EQUAL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "EQUAL",
       "learnUrl": "/learn/?sign=EQUAL",
@@ -5487,6 +5650,7 @@
         "ERASE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ERASE",
       "learnUrl": "/learn/?sign=ERASE",
@@ -5516,6 +5680,7 @@
         "EVENING"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "EVENING",
       "learnUrl": "/learn/?sign=EVENING",
@@ -5545,6 +5710,7 @@
         "EXCHANGE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "EXCHANGE",
       "learnUrl": "/learn/?sign=EXCHANGE",
@@ -5574,6 +5740,7 @@
         "EYE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "EYE",
       "learnUrl": "/learn/?sign=EYE",
@@ -5603,6 +5770,7 @@
         "EYES"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "EYES",
       "learnUrl": "/learn/?sign=EYES",
@@ -5632,6 +5800,7 @@
         "F"
       ],
       "sinhala": "F",
+      "speakText": "F",
       "english": "",
       "learnGloss": "F",
       "learnUrl": "/learn/?sign=F",
@@ -5663,6 +5832,7 @@
         "FACE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FACE",
       "learnUrl": "/learn/?sign=FACE",
@@ -5692,6 +5862,7 @@
         "FAMILIES"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FAMILIES",
       "learnUrl": "/learn/?sign=FAMILIES",
@@ -5721,6 +5892,7 @@
         "FAMILY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FAMILY",
       "learnUrl": "/learn/?sign=FAMILY",
@@ -5750,6 +5922,7 @@
         "FAST"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FAST",
       "learnUrl": "/learn/?sign=FAST",
@@ -5779,6 +5952,7 @@
         "FAT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FAT",
       "learnUrl": "/learn/?sign=FAT",
@@ -5808,6 +5982,7 @@
         "FATHER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FATHER",
       "learnUrl": "/learn/?sign=FATHER",
@@ -5838,6 +6013,7 @@
         "February"
       ],
       "sinhala": "පෙබරවාරි",
+      "speakText": "පෙබරවාරි",
       "english": "",
       "learnGloss": "FEBRUARY",
       "learnUrl": "/learn/?sign=FEBRUARY",
@@ -5870,6 +6046,7 @@
         "FEEL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FEEL",
       "learnUrl": "/learn/?sign=FEEL",
@@ -5899,6 +6076,7 @@
         "FEVER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FEVER",
       "learnUrl": "/learn/?sign=FEVER",
@@ -5928,6 +6106,7 @@
         "FIGHT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FIGHT",
       "learnUrl": "/learn/?sign=FIGHT",
@@ -5957,6 +6136,7 @@
         "FLOWER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FLOWER",
       "learnUrl": "/learn/?sign=FLOWER",
@@ -5986,6 +6166,7 @@
         "FOLLOW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FOLLOW",
       "learnUrl": "/learn/?sign=FOLLOW",
@@ -6015,6 +6196,7 @@
         "FOOD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FOOD",
       "learnUrl": "/learn/?sign=FOOD",
@@ -6044,6 +6226,7 @@
         "FREE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FREE",
       "learnUrl": "/learn/?sign=FREE",
@@ -6073,6 +6256,7 @@
         "FRIDAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FRIDAY",
       "learnUrl": "/learn/?sign=FRIDAY",
@@ -6102,6 +6286,7 @@
         "FULL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "FULL",
       "learnUrl": "/learn/?sign=FULL",
@@ -6131,6 +6316,7 @@
         "G"
       ],
       "sinhala": "G",
+      "speakText": "G",
       "english": "",
       "learnGloss": "G",
       "learnUrl": "/learn/?sign=G",
@@ -6163,6 +6349,7 @@
         "gannawa"
       ],
       "sinhala": "ගන්නවා",
+      "speakText": "ගන්නවා",
       "english": "take",
       "learnGloss": "GANNAWA",
       "learnUrl": "/learn/?sign=GANNAWA",
@@ -6195,6 +6382,7 @@
         "gas kapanawa"
       ],
       "sinhala": "ගස් කපනවා",
+      "speakText": "ගස් කපනවා",
       "english": "cut trees",
       "learnGloss": "GAS KAPANAWA",
       "learnUrl": "/learn/?sign=GAS%20KAPANAWA",
@@ -6227,6 +6415,7 @@
         "gedara issaraha"
       ],
       "sinhala": "ගෙදර ඉස්සරහ",
+      "speakText": "ගෙදර ඉස්සරහ",
       "english": "in front of house",
       "learnGloss": "GEDARA ISSARAHA",
       "learnUrl": "/learn/?sign=GEDARA%20ISSARAHA",
@@ -6258,6 +6447,7 @@
         "GET UP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GET UP",
       "learnUrl": "/learn/?sign=GET%20UP",
@@ -6288,6 +6478,7 @@
         "geyak hadanawa"
       ],
       "sinhala": "ගෙයක් හදනවා",
+      "speakText": "ගෙයක් හදනවා",
       "english": "build a house",
       "learnGloss": "GEYAK HADANAWA",
       "learnUrl": "/learn/?sign=GEYAK%20HADANAWA",
@@ -6319,6 +6510,7 @@
         "GIVE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GIVE",
       "learnUrl": "/learn/?sign=GIVE",
@@ -6348,6 +6540,7 @@
         "GO"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GO",
       "learnUrl": "/learn/?sign=GO",
@@ -6377,6 +6570,7 @@
         "GOLD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GOLD",
       "learnUrl": "/learn/?sign=GOLD",
@@ -6406,6 +6600,7 @@
         "GOOD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GOOD",
       "learnUrl": "/learn/?sign=GOOD",
@@ -6435,6 +6630,7 @@
         "GOOD EVENING"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GOOD EVENING",
       "learnUrl": "/learn/?sign=GOOD%20EVENING",
@@ -6464,6 +6660,7 @@
         "GOOD MORNING"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GOOD MORNING",
       "learnUrl": "/learn/?sign=GOOD%20MORNING",
@@ -6493,6 +6690,7 @@
         "GOOD NIGHT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GOOD NIGHT",
       "learnUrl": "/learn/?sign=GOOD%20NIGHT",
@@ -6522,6 +6720,7 @@
         "GRAND FATHER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GRAND FATHER",
       "learnUrl": "/learn/?sign=GRAND%20FATHER",
@@ -6551,6 +6750,7 @@
         "GRAND MOTHER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GRAND MOTHER",
       "learnUrl": "/learn/?sign=GRAND%20MOTHER",
@@ -6580,6 +6780,7 @@
         "GRAND SON"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GRAND SON",
       "learnUrl": "/learn/?sign=GRAND%20SON",
@@ -6609,6 +6810,7 @@
         "GRAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GRAY",
       "learnUrl": "/learn/?sign=GRAY",
@@ -6638,6 +6840,7 @@
         "GREEN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GREEN",
       "learnUrl": "/learn/?sign=GREEN",
@@ -6667,6 +6870,7 @@
         "GREY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GREY",
       "learnUrl": "/learn/?sign=GREY",
@@ -6696,6 +6900,7 @@
         "GROUP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GROUP",
       "learnUrl": "/learn/?sign=GROUP",
@@ -6725,6 +6930,7 @@
         "GUIDE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GUIDE",
       "learnUrl": "/learn/?sign=GUIDE",
@@ -6754,6 +6960,7 @@
         "GUN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "GUN",
       "learnUrl": "/learn/?sign=GUN",
@@ -6783,6 +6990,7 @@
         "H"
       ],
       "sinhala": "H",
+      "speakText": "H",
       "english": "",
       "learnGloss": "H",
       "learnUrl": "/learn/?sign=H",
@@ -6815,6 +7023,7 @@
         "haaranawa"
       ],
       "sinhala": "හාරනවා",
+      "speakText": "හාරනවා",
       "english": "dig",
       "learnGloss": "HAARANAWA",
       "learnUrl": "/learn/?sign=HAARANAWA",
@@ -6846,6 +7055,7 @@
         "HADANAWA"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "build/make",
       "learnGloss": "HADANAWA",
       "learnUrl": "/learn/?sign=HADANAWA",
@@ -6875,6 +7085,7 @@
         "HANG"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HANG",
       "learnUrl": "/learn/?sign=HANG",
@@ -6904,6 +7115,7 @@
         "HAPPY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HAPPY",
       "learnUrl": "/learn/?sign=HAPPY",
@@ -6933,6 +7145,7 @@
         "HARD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HARD",
       "learnUrl": "/learn/?sign=HARD",
@@ -6962,6 +7175,7 @@
         "HAT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HAT",
       "learnUrl": "/learn/?sign=HAT",
@@ -6991,6 +7205,7 @@
         "HATHARAMN HANDIYA"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "4-way junction",
       "learnGloss": "HATHARAMN HANDIYA",
       "learnUrl": "/learn/?sign=HATHARAMN%20HANDIYA",
@@ -7020,6 +7235,7 @@
         "HE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HE",
       "learnUrl": "/learn/?sign=HE",
@@ -7049,6 +7265,7 @@
         "HEALTH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HEALTH",
       "learnUrl": "/learn/?sign=HEALTH",
@@ -7078,6 +7295,7 @@
         "HEALTHY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HEALTHY",
       "learnUrl": "/learn/?sign=HEALTHY",
@@ -7107,6 +7325,7 @@
         "HEAR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HEAR",
       "learnUrl": "/learn/?sign=HEAR",
@@ -7136,6 +7355,7 @@
         "HELLO"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HELLO",
       "learnUrl": "/learn/?sign=HELLO",
@@ -7165,6 +7385,7 @@
         "HELP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HELP",
       "learnUrl": "/learn/?sign=HELP",
@@ -7194,6 +7415,7 @@
         "HERE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HERE",
       "learnUrl": "/learn/?sign=HERE",
@@ -7223,6 +7445,7 @@
         "HIGH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HIGH",
       "learnUrl": "/learn/?sign=HIGH",
@@ -7252,6 +7475,7 @@
         "HILL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HILL",
       "learnUrl": "/learn/?sign=HILL",
@@ -7281,6 +7505,7 @@
         "HINAWENAWA"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "smile/laugh",
       "learnGloss": "HINAWENAWA",
       "learnUrl": "/learn/?sign=HINAWENAWA",
@@ -7315,6 +7540,7 @@
         "HIT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HIT",
       "learnUrl": "/learn/?sign=HIT",
@@ -7344,6 +7570,7 @@
         "HOSPITAL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HOSPITAL",
       "learnUrl": "/learn/?sign=HOSPITAL",
@@ -7373,6 +7600,7 @@
         "HOUR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HOUR",
       "learnUrl": "/learn/?sign=HOUR",
@@ -7402,6 +7630,7 @@
         "HOUSE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HOUSE",
       "learnUrl": "/learn/?sign=HOUSE",
@@ -7431,6 +7660,7 @@
         "HOW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HOW",
       "learnUrl": "/learn/?sign=HOW",
@@ -7460,6 +7690,7 @@
         "HOW ARE YOU"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HOW ARE YOU",
       "learnUrl": "/learn/?sign=HOW%20ARE%20YOU",
@@ -7489,6 +7720,7 @@
         "HOW MANY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HOW MANY",
       "learnUrl": "/learn/?sign=HOW%20MANY",
@@ -7518,6 +7750,7 @@
         "HOW MUCH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HOW MUCH",
       "learnUrl": "/learn/?sign=HOW%20MUCH",
@@ -7547,6 +7780,7 @@
         "HUSBAND"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "HUSBAND",
       "learnUrl": "/learn/?sign=HUSBAND",
@@ -7576,6 +7810,7 @@
         "I"
       ],
       "sinhala": "I",
+      "speakText": "I",
       "english": "",
       "learnGloss": "I",
       "learnUrl": "/learn/?sign=I",
@@ -7613,6 +7848,7 @@
         "I KNOW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "I KNOW",
       "learnUrl": "/learn/?sign=I%20KNOW",
@@ -7642,6 +7878,7 @@
         "IMPACT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "IMPACT",
       "learnUrl": "/learn/?sign=IMPACT",
@@ -7671,6 +7908,7 @@
         "IN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "IN",
       "learnUrl": "/learn/?sign=IN",
@@ -7700,6 +7938,7 @@
         "INDEPENDENT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "INDEPENDENT",
       "learnUrl": "/learn/?sign=INDEPENDENT",
@@ -7729,6 +7968,7 @@
         "INSIDE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "INSIDE",
       "learnUrl": "/learn/?sign=INSIDE",
@@ -7758,6 +7998,7 @@
         "INSTEAD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "INSTEAD",
       "learnUrl": "/learn/?sign=INSTEAD",
@@ -7787,6 +8028,7 @@
         "INTERNET"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "INTERNET",
       "learnUrl": "/learn/?sign=INTERNET",
@@ -7817,6 +8059,7 @@
         "iranawa"
       ],
       "sinhala": "ඉරනවා",
+      "speakText": "ඉරනවා",
       "english": "tear down",
       "learnGloss": "IRANAWA",
       "learnUrl": "/learn/?sign=IRANAWA",
@@ -7848,6 +8091,7 @@
         "J"
       ],
       "sinhala": "J",
+      "speakText": "J",
       "english": "",
       "learnGloss": "J",
       "learnUrl": "/learn/?sign=J",
@@ -7880,6 +8124,7 @@
         "January"
       ],
       "sinhala": "ජනවාරි",
+      "speakText": "ජනවාරි",
       "english": "",
       "learnGloss": "JANUARY",
       "learnUrl": "/learn/?sign=JANUARY",
@@ -7913,6 +8158,7 @@
         "July"
       ],
       "sinhala": "ජූලි",
+      "speakText": "ජූලි",
       "english": "",
       "learnGloss": "JULY",
       "learnUrl": "/learn/?sign=JULY",
@@ -7945,6 +8191,7 @@
         "JUMP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "JUMP",
       "learnUrl": "/learn/?sign=JUMP",
@@ -7975,6 +8222,7 @@
         "June"
       ],
       "sinhala": "ජූනි",
+      "speakText": "ජූනි",
       "english": "",
       "learnGloss": "JUNE",
       "learnUrl": "/learn/?sign=JUNE",
@@ -8007,6 +8255,7 @@
         "K"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "K",
       "learnUrl": "/learn/?sign=K",
@@ -8047,6 +8296,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "K",
       "recognizeCategory": "letter"
     },
     {
@@ -8066,6 +8316,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "K",
       "recognizeCategory": "letter"
     },
     {
@@ -8075,6 +8326,7 @@
         "kaamak hadanawa"
       ],
       "sinhala": "කෑමක් හදනවා",
+      "speakText": "කෑමක් හදනවා",
       "english": "cook",
       "learnGloss": "KAAMAK HADANAWA",
       "learnUrl": "/learn/?sign=KAAMAK%20HADANAWA",
@@ -8107,6 +8359,7 @@
         "kadanawa"
       ],
       "sinhala": "කඩනවා",
+      "speakText": "කඩනවා",
       "english": "break",
       "learnGloss": "KADANAWA",
       "learnUrl": "/learn/?sign=KADANAWA",
@@ -8139,6 +8392,7 @@
         "Kadaya"
       ],
       "sinhala": "කඩය",
+      "speakText": "කඩය",
       "english": "shop",
       "learnGloss": "KADAYA",
       "learnUrl": "/learn/?sign=KADAYA",
@@ -8171,6 +8425,7 @@
         "kanawa"
       ],
       "sinhala": "කනවා",
+      "speakText": "කනවා",
       "english": "eat",
       "learnGloss": "KANAWA",
       "learnUrl": "/learn/?sign=KANAWA",
@@ -8208,6 +8463,7 @@
         "Kanda nagala bahinna"
       ],
       "sinhala": "කන්ද නැගල බහින්න",
+      "speakText": "කන්ද නැගල බහින්න",
       "english": "climb a hill and come down",
       "learnGloss": "KANDA NAGALA BAHINNA",
       "learnUrl": "/learn/?sign=KANDA%20NAGALA%20BAHINNA",
@@ -8240,6 +8496,7 @@
         "kasanawa"
       ],
       "sinhala": "කසනවා",
+      "speakText": "කසනවා",
       "english": "scratch",
       "learnGloss": "KASANAWA",
       "learnUrl": "/learn/?sign=KASANAWA",
@@ -8271,6 +8528,7 @@
         "KEY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "KEY",
       "learnUrl": "/learn/?sign=KEY",
@@ -8300,6 +8558,7 @@
         "KNOCK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "KNOCK",
       "learnUrl": "/learn/?sign=KNOCK",
@@ -8330,6 +8589,7 @@
         "kotanawa"
       ],
       "sinhala": "කොටනවා",
+      "speakText": "කොටනවා",
       "english": "crush(mortal and pestle)",
       "learnGloss": "KOTANAWA",
       "learnUrl": "/learn/?sign=KOTANAWA",
@@ -8362,6 +8622,7 @@
         "kunu damanawa"
       ],
       "sinhala": "කුණු දමනවා",
+      "speakText": "කුණු දමනවා",
       "english": "litter",
       "learnGloss": "KUNU DAMANAWA",
       "learnUrl": "/learn/?sign=KUNU%20DAMANAWA",
@@ -8393,6 +8654,7 @@
         "L"
       ],
       "sinhala": "L",
+      "speakText": "L",
       "english": "",
       "learnGloss": "L",
       "learnUrl": "/learn/?sign=L",
@@ -8424,6 +8686,7 @@
         "LADY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LADY",
       "learnUrl": "/learn/?sign=LADY",
@@ -8453,6 +8716,7 @@
         "LAPTOP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LAPTOP",
       "learnUrl": "/learn/?sign=LAPTOP",
@@ -8483,6 +8747,7 @@
         "laptop eka"
       ],
       "sinhala": "ලැප්ටොප් එක",
+      "speakText": "ලැප්ටොප් එක",
       "english": "laptop",
       "learnGloss": "LAPTOP EKA",
       "learnUrl": "/learn/?sign=LAPTOP%20EKA",
@@ -8514,6 +8779,7 @@
         "LAUGH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LAUGH",
       "learnUrl": "/learn/?sign=LAUGH",
@@ -8543,6 +8809,7 @@
         "LEAD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LEAD",
       "learnUrl": "/learn/?sign=LEAD",
@@ -8572,6 +8839,7 @@
         "LESS"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LESS",
       "learnUrl": "/learn/?sign=LESS",
@@ -8601,6 +8869,7 @@
         "LET"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LET",
       "learnUrl": "/learn/?sign=LET",
@@ -8630,6 +8899,7 @@
         "LIKE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LIKE",
       "learnUrl": "/learn/?sign=LIKE",
@@ -8659,6 +8929,7 @@
         "LIST"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LIST",
       "learnUrl": "/learn/?sign=LIST",
@@ -8688,6 +8959,7 @@
         "LISTEN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LISTEN",
       "learnUrl": "/learn/?sign=LISTEN",
@@ -8718,6 +8990,7 @@
         "liyanawa"
       ],
       "sinhala": "ලියනවා",
+      "speakText": "ලියනවා",
       "english": "write",
       "learnGloss": "LIYANAWA",
       "learnUrl": "/learn/?sign=LIYANAWA",
@@ -8749,6 +9022,7 @@
         "LOCATION"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LOCATION",
       "learnUrl": "/learn/?sign=LOCATION",
@@ -8778,6 +9052,7 @@
         "LOCK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LOCK",
       "learnUrl": "/learn/?sign=LOCK",
@@ -8807,6 +9082,7 @@
         "LOOK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LOOK",
       "learnUrl": "/learn/?sign=LOOK",
@@ -8836,6 +9112,7 @@
         "LOOSE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LOOSE",
       "learnUrl": "/learn/?sign=LOOSE",
@@ -8865,6 +9142,7 @@
         "LOVE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LOVE",
       "learnUrl": "/learn/?sign=LOVE",
@@ -8894,6 +9172,7 @@
         "LOW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "LOW",
       "learnUrl": "/learn/?sign=LOW",
@@ -8923,6 +9202,7 @@
         "M"
       ],
       "sinhala": "M",
+      "speakText": "M",
       "english": "",
       "learnGloss": "M",
       "learnUrl": "/learn/?sign=M",
@@ -8955,6 +9235,7 @@
         "makanawa"
       ],
       "sinhala": "මකනවා",
+      "speakText": "මකනවා",
       "english": "erase",
       "learnGloss": "MAKANAWA",
       "learnUrl": "/learn/?sign=MAKANAWA",
@@ -8986,6 +9267,7 @@
         "MAKE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MAKE",
       "learnUrl": "/learn/?sign=MAKE",
@@ -9015,6 +9297,7 @@
         "MAN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MAN",
       "learnUrl": "/learn/?sign=MAN",
@@ -9044,6 +9327,7 @@
         "MARCH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MARCH",
       "learnUrl": "/learn/?sign=MARCH",
@@ -9074,6 +9358,7 @@
         "mas maalu kapanawa"
       ],
       "sinhala": "මස් මාළු කපනවා",
+      "speakText": "මස් මාළු කපනවා",
       "english": "chop fish/meat",
       "learnGloss": "MAS MAALU KAPANAWA",
       "learnUrl": "/learn/?sign=MAS%20MAALU%20KAPANAWA",
@@ -9106,6 +9391,7 @@
         "May"
       ],
       "sinhala": "මැයි",
+      "speakText": "මැයි",
       "english": "",
       "learnGloss": "MAY",
       "learnUrl": "/learn/?sign=MAY",
@@ -9138,6 +9424,7 @@
         "MEET"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MEET",
       "learnUrl": "/learn/?sign=MEET",
@@ -9167,6 +9454,7 @@
         "MIDDLE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MIDDLE",
       "learnUrl": "/learn/?sign=MIDDLE",
@@ -9197,6 +9485,7 @@
         "miladii gannawa"
       ],
       "sinhala": "මිලදී ගන්නවා",
+      "speakText": "මිලදී ගන්නවා",
       "english": "buy",
       "learnGloss": "MILADII GANNAWA",
       "learnUrl": "/learn/?sign=MILADII%20GANNAWA",
@@ -9233,6 +9522,7 @@
         "MILIYANAYA"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MILIYANAYA",
       "learnUrl": "/learn/?sign=MILIYANAYA",
@@ -9262,6 +9552,7 @@
         "MILK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MILK",
       "learnUrl": "/learn/?sign=MILK",
@@ -9291,6 +9582,7 @@
         "MIND"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MIND",
       "learnUrl": "/learn/?sign=MIND",
@@ -9320,6 +9612,7 @@
         "MONDAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MONDAY",
       "learnUrl": "/learn/?sign=MONDAY",
@@ -9349,6 +9642,7 @@
         "MONEY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MONEY",
       "learnUrl": "/learn/?sign=MONEY",
@@ -9378,6 +9672,7 @@
         "MONTH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MONTH",
       "learnUrl": "/learn/?sign=MONTH",
@@ -9407,6 +9702,7 @@
         "MOON"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MOON",
       "learnUrl": "/learn/?sign=MOON",
@@ -9436,6 +9732,7 @@
         "MORNING"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MORNING",
       "learnUrl": "/learn/?sign=MORNING",
@@ -9465,6 +9762,7 @@
         "MOTHER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MOTHER",
       "learnUrl": "/learn/?sign=MOTHER",
@@ -9494,6 +9792,7 @@
         "MOTORCYCLE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MOTORCYCLE",
       "learnUrl": "/learn/?sign=MOTORCYCLE",
@@ -9523,6 +9822,7 @@
         "MOVIE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MOVIE",
       "learnUrl": "/learn/?sign=MOVIE",
@@ -9553,6 +9853,7 @@
         "Mrach"
       ],
       "sinhala": "මාර්තු",
+      "speakText": "මාර්තු",
       "english": "",
       "learnGloss": "MRACH",
       "learnUrl": "/learn/?sign=MRACH",
@@ -9585,6 +9886,7 @@
         "muuna kasanawa"
       ],
       "sinhala": "මූණ කසනවා",
+      "speakText": "මූණ කසනවා",
       "english": "scratch face",
       "learnGloss": "MUUNA KASANAWA",
       "learnUrl": "/learn/?sign=MUUNA%20KASANAWA",
@@ -9617,6 +9919,7 @@
         "muuna soodanawa"
       ],
       "sinhala": "මූණ සෝදනවා",
+      "speakText": "මූණ සෝදනවා",
       "english": "wash face",
       "learnGloss": "MUUNA SOODANAWA",
       "learnUrl": "/learn/?sign=MUUNA%20SOODANAWA",
@@ -9648,6 +9951,7 @@
         "MY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "MY",
       "learnUrl": "/learn/?sign=MY",
@@ -9688,6 +9992,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "මගේ නම",
       "recognizeCategory": "phrase"
     },
     {
@@ -9707,6 +10012,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "මගේ නම දහම්",
       "recognizeCategory": "phrase"
     },
     {
@@ -9716,6 +10022,7 @@
         "naanawa"
       ],
       "sinhala": "නානවා",
+      "speakText": "නානවා",
       "english": "bathe",
       "learnGloss": "NAANAWA",
       "learnUrl": "/learn/?sign=NAANAWA",
@@ -9748,6 +10055,7 @@
         "nagitinawa"
       ],
       "sinhala": "නැගිටිනවා",
+      "speakText": "නැගිටිනවා",
       "english": "stand up",
       "learnGloss": "NAGITINAWA",
       "learnUrl": "/learn/?sign=NAGITINAWA",
@@ -9779,6 +10087,7 @@
         "NEAR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NEAR",
       "learnUrl": "/learn/?sign=NEAR",
@@ -9808,6 +10117,7 @@
         "NETWORK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NETWORK",
       "learnUrl": "/learn/?sign=NETWORK",
@@ -9837,6 +10147,7 @@
         "NEVER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NEVER",
       "learnUrl": "/learn/?sign=NEVER",
@@ -9866,6 +10177,7 @@
         "NEXT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NEXT",
       "learnUrl": "/learn/?sign=NEXT",
@@ -9895,6 +10207,7 @@
         "NEXT DOOR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NEXT DOOR",
       "learnUrl": "/learn/?sign=NEXT%20DOOR",
@@ -9924,6 +10237,7 @@
         "NICE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NICE",
       "learnUrl": "/learn/?sign=NICE",
@@ -9953,6 +10267,7 @@
         "NIGHT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NIGHT",
       "learnUrl": "/learn/?sign=NIGHT",
@@ -9982,6 +10297,7 @@
         "NO"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NO",
       "learnUrl": "/learn/?sign=NO",
@@ -10011,6 +10327,7 @@
         "NONE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NONE",
       "learnUrl": "/learn/?sign=NONE",
@@ -10040,6 +10357,7 @@
         "NOT GOOD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NOT GOOD",
       "learnUrl": "/learn/?sign=NOT%20GOOD",
@@ -10069,6 +10387,7 @@
         "NOT LIKE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NOT LIKE",
       "learnUrl": "/learn/?sign=NOT%20LIKE",
@@ -10099,6 +10418,7 @@
         "November"
       ],
       "sinhala": "නොවැම්බර්",
+      "speakText": "නොවැම්බර්",
       "english": "",
       "learnGloss": "NOVEMBER",
       "learnUrl": "/learn/?sign=NOVEMBER",
@@ -10131,6 +10451,7 @@
         "NOW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "NOW",
       "learnUrl": "/learn/?sign=NOW",
@@ -10160,7 +10481,8 @@
         "NURSE",
         "nurse"
       ],
-      "sinhala": "නුර්සේ",
+      "sinhala": "හෙදිය/නර්ස්",
+      "speakText": "හෙදිය",
       "english": "nurse",
       "learnGloss": "NURSE",
       "learnUrl": "/learn/?sign=NURSE",
@@ -10182,7 +10504,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -10192,6 +10515,7 @@
         "O"
       ],
       "sinhala": "O",
+      "speakText": "O",
       "english": "",
       "learnGloss": "O",
       "learnUrl": "/learn/?sign=O",
@@ -10224,6 +10548,7 @@
         "October"
       ],
       "sinhala": "ඔක්තෝබර්",
+      "speakText": "ඔක්තෝබර්",
       "english": "",
       "learnGloss": "OCTOBER",
       "learnUrl": "/learn/?sign=OCTOBER",
@@ -10256,6 +10581,7 @@
         "OK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "OK",
       "learnUrl": "/learn/?sign=OK",
@@ -10285,6 +10611,7 @@
         "OLD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "OLD",
       "learnUrl": "/learn/?sign=OLD",
@@ -10315,6 +10642,7 @@
         "oluwa kasanawa"
       ],
       "sinhala": "ඔලුව කසනවා",
+      "speakText": "ඔලුව කසනවා",
       "english": "scratch head",
       "learnGloss": "OLUWA KASANAWA",
       "learnUrl": "/learn/?sign=OLUWA%20KASANAWA",
@@ -10346,6 +10674,7 @@
         "ON"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ON",
       "learnUrl": "/learn/?sign=ON",
@@ -10375,6 +10704,7 @@
         "OPEN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "OPEN",
       "learnUrl": "/learn/?sign=OPEN",
@@ -10404,6 +10734,7 @@
         "OR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "OR",
       "learnUrl": "/learn/?sign=OR",
@@ -10433,6 +10764,7 @@
         "ORANGE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ORANGE",
       "learnUrl": "/learn/?sign=ORANGE",
@@ -10462,6 +10794,7 @@
         "ORDER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ORDER",
       "learnUrl": "/learn/?sign=ORDER",
@@ -10492,6 +10825,7 @@
         "osawanawa"
       ],
       "sinhala": "ඔසවනවා",
+      "speakText": "ඔසවනවා",
       "english": "lift",
       "learnGloss": "OSAWANAWA",
       "learnUrl": "/learn/?sign=OSAWANAWA",
@@ -10523,6 +10857,7 @@
         "OUR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "OUR",
       "learnUrl": "/learn/?sign=OUR",
@@ -10552,6 +10887,7 @@
         "OUT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "OUT",
       "learnUrl": "/learn/?sign=OUT",
@@ -10581,6 +10917,7 @@
         "OVER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "OVER",
       "learnUrl": "/learn/?sign=OVER",
@@ -10621,6 +10958,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "ඔක්තෝබර්",
       "recognizeCategory": "month"
     },
     {
@@ -10629,6 +10967,7 @@
         "P"
       ],
       "sinhala": "P",
+      "speakText": "P",
       "english": "",
       "learnGloss": "P",
       "learnUrl": "/learn/?sign=P",
@@ -10661,6 +11000,7 @@
         "paadam karanawa"
       ],
       "sinhala": "පාඩම් කරනවා",
+      "speakText": "පාඩම් කරනවා",
       "english": "study",
       "learnGloss": "PAADAM KARANAWA",
       "learnUrl": "/learn/?sign=PAADAM%20KARANAWA",
@@ -10692,6 +11032,7 @@
         "PAAN KAPANAWA"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "cut bread",
       "learnGloss": "PAAN KAPANAWA",
       "learnUrl": "/learn/?sign=PAAN%20KAPANAWA",
@@ -10722,6 +11063,7 @@
         "paare idiriyata yanna"
       ],
       "sinhala": "පාරේ ඉදිරියට යන්න",
+      "speakText": "පාරේ ඉදිරියට යන්න",
       "english": "go forward",
       "learnGloss": "PAARE IDIRIYATA YANNA",
       "learnUrl": "/learn/?sign=PAARE%20IDIRIYATA%20YANNA",
@@ -10753,6 +11095,7 @@
         "PAINT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PAINT",
       "learnUrl": "/learn/?sign=PAINT",
@@ -10783,6 +11126,7 @@
         "paninawa"
       ],
       "sinhala": "පනිනවා",
+      "speakText": "පනිනවා",
       "english": "jump",
       "learnGloss": "PANINAWA",
       "learnUrl": "/learn/?sign=PANINAWA",
@@ -10814,6 +11158,7 @@
         "PART"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PART",
       "learnUrl": "/learn/?sign=PART",
@@ -10843,6 +11188,7 @@
         "PAST"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PAST",
       "learnUrl": "/learn/?sign=PAST",
@@ -10872,6 +11218,7 @@
         "PATH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PATH",
       "learnUrl": "/learn/?sign=PATH",
@@ -10901,6 +11248,7 @@
         "PEACE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PEACE",
       "learnUrl": "/learn/?sign=PEACE",
@@ -10930,6 +11278,7 @@
         "PEEING"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PEEING",
       "learnUrl": "/learn/?sign=PEEING",
@@ -10959,7 +11308,8 @@
         "PEENAWA",
         "peenawa"
       ],
-      "sinhala": "පීනවා",
+      "sinhala": "පේනවා",
+      "speakText": "පේනවා",
       "english": "see",
       "learnGloss": "PEENAWA",
       "learnUrl": "/learn/?sign=PEENAWA",
@@ -10981,7 +11331,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -10991,6 +11342,7 @@
         "PENCIL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PENCIL",
       "learnUrl": "/learn/?sign=PENCIL",
@@ -11020,6 +11372,7 @@
         "PHONE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PHONE",
       "learnUrl": "/learn/?sign=PHONE",
@@ -11049,7 +11402,8 @@
         "PHONE EKA",
         "phone eka"
       ],
-      "sinhala": "ෆොනේ එක",
+      "sinhala": "ෆෝන් එක",
+      "speakText": "ෆෝන් එක",
       "english": "phone",
       "learnGloss": "PHONE EKA",
       "learnUrl": "/learn/?sign=PHONE%20EKA",
@@ -11076,7 +11430,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -11086,7 +11441,8 @@
         "PIGANA HODANAWA",
         "pigana hodanawa"
       ],
-      "sinhala": "පිගන හෝදනවා",
+      "sinhala": "පිඟාන හෝදනවා",
+      "speakText": "පිඟාන හෝදනවා",
       "english": "wash dishes",
       "learnGloss": "PIGANA HODANAWA",
       "learnUrl": "/learn/?sign=PIGANA%20HODANAWA",
@@ -11108,7 +11464,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -11119,6 +11476,7 @@
         "pihinanawa"
       ],
       "sinhala": "පිහිනනවා",
+      "speakText": "පිහිනනවා",
       "english": "swim",
       "learnGloss": "PIHINANAWA",
       "learnUrl": "/learn/?sign=PIHINANAWA",
@@ -11150,6 +11508,7 @@
         "PINK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PINK",
       "learnUrl": "/learn/?sign=PINK",
@@ -11180,6 +11539,7 @@
         "pitipassata enna"
       ],
       "sinhala": "පිටිපස්සට එන්න",
+      "speakText": "පිටිපස්සට එන්න",
       "english": "come backwards",
       "learnGloss": "PITIPASSATA ENNA",
       "learnUrl": "/learn/?sign=PITIPASSATA%20ENNA",
@@ -11211,6 +11571,7 @@
         "PLANE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PLANE",
       "learnUrl": "/learn/?sign=PLANE",
@@ -11240,6 +11601,7 @@
         "PLAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PLAY",
       "learnUrl": "/learn/?sign=PLAY",
@@ -11269,6 +11631,7 @@
         "PLAYER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PLAYER",
       "learnUrl": "/learn/?sign=PLAYER",
@@ -11298,6 +11661,7 @@
         "POCKET"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "POCKET",
       "learnUrl": "/learn/?sign=POCKET",
@@ -11327,6 +11691,7 @@
         "POINT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "POINT",
       "learnUrl": "/learn/?sign=POINT",
@@ -11356,6 +11721,7 @@
         "POLICE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "POLICE",
       "learnUrl": "/learn/?sign=POLICE",
@@ -11385,6 +11751,7 @@
         "POLICE STATION"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "POLICE STATION",
       "learnUrl": "/learn/?sign=POLICE%20STATION",
@@ -11414,6 +11781,7 @@
         "POSITIVE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "POSITIVE",
       "learnUrl": "/learn/?sign=POSITIVE",
@@ -11443,6 +11811,7 @@
         "PRESENT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PRESENT",
       "learnUrl": "/learn/?sign=PRESENT",
@@ -11472,6 +11841,7 @@
         "PROBLEM"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PROBLEM",
       "learnUrl": "/learn/?sign=PROBLEM",
@@ -11501,6 +11871,7 @@
         "PULL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PULL",
       "learnUrl": "/learn/?sign=PULL",
@@ -11530,6 +11901,7 @@
         "PURPLE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PURPLE",
       "learnUrl": "/learn/?sign=PURPLE",
@@ -11559,6 +11931,7 @@
         "PUT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "PUT",
       "learnUrl": "/learn/?sign=PUT",
@@ -11588,6 +11961,7 @@
         "Q"
       ],
       "sinhala": "Q",
+      "speakText": "Q",
       "english": "",
       "learnGloss": "Q",
       "learnUrl": "/learn/?sign=Q",
@@ -11619,6 +11993,7 @@
         "QUICK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "QUICK",
       "learnUrl": "/learn/?sign=QUICK",
@@ -11648,6 +12023,7 @@
         "QUICKLY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "QUICKLY",
       "learnUrl": "/learn/?sign=QUICKLY",
@@ -11677,6 +12053,7 @@
         "R"
       ],
       "sinhala": "R",
+      "speakText": "R",
       "english": "",
       "learnGloss": "R",
       "learnUrl": "/learn/?sign=R",
@@ -11708,6 +12085,7 @@
         "RADIO"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "RADIO",
       "learnUrl": "/learn/?sign=RADIO",
@@ -11737,7 +12115,8 @@
         "RANDU KARAGANNAWA",
         "randu karagannawa"
       ],
-      "sinhala": "රැඳු කරගන්නවා",
+      "sinhala": "රණ්ඩු කරනවා",
+      "speakText": "රණ්ඩු කරනවා",
       "english": "fight",
       "learnGloss": "RANDU KARAGANNAWA",
       "learnUrl": "/learn/?sign=RANDU%20KARAGANNAWA",
@@ -11759,7 +12138,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -11769,6 +12149,7 @@
         "RED"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "RED",
       "learnUrl": "/learn/?sign=RED",
@@ -11798,6 +12179,7 @@
         "RELATIONS"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "RELATIONS",
       "learnUrl": "/learn/?sign=RELATIONS",
@@ -11827,6 +12209,7 @@
         "RICH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "RICH",
       "learnUrl": "/learn/?sign=RICH",
@@ -11856,6 +12239,7 @@
         "RING"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "RING",
       "learnUrl": "/learn/?sign=RING",
@@ -11885,6 +12269,7 @@
         "ROAD"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "ROAD",
       "learnUrl": "/learn/?sign=ROAD",
@@ -11914,6 +12299,7 @@
         "RUN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "RUN",
       "learnUrl": "/learn/?sign=RUN",
@@ -11943,6 +12329,7 @@
         "S"
       ],
       "sinhala": "S",
+      "speakText": "S",
       "english": "",
       "learnGloss": "S",
       "learnUrl": "/learn/?sign=S",
@@ -11974,6 +12361,7 @@
         "SAME"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SAME",
       "learnUrl": "/learn/?sign=SAME",
@@ -12003,6 +12391,7 @@
         "SAND"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SAND",
       "learnUrl": "/learn/?sign=SAND",
@@ -12032,6 +12421,7 @@
         "SAREE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SAREE",
       "learnUrl": "/learn/?sign=SAREE",
@@ -12061,6 +12451,7 @@
         "SATURDAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SATURDAY",
       "learnUrl": "/learn/?sign=SATURDAY",
@@ -12090,6 +12481,7 @@
         "SCRATCH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SCRATCH",
       "learnUrl": "/learn/?sign=SCRATCH",
@@ -12119,6 +12511,7 @@
         "SEARCH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SEARCH",
       "learnUrl": "/learn/?sign=SEARCH",
@@ -12148,6 +12541,7 @@
         "SECONDS"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SECONDS",
       "learnUrl": "/learn/?sign=SECONDS",
@@ -12177,6 +12571,7 @@
         "SEE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SEE",
       "learnUrl": "/learn/?sign=SEE",
@@ -12206,6 +12601,7 @@
         "SELECT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SELECT",
       "learnUrl": "/learn/?sign=SELECT",
@@ -12235,6 +12631,7 @@
         "SELL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SELL",
       "learnUrl": "/learn/?sign=SELL",
@@ -12264,6 +12661,7 @@
         "SENIOR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SENIOR",
       "learnUrl": "/learn/?sign=SENIOR",
@@ -12293,6 +12691,7 @@
         "SEPTEMBER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SEPTEMBER",
       "learnUrl": "/learn/?sign=SEPTEMBER",
@@ -12323,6 +12722,7 @@
         "SHE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SHE",
       "learnUrl": "/learn/?sign=SHE",
@@ -12352,6 +12752,7 @@
         "SHIRT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SHIRT",
       "learnUrl": "/learn/?sign=SHIRT",
@@ -12381,6 +12782,7 @@
         "SHOP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SHOP",
       "learnUrl": "/learn/?sign=SHOP",
@@ -12410,6 +12812,7 @@
         "SHOW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SHOW",
       "learnUrl": "/learn/?sign=SHOW",
@@ -12439,6 +12842,7 @@
         "SIGN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SIGN",
       "learnUrl": "/learn/?sign=SIGN",
@@ -12468,6 +12872,7 @@
         "SIGN LANGUAGE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SIGN LANGUAGE",
       "learnUrl": "/learn/?sign=SIGN%20LANGUAGE",
@@ -12497,6 +12902,7 @@
         "SISTER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SISTER",
       "learnUrl": "/learn/?sign=SISTER",
@@ -12526,6 +12932,7 @@
         "SISTER IN LAW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SISTER IN LAW",
       "learnUrl": "/learn/?sign=SISTER%20IN%20LAW",
@@ -12555,6 +12962,7 @@
         "SIT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SIT",
       "learnUrl": "/learn/?sign=SIT",
@@ -12584,6 +12992,7 @@
         "SKIRT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SKIRT",
       "learnUrl": "/learn/?sign=SKIRT",
@@ -12613,6 +13022,7 @@
         "SLEEP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SLEEP",
       "learnUrl": "/learn/?sign=SLEEP",
@@ -12642,6 +13052,7 @@
         "SMALL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SMALL",
       "learnUrl": "/learn/?sign=SMALL",
@@ -12671,6 +13082,7 @@
         "SMILE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SMILE",
       "learnUrl": "/learn/?sign=SMILE",
@@ -12700,6 +13112,7 @@
         "SOCIETY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SOCIETY",
       "learnUrl": "/learn/?sign=SOCIETY",
@@ -12730,6 +13143,7 @@
         "sodanawa"
       ],
       "sinhala": "සෝදනවා",
+      "speakText": "සෝදනවා",
       "english": "wash",
       "learnGloss": "SODANAWA",
       "learnUrl": "/learn/?sign=SODANAWA",
@@ -12761,6 +13175,7 @@
         "SOFT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SOFT",
       "learnUrl": "/learn/?sign=SOFT",
@@ -12790,6 +13205,7 @@
         "SON"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SON",
       "learnUrl": "/learn/?sign=SON",
@@ -12819,6 +13235,7 @@
         "SONG"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SONG",
       "learnUrl": "/learn/?sign=SONG",
@@ -12849,6 +13266,7 @@
         "soynawa"
       ],
       "sinhala": "සොයනවා",
+      "speakText": "සොයනවා",
       "english": "find",
       "learnGloss": "SOYNAWA",
       "learnUrl": "/learn/?sign=SOYNAWA",
@@ -12880,6 +13298,7 @@
         "SQUIRREL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SQUIRREL",
       "learnUrl": "/learn/?sign=SQUIRREL",
@@ -12909,6 +13328,7 @@
         "STOP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "STOP",
       "learnUrl": "/learn/?sign=STOP",
@@ -12938,6 +13358,7 @@
         "STREET"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "STREET",
       "learnUrl": "/learn/?sign=STREET",
@@ -12967,6 +13388,7 @@
         "STRONG"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "STRONG",
       "learnUrl": "/learn/?sign=STRONG",
@@ -12996,6 +13418,7 @@
         "STRUCTURE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "STRUCTURE",
       "learnUrl": "/learn/?sign=STRUCTURE",
@@ -13025,6 +13448,7 @@
         "STUDY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "STUDY",
       "learnUrl": "/learn/?sign=STUDY",
@@ -13055,6 +13479,7 @@
         "sudu kolayak"
       ],
       "sinhala": "සුදු කොලයක්",
+      "speakText": "සුදු කොලයක්",
       "english": "white paper",
       "learnGloss": "SUDU KOLAYAK",
       "learnUrl": "/learn/?sign=SUDU%20KOLAYAK",
@@ -13086,6 +13511,7 @@
         "SUIT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SUIT",
       "learnUrl": "/learn/?sign=SUIT",
@@ -13115,6 +13541,7 @@
         "SUNDAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SUNDAY",
       "learnUrl": "/learn/?sign=SUNDAY",
@@ -13144,6 +13571,7 @@
         "SWEEP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SWEEP",
       "learnUrl": "/learn/?sign=SWEEP",
@@ -13173,6 +13601,7 @@
         "SWIM"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "SWIM",
       "learnUrl": "/learn/?sign=SWIM",
@@ -13213,6 +13642,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "සැප්තැම්බර්",
       "recognizeCategory": "month"
     },
     {
@@ -13221,6 +13651,7 @@
         "T"
       ],
       "sinhala": "T",
+      "speakText": "T",
       "english": "",
       "learnGloss": "T",
       "learnUrl": "/learn/?sign=T",
@@ -13263,6 +13694,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "ටී ෂර්ට් එකේ මිල කීයද",
       "recognizeCategory": "phrase"
     },
     {
@@ -13271,6 +13703,7 @@
         "TABLE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TABLE",
       "learnUrl": "/learn/?sign=TABLE",
@@ -13300,6 +13733,7 @@
         "TAKE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TAKE",
       "learnUrl": "/learn/?sign=TAKE",
@@ -13329,6 +13763,7 @@
         "TALK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TALK",
       "learnUrl": "/learn/?sign=TALK",
@@ -13358,6 +13793,7 @@
         "TEA"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TEA",
       "learnUrl": "/learn/?sign=TEA",
@@ -13387,6 +13823,7 @@
         "TEACH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TEACH",
       "learnUrl": "/learn/?sign=TEACH",
@@ -13416,6 +13853,7 @@
         "TEAM"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TEAM",
       "learnUrl": "/learn/?sign=TEAM",
@@ -13445,6 +13883,7 @@
         "TEAR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TEAR",
       "learnUrl": "/learn/?sign=TEAR",
@@ -13474,6 +13913,7 @@
         "TECHNOLOGY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TECHNOLOGY",
       "learnUrl": "/learn/?sign=TECHNOLOGY",
@@ -13503,6 +13943,7 @@
         "TELEPHONE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TELEPHONE",
       "learnUrl": "/learn/?sign=TELEPHONE",
@@ -13532,6 +13973,7 @@
         "TELL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TELL",
       "learnUrl": "/learn/?sign=TELL",
@@ -13561,6 +14003,7 @@
         "TEMPLE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TEMPLE",
       "learnUrl": "/learn/?sign=TEMPLE",
@@ -13590,6 +14033,7 @@
         "TEXT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TEXT",
       "learnUrl": "/learn/?sign=TEXT",
@@ -13619,6 +14063,7 @@
         "THAN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "THAN",
       "learnUrl": "/learn/?sign=THAN",
@@ -13648,6 +14093,7 @@
         "THANK YOU"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "THANK YOU",
       "learnUrl": "/learn/?sign=THANK%20YOU",
@@ -13678,6 +14124,7 @@
         "thattu karanawa"
       ],
       "sinhala": "තට්ටු කරනවා",
+      "speakText": "තට්ටු කරනවා",
       "english": "tap",
       "learnGloss": "THATTU KARANAWA",
       "learnUrl": "/learn/?sign=THATTU%20KARANAWA",
@@ -13715,6 +14162,7 @@
         "therum gannawa"
       ],
       "sinhala": "තේරුම් ගන්නවා",
+      "speakText": "තේරුම් ගන්නවා",
       "english": "understand",
       "learnGloss": "THERUM GANNAWA",
       "learnUrl": "/learn/?sign=THERUM%20GANNAWA",
@@ -13746,6 +14194,7 @@
         "THEY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "THEY",
       "learnUrl": "/learn/?sign=THEY",
@@ -13775,6 +14224,7 @@
         "THIEF"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "THIEF",
       "learnUrl": "/learn/?sign=THIEF",
@@ -13804,6 +14254,7 @@
         "THINK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "THINK",
       "learnUrl": "/learn/?sign=THINK",
@@ -13833,6 +14284,7 @@
         "THIRSTY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "THIRSTY",
       "learnUrl": "/learn/?sign=THIRSTY",
@@ -13863,6 +14315,7 @@
         "thoranawa"
       ],
       "sinhala": "තෝරනවා",
+      "speakText": "තෝරනවා",
       "english": "choose/pick",
       "learnGloss": "THORANAWA",
       "learnUrl": "/learn/?sign=THORANAWA",
@@ -13894,6 +14347,7 @@
         "THROW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "THROW",
       "learnUrl": "/learn/?sign=THROW",
@@ -13923,6 +14377,7 @@
         "THURSDAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "THURSDAY",
       "learnUrl": "/learn/?sign=THURSDAY",
@@ -13952,6 +14407,7 @@
         "TIGHT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TIGHT",
       "learnUrl": "/learn/?sign=TIGHT",
@@ -13981,6 +14437,7 @@
         "TIME"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TIME",
       "learnUrl": "/learn/?sign=TIME",
@@ -14010,6 +14467,7 @@
         "TIRE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TIRE",
       "learnUrl": "/learn/?sign=TIRE",
@@ -14039,6 +14497,7 @@
         "TO"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TO",
       "learnUrl": "/learn/?sign=TO",
@@ -14068,6 +14527,7 @@
         "TODAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TODAY",
       "learnUrl": "/learn/?sign=TODAY",
@@ -14097,6 +14557,7 @@
         "TOMORROW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TOMORROW",
       "learnUrl": "/learn/?sign=TOMORROW",
@@ -14126,6 +14587,7 @@
         "TRAIN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TRAIN",
       "learnUrl": "/learn/?sign=TRAIN",
@@ -14155,6 +14617,7 @@
         "TRAIN STATION"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TRAIN STATION",
       "learnUrl": "/learn/?sign=TRAIN%20STATION",
@@ -14184,6 +14647,7 @@
         "TREE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TREE",
       "learnUrl": "/learn/?sign=TREE",
@@ -14213,6 +14677,7 @@
         "TRUST"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TRUST",
       "learnUrl": "/learn/?sign=TRUST",
@@ -14242,6 +14707,7 @@
         "TUESDAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "TUESDAY",
       "learnUrl": "/learn/?sign=TUESDAY",
@@ -14271,6 +14737,7 @@
         "U"
       ],
       "sinhala": "U",
+      "speakText": "U",
       "english": "",
       "learnGloss": "U",
       "learnUrl": "/learn/?sign=U",
@@ -14303,6 +14770,7 @@
         "udaw karanawa"
       ],
       "sinhala": "උදව් කරනවා",
+      "speakText": "උදව් කරනවා",
       "english": "help",
       "learnGloss": "UDAW KARANAWA",
       "learnUrl": "/learn/?sign=UDAW%20KARANAWA",
@@ -14334,6 +14802,7 @@
         "UGLY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "UGLY",
       "learnUrl": "/learn/?sign=UGLY",
@@ -14363,6 +14832,7 @@
         "UNCLE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "UNCLE",
       "learnUrl": "/learn/?sign=UNCLE",
@@ -14392,6 +14862,7 @@
         "UNDERSTAND"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "UNDERSTAND",
       "learnUrl": "/learn/?sign=UNDERSTAND",
@@ -14421,6 +14892,7 @@
         "UNTIL"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "UNTIL",
       "learnUrl": "/learn/?sign=UNTIL",
@@ -14450,6 +14922,7 @@
         "UP"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "UP",
       "learnUrl": "/learn/?sign=UP",
@@ -14479,6 +14952,7 @@
         "US"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "US",
       "learnUrl": "/learn/?sign=US",
@@ -14508,6 +14982,7 @@
         "USE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "USE",
       "learnUrl": "/learn/?sign=USE",
@@ -14538,6 +15013,7 @@
         "uthuranawa"
       ],
       "sinhala": "උතුරනවා",
+      "speakText": "උතුරනවා",
       "english": "overflow",
       "learnGloss": "UTHURANAWA",
       "learnUrl": "/learn/?sign=UTHURANAWA",
@@ -14569,6 +15045,7 @@
         "V"
       ],
       "sinhala": "V",
+      "speakText": "V",
       "english": "",
       "learnGloss": "V",
       "learnUrl": "/learn/?sign=V",
@@ -14600,6 +15077,7 @@
         "VAN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "VAN",
       "learnUrl": "/learn/?sign=VAN",
@@ -14629,6 +15107,7 @@
         "VEHICLE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "VEHICLE",
       "learnUrl": "/learn/?sign=VEHICLE",
@@ -14658,6 +15137,7 @@
         "VISIT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "VISIT",
       "learnUrl": "/learn/?sign=VISIT",
@@ -14687,6 +15167,7 @@
         "W"
       ],
       "sinhala": "W",
+      "speakText": "W",
       "english": "",
       "learnGloss": "W",
       "learnUrl": "/learn/?sign=W",
@@ -14718,7 +15199,8 @@
         "WAADI WENAWA",
         "waadi wenawa"
       ],
-      "sinhala": "වාදී වෙනවා",
+      "sinhala": "වාඩි වෙනවා",
+      "speakText": "වාඩි වෙනවා",
       "english": "sit",
       "learnGloss": "WAADI WENAWA",
       "learnUrl": "/learn/?sign=WAADI%20WENAWA",
@@ -14740,7 +15222,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -14751,6 +15234,7 @@
         "wada karanawa"
       ],
       "sinhala": "වැඩ කරනවා",
+      "speakText": "වැඩ කරනවා",
       "english": "work",
       "learnGloss": "WADA KARANAWA",
       "learnUrl": "/learn/?sign=WADA%20KARANAWA",
@@ -14782,6 +15266,7 @@
         "WALK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WALK",
       "learnUrl": "/learn/?sign=WALK",
@@ -14811,6 +15296,7 @@
         "WAMA"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "left",
       "learnGloss": "WAMA",
       "learnUrl": "/learn/?sign=WAMA",
@@ -14840,7 +15326,8 @@
         "WAMAATA HARENNA",
         "wamaata harenna"
       ],
-      "sinhala": "වමාට හැරෙන්න",
+      "sinhala": "වමට හැරෙන්න",
+      "speakText": "වමට හැරෙන්න",
       "english": "turn left",
       "learnGloss": "WAMAATA HARENNA",
       "learnUrl": "/learn/?sign=WAMAATA%20HARENNA",
@@ -14862,7 +15349,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -14872,7 +15360,8 @@
         "WAMATA U TURN EKEN HARENNA",
         "wamata U turn eken harenna"
       ],
-      "sinhala": "වමට උ තුරන් එකෙන් හැරෙන්න",
+      "sinhala": "වමට යූ ටර්න් එකෙන් හැරෙන්න",
+      "speakText": "වමට යූ ටර්න් එකෙන් හැරෙන්න",
       "english": "turn left with a U-turn",
       "learnGloss": "WAMATA U TURN EKEN HARENNA",
       "learnUrl": "/learn/?sign=WAMATA%20U%20TURN%20EKEN%20HARENNA",
@@ -14894,7 +15383,8 @@
         "learn": "apps/learn/public/reference-index.json",
         "meaning": "apps/learn/src/data/translations.ts",
         "curriculum": "apps/learn/src/data/curriculum.ts",
-        "recognize": "services/recognition/webapp/data/sinhala_labels.json"
+        "recognize": "services/recognition/webapp/data/sinhala_labels.json",
+        "sinhala": "services/recognition/webapp/data/sinhala-corrections.json"
       },
       "recognizeCategory": "phrase"
     },
@@ -14904,6 +15394,7 @@
         "WANT"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WANT",
       "learnUrl": "/learn/?sign=WANT",
@@ -14933,6 +15424,7 @@
         "WASH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WASH",
       "learnUrl": "/learn/?sign=WASH",
@@ -14962,6 +15454,7 @@
         "WATCH"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WATCH",
       "learnUrl": "/learn/?sign=WATCH",
@@ -14991,6 +15484,7 @@
         "WEATHER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WEATHER",
       "learnUrl": "/learn/?sign=WEATHER",
@@ -15020,6 +15514,7 @@
         "WEDNESDAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WEDNESDAY",
       "learnUrl": "/learn/?sign=WEDNESDAY",
@@ -15049,6 +15544,7 @@
         "WEEK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WEEK",
       "learnUrl": "/learn/?sign=WEEK",
@@ -15078,6 +15574,7 @@
         "WELCOME"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WELCOME",
       "learnUrl": "/learn/?sign=WELCOME",
@@ -15107,6 +15604,7 @@
         "WHEN"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WHEN",
       "learnUrl": "/learn/?sign=WHEN",
@@ -15136,6 +15634,7 @@
         "WHERE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WHERE",
       "learnUrl": "/learn/?sign=WHERE",
@@ -15165,6 +15664,7 @@
         "WHITE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WHITE",
       "learnUrl": "/learn/?sign=WHITE",
@@ -15194,6 +15694,7 @@
         "WHO"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WHO",
       "learnUrl": "/learn/?sign=WHO",
@@ -15223,6 +15724,7 @@
         "WHOM"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WHOM",
       "learnUrl": "/learn/?sign=WHOM",
@@ -15252,6 +15754,7 @@
         "WHOSE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WHOSE",
       "learnUrl": "/learn/?sign=WHOSE",
@@ -15281,6 +15784,7 @@
         "WHY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WHY",
       "learnUrl": "/learn/?sign=WHY",
@@ -15310,6 +15814,7 @@
         "WIFE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WIFE",
       "learnUrl": "/learn/?sign=WIFE",
@@ -15339,6 +15844,7 @@
         "WINDOW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WINDOW",
       "learnUrl": "/learn/?sign=WINDOW",
@@ -15369,6 +15875,7 @@
         "wiyadam karanawa"
       ],
       "sinhala": "වියදම් කරනවා",
+      "speakText": "වියදම් කරනවා",
       "english": "spend",
       "learnGloss": "WIYADAM KARANAWA",
       "learnUrl": "/learn/?sign=WIYADAM%20KARANAWA",
@@ -15400,6 +15907,7 @@
         "WORK"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WORK",
       "learnUrl": "/learn/?sign=WORK",
@@ -15429,6 +15937,7 @@
         "WRITE"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WRITE",
       "learnUrl": "/learn/?sign=WRITE",
@@ -15458,6 +15967,7 @@
         "WRONG"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "WRONG",
       "learnUrl": "/learn/?sign=WRONG",
@@ -15487,6 +15997,7 @@
         "X"
       ],
       "sinhala": "X",
+      "speakText": "X",
       "english": "",
       "learnGloss": "X",
       "learnUrl": "/learn/?sign=X",
@@ -15518,6 +16029,7 @@
         "Y"
       ],
       "sinhala": "Y",
+      "speakText": "Y",
       "english": "",
       "learnGloss": "Y",
       "learnUrl": "/learn/?sign=Y",
@@ -15550,6 +16062,7 @@
         "yanawa"
       ],
       "sinhala": "යනවා",
+      "speakText": "යනවා",
       "english": "go",
       "learnGloss": "YANAWA",
       "learnUrl": "/learn/?sign=YANAWA",
@@ -15581,6 +16094,7 @@
         "YEAR"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "YEAR",
       "learnUrl": "/learn/?sign=YEAR",
@@ -15610,6 +16124,7 @@
         "YELLOW"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "YELLOW",
       "learnUrl": "/learn/?sign=YELLOW",
@@ -15639,6 +16154,7 @@
         "YES"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "YES",
       "learnUrl": "/learn/?sign=YES",
@@ -15668,6 +16184,7 @@
         "YESTERDAY"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "YESTERDAY",
       "learnUrl": "/learn/?sign=YESTERDAY",
@@ -15697,6 +16214,7 @@
         "YOU"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "YOU",
       "learnUrl": "/learn/?sign=YOU",
@@ -15726,6 +16244,7 @@
         "YOUNGER BRO"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "YOUNGER BRO",
       "learnUrl": "/learn/?sign=YOUNGER%20BRO",
@@ -15755,6 +16274,7 @@
         "YOUNGER SISTER"
       ],
       "sinhala": "",
+      "speakText": "",
       "english": "",
       "learnGloss": "YOUNGER SISTER",
       "learnUrl": "/learn/?sign=YOUNGER%20SISTER",
@@ -15784,6 +16304,7 @@
         "Z"
       ],
       "sinhala": "Z",
+      "speakText": "Z",
       "english": "",
       "learnGloss": "Z",
       "learnUrl": "/learn/?sign=Z",
@@ -15826,6 +16347,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "අඳිනවා",
       "recognizeCategory": "phrase"
     },
     {
@@ -15845,6 +16367,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "බර කිලෝග්‍රෑම් 1 ක්",
       "recognizeCategory": "phrase"
     },
     {
@@ -15864,6 +16387,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "බෙහෙත් කීයද",
       "recognizeCategory": "phrase"
     },
     {
@@ -15883,6 +16407,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "දකුණට",
       "recognizeCategory": "phrase"
     },
     {
@@ -15902,6 +16427,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "ඩොක්ටර් කොහෙද ඉන්නේ",
       "recognizeCategory": "phrase"
     },
     {
@@ -15921,6 +16447,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "හදනවා",
       "recognizeCategory": "phrase"
     },
     {
@@ -15940,6 +16467,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "හතරම්න් හන්දිය",
       "recognizeCategory": "phrase"
     },
     {
@@ -15959,6 +16487,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "හිනාවෙනවා",
       "recognizeCategory": "phrase"
     },
     {
@@ -15978,6 +16507,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "හිනාවෙනවා",
       "recognizeCategory": "phrase"
     },
     {
@@ -15997,6 +16527,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "ඉස්චෝලේ බග් එක",
       "recognizeCategory": "phrase"
     },
     {
@@ -16016,6 +16547,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "මගේ ගේ එකේ හොයන්න උදව් කරන්න",
       "recognizeCategory": "phrase"
     },
     {
@@ -16035,6 +16567,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "මගේ ලැප් එක හොයන්න උදව් කරන්න",
       "recognizeCategory": "phrase"
     },
     {
@@ -16054,6 +16587,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "මගේ ෆොනේ එක හොයන්න උදව් කරන්න",
       "recognizeCategory": "phrase"
     },
     {
@@ -16073,6 +16607,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "මම ඔයාට උසාවියේදී නඩු පවරනවා",
       "recognizeCategory": "phrase"
     },
     {
@@ -16092,6 +16627,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "මට අසනීපයි",
       "recognizeCategory": "phrase"
     },
     {
@@ -16111,6 +16647,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "මට බෙහෙත් දෙන්න",
       "recognizeCategory": "phrase"
     },
     {
@@ -16130,6 +16667,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "මට පන්නන්නේ",
       "recognizeCategory": "phrase"
     },
     {
@@ -16149,6 +16687,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "මිලියනය",
       "recognizeCategory": "phrase"
     },
     {
@@ -16168,6 +16707,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "නුර්සේ මට බෙහෙත් දෙන්න",
       "recognizeCategory": "phrase"
     },
     {
@@ -16187,6 +16727,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "නුර්සේ මට බෙහෙත් එන්නත් කරනවා",
       "recognizeCategory": "phrase"
     },
     {
@@ -16206,6 +16747,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "ඔයාගේ උපන්දිනය කවද්ද",
       "recognizeCategory": "phrase"
     },
     {
@@ -16225,6 +16767,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "පාන් කපනවා",
       "recognizeCategory": "phrase"
     },
     {
@@ -16244,6 +16787,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "පාර දිගේ කෙලින් ගිහිල්ල වමට හැරෙන්නේ",
       "recognizeCategory": "phrase"
     },
     {
@@ -16263,6 +16807,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "පරිමාව ලිටෙර් 1 ක්",
       "recognizeCategory": "phrase"
     },
     {
@@ -16282,6 +16827,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "තෙල් ලිටෙර් 1 ක්",
       "recognizeCategory": "phrase"
     },
     {
@@ -16301,6 +16847,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "වම",
       "recognizeCategory": "phrase"
     },
     {
@@ -16320,6 +16867,7 @@
       "provenance": {
         "recognize": "services/recognition/webapp/data/sinhala_labels.json"
       },
+      "speakText": "වපුරනවා",
       "recognizeCategory": "phrase"
     }
   ]

@@ -34,6 +34,7 @@ COPY --chown=user src/ src/
 COPY --chown=user webapp/*.py webapp/
 COPY --chown=user webapp/static/ webapp/static/
 COPY --chown=user webapp/data/sinhala_labels.json webapp/data/sinhala_labels.json
+COPY --chown=user webapp/data/sinhala-corrections.json webapp/data/sinhala-corrections.json
 COPY --chown=user data/processed/labels.npy data/processed/labels.npy
 COPY --chown=user models/saved_models/best_model.h5 models/saved_models/best_model.h5
 

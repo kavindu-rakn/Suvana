@@ -77,7 +77,7 @@ function sinhalaVoice(): SpeechSynthesisVoice | null {
 function cardHtml(card: SignCard, canSpeak: boolean): string {
   const gloss = card.english ? `<p class="svn-ai-card-gloss">${escapeHtml(card.english)}</p>` : ''
   const speak = canSpeak && card.sinhala
-    ? `<button class="svn-ai-speak" type="button" data-speak="${escapeHtml(card.sinhala)}" aria-label="Speak ${escapeHtml(card.sinhala)}">${ICON_SPEAK}</button>`
+    ? `<button class="svn-ai-speak" type="button" data-speak="${escapeHtml(card.speakText)}" aria-label="Speak ${escapeHtml(card.sinhala)}">${ICON_SPEAK}</button>`
     : ''
   return `
     <article class="svn-ai-card">

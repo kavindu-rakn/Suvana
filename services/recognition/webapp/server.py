@@ -23,6 +23,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from webapp.suvana_platform import public_connection_config  # noqa: E402
+from webapp.suvana_labels import load_sinhala_labels, tts_cache_name  # noqa: E402
 
 try:
     from data_preprocessing.frame_extractor import FrameExtractor  # noqa: E402
@@ -63,15 +64,10 @@ print(f"Loaded {len(label_map)} gesture labels")
 
 SINHALA_LABELS_PATH = Path(__file__).resolve().parent / "data" / "sinhala_labels.json"
 if SINHALA_LABELS_PATH.exists():
-    sinhala_labels = json.loads(SINHALA_LABELS_PATH.read_text(encoding="utf-8"))
+    sinhala_labels = load_sinhala_labels(SINHALA_LABELS_PATH)
 else:
     sinhala_labels = {}
 print(f"Loaded {len(sinhala_labels)} Sinhala label translations")
-
-
-def _safe_cache_name(text):
-    slug = re.sub(r"[^A-Za-z0-9]+", "_", text).strip("_").lower()
-    return slug[:120] or "audio"
 
 
 def _warm_tts_cache():
@@ -86,7 +82,7 @@ def _warm_tts_cache():
     for label, entry in sinhala_labels.items():
         speak_text = entry.get("speakText") or label
         speak_lang = entry.get("speakLang") or config['speech']['language']
-        cache_path = TTS_CACHE_DIR / f"{_safe_cache_name(label)}_{speak_lang}.mp3"
+        cache_path = TTS_CACHE_DIR / tts_cache_name(label, speak_text, speak_lang)
         if cache_path.exists():
             continue
         try:
@@ -189,7 +185,7 @@ def speak(text: str):
     speak_text = entry["speakText"] if entry else text
     speak_lang = entry["speakLang"] if entry else config['speech']['language']
 
-    cache_path = TTS_CACHE_DIR / f"{_safe_cache_name(text)}_{speak_lang}.mp3"
+    cache_path = TTS_CACHE_DIR / tts_cache_name(text, speak_text, speak_lang)
     if not cache_path.exists():
         tts = gTTS(text=speak_text, lang=speak_lang)
         tts.save(str(cache_path))
