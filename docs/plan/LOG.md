@@ -1138,3 +1138,11 @@ Rules:
 - Status after: synced 4265671, upstream head 4265671, nothing new upstream; Everything matches its upstream. Old M0/M1/M2 backlog gone. Only informational identical package-lock coupling remains, retained intentionally.
 - Gates: sync guard 255/255; node --test tools/ci/*.test.mjs 6 passed/0 failed/0 skipped; diff check and exact manifest/LOG/scope preservation checks. Screenshots n/a, no UI/product/SSL/figure changes.
 - Needs kvn: normal Suvana branch review/merge/push. No push, merge, deploy or external messages by agent. Root README/owner-managed plan records/other handoffs untouched; handoff: docs/plan/handoffs/record-r04-port.md.
+
+### 2026-10-18 | claude-code-thesis | T-03 Ch6/Ch7/Ch8 drafts (early, pending Q-08/Q-09)
+- What: partial (drafted; TODO(Q-09), TODO(Q-08), TODO(D-10) remain). Thesis\final-source\06-results.md, 07-discussion.md, 08-conclusion.md: D-A35 figures (75.7%, 65.4%, ROC AUC 0.758; the draft's 74.6%/0.744 named once as the earlier scorer's), other 6.1 tables labelled earlier scorer, new finger-label results (Table 6.7, L-33 wording rules), engineering verification table, objectives tables in 09's wording (O1 never "met" without Q-09), limitations, commercialisation from docs/commercialisation.md, new 7.8 panel responses (PP2 quotes ADAPTATION.md exactly), future work.
+- Branch @ sha: agent/claude/T-03-thesis-ch6-7-8 (handoff + LOG only; final SHA in git log), from origin/main d17a561.
+- Gates: n/a (text outside the repo); self-check clean.
+- Screenshots: n/a.
+- Needs kvn: review; five CHECKs in handoffs/T-03.md (re-measure the other 6.1 tables or keep them labelled; regenerate figures; re-run the scoring bench at the shipped capture window; no sequence level; team landing page link).
+- Next: fill TODO(Q-09) when the latency run exists and TODO(Q-08)/TODO(D-10) on 21 Oct.
