@@ -212,6 +212,7 @@ export function mountAssistant(): void {
       <div class="svn-ai-bubble">
         ${badge}
         ${renderMarkdown(answer.text)}
+        ${answer.learnUrl ? `<p><a class="svn-ai-card-cta" href="${escapeHtml(answer.learnUrl)}">Watch a recording in Learn &rarr;</a></p>` : ''}
         ${notice}
         ${answer.cards.map((c) => cardHtml(c, canSpeak)).join('')}
       </div>`
@@ -246,7 +247,7 @@ export function mountAssistant(): void {
 
     // With no index there is nothing to ground a model answer in, so do not
     // spend a call on it — the local reply already explains the situation.
-    if (!kb.size) {
+    if (base.refused || !kb.size) {
       addAssistant(base)
       setChips(base.chips)
       history.push({ role: 'user', content: message }, { role: 'assistant', content: base.text })

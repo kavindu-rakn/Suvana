@@ -15,6 +15,7 @@
 
 import { MAX_CONTEXT_CHARS, MAX_HISTORY_TURNS, MAX_MESSAGE_CHARS, askGemini } from './model'
 import type { Turn } from './model'
+import { signingRefusal } from './signingSafety'
 
 export interface AssistantRequest {
   message?: unknown
@@ -88,6 +89,9 @@ export async function handleAssistant(
   if (rateLimited(client)) {
     return { status: 429, body: { error: 'Too many requests — try again in a minute.' } }
   }
+
+  const refusal = signingRefusal(message)
+  if (refusal) return { status: 200, body: { ...refusal, model: 'local' } }
 
   const context = typeof body.context === 'string' ? body.context.slice(0, MAX_CONTEXT_CHARS) : ''
 

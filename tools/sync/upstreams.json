@@ -197,14 +197,14 @@
       "recorded": "2026-10-12",
       "policy": "DN-18: take source model/recognizer/server code and tests only. Keep Suvana HTTP/WebSocket contracts, trained runtime model and label order. Skip extra models, training artefacts/scripts/notebooks and unverified reports; out-of-bound main/utils changes are proposed in I-04 handoff.",
       "couplings": {
-        "webapp/assistant.py": "five user-visible strings rebranded plus a system-prompt rule (1968cf2); take upstream logic, re-apply the strings",
+        "webapp/assistant.py": "Suvana-only branding and content-safety boundary: camera-only tips, deterministic refusal before retrieval/cloud calls, exact Learn-gloss recording links and matching model-prompt rule; re-apply on upstream sync. No inference, trained-model or label-file changes.",
         "README.md": "Keep the existing pytest/local setup correction plus I-08's CPU container, network boundary, theme and synthetic WebSocket benchmark instructions.",
         "webapp/server.py": "I-08 adds labels, backend and model filename to /api/info while preserving the original fields and upstream JPEG WebSocket protocol. D-A33 adds optional RECOGNIZE_PUBLIC_ORIGIN metadata and a fixed prefixed-HTML render hint; no model, label, frame-processing or WebSocket protocol changes.",
         ".gitignore": "anchored data rules so labels.npy / sinhala_labels.json can be committed (c5b5b3b)",
         "requirements.txt": "Suvana pins fastapi 0.103.2 / uvicorn 0.23.2 / websockets 11.0.3 (8ecb443, reason not recorded); upstream and Lahiru's venv run 0.141.1 / 0.52.1 / 16.1.1 — verify the Docker build before converging",
         "webapp/static/index.html": "D-A33 Suvana-only relative assets, bare/prefixed base URL, home navigation and non-gating shared account slot; preserve existing theme/branding",
         "webapp/static/app.js": "D-A33 Suvana-only transport adapter for API/TTS paths and an environment-supplied direct socket origin; inference UI/protocol unchanged",
-        "webapp/static/assistant.js": "D-A33 Suvana-only prefixed assistant API/TTS URLs, retaining assistant logic and original storage keys",
+        "webapp/static/assistant.js": "D-A33 Suvana-only prefixed assistant API/TTS URLs and content-safety Learn-link rendering; preserve original storage keys",
         "webapp/static/soundguard.js": "D-A33 Suvana-only prefixed mobile-discovery endpoint; internal identifiers and existing behavior preserved"
       },
       "suvanaOnly": {
@@ -222,7 +222,9 @@
         "webapp/suvana_platform.py": "D-A33 optional public-origin env validation; unset returns no additional API fields",
         "webapp/static/suvana-platform.js": "D-A33 HTTP/socket routing and optional same-origin account adapter; inert account behavior at service root",
         "tests/test_suvana_platform.py": "D-A33 env-unset compatibility and configured-origin validation regressions",
-        "tests/suvana-platform.test.mjs": "D-A33 default-root transport/account inactivity and prefix/direct-socket browser regressions"
+        "tests/suvana-platform.test.mjs": "D-A33 default-root transport/account inactivity and prefix/direct-socket browser regressions",
+        "webapp/static/learn-glosses.json": "Suvana-only exact single-sign Learn gloss allowlist generated from existing reference metadata; shared by Shell and Recognize refusals, never a translation or recognition-label mapping",
+        "tests/test_assistant_safety.py": "Suvana-only refusal, exact recording-link, camera-tip and no-cloud-call regressions"
       },
       "skip": {
         "webapp/static/**": "Suvana-branded frontend; upstream's index.html embeds the other modules as panels, which the shell does here (b4ad381, 87a6d3a)",
@@ -242,6 +244,22 @@
         "src/utils/visualization.py": "Training report utility outside I-04 owned files; proposed separately in handoff"
       },
       "guards": [
+        {
+          "file": "webapp/assistant.py",
+          "has": ["def signing_refusal", "refusal = signing_refusal(msg)", "Suvana does not describe how signs are made and does not translate into SSL", "if local.get(\"refused\")", "\"tips\": list(GENERAL_TIPS)", "learn-glosses.json"],
+          "lacks": ["CATEGORY_TIPS"],
+          "why": "Hard rules 2/3: preserve Suvana's refusal before model calls and remove all category-form tips on upstream sync"
+        },
+        {
+          "file": "webapp/static/assistant.js",
+          "has": ["payload.learnUrl", "Watch a recording in Learn"],
+          "why": "Refused signing requests must still offer the actual Learn recording link"
+        },
+        {
+          "file": "webapp/static/learn-glosses.json",
+          "has": ["metadataSha256", "apps/shell/scripts/build-learn-glosses.mjs", "\"glosses\""],
+          "why": "Exact Learn gloss membership is sourced from references, never inferred from recognition labels"
+        },
         {
           "file": ".gitignore",
           "has": [

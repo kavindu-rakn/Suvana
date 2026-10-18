@@ -10,6 +10,7 @@
 
 import { GENERAL_TIPS, CATEGORY_LABEL, SignKnowledgeBase, norm, tokens } from './kb'
 import type { Sign, SignCard } from './kb'
+import { signingRefusal } from './signingSafety'
 
 export interface Answer {
   text: string
@@ -19,6 +20,8 @@ export interface Answer {
   via?: 'gemini'
   /** Set when a cloud call was attempted and fell back to the local answer. */
   notice?: string
+  learnUrl?: string
+  refused?: boolean
 }
 
 // NOTE: the Sinhala alternatives are matched without a trailing \b — Sinhala
@@ -98,6 +101,8 @@ function sample<T>(items: T[], n: number): T[] {
 export function localAnswer(kb: SignKnowledgeBase, message: string): Answer {
   const msg = (message || '').trim()
   const low = msg.toLowerCase()
+  const refusal = signingRefusal(msg)
+  if (refusal) return { ...refusal, cards: [], chips: [] }
 
   if (!msg) {
     return {
@@ -123,7 +128,7 @@ export function localAnswer(kb: SignKnowledgeBase, message: string): Answer {
       text:
         `ආයුබෝවන්! I'm **Suvana AI**, the tutor built into this platform.\n\n` +
         `I know all **${kb.size}** signs the Recognize model was trained on. ` +
-        'Ask me how to sign something, what a sign means, or ask for a sign to practise.',
+        'Ask me to look up a dataset label or browse reference recordings in Learn.',
       cards: [],
       chips: ["How do I sign 'to eat'?", 'Show me the letters', 'Teach me a random sign'],
     }
@@ -143,10 +148,10 @@ export function localAnswer(kb: SignKnowledgeBase, message: string): Answer {
     return {
       text:
         "I'm the built-in tutor for **Suvana**. I can:\n\n" +
-        '• **Look up any sign** — "how do I sign *to drink*?"\n' +
-        '• **Translate** — "what does *gannawa* mean?"\n' +
+        '• **Look up dataset labels** — "to drink"\n' +
+        '• **Read existing label metadata** — "what does *gannawa* mean?"\n' +
         '• **Browse by group** — "show me the numbers"\n' +
-        '• **Give you practice tips** so the model reads your sign confidently\n' +
+        '• **Give camera setup tips** for recording\n' +
         '• Send you straight to **Learn** to practise it with your camera\n\n' +
         `_${kb.statsLine()}._`,
       cards: [],
@@ -160,7 +165,7 @@ export function localAnswer(kb: SignKnowledgeBase, message: string): Answer {
       text:
         `The Recognize model reads **${kb.size}** distinct signs.\n\n` +
         `${kb.statsLine()}.\n\n` +
-        'I can teach you any of them — and Learn scores your attempt against real-signer recordings.',
+        'Learn offers reference recordings and scores attempts against those references.',
       cards: [],
       chips: ['Show me the letters', 'Show me the numbers', 'Teach me a random sign'],
     }
@@ -173,7 +178,7 @@ export function localAnswer(kb: SignKnowledgeBase, message: string): Answer {
     return {
       text:
         `Here's one to practise — **${entry.sinhala}**${gloss}.\n\n` +
-        'Perform it in front of the camera in Recognize and watch the confidence bar climb.',
+        'Use Learn to watch reference recordings before camera practice.',
       cards: [kb.card(entry)],
       chips: ['Teach me another one', 'Practice tips', 'Show me the letters'],
     }
@@ -202,7 +207,7 @@ export function localAnswer(kb: SignKnowledgeBase, message: string): Answer {
   if (TIPS_RE.some((p) => p.test(low))) {
     const bullets = GENERAL_TIPS.map((t) => `• ${t}`).join('\n')
     return {
-      text: `**Getting a clean detection**\n\n${bullets}\n\nIf a sign still won’t register, ask me about it by name and I’ll give you guidance for that sign’s type.`,
+      text: `**Getting a clean detection**\n\n${bullets}\n\nUse Learn to watch reference recordings.`,
       cards: [],
       chips: ['Teach me a random sign', 'Show me the letters', 'How many signs do you know?'],
     }
@@ -220,7 +225,7 @@ export function localAnswer(kb: SignKnowledgeBase, message: string): Answer {
     let text =
       `**${top.sinhala}**${gloss}\n\n` +
       `Dataset label \`${top.label}\` · ${CATEGORY_LABEL[top.category] ?? 'Sign'}. ` +
-      'The card below has practice guidance for this kind of sign.'
+      'The card has camera setup advice only.'
     if (rest.length) {
       text += '\n\nClose matches: ' + rest.map((r) => `**${r.sinhala}**`).join(', ') + '.'
     }

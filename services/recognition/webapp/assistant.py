@@ -2,8 +2,8 @@
 
 Rebranded from the team repo's copy: the standalone name this module was
 built under is a sub-brand, and Suvana carries no sub-brand names in UI copy.
-Only user-visible strings differ; the engine is untouched, so a re-sync should
-take upstream logic and re-apply these few strings.
+Suvana also refuses written signing/translation requests and uses camera-only
+tips. Re-apply this declared content-safety coupling on upstream sync.
 
 Design goals
 ------------
@@ -34,6 +34,7 @@ import json
 import random
 import re
 from pathlib import Path
+from urllib.parse import quote
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter
@@ -190,36 +191,12 @@ CATEGORY_LABEL = {
     "phrase": "Word / phrase",
 }
 
-# Honest, category-specific practice guidance. We deliberately do not invent
-# handshape descriptions we have no reference for -- instead we give the
-# practice protocol that actually raises this model's recognition confidence.
-CATEGORY_TIPS = {
-    "letter": [
-        "Fingerspelling is a single static handshape — form it, then hold it still.",
-        "Keep the hand at chest height, palm toward the camera, fingers clearly separated.",
-        "Some letters have two accepted variants in this dataset; try both and use whichever the model reads more confidently.",
-    ],
-    "number": [
-        "Number signs are held rather than moved — settle the shape and keep it steady.",
-        "Large numbers are compound: perform the parts in order without a long pause between them.",
-        "Keep your other hand out of the frame so it is not mistaken for a two-handed sign.",
-    ],
-    "month": [
-        "Month signs are usually fingerspelled or initialised — start from the letter shape, then complete the movement.",
-        "Perform it at a steady, even pace; rushing the movement is the most common cause of a missed detection.",
-    ],
-    "phrase": [
-        "This is a movement sign — the model reads the whole motion path, not a single frame.",
-        "Start from a neutral rest position, perform the motion once cleanly, then return to rest.",
-        "Keep your torso and both hands inside the frame; the model tracks pose and face as well as hands.",
-    ],
-}
-
+# Suvana: camera setup only; category metadata cannot establish sign form.
 GENERAL_TIPS = [
-    "Sit about an arm's length from the camera so your head, torso and both hands stay in frame.",
-    "Light your face from the front — backlighting from a window is what breaks landmark tracking most often.",
-    "Hold each sign for the full capture window; the model classifies a sequence of frames, not a snapshot.",
-    "Use a plain background and avoid clothing that matches your skin tone.",
+    "Stay about an arm's length from the camera and keep both hands in frame.",
+    "Use front lighting and avoid backlighting.",
+    "Keep recording for the full capture window.",
+    "Use a plain background.",
 ]
 
 
@@ -336,7 +313,7 @@ class SignKnowledgeBase:
             "english": entry["english"],
             "category": entry["category"],
             "categoryLabel": CATEGORY_LABEL.get(entry["category"], "Sign"),
-            "tips": CATEGORY_TIPS.get(entry["category"], CATEGORY_TIPS["phrase"]),
+            "tips": list(GENERAL_TIPS),
         }
 
     def stats_line(self) -> str:
@@ -349,6 +326,39 @@ class SignKnowledgeBase:
 
 
 KB = SignKnowledgeBase()
+
+# Suvana-only, generated from Learn reference metadata; no English/Sinhala
+# translation or fuzzy recognition-label mapping is used to make a Learn URL.
+LEARN_URL = "https://suvana.help/learn/"
+LEARN_GLOSSES_PATH = Path(__file__).resolve().parent / "static" / "learn-glosses.json"
+try:
+    LEARN_GLOSSES = frozenset(json.loads(LEARN_GLOSSES_PATH.read_text(encoding="utf-8"))["glosses"])
+except (OSError, ValueError, KeyError, TypeError):
+    LEARN_GLOSSES = frozenset()  # Missing metadata can only produce the generic Learn URL.
+
+SIGNING_REFUSAL = "Suvana does not describe how signs are made and does not translate into SSL. Use Learn to watch the reference recording instead."
+SIGNING_REQUESTS = [
+    re.compile(pattern, re.I) for pattern in [
+        r"\bhow\b[^.!?]*\b(sign|signed|signing|fingerspell)\b",
+        r"\b(describe|explain|demonstrate|show|teach|perform|make)\b[^.!?]*\b(sign|signs|signing|fingerspell\w*|handshape|hand\s*(position|shape|movement)|finger\s*position|palm|pose|position|location|movement|orientation)\b",
+        r"\b(handshape|finger\s*position|hand\s*(position|shape|movement))\b",
+        r"^\s*(please\s+)?sign\s+\S",
+        r"\btranslat\w*\b[^.!?]*\b(ssl|sign\s*language|signing|sinhala\s*sign)\b",
+    ]
+]
+
+
+def signing_refusal(message: str) -> Optional[Dict[str, Any]]:
+    sinhala = (re.search(r"සංඥා|අත්හැඩ|අත් හැඩ|අතේ පිහිටීම|ඇඟිලි පිහිටීම", message)
+               and re.search(r"කෙසේ|කොහොම|පෙන්ව|විස්තර|පැහැදිලි|පරිවර්ත|කරන්න|කියන්න", message))
+    if not sinhala and not any(pattern.search(message) for pattern in SIGNING_REQUESTS):
+        return None
+    target = (re.search(r"\btranslate\s+(.+?)\s+(?:in)?to\s+(?:ssl|(?:sinhala\s+)?sign\s*language)[?.!]*$", message, re.I)
+              or re.search(r"\b(?:sign|fingerspell)\s+(.+?)[?.!]*$", message, re.I)
+              or re.search(r"\b(?:handshape|position|movement)\s+(?:for|of)\s+(.+?)[?.!]*$", message, re.I))
+    candidate = re.sub(r'''^["'“‘](.*)["'”’]$''', r"\1", target.group(1).strip()) if target else None
+    url = f"{LEARN_URL}?sign={quote(candidate, safe='')}" if candidate in LEARN_GLOSSES else LEARN_URL
+    return {"text": SIGNING_REFUSAL, "learnUrl": url, "refused": True, "cards": [], "chips": []}
 
 
 # ---------------------------------------------------------------------------
@@ -428,6 +438,9 @@ def local_answer(message: str) -> Dict[str, Any]:
     """Answer purely from the local knowledge base. Never raises."""
     msg = (message or "").strip()
     low = msg.lower()
+    refusal = signing_refusal(msg)
+    if refusal:
+        return refusal
 
     if not msg:
         return {
@@ -442,7 +455,7 @@ def local_answer(message: str) -> Dict[str, Any]:
             "text": (
                 "ආයුබෝවන්! I'm **සුවණ Suvana AI**, your sign-language tutor for this app.\n\n"
                 f"I know all **{len(KB.entries)}** signs this model was trained on. "
-                "Ask me how to sign something, what a sign means, or ask for a sign to practise."
+                "Ask me to look up a dataset label or browse reference recordings in Learn."
             ),
             "cards": [],
             "chips": ["How do I sign 'to eat'?", "Show me the letters", "Teach me a random sign"],
@@ -461,10 +474,10 @@ def local_answer(message: str) -> Dict[str, Any]:
         return {
             "text": (
                 "I'm the built-in tutor for **සුවණ Suvana**. I can:\n\n"
-                "• **Look up any sign** — \"how do I sign *to drink*?\"\n"
-                "• **Translate** — \"what does *gannawa* mean?\"\n"
+                "• **Look up dataset labels** — \"to drink\"\n"
+                "• **Read existing label metadata** — \"what does *gannawa* mean?\"\n"
                 "• **Browse by group** — \"show me the numbers\"\n"
-                "• **Give you practice tips** so the model reads your sign confidently\n"
+                "• **Give camera setup tips** for recording\n"
                 "• **Speak any sign aloud** — tap the speaker on any card\n\n"
                 f"_{KB.stats_line()}._"
             ),
@@ -478,7 +491,7 @@ def local_answer(message: str) -> Dict[str, Any]:
             "text": (
                 f"This model recognises **{len(KB.entries)}** distinct signs.\n\n"
                 f"{KB.stats_line()}.\n\n"
-                "Every one of them is in the **Supported Signs** panel — and I can teach you any of them."
+                "They are listed in the **Supported Signs** panel. Learn offers reference recordings."
             ),
             "cards": [],
             "chips": ["Show me the letters", "Show me the numbers", "Teach me a random sign"],
@@ -491,7 +504,7 @@ def local_answer(message: str) -> Dict[str, Any]:
         return {
             "text": (
                 f"Here's one to practise — **{entry['sinhala']}**{gloss}.\n\n"
-                "Perform it in front of the camera and watch the confidence bar climb."
+                "Use Learn to watch reference recordings before camera practice."
             ),
             "cards": [KB.card(entry)],
             "chips": ["Teach me another one", "Practice tips", "Show me the letters"],
@@ -517,7 +530,7 @@ def local_answer(message: str) -> Dict[str, Any]:
     if any(p.search(low) for p in TIPS_RE):
         bullets = "\n".join(f"• {t}" for t in GENERAL_TIPS)
         return {
-            "text": f"**Getting a clean detection**\n\n{bullets}\n\nIf a sign still won't register, ask me about it by name and I'll give you guidance for that sign's type.",
+            "text": f"**Getting a clean detection**\n\n{bullets}\n\nUse Learn to watch reference recordings.",
             "cards": [],
             "chips": ["Teach me a random sign", "Show me the letters", "How many signs do you know?"],
         }
@@ -588,7 +601,8 @@ Your job is to help the user learn and practise the signs this app's model recog
 
 Hard rules:
 - The CONTEXT block below is retrieved from the app's own dataset. It is the only ground truth about which signs exist. Never claim a sign exists if it is not in the dataset, and never invent a Sinhala translation.
-- Never invent a specific handshape or finger-position description for a sign. You do not have that reference data. Instead give practice guidance: framing, lighting, holding the sign for the full capture window, movement pacing.
+- Suvana does not describe how signs are made and does not translate into SSL. Refuse requests to describe, explain or demonstrate signing, handshape, position, location, orientation, movement, category behaviour, or to translate text/speech into SSL or sign language, including Sinhala requests. Never provide signing instructions, gloss order or inferred mappings. Offer https://suvana.help/learn/ to watch reference recordings; use an exact ?sign= URL only if supplied by the local refusal rule, never from a translation or fuzzy label match.
+- Camera setup advice only: distance, lighting, recording through the capture window and a plain background. A category label cannot establish how a sign is formed.
 - Keep answers short and warm — 2 to 5 sentences, or a tight bullet list. This is a chat bubble, not an essay.
 - Sinhala script may be used freely; the user reads Sinhala.
 - Use light markdown (**bold**, bullets with •). No headings, no code fences.
@@ -927,7 +941,7 @@ def assistant_chat(req: ChatRequest):
     provider = (req.provider or "").lower()
     api_key = (req.apiKey or "").strip()
 
-    if not api_key or provider not in PROVIDERS:
+    if local.get("refused") or not api_key or provider not in PROVIDERS:
         return {**local, "engine": "local", "engineLabel": "Offline engine"}
 
     model, note = _resolve_model(provider, api_key, (req.model or "").strip())

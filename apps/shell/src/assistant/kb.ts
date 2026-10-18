@@ -41,36 +41,12 @@ export const CATEGORY_LABEL: Record<string, string> = {
   phrase: 'Word / phrase',
 }
 
-// Honest, category-specific practice guidance. We deliberately do not invent
-// handshape descriptions we have no reference for — instead we give the
-// practice protocol that actually raises this model's recognition confidence.
-export const CATEGORY_TIPS: Record<string, string[]> = {
-  letter: [
-    'Fingerspelling is a single static handshape — form it, then hold it still.',
-    'Keep the hand at chest height, palm toward the camera, fingers clearly separated.',
-    'Some letters have two accepted variants in this dataset; try both and use whichever the model reads more confidently.',
-  ],
-  number: [
-    'Number signs are held rather than moved — settle the shape and keep it steady.',
-    'Large numbers are compound: perform the parts in order without a long pause between them.',
-    'Keep your other hand out of the frame so it is not mistaken for a two-handed sign.',
-  ],
-  month: [
-    'Month signs are usually fingerspelled or initialised — start from the letter shape, then complete the movement.',
-    'Perform it at a steady, even pace; rushing the movement is the most common cause of a missed detection.',
-  ],
-  phrase: [
-    'This is a movement sign — the model reads the whole motion path, not a single frame.',
-    'Start from a neutral rest position, perform the motion once cleanly, then return to rest.',
-    'Keep your torso and both hands inside the frame; the model tracks pose and face as well as hands.',
-  ],
-}
-
+// Camera setup only. Category metadata is not evidence of how a sign is made.
 export const GENERAL_TIPS = [
-  'Sit about an arm’s length from the camera so your head, torso and both hands stay in frame.',
-  'Light your face from the front — backlighting from a window is what breaks landmark tracking most often.',
-  'Hold each sign for the full capture window; the model classifies a sequence of frames, not a snapshot.',
-  'Use a plain background and avoid clothing that matches your skin tone.',
+  'Stay about an arm’s length from the camera and keep both hands in frame.',
+  'Use front lighting and avoid backlighting.',
+  'Keep recording for the full capture window.',
+  'Use a plain background.',
 ]
 
 /** Sinhala occupies U+0D80–U+0DFF; keep it alongside ASCII alphanumerics. */
@@ -234,7 +210,7 @@ export class SignKnowledgeBase {
       english: entry.english,
       category: entry.category,
       categoryLabel: CATEGORY_LABEL[entry.category] ?? 'Sign',
-      tips: CATEGORY_TIPS[entry.category] ?? CATEGORY_TIPS.phrase,
+      tips: [...GENERAL_TIPS],
     }
   }
 
