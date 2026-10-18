@@ -21,28 +21,11 @@
   const API = {
     meta: window.SuvanaRecognize.apiPath("/api/assistant/meta"),
     chat: window.SuvanaRecognize.apiPath("/api/assistant/chat"),
-    verify: window.SuvanaRecognize.apiPath("/api/assistant/verify"),
-    models: window.SuvanaRecognize.apiPath("/api/assistant/models"),
     speak: window.SuvanaRecognize.apiPath("/api/speak"),
   };
 
-  /* --------------------------------------------------------------- settings */
-
-  const defaults = { provider: "", apiKey: "", model: "" };
-  let settings = { ...defaults };
-
-  try {
-    const saved = localStorage.getItem(STORE_KEY);
-    if (saved) settings = { ...defaults, ...JSON.parse(saved) };
-  } catch (_) {
-    /* private-browsing or storage disabled — run keyless, that's fine */
-  }
-
-  const persist = () => {
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(settings));
-    } catch (_) {}
-  };
+  // D-A37: discard provider credentials left by the old assistant panel.
+  try { localStorage.removeItem(STORE_KEY); } catch (_) { /* storage disabled */ }
 
   /* ------------------------------------------------------------------ icons */
 
@@ -50,8 +33,6 @@
     orb: `<svg width="27" height="27" viewBox="0 0 24 24" fill="none"><path d="M12 3.2 13.7 8a4 4 0 0 0 2.3 2.3l4.8 1.7-4.8 1.7a4 4 0 0 0-2.3 2.3L12 20.8l-1.7-4.8A4 4 0 0 0 8 13.7L3.2 12 8 10.3A4 4 0 0 0 10.3 8L12 3.2Z" fill="#fff"/><circle cx="19" cy="5.4" r="1.5" fill="#fff" opacity=".85"/><circle cx="5.2" cy="18.4" r="1.1" fill="#fff" opacity=".7"/></svg>`,
     spark: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3.5 13.4 8a3.6 3.6 0 0 0 2.1 2.1L20 11.5l-4.5 1.4a3.6 3.6 0 0 0-2.1 2.1L12 19.5l-1.4-4.5a3.6 3.6 0 0 0-2.1-2.1L4 11.5l4.5-1.4A3.6 3.6 0 0 0 10.6 8L12 3.5Z" fill="#fff"/></svg>`,
     close: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
-    gear: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.7"/><path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H4a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 5.6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H10a1.65 1.65 0 0 0 1-1.51V2a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>`,
-    back: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M14 6 8 12l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     send: `<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4.5 12 20 4.5 16 20l-4.6-5.4L4.5 12Z" fill="currentColor"/></svg>`,
     speaker: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M17 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>`,
     chevron: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -76,7 +57,6 @@
           <span><i></i><em data-role="engine">Verified index · ready</em></span>
         </span>
         <button class="svn-ai-headbtn" type="button" data-act="clear" title="Clear conversation" aria-label="Clear conversation">${ICON.trash}</button>
-        <button class="svn-ai-headbtn" type="button" data-act="settings" title="AI settings" aria-label="AI settings">${ICON.gear}</button>
         <button class="svn-ai-headbtn" type="button" data-act="close" title="Close" aria-label="Close assistant">${ICON.close}</button>
       </header>
 
@@ -90,48 +70,6 @@
         <div class="svn-ai-foot-note" data-role="note">Verified sources · no account needed</div>
       </footer>
 
-      <div class="svn-ai-settings" data-role="settings">
-        <header class="svn-ai-head">
-          <button class="svn-ai-headbtn" type="button" data-act="settings-back" aria-label="Back">${ICON.back}</button>
-          <span class="svn-ai-title"><strong>AI Settings</strong><span>Optional model access</span></span>
-        </header>
-        <div class="svn-ai-set-body">
-          <div class="svn-ai-set-intro">
-            Suvana AI answers from <strong>verified Learn and Recognize sources</strong> — no model key needed.
-            <br><br>Optional model access uses the same verified answers and safety rules. Add a provider key below; it is stored in this browser and sent with assistant requests to this server and the provider.
-          </div>
-
-          <div class="svn-ai-field">
-            <label>Provider</label>
-            <select data-role="provider">
-              <option value="">Offline only (no key)</option>
-            </select>
-            <small data-role="keylink"></small>
-          </div>
-
-          <div class="svn-ai-field">
-            <label>API key</label>
-            <input type="password" data-role="apikey" placeholder="Paste your API key" autocomplete="off" spellcheck="false" />
-          </div>
-
-          <div class="svn-ai-field">
-            <label>Model</label>
-            <div class="svn-ai-modelrow">
-              <input type="text" data-role="model" placeholder="default" autocomplete="off" spellcheck="false" />
-              <button class="svn-ai-btn compact" type="button" data-act="browse">Browse</button>
-            </div>
-            <select class="svn-ai-modelpick" data-role="modelpick" hidden aria-label="Available models"></select>
-            <small>Leave blank for the provider's default model. This must be the model <b>id</b> (e.g. <code>liquid/lfm-2.5-2.6b:free</code>) — not the display name shown on the provider's website. <b>Browse</b> lists the real ids.</small>
-          </div>
-
-          <div class="svn-ai-set-status" data-role="status"></div>
-
-          <div class="svn-ai-set-actions">
-            <button class="svn-ai-btn" type="button" data-act="test">Test key</button>
-            <button class="svn-ai-btn primary" type="button" data-act="save">Save</button>
-          </div>
-        </div>
-      </div>
     </section>
   `;
 
@@ -145,16 +83,6 @@
   const body = $("body");
   const input = $("input");
   const sendBtn = root.querySelector('[data-act="send"]');
-  const engineTag = $("engine");
-  const noteEl = $("note");
-  const settingsPane = $("settings");
-  const statusEl = $("status");
-  const providerSel = $("provider");
-  const keyInput = $("apikey");
-  const modelInput = $("model");
-  const modelPick = $("modelpick");
-  const keyLink = $("keylink");
-
   /* ------------------------------------------------------------------ state */
 
   let meta = null;
@@ -390,9 +318,6 @@
         body: JSON.stringify({
           message,
           history: history.slice(-8),
-          provider: settings.provider || null,
-          apiKey: settings.apiKey || null,
-          model: settings.model || null,
         }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -411,10 +336,6 @@
     history.push({ role: "user", content: message });
     history.push({ role: "assistant", content: payload.text || "" });
     if (history.length > 16) history = history.slice(-16);
-
-    if (payload.engineLabel) {
-      engineTag.textContent = `${payload.engineLabel} · ready`;
-    }
 
     busy = false;
     sendBtn.disabled = !input.value.trim();
@@ -451,7 +372,6 @@
 
   function close() {
     root.classList.remove("is-open");
-    settingsPane.classList.remove("is-open");
   }
 
   launcher.addEventListener("click", open);
@@ -461,156 +381,18 @@
     if (!btn || !root.contains(btn)) return;
     const act = btn.dataset.act;
     if (act === "close") close();
-    if (act === "settings") settingsPane.classList.add("is-open");
-    if (act === "settings-back") settingsPane.classList.remove("is-open");
     if (act === "clear") {
       body.innerHTML = "";
       history = [];
       greet();
     }
-    if (act === "test") verify();
-    if (act === "save") save();
-    if (act === "browse") browseModels();
   });
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && root.classList.contains("is-open")) {
-      if (settingsPane.classList.contains("is-open")) settingsPane.classList.remove("is-open");
-      else close();
+      close();
     }
   });
-
-  /* ---------------------------------------------------------------- settings */
-
-  function refreshKeyLink() {
-    const p = (meta?.providers || []).find((x) => x.id === providerSel.value);
-    if (!p) {
-      keyLink.innerHTML = "Works with zero setup. Optional models use the same verified answers.";
-      modelInput.placeholder = "default";
-      return;
-    }
-    keyLink.innerHTML = `Get a ${esc(p.name)} key at <a href="${esc(p.keysUrl)}" target="_blank" rel="noopener">${esc(p.keysUrl.replace(/^https?:\/\//, ""))}</a>.`;
-    modelInput.placeholder = p.defaultModel;
-  }
-
-  providerSel.addEventListener("change", () => {
-    refreshKeyLink();
-    // A model id from one provider is meaningless to another.
-    modelPick.hidden = true;
-    modelPick.innerHTML = "";
-  });
-
-  modelPick.addEventListener("change", () => {
-    if (modelPick.value) {
-      modelInput.value = modelPick.value;
-      setStatus("ok", `Model set to ${modelPick.value}`);
-    }
-  });
-
-  async function browseModels() {
-    if (!providerSel.value) {
-      setStatus("err", "Pick a provider first.");
-      return;
-    }
-    setStatus("busy", "Fetching the provider's model list…");
-    try {
-      const res = await fetch(API.models, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          provider: providerSel.value,
-          apiKey: keyInput.value.trim() || null,
-        }),
-      });
-      const data = await res.json();
-      if (!data.ok) {
-        setStatus("err", data.error || "Couldn't load the model list.");
-        return;
-      }
-      modelPick.innerHTML = "";
-      const head = document.createElement("option");
-      head.value = "";
-      head.textContent = `Select a model — ${data.count} available, ${data.freeCount} free`;
-      modelPick.appendChild(head);
-      (data.models || []).forEach((m) => {
-        const o = document.createElement("option");
-        o.value = m.id;
-        o.textContent = `${m.free ? "FREE · " : ""}${m.id}${m.name && m.name !== m.id ? "  —  " + m.name : ""}`;
-        modelPick.appendChild(o);
-      });
-      modelPick.hidden = false;
-      if (modelInput.value.trim()) modelPick.value = modelInput.value.trim();
-      setStatus("ok", `${data.freeCount} free models available. Pick one from the list.`);
-    } catch (_) {
-      setStatus("err", "Couldn't reach the app server to load models.");
-    }
-  }
-
-  function setStatus(kind, text) {
-    statusEl.className = `svn-ai-set-status show ${kind}`;
-    statusEl.textContent = text;
-  }
-
-  async function verify() {
-    if (!providerSel.value) {
-      setStatus("ok", "Offline mode needs no key — you're already good to go.");
-      return;
-    }
-    if (!keyInput.value.trim()) {
-      setStatus("err", "Paste an API key first.");
-      return;
-    }
-    setStatus("busy", "Checking your key…");
-    try {
-      const res = await fetch(API.verify, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          provider: providerSel.value,
-          apiKey: keyInput.value.trim(),
-          model: modelInput.value.trim() || null,
-        }),
-      });
-      const data = await res.json();
-      if (data.ok) {
-        // If the server resolved a pasted display name to a real id, write it
-        // back so the box holds the value that actually works.
-        if (data.model && data.model !== modelInput.value.trim()) modelInput.value = data.model;
-        setStatus("ok", `${data.note ? data.note + " " : ""}Connected to ${data.provider} (${data.model}). Hit Save to switch සුවණ AI over.`);
-      } else {
-        setStatus("err", data.error || "That key didn't work.");
-      }
-    } catch (_) {
-      setStatus("err", "Couldn't reach the app server to check the key.");
-    }
-  }
-
-  function save() {
-    settings.provider = providerSel.value;
-    settings.apiKey = keyInput.value.trim();
-    settings.model = modelInput.value.trim();
-    if (!settings.provider) {
-      settings.apiKey = "";
-      settings.model = "";
-      keyInput.value = "";
-      modelInput.value = "";
-    }
-    persist();
-    updateEngineTag();
-    setStatus("ok", settings.provider && settings.apiKey ? "Saved. Suvana AI is now running on the cloud model." : "Saved. Suvana AI uses the verified local index.");
-    setTimeout(() => settingsPane.classList.remove("is-open"), 900);
-  }
-
-  function updateEngineTag() {
-    const p = (meta?.providers || []).find((x) => x.id === settings.provider);
-    if (p && settings.apiKey) {
-      engineTag.textContent = `${p.name} · ready`;
-      noteEl.textContent = `Grounded in this project's ${meta?.signCount ?? ""} signs`.trim();
-    } else {
-      engineTag.textContent = "Verified index · ready";
-      noteEl.textContent = "Verified sources · no account needed";
-    }
-  }
 
   /* -------------------------------------------------------------- greeting */
 
@@ -636,22 +418,6 @@
 
   fetch(API.meta)
     .then((r) => r.json())
-    .then((data) => {
-      meta = data;
-      (data.providers || []).forEach((p) => {
-        const opt = document.createElement("option");
-        opt.value = p.id;
-        opt.textContent = `${p.name} (free tier)`;
-        providerSel.appendChild(opt);
-      });
-      providerSel.value = settings.provider || "";
-      keyInput.value = settings.apiKey || "";
-      modelInput.value = settings.model || "";
-      refreshKeyLink();
-      updateEngineTag();
-    })
-    .catch(() => {
-      refreshKeyLink();
-      updateEngineTag();
-    });
+    .then((data) => { meta = data; })
+    .catch(() => { /* greeting works without metadata */ });
 })();

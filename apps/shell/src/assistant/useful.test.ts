@@ -70,7 +70,8 @@ describe('shared verified question set',()=>{
     expect(localAnswer(kb,'teach me First numbers').cards.map(c=>c.label)).toEqual(knowledge.units.find(u=>u.title==='First numbers')!.signs)
     expect(localAnswer(kb,'teach me Months 1').cards.map(c=>c.label)).toEqual(knowledge.units.find(u=>u.title==='Months 1')!.signs)
     expect(localAnswer(kb,'what is the sinhala for sit').cards[0].sinhala).toBe('වාඩි වෙනවා')
-    expect(localAnswer(kb,'sign for eat').cards[0].label).toBe('KANAWA')
+    expect(localAnswer(kb,'sign for eat').cards[0].label).toBe('EAT')
+    expect(localAnswer(kb,'what is the sinhala for eat').cards[0].label).toBe('KANAWA')
     for (const word of ['mother','water','head','wa','MOTHER']) {
       expect(localAnswer(kb,`what is the sinhala for ${word}`).intent).toBe('unknown')
     }
@@ -92,7 +93,7 @@ describe('shared verified question set',()=>{
     expect(policy.modelPrompt).toBe(before.modelPrompt)
     const priorQuestions=JSON.parse(execFileSync('git',['show','origin/main:services/recognition/tests/assistant-questions.json'],{cwd:root,encoding:'utf8'})) as Array<{question:string}>
     expect(original.map(c=>c.question)).toEqual(priorQuestions.map(c=>c.question))
-    expect(original).toHaveLength(65);expect(heldOut).toHaveLength(18)
+    expect(original).toHaveLength(65);expect(heldOut).toHaveLength(32)
     expect(localAnswer(kb,'අඬනවා').cards[0].label).toBe('ANDANAWA')
   })
   it('does not accept ungrounded model additions, including injected client context',async()=>{

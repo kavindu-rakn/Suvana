@@ -63,7 +63,8 @@ def test_reverse_lookup_and_category_priority():
         unit=next(u for u in engine.KNOWLEDGE['units'] if u['title']==title)
         assert [c['label'] for c in engine.local_answer(f'teach me {title}')['cards']]==unit['signs']
     assert engine.local_answer('what is the sinhala for sit')['cards'][0]['sinhala']=='වාඩි වෙනවා'
-    assert engine.local_answer('sign for eat')['cards'][0]['label']=='KANAWA'
+    assert engine.local_answer('sign for eat')['cards'][0]['label']=='EAT'
+    assert engine.local_answer('what is the sinhala for eat')['cards'][0]['label']=='KANAWA'
     assert engine.local_answer('අඬනවා')['cards'][0]['label']=='ANDANAWA'
     for word in ['mother','water','head','wa','MOTHER']:
         assert engine.local_answer(f'what is the sinhala for {word}')['intent']=='unknown'
