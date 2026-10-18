@@ -932,7 +932,7 @@
       "Q-06a",
       "L-16b"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "n/a",
     "r26_port": "no",
     "screenshots": "no",
@@ -2223,7 +2223,7 @@
     "deps": [
       "R-03"
     ],
-    "status": "todo",
+    "status": "done",
     "branch": "none (R26 working tree)",
     "r26_port": "no",
     "screenshots": "yes",

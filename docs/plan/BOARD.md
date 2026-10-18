@@ -50,7 +50,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | Q-03 | Close CI gaps: concurrency, Docker build, R26-form Learn build, dist smoke, extended brand grep | codex | 2026-10-20 | M | R-01, I-01, I-02 | done | `agent/codex/Q-03-ci` | no | no | - |
 | Q-04 | Playwright smoke for Learn (keyboard, storage failure, onboarding) | antigravity | 2026-10-15 | M | Q-00, L-02, L-05, L-07 | done | `agent/antigravity/Q-04-e2e` | no | no | - |
 | Q-05 | DEMO.md: timed script, device plan, fallback runbook, adversarial assistant check | codex | 2026-10-20 | S | D-03, D-04 | done | `agent/codex/Q-05-demo` | no | no | - |
-| Q-06 | Full real-device matrix (iPhone Safari, Android Chrome, laptop) | kvn | 2026-10-19 | M | Q-06a, L-16b | todo | `n/a` | no | no | - |
+| Q-06 | Full real-device matrix (iPhone Safari, Android Chrome, laptop) | kvn | 2026-10-19 | M | Q-06a, L-16b | done | `n/a` | no | no | - |
 | Q-06a | Early phone check of the deployed Learn and device inventory | kvn | 2026-10-15 | S | D-02, L-04 | done | `n/a` | no | no | - |
 | Q-07 | Handedness reality check | kvn | 2026-10-14 | S | - | done | `n/a` | no | no | - |
 | Q-08 | Demo-ready gate run and release tag proposal | claude-code | 2026-10-21 | S | L-26, L-27 | todo | `agent/claude/Q-08-gates` | no | no | - |
@@ -96,7 +96,7 @@ Task counts by owner: kvn 31, claude-code-thesis 5, antigravity 11, claude-code 
 | R-01 | Portability refactor: base and Suvana-only code driven by suvana.config.json | codex | 2026-10-14 | M | L-06 | done | `agent/codex/R-01-portability` | yes | yes | DN-01 |
 | R-02 | sync.mjs `port learn --to <R26>` with --check | codex | 2026-10-16 | S | R-01 | done | `agent/codex/R-02-port-command` | no | no | - |
 | R-03 | M1: port Learn into the R26 working tree | claude-code | 2026-10-17 | S | R-02 | done | `none (R26 working tree)` | no | yes | - |
-| R-04 | M2: port Learn into the R26 working tree | claude-code | 2026-10-19 | S | R-03 | todo | `none (R26 working tree)` | no | yes | - |
+| R-04 | M2: port Learn into the R26 working tree | claude-code | 2026-10-19 | S | R-03 | done | `none (R26 working tree)` | no | yes | - |
 | R-05 | Final Learn port to R26 for the demo | claude-code | 2026-10-21 | S | R-04, L-26, L-27, Q-08 | todo | `none (R26 working tree)` | no | no | - |
 | I-01 | Shell: remove the 'SoundGuard Ecosystem' sub-brand, configurable Recognize URL, fix the stale example | antigravity | 2026-10-13 | S | - | done | `agent/antigravity/I-01-shell-brand` | no | yes | - |
 | I-02 | Alerts: user-visible strings say Suvana | antigravity | 2026-10-13 | S | - | done | `agent/antigravity/I-02-alerts-strings` | no | yes | - |
