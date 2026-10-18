@@ -9,8 +9,8 @@
     "apps/learn/src/data/sentences.ts": "775c139b0070979ebf98dfd22519c66d406c6671bf5549d98cf572291940b88e",
     "apps/learn/src/scoring/fingerCutoffs.ts": "d594a2a55736f6d07126fdae2a45451f5918cd9d1680ddeb8e679ed773969d62",
     "apps/learn/src/learner/game.ts": "5f2b5b08fa517afb210cce176c3888595540adab02d4b2565778491c19a112e8",
-    "services/recognition/webapp/data/sinhala_labels.json": "961d5bba393c6ab179a5d357cbf5caa41089c7118227ab2ff3e35614cc2e0362",
-    "services/recognition/config/config.yaml": "01250b8d21d40c25a3231fd787f0ffd747a76a13edf0f109e181c58db67c4244",
+    "services/recognition/webapp/data/sinhala_labels.json": "a6e3fd91e88d68deb9bb37861bd656dbcbee66e741512e047cb7ec0021cae84a",
+    "services/recognition/config/config.yaml": "31304559edfb61b200e46e073ad75ee724897e1ebef8467e007c63a30ba4b683",
     "apps/learn/src/components/ProgressView.tsx": "dc70d0e6c527247e3d2c96d1a2ead1153e49818d6d5b033344b45b6148bd2249",
     "apps/learn/src/components/PathView.tsx": "5e7ca7032b9a9c6bbeaece38176bba0cfab2156d67eb368083f1b9fb69042797",
     "apps/learn/src/learner/pathContent.ts": "c1ea02b3f92f8b0c9cf11c075b8614e92b53aba150aa5e5cd9e4fb461e7a5c9d",
@@ -20,7 +20,7 @@
     "apps/shell/privacy.html": "8233763f1692d1e7effb9bb199993f6ac82d2245c8bfa46ab49efb2984e29899",
     "apps/shell/alerts/index.html": "73e843f4b9e6e2863293ce878ff1ca2ca14aae4e10a2f7892f4e7b1df59581cf",
     "services/recognition/webapp/server.py": "4172aca4ecbeccc7fab0f3d70e95377c2a65930206740481809595f24c1cc08a",
-    "README.md": "88ffd28895b471a558ec144fcaeb246ee13ffc37c01c477dfd5cb08554c45624"
+    "README.md": "08b3a6647c7482b74d6df46ebf88b63504b39418a201821c6bd0ae9cde704171"
   },
   "facts": {
     "recognitionCount": 171,

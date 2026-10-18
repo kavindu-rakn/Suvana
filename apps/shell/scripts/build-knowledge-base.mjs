@@ -1,13 +1,17 @@
 // Read-only source extraction. No label, reference, model or curriculum is rewritten.
 import { build } from '../node_modules/esbuild/lib/main.js'
+import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const root = new URL('../../../', import.meta.url)
 const sources = {}
+// Learn's reference index is gitignored; rebuild it as Learn's pretest does, so a fresh checkout (CI) has it.
+execFileSync(process.execPath, [fileURLToPath(new URL('apps/learn/scripts/build-reference-index.mjs', root))], { stdio: 'ignore' })
+// Hash sources as git stores them (LF): Windows working copies may still hold CRLF.
 function read(path) {
-  const text = readFileSync(new URL(path, root), 'utf8')
+  const text = readFileSync(new URL(path, root), 'utf8').replace(/\r\n/g, '\n')
   sources[path] = createHash('sha256').update(text).digest('hex')
   return text
 }
@@ -89,7 +93,7 @@ const compatibility = JSON.stringify({
 }) + '\n'
 for (const [file, content] of [[target,text], [new URL('apps/shell/public/data/signs.json',root),compatibility]]) {
   if (process.argv.includes('--check')) {
-    if (readFileSync(file,'utf8') !== content) throw new Error('Knowledge base stale: node apps/shell/scripts/build-knowledge-base.mjs')
+    if (readFileSync(file,'utf8').replace(/\r\n/g,'\n') !== content) throw new Error('Knowledge base stale: node apps/shell/scripts/build-knowledge-base.mjs')
   } else writeFileSync(file,content)
 }
 console.log(`Knowledge base: ${output.signs.length} records; Learn ${facts.learnCount}; Recognize ${facts.recognitionCount}; finger labels ${facts.fingerCount}${process.argv.includes('--check')?' verified':' written'}`)
