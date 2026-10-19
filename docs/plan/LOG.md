@@ -1259,3 +1259,9 @@ Rules:
 - Pinned exact model prompt and ordered 65 original questions from main 7a74cc4fce5a85e74b719beace425e4e838617a0 in a test fixture, verified identical on PR head. Exact safety equality/count/grounding checks retained; no runtime/UI/content changes.
 - Gates: npm 10.9.9 ci, 157 Shell tests, typecheck/build, 255 sync guards, diff check pass. Reproduced original missing-ref failure in a depth-one clone without origin/main, then verified all 157 tests and build with the patch there. Existing bundle warning remains. Sandbox EPERM required normal-access reruns.
 - Handoff: docs/plan/handoffs/pr-10-shell-ci.md. Needs kvn: apply fix commit to codex/pipeline-card-stairs and push, then check hosted CI. No push/merge/deploy/messages; r26_port no.
+
+### 2026-10-19 | Codex | Shell footer start link
+- Direct user assignment on uifixes/suvana in main worktree: replaced Start Now button with inline gradient start? registration link; matched Learn heading spacing/type and added focus/reduced-motion styling. Marquee and bottom footer unchanged.
+- Plan correction: unscheduled chat task with explicit branch/worktree override; no planner-owned files edited.
+- Gates: 157 Shell tests, typecheck/build, 255 sync guards and diff check pass. Existing bundle advisory remains. Clean npm ci blocked by Windows EPERM; dependencies restored through npm install --no-package-lock without lockfile changes.
+- Desktop/390/360 light/dark before/after renders and browser focus/Enter/overflow/reduced-motion checks: .agent-local/screens/shell-start-cta/index.html. Handoff: docs/plan/handoffs/shell-start-cta.md. No SSL content/figures changed. Visual review and merge/push/deploy remain kvn's.

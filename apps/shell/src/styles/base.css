@@ -250,25 +250,60 @@ a:focus-visible,
 
 /* Mega CTA */
 .footer-mega {
-  padding: 120px 24px;
+  padding: 120px 24px 140px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 40px;
 }
 
 .footer-mega h2 {
-  font-size: clamp(4rem, 10vw, 10rem);
-  line-height: 0.9;
+  font-size: clamp(3rem, 11vw, 8.5rem);
+  line-height: 1.05;
   font-family: var(--sans);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  background: linear-gradient(135deg, #fff, rgba(255,255,255,0.4));
+  color: #fff;
+  margin: 0;
+}
+
+.footer-start-link {
+  display: inline-block;
+  background-image: linear-gradient(90deg, #daa520, #f59e0b, #00a693, #f59e0b, #daa520);
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin: 0;
+  text-decoration: none;
+  animation: footer-start-gradient 6s linear infinite;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.footer-start-link:hover {
+  animation-duration: 2s;
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 24px rgba(218, 165, 32, 0.4));
+}
+
+.footer-start-link:focus-visible {
+  outline: 2px dashed var(--gold);
+  outline-offset: 8px;
+  border-radius: 8px;
+}
+
+@keyframes footer-start-gradient {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-start-link {
+    animation: none;
+    transition: none;
+  }
+
+  .footer-start-link:hover {
+    transform: none;
+  }
 }
 
 .btn.massive {
