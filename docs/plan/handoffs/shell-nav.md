@@ -22,3 +22,18 @@ Clarify and expose landing page navigation
 - Use plain language labels for the landing page sections
 - Keep accessible section links visible on mobile and improve active state
 - Offset smooth scroll for the responsive header
+
+## Handoff addendum - 2026-10-19 - Codex
+Status: review
+- Restored an editorial section nav: serif labels, generous spacing, gold active text, and the animated teal-to-gold underline with a soft glow. Removed the rounded active pills introduced in 9708541.
+- Kept the user-facing labels, mobile second-row navigation and 44px hit areas. Hover lifts gently; reduced-motion disables link/underline transitions and the lift. ARIA current location and responsive anchor offset remain.
+- Screenshots refreshed at desktop, 390px and 360px in light/dark, plus desktop dark hover state: .agent-local/screens/shell-nav/index.html.
+- Browser checks: links visible and inside nav at all viewport sizes; 44px hit areas; section jump marks correct link active and aligns heading; hover underline fully animates; reduced motion transitions 0s. Full-page phone overflow remains unrelated.
+- `git diff --check` passed. No tests/build run.
+- Manual visual review/adoption remains with kvn; no merge/push/deploy.
+
+Commit message:
+Restore editorial motion to landing navigation
+
+- Bring back the animated teal-to-gold section underline and serif styling
+- Keep plain-language links visible on phones with reduced-motion support

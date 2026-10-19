@@ -1228,3 +1228,8 @@ Rules:
 - Browser captures/checks: desktop, 390px phone, 360px phone; light/dark; section jump/active state. Existing unrelated phone full-page overflow flag persists. `git diff --check` passed; tests/build not run this turn.
 - Review screenshots: .agent-local/screens/shell-nav/index.html. Handoff: docs/plan/handoffs/shell-nav.md.
 - Review finding outside scope: named testimonials and “Tested by…” copy conflicts with project plan stating no study participants. Verify source or owner review before public use. No SSL content or figures edited.
+
+### 2026-10-19 | Codex | Restore landing nav styling
+- Restored the landing nav's serif editorial look with animated teal-to-gold underline and hover lift; removed the rounded pills while retaining clearer section names and the mobile second row.
+- Added reduced-motion support. Browser checks covered desktop/390/360, light/dark, 44px targets, section jump/current state, hover animation, and reduced motion. Contact sheet refreshed at .agent-local/screens/shell-nav/index.html. `git diff --check` passed; tests/build not run.
+- Handoff addendum: docs/plan/handoffs/shell-nav.md. Needs kvn visual review and manual merge.
