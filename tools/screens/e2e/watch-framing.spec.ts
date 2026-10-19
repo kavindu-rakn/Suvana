@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test'
+import { startFirstLesson } from './helpers/navigation'
 
 for (const width of [360, 390, 767, 768, 1280]) {
   test(`Watch initial framing and manual choice at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 800 })
     await page.addInitScript(() => localStorage.setItem('suvana.learn.onboarding-seen', '1'))
     await page.goto('./')
-    await page.getByRole('button', { name: 'Start practising', exact: true }).first().click()
+    await startFirstLesson(page)
     const zoom = page.getByRole('button', { name: 'Zoom to hands', exact: true })
     await expect(zoom).toHaveAttribute('aria-pressed', String(width < 768))
     if (width < 768) {

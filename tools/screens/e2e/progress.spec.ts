@@ -120,10 +120,10 @@ test('blocked profile persistence is reported while the current-page switch work
 })
 
 test('the existing Study JSON and CSV exports still use the selected profile', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('ssl-learn-mode', 'author'))
   await prepare(page, 'default')
   await page.locator('#pg-profile').selectOption('demo')
   await expect(page.locator('.pg-game-stats > div > strong').last()).toHaveText('5/5')
-  await page.getByRole('button', { name: 'Research & authoring tools', exact: true }).click()
   await page.getByRole('tab', { name: /Study/ }).press('Enter')
   for (const format of ['JSON', 'CSV']) {
     const download = page.waitForEvent('download')

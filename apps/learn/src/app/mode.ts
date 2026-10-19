@@ -7,11 +7,8 @@
  * choices, two tools whose success criterion is a git commit — and a Study tab
  * whose export exists for the researcher, not for them.
  *
- * Entry is `?mode=author` (what a pilot facilitator bookmarks) or a quiet
- * footer link (what a demo uses). Deliberately not a long-press or a secret
- * gesture: those are invisible to keyboard and screen-reader users, and they
- * are exactly the sort of thing that cannot be found on a projector during a
- * viva.
+ * Entry is `?mode=author` (what a facilitator bookmarks). Learner headers
+ * and footers keep these research controls out of the learning flow.
  */
 export type AppMode = 'learner' | 'author'
 

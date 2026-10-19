@@ -1,0 +1,35 @@
+.learn-info { display: grid; place-items: center; }
+.learn-info-trigger, .learn-info-close {
+  display: inline-grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; color: var(--text-dim); cursor: pointer;
+}
+.learn-info-trigger:hover, .learn-info-close:hover { color: var(--text); background: var(--surface-2); }
+.learn-info-trigger:focus-visible, .learn-info-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+html:has(.learn-info-dialog[open]) { overflow: hidden; }
+.learn-info-dialog {
+  width: min(760px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 0;
+  overflow: auto; overscroll-behavior: contain; text-align: left;
+  color: var(--text); background: var(--surface); border: 1px solid var(--border-subtle);
+  border-radius: 28px; box-shadow: 0 24px 80px rgb(0 0 0 / .3);
+}
+.learn-info-dialog::backdrop { background: rgb(4 10 10 / .5); backdrop-filter: blur(10px); }
+.learn-info-heading {
+  position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 24px 28px 20px; border-bottom: 1px solid var(--border-subtle); background: var(--surface);
+}
+.learn-info-kicker { font: 600 .6875rem/1.5 ui-monospace, Consolas, monospace; letter-spacing: .16em; color: var(--text-dim); }
+.learn-info-heading h2 { margin: 6px 0 0; font-size: 1.75rem; line-height: 1.2; font-weight: 600; }
+.learn-info-close { flex-shrink: 0; }
+.learn-info-body { padding: 24px 28px 28px; }
+.learn-info-body .attribution { margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
+.learn-info-body .content-notice { padding: 16px; margin-bottom: 24px; border-radius: 16px; background: var(--glow-accent); }
+.learn-info-body .attribution ul { gap: 16px; margin-top: 16px; }
+.learn-info-body .attribution li { padding: 16px; border: 1px solid var(--border-subtle); border-radius: 16px; }
+.learn-info-privacy { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-size: .875rem; line-height: 1.6; }
+.learn-info-privacy h3 { margin: 0 0 6px; font-size: 1rem; }
+.learn-info-privacy p { margin: 0; color: var(--text-dim); }
+@media (max-width: 600px) {
+  .learn-info-heading { padding: 20px 18px 16px; gap: 8px; }
+  .learn-info-heading h2 { font-size: 1.4rem; }
+  .learn-info-body { padding: 20px 18px; }
+}

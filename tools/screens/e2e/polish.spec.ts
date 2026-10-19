@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import { mockHandDetectionScript } from './helpers/hands'
+import { selectPractice, startFirstLesson } from './helpers/navigation'
 import { CURRICULUM_UNITS } from '../../../apps/learn/src/data/curriculum'
 
 async function fits(page: Page, width: number) {
@@ -8,7 +9,7 @@ async function fits(page: Page, width: number) {
 async function enter(page: Page) {
   await page.addInitScript(() => localStorage.setItem('suvana.learn.onboarding-seen', '1'))
   await page.goto('./')
-  await page.getByRole('button', { name: 'Start practising', exact: true }).first().click()
+  await startFirstLesson(page)
   await expect(page.getByRole('button', { name: 'My turn', exact: true })).toBeEnabled()
 }
 async function tab(page: Page, name: string) {
@@ -21,7 +22,7 @@ for (const width of [360, 375, 390]) {
     const page = await context.newPage()
     await page.addInitScript(() => localStorage.setItem('suvana.learn.onboarding-seen', '1'))
     await page.goto('./'); await fits(page, width)
-    await page.getByRole('button', { name: 'Start practising', exact: true }).first().click()
+    await startFirstLesson(page)
     await expect(page.getByRole('button', { name: 'My turn', exact: true })).toBeEnabled()
     await fits(page, width)
     const reference = await page.locator('.aww-pane-left canvas').boundingBox()
@@ -51,6 +52,7 @@ for (const width of [360, 375, 390]) {
     await page.locator('button.aww-scenario-card').first().click(); await fits(page, width)
     await page.getByRole('button', { name: /Start Scenario|Start Preview/ }).click(); await fits(page, width)
     await page.goto('./?mode=author')
+    await selectPractice(page)
     await expect(page.locator('.aww-practice-env')).toBeVisible()
     await fits(page, width)
     await tab(page, 'Library'); await expect(page.locator('.rec-list')).toBeVisible(); await fits(page, width)
@@ -131,13 +133,13 @@ test('Recall, reveal and session complete fit every phone width', async ({ page 
   for (const width of [360, 375, 390]) {
     await page.setViewportSize({ width, height: 844 })
     await page.evaluate(() => sessionStorage.setItem('ssl-learn-session', JSON.stringify({ id: 'polish-recall', glosses: ['BAG EKA'], done: [], startMastery: {}, startedAt: new Date().toISOString() })))
-    await page.reload(); await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    await page.reload(); await selectPractice(page); await page.getByRole('button', { name: 'My turn', exact: true }).click()
     await page.getByRole('button', { name: '3. Recall', exact: true }).click()
     await expect(page.locator('.aww-pane-left canvas')).toHaveCount(0); await fits(page, width)
     await page.getByRole('button', { name: 'Reveal (costs the 3rd star)', exact: true }).click()
     await expect(page.locator('.aww-pane-left canvas')).toBeVisible(); await fits(page, width)
     await page.evaluate(signs => sessionStorage.setItem('ssl-learn-session', JSON.stringify({ id: 'polish-complete', glosses: signs, done: signs, startMastery: {}, startedAt: new Date().toISOString() })), CURRICULUM_UNITS[0].signs)
-    await page.reload(); await expect(page.getByRole('heading', { name: 'Nice work!', exact: true })).toBeFocused(); await fits(page, width)
+    await page.reload(); await selectPractice(page); await expect(page.getByRole('heading', { name: 'Nice work!', exact: true })).toBeFocused(); await fits(page, width)
   }
 })
 

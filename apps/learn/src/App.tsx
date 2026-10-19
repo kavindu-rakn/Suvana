@@ -2,8 +2,7 @@ import { Suspense, lazy, useEffect, useState } from 'react'
 import { PracticeView } from './components/PracticeView'
 import { Hero } from './components/Hero'
 
-// Only Hero and Practice are needed on first paint. Secondary views load when
-// selected; named exports retain their existing props and component identity.
+// Secondary views load when selected; named exports retain their props and identity.
 const ProgressView = lazy(() => import('./components/ProgressView').then((m) => ({ default: m.ProgressView })))
 const PathView = lazy(() => import('./components/PathView').then((m) => ({ default: m.PathView })))
 const ScenarioView = lazy(() => import('./components/ScenarioView').then((m) => ({ default: m.ScenarioView })))
@@ -11,8 +10,8 @@ const RecordView = lazy(() => import('./components/RecordView').then((m) => ({ d
 const LibraryView = lazy(() => import('./components/LibraryView').then((m) => ({ default: m.LibraryView })))
 const StudyView = lazy(() => import('./components/StudyView').then((m) => ({ default: m.StudyView })))
 import { AppNavBar } from './components/AppNavBar'
-import { Attribution, ContentNotice } from './components/Attribution'
-import { persistMode, readMode } from './app/mode'
+import { LearnInfo } from './components/LearnInfo'
+import { readMode } from './app/mode'
 import type { AppMode } from './app/mode'
 import { AUTHOR_TABS, LEARNER_TABS } from './app/tabs'
 import type { Tab } from './app/tabs'
@@ -47,16 +46,16 @@ function readEntered(): boolean {
 function App() {
   const [signSearch] = useState(() => window.location.search)
   const [resolvingSign, setResolvingSign] = useState(() => Boolean(new URLSearchParams(signSearch).get('sign')))
-  const [tab, setTab] = useState<Tab>('practice')
-  const [mode, setModeState] = useState<AppMode>(readMode)
+  const [tab, setTab] = useState<Tab>('path')
+  const [mode] = useState<AppMode>(readMode)
   const [entered, setEntered] = useState<boolean>(readEntered)
   // undefined while unknown, null when signed out — so the bar shows nothing
   // rather than flashing "Sign in" at someone who is already signed in.
   const [user, setUser] = useState<SuvanaUser | null | undefined>(undefined)
 
   // A gloss handed from Progress's "Practise" rows to the next mount of
-  // PracticeView. In-memory and one-shot: reloading just lands you in Practice,
-  // which is fine. PracticeView clears it once it has selected the sign.
+  // PracticeView. In-memory and one-shot: a normal reload returns to Path.
+  // PracticeView clears it once it has selected the sign.
   const [practiceIntent, setPracticeIntent] = useState<string | null>(null)
   const [practiceKey, setPracticeKey] = useState(0)
 
@@ -68,6 +67,7 @@ function App() {
       const gloss = matchSignDeepLink(signSearch, index)
       if (gloss) {
         setPracticeIntent(gloss)
+        setTab('practice')
         setEntered(true)
         try { sessionStorage.setItem(ENTERED_KEY, '1') } catch { /* Non-fatal. */ }
       }
@@ -88,15 +88,6 @@ function App() {
   }
 
   const tabs = mode === 'author' ? AUTHOR_TABS : LEARNER_TABS
-
-  function setMode(next: AppMode) {
-    setModeState(next)
-    persistMode(next)
-    // Leaving author mode while standing on an author-only tab would otherwise
-    // render nothing at all.
-    const allowed = next === 'author' ? AUTHOR_TABS : LEARNER_TABS
-    setTab((cur) => (allowed.includes(cur) ? cur : 'practice'))
-  }
 
   function enter(next: Tab) {
     setTab(next)
@@ -159,8 +150,6 @@ function App() {
         tab={tab}
         tabs={tabs}
         onSelectTab={setTab}
-        mode={mode}
-        onSetMode={setMode}
         onLeaveToHero={leaveToHero}
         // One Suvana account, surfaced here but never required: progress
         // lives in this browser, so gating practice would promise a
@@ -191,20 +180,7 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <ContentNotice />
-        <details>
-          <summary>Corpus credits and licences</summary>
-          <Attribution />
-        </details>
-        <p>
-          Hand tracking runs fully in your browser (MediaPipe HandLandmarker) — no video ever
-          leaves your device.
-        </p>
-        {mode === 'learner' && (
-          <button className="link-button" onClick={() => setMode('author')}>
-            Research &amp; authoring tools
-          </button>
-        )}
+        <LearnInfo />
       </footer>
     </div>
   )
