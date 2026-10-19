@@ -22,31 +22,29 @@ async function assertCardContents(page: Page) {
     for (const [index, node] of nodes.entries()) {
       const card = node.getBoundingClientRect(), slot = node.closest('.path-node')!.getBoundingClientRect()
       const title = node.querySelector('.path-card-copy > strong')!, titleBounds = title.getBoundingClientRect()
-      const cardCentre = centre(card), titleCentre = centre(titleBounds), slotCentre = centre(slot)
-      if (card.height !== 140 || Math.abs(slot.width - card.width - 24) > 1) failures.push(`${index}: dimensions`)
+      const cardCentre = centre(card), slotCentre = centre(slot)
+      if (card.height !== 124 || Math.abs(slot.width - card.width - 44) > 1) failures.push(`${index}: dimensions`)
       if (Math.abs(cardCentre.x - slotCentre.x) > .5 || Math.abs(cardCentre.y - slotCentre.y) > .5) failures.push(`${index}: slot centre`)
-      if (Math.abs(titleCentre.x - cardCentre.x) > .5 || Math.abs(titleCentre.y - cardCentre.y) > .5) failures.push(`${index}: title centre`)
-      if (getComputedStyle(title).textAlign !== 'center') failures.push(`${index}: title alignment`)
+      const heading = node.querySelector('.path-card-heading')!.getBoundingClientRect()
+      if (titleBounds.top < heading.bottom || titleBounds.left < card.left + 12) failures.push(`${index}: title overlaps header`)
       const range = document.createRange()
       range.selectNodeContents(title)
       for (const rect of range.getClientRects()) {
         if (rect.left < card.left + 5 || rect.right > card.right - 5 || rect.top < card.top || rect.bottom > card.bottom) failures.push(`${index}: title text clipped`)
       }
       const meta = node.querySelector('.path-card-meta')!, metaBounds = meta.getBoundingClientRect()
-      if (metaBounds.top < titleBounds.bottom + 3 || metaBounds.bottom > card.bottom - 1) failures.push(`${index}: metadata fit`)
-      if (getComputedStyle(meta).textAlign !== 'right') failures.push(`${index}: metadata alignment`)
+      if (metaBounds.top < titleBounds.bottom + 3 || metaBounds.bottom > card.bottom - 6) failures.push(`${index}: metadata fit`)
       const milestone = node.querySelector('.lesson-stars')
-      if (milestone && Math.abs(centre(milestone.getBoundingClientRect()).y - cardCentre.y) > .5) failures.push(`${index}: milestone vertical centre`)
+      if (milestone && Math.abs(centre(milestone.getBoundingClientRect()).y - centre(heading).y) > .5) failures.push(`${index}: milestone header alignment`)
       const count = node.querySelector('.path-star-count')
       if (count) {
-        const number = node.querySelector('.path-number')!.getBoundingClientRect(), countBounds = count.getBoundingClientRect()
-        if (Math.abs(centre(number).y - centre(countBounds).y) > .5) failures.push(`${index}: header alignment`)
+        const countBounds = count.getBoundingClientRect()
         if (Math.abs(countBounds.right - metaBounds.right) > .5) failures.push(`${index}: right alignment`)
         const star = count.querySelector('svg')!
         if (getComputedStyle(star).fill !== 'rgb(250, 204, 21)') failures.push(`${index}: yellow star`)
         if (/stars/i.test(count.textContent ?? '')) failures.push(`${index}: visible stars word`)
       }
-      if (card.height <= node.scrollHeight - 1) failures.push(`${index}: card overflow`)
+      if (node.scrollHeight > node.clientHeight + 1) failures.push(`${index}: card overflow`)
     }
     return failures
   })
