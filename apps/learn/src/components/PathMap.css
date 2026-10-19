@@ -6,17 +6,15 @@
 .path-route .path-route-halo { stroke-width: 10; opacity: .12; }
 .path-units { position: relative; list-style: none; margin: 0; padding: 0 40px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 48px; }
 .path-node { min-width: 0; }
-.path-node:not(.path-node-current) { display: none; }
-.path-pagination { display: flex; align-items: center; justify-content: center; gap: 32px; margin-top: 28px; }
-.path-pagination p { margin: 0; font-size: .9rem; font-variant-numeric: tabular-nums; }
-.path-pagination p span { color: var(--text-dim); }
-.path-page-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 112px; padding: 10px 16px; border: 1px solid var(--border-interactive); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; font-size: .9rem; cursor: pointer; }
-.path-page-button:not(:disabled):hover { border-color: var(--accent); background: var(--surface-2); }
+@media (min-width: 900px) {
+  /* Uniform row pitch gives a three-by-three viewport without page breaks. */
+  .path-units { row-gap: max(40px, calc((100dvh - var(--app-bar-h)) / 3 - 160px)); }
+}
 @media (max-width: 899px) {
   .path-units { display: flex; flex-direction: column; gap: 44px; padding: 0; }
-  .path-node, .path-node:not(.path-node-current) { display: block; width: 72%; max-width: 300px; align-self: flex-start; }
+  /* Keep card width while reserving an outside gutter for each curved turn. */
+  .path-node { width: 72%; max-width: 300px; margin-inline: 24px; align-self: flex-start; }
   .path-node:nth-child(even) { align-self: flex-end; }
-  .path-pagination { display: none; }
 }
 @media (forced-colors: active) {
   .path-route path { stroke: CanvasText; }

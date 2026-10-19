@@ -35,11 +35,20 @@ export function PathView({ onPractise, onSession }: {
   const [loading, setLoading] = useState(true)
   const [storageOk, setStorageOk] = useState(true)
   const [detail, setDetail] = useState<string | null>(null)
-  const [pathPage, setPathPage] = useState(0)
   const [preview, setPreview] = useState<SignRecording | null>(null)
   const [notice, setNotice] = useState('')
   const previewRequest = useRef(0)
   const previewTitle = useRef<HTMLHeadingElement>(null)
+  const returnToLesson = useRef<string | null>(null)
+  useEffect(() => {
+    if (detail !== null || returnToLesson.current === null) return
+    const button = document.getElementById(`path-unit-${returnToLesson.current}`)
+    if (button) {
+      button.scrollIntoView({ block: 'center' })
+      button.focus({ preventScroll: true })
+      returnToLesson.current = null
+    }
+  }, [detail])
   useEffect(() => { if (preview) previewTitle.current?.focus() }, [preview])
   useEffect(() => () => { previewRequest.current++ }, [])
   useEffect(() => {
@@ -103,18 +112,18 @@ export function PathView({ onPractise, onSession }: {
       {preview && <section className="path-preview" aria-label={`Watch ${glossLabel(preview.gloss)}`}>
         <h3 ref={previewTitle} tabIndex={-1}>{glossLabel(preview.gloss)}</h3><SkeletonPlayer frames={preview.frames} videoWidth={preview.videoWidth} videoHeight={preview.videoHeight} />
       </section>}
-    </div> : <PathMap page={pathPage} onPage={setPathPage}>{[...CURRICULUM_UNITS.map((item, index) => {
+    </div> : <PathMap>{[...CURRICULUM_UNITS.map((item, index) => {
       const state = pathUnitState(item, CURRICULUM_UNITS, attempts, contentIndex)
       const coverage = contentCoverage(item.signs, contentIndex)
       const signStars = item.signs.map(gloss => starsFor(gloss, attempts))
       const stars = signStars.reduce<number>((sum, count) => sum + count, 0)
-      return <button key={item.id} className="path-card" data-state={state} onClick={() => { setDetail(item.id); setPreview(null); setNotice('') }}>
+      return <button key={item.id} id={`path-unit-${item.id}`} className="path-card" data-state={state} onClick={() => { returnToLesson.current = item.id; setDetail(item.id); setPreview(null); setNotice('') }}>
         <span className="path-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
         <span className="path-card-copy"><strong>{item.title}</strong><span>{item.signs.length} signs · {stars}/{item.signs.length * 3} stars</span>{coverage.preview && <span>Preview: {coverage.covered} of {coverage.total} signs available</span>}</span>
         {state !== 'locked' && <span className="sr-only">{state === 'preview' ? 'Preview' : 'Available'}</span>}
         <LessonStars stars={signStars} locked={state === 'locked'} />
       </button>
-    }), <button key="sentence-challenge" className="path-card sentence-entry" data-state={sentencesUnlocked ? 'open' : 'locked'} disabled={!sentencesUnlocked} onClick={() => setDetail('sentence-challenge')}>
+    }), <button key="sentence-challenge" id="path-unit-sentence-challenge" className="path-card sentence-entry" data-state={sentencesUnlocked ? 'open' : 'locked'} disabled={!sentencesUnlocked} onClick={() => { returnToLesson.current = 'sentence-challenge'; setDetail('sentence-challenge') }}>
       <span className="path-number" aria-hidden="true">{String(CURRICULUM_UNITS.length + 1).padStart(2, '0')}</span>
       <span className="path-card-copy"><strong>Sentence challenge</strong><span>{SENTENCE_EXPERIMENTAL_LABEL}</span><span className="sr-only">{sentencesUnlocked ? 'Watch, try, then practise from the dataset label.' : `Pass ${lastUnit?.title ?? 'the earlier units'} to open this challenge.`}</span></span>
       <LessonStars stars={[]} locked={!sentencesUnlocked} />
