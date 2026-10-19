@@ -118,7 +118,7 @@
 /* A compact recognition symbol, at the same scale as the other module art. */
 .recognize-hand {
   width: 112px;
-  height: 112px;
+  height: 140px;
   overflow: visible;
 }
 .recognize-outline {

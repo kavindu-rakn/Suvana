@@ -1217,3 +1217,8 @@ Rules:
 - Validation: 157 Shell tests, typecheck/build, 255 sync guards and diff check passed. Desktop/phone, light/dark and reduced-motion browser checks passed; existing chunk warning and phone page overflow flag remain.
 - Rendered review: .agent-local/screens/recognize-card-refinement/index.html; handoff docs/plan/handoffs/recognize-card-refinement.md. Needs kvn's visual adoption and manual merge/push/deploy.
 - Gate caveat: repeat npm ci hit a Windows locked Rollup binary. Restored exact native dependency without manifest/lockfile changes, then tests/typecheck/build passed again; the clean-install repeat remains limited by that lock.
+
+### 2026-10-19 | Codex | Recognize hand proportions
+- User-approved hand concept refined with longer fingers and palm: 112px wide, 140px high. Updated thumb point alignment; existing animation and themes retained.
+- Gates: 157 Shell tests, typecheck/build, 255 sync guards, diff check passed. Clean-install repeat skipped for previously established live-preview native-binary lock; existing bundle warning remains.
+- Desktop/phone light/dark and reduced-motion evidence: .agent-local/screens/recognize-hand-proportions/index.html. Handoff: docs/plan/handoffs/recognize-hand-proportions.md. Same task branch; no SSL content or figures changed. Needs kvn visual adoption and manual merge/push/deploy.
