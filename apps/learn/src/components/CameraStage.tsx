@@ -5,6 +5,7 @@ import type { TrackingStatus } from '../vision/useHandTracking'
 import { useHandTrackerPreparation } from '../vision/useHandTrackerPreparation'
 import { CameraDebugPanel } from './CameraDebugPanel'
 import { CameraPreparationNotice } from './CameraPreparationNotice'
+import { LoadingSequence } from './LoadingSequence'
 
 interface CameraStageProps {
   videoRef: RefObject<HTMLVideoElement | null>
@@ -147,15 +148,20 @@ export function CameraStage({
               <p className="camera-hint" role="status">Camera paused. Please wait…</p>
               {onStop && <button className="btn" onClick={onStop}>Turn off camera</button>}
             </>
+          ) : status === 'starting' ? (
+            <>
+              <LoadingSequence />
+              {onStop && <button className="btn ghost" onClick={onStop}>Cancel camera startup</button>}
+            </>
           ) : (
             <>
               {preparing && showPreparationNotice && <CameraPreparationNotice />}
-              {status !== 'starting' && intro ? intro : (
+              {intro ? intro : (
                 <>
-                  {!preparing && <p className="camera-hint">{status === 'starting' ? 'Getting the camera ready…' : idleHint}</p>}
-                  <button className="btn" onClick={onStart} disabled={status === 'starting'}>
+                  {!preparing && <p className="camera-hint">{idleHint}</p>}
+                  <button className="btn" onClick={onStart}>
                     <Video size={16} style={{ marginRight: '6px' }} />
-                    {status === 'starting' ? 'Starting…' : 'Start camera'}
+                    Start camera
                   </button>
                 </>
               )}

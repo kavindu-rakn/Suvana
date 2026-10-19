@@ -32,10 +32,13 @@
     <link rel="stylesheet" href="/src/styles/main.css" />
   </head>
   <body>
-    <!-- Preloader -->
-    <div id="preloader">
-      <div class="preloader-content">
-        <span id="loader-count">0</span>
+    <!-- Hidden on arrival/reload; shown only while sign-up navigation waits. -->
+    <div id="navigation-loader" class="navigation-loader" hidden role="dialog" aria-modal="true" aria-labelledby="navigation-loading-title">
+      <div class="load-sequence-content">
+        <span class="load-sequence-brand">SUVANA</span>
+        <span class="load-sequence-count" data-load-count aria-hidden="true">0</span>
+        <p id="navigation-loading-title" role="status">Opening sign up…</p>
+        <button type="button" data-load-cancel>Cancel</button>
       </div>
     </div>
 
@@ -532,6 +535,7 @@
       </div>
     </footer>
 
+    <script type="module" src="/src/navigationLoading.ts"></script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
