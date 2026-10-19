@@ -144,10 +144,7 @@
   color: var(--sh-gold-ink);
 }
 
-/* On a phone the bar is brand + toggle + the account link, and at
-   375px that does not fit: the wordmark ran into the toggle and the account
-   links wrapped to two lines each. Drop to the mark alone and let the links
-   stay on one line — the wordmark is the part the logo already says. */
+/* Compact the full brand on phones while keeping room for the controls. */
 @media (max-width: 560px) {
   #header .nav {
     padding: 10px 16px;
@@ -158,7 +155,8 @@
     flex-shrink: 0;
   }
   #header .nav .wordmark {
-    display: none;
+    font-size: clamp(14px, 4.4vw, 18px);
+    letter-spacing: 1.5px;
   }
   #header .nav-right {
     gap: 10px;
@@ -182,6 +180,11 @@
     font-size: 13px;
     white-space: nowrap;
   }
+}
+
+@media (max-width: 360px) {
+  #header .nav .mark { height: 28px; }
+  #header .nav .auth-slot a.auth-cta { padding-inline: 14px; }
 }
 
 #header :is(a, button):focus-visible {

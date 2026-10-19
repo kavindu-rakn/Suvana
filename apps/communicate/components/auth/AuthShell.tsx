@@ -36,8 +36,7 @@ export function AuthShell({ initialMode, loginForm, registerForm }: {
       <div className="account-topline" aria-hidden="true" />
       <div className="account-layout">
         <section className="account-story" aria-labelledby="account-welcome">
-          {/* eslint-disable-next-line @next/next/no-img-element -- Use the actual Shell brand asset. */}
-          <img className="account-mark" src="/branding/suvana-mark.png" alt="" />
+          <span className="account-mark" aria-hidden="true" />
           <h1 id="account-welcome" aria-label={accountCopy.heading}>Welcome<br /> to <span>Suvana.</span></h1>
           <p className="account-description">{accountCopy.description}</p>
         </section>
@@ -76,7 +75,6 @@ export function AuthShell({ initialMode, loginForm, registerForm }: {
       <footer className="account-footer">
         <div className="footer-bottom">
           <div className="fb-left">
-            <span className="fb-logo">SUVANA</span>
             <span className="copyright">© {new Date().getFullYear()} Suvana. All rights reserved.</span>
           </div>
           <nav className="fb-right" aria-label="Footer">
