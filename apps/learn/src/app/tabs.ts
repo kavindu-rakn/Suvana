@@ -16,7 +16,7 @@ export const ALL_TABS: Record<Tab, string> = {
 
 /** What a learner sees. Record and Library author reference data; Study is the
  *  researcher's pilot tooling. None of the three is the learner's job. */
-export const LEARNER_TABS: Tab[] = ['path', 'practice', 'scenario', 'progress']
+export const LEARNER_TABS: Tab[] = ['path', 'practice', 'progress']
 export const AUTHOR_TABS: Tab[] = [...LEARNER_TABS, 'record', 'library', 'study']
 
 /**

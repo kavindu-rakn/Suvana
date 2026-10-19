@@ -1374,3 +1374,9 @@ Rules:
 - Gates: Learn clean install/lint, 375 passed / 13 skipped, build 153.09 kB main JS gzip; 35 distinct browser cases and standalone / desktop/phone playback passed. Shell 157 tests/typecheck/build; Recognize 42 tests; metadata freshness, 266 sync guards and diff check passed. Generated JSON changes are source hashes only. Existing npm/Shell advisories and the pinned media-bridge upgrade boundary are documented.
 - Review: .agent-local/screens/learn-videojs/index.html with desktop 1280x800 / phone 390x844 lesson/Watch before-after in both themes, additional Practice/browser and standalone renders; missing phone browser before captures are explicitly labeled. Handoff: docs/plan/handoffs/learn-videojs.md. UI fixtures are not learner/accuracy evidence. Preview restored at 5174; r26_port: yes.
 - Plan correction: direct request on revamp/learn-path/main worktree overrides board/lane/hot-file selection for this scoped player/package change. Screenshot adoption, mirror, merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Hide Scenario navigation
+- Removed Scenario from the shared visible Learn tabs. Desktop/mobile now show Path, Practice, Progress; shortcut 3 opens Progress. Author navigation inherits the same first three tabs; Scenario code remains available for later restoration.
+- Gates: clean install/lint, 375 tests passed / 13 skipped, TypeScript/build passed (153.09 kB main JS gzip); metadata freshness, 267 sync guards and diff check passed. Desktop 1280x800 / phone 390x844 in both themes verified tab order, click and numeric shortcut before/after clean install.
+- Review: .agent-local/screens/learn-hide-scenario/index.html. Handoff: docs/plan/handoffs/learn-hide-scenario.md. Preview restored and rendered at 5174; r26_port: yes. No push/merge/deploy performed.
+- Plan correction: direct session request on revamp/learn-path/main worktree overrides board/lane selection for this scoped navigation change.
