@@ -1405,3 +1405,8 @@ Rules:
 - Gates: Shell 161 tests/typecheck/build (180.94 kB main JS gzip; existing chunk warning), 15 browser checks across 1280/1024/768/390/360 light/dark and navigation fixtures, knowledge freshness, 268 sync guards and diff check passed.
 - Review: .agent-local/screens/shell-header-links/index.html, before/after desktop 1280x800 and phone 390x844/360x844 in both themes. Handoff: docs/plan/handoffs/shell-header-links.md. Shell only; r26_port: no. No push/merge/deploy.
 - Plan correction: direct request authorizes the scoped Shell increment on redesign/load-sequence in the main worktree, overriding board/lane selection.
+
+### 2026-10-20 | Codex | Alerts header cleanup
+- Removed Modules and Install section links from the Alerts header. Brand, theme toggle, Back to Home and install content remain.
+- Gates: Shell TypeScript/build, four desktop/phone light/dark browser checks, 268 sync guards and diff check passed. Existing large-chunk warning remains. Before/after renders at .agent-local/screens/alerts-header-cleanup (1280x800, 390x844); handoff docs/plan/handoffs/alerts-header-cleanup.md.
+- Plan correction: direct request authorizes this scoped Shell HTML increment on redesign/load-sequence in the main worktree. r26_port: no. Existing user-run servers retained; no push/merge/deploy.
