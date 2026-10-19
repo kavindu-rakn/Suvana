@@ -2,61 +2,6 @@
    editorial feature list. These are the structures ported from the recognition
    module's own landing page, rebuilt on Suvana's tokens. ---- */
 
-/* ---- header section nav ---- */
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-
-.nav-links a {
-  position: relative;
-  padding: 4px 0;
-  color: var(--slate);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  opacity: 0.75;
-  transition: opacity 0.2s, color 0.2s;
-}
-
-.nav-links a:hover {
-  opacity: 1;
-  color: var(--gold-ink);
-}
-
-/* The underline marks the section currently in view. Drawn with a
-   transform-scaled pseudo-element so it animates without reflowing the bar. */
-.nav-links a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(100deg, var(--teal), var(--gold));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.28s ease;
-}
-
-.nav-links a.is-current {
-  opacity: 1;
-  color: var(--gold-ink);
-}
-
-.nav-links a.is-current::after {
-  transform: scaleX(1);
-}
-
-/* Below the wide breakpoint the brand and the controls need the whole bar. */
-@media (max-width: 900px) {
-  .nav-links {
-    display: none;
-  }
-}
-
 /* On a phone the bar is brand + toggle + one or two account links, and at
    375px that does not fit: the wordmark ran into the toggle and the account
    links wrapped to two lines each. Drop to the mark alone and let the links
@@ -162,7 +107,7 @@
 /* ---- step cards ---- */
 .steps-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 28px;
 }
 
@@ -296,6 +241,11 @@
   .stats-band .stat-tile:nth-child(odd) {
     border-left: none;
   }
+
+  .stats-band .stat-tile + .stat-tile {
+    border-left: none;
+    border-top: 1px solid var(--line);
+  }
 }
 
 /* ---- editorial feature list ---- */
@@ -385,5 +335,60 @@
   }
   .feature-item-title h3 {
     white-space: normal;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .overview-wrapper,
+  .features-wrapper {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .overview-wrapper {
+    padding-top: 56px;
+  }
+
+  .overview-container {
+    gap: 48px;
+  }
+
+  .overview-content h2,
+  .features-heading h2 {
+    font-size: clamp(2rem, 8vw, 2.75rem);
+  }
+
+  .steps-row {
+    gap: 16px;
+  }
+
+  .step-card {
+    padding: 26px 22px;
+  }
+
+  .stats-band {
+    padding: 24px 16px;
+  }
+
+  .stats-band .stat-tile {
+    padding: 18px 12px;
+  }
+
+  .features-wrapper {
+    padding-top: 32px;
+    padding-bottom: 72px;
+  }
+
+  .features-container {
+    gap: 24px;
+  }
+
+  .feature-item-title {
+    gap: 12px;
+  }
+
+  .feature-rule {
+    display: none;
   }
 }

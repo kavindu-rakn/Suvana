@@ -49,15 +49,6 @@
           <img class="mark" src="/branding/suvana-mark.png" alt="" />
           <span class="wordmark">Suvana</span>
         </a>
-        <!-- Section navigation. The landing is a long single page, so without
-             these the only way back to the module list is to scroll. An
-             IntersectionObserver in main.ts marks the section in view. -->
-        <nav class="nav-links" aria-label="Page sections">
-          <a href="#overview">Overview</a>
-          <a href="#modules-wrapper">Modules</a>
-          <a href="#pipeline">Pipeline</a>
-          <a href="#community">Community</a>
-        </nav>
         <div class="nav-right">
           <button id="theme-toggle" class="theme-toggle" type="button"></button>
           <div id="auth-slot" class="auth-slot"></div>
@@ -219,8 +210,23 @@
               </div>
             </div>
             <div class="mr-visual">
-              <div class="css-art art-recognize">
-                <div class="art-glass">SIGN &rarr; SPEECH</div>
+              <div class="css-art art-recognize" aria-hidden="true">
+                <svg class="recognize-hand" viewBox="0 0 24 30" fill="none" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                  <!-- Generic hand icon, not a demonstration of an SSL sign. -->
+                  <g class="recognize-outline">
+                    <path d="M18 15V7a2 2 0 0 0-4 0" />
+                    <path d="M14 14V5a2 2 0 0 0-4 0v10" />
+                    <path d="M10 14.5V7a2 2 0 0 0-4 0v12" />
+                    <path d="M18 8a2 2 0 1 1 4 0v11a8 8 0 0 1-8 8h-2c-2.8 0-4.5-2-6-4.5l-3.6-3.6a2 2 0 0 1 2.8-2.8L6 19" />
+                  </g>
+                  <g class="recognize-landmarks">
+                    <circle cx="4" cy="17.5" r="0.65" />
+                    <circle cx="8" cy="7" r="0.65" />
+                    <circle cx="12" cy="5" r="0.65" />
+                    <circle cx="16" cy="7" r="0.65" />
+                    <circle cx="20" cy="8" r="0.65" />
+                  </g>
+                </svg>
               </div>
             </div>
           </article>

@@ -1203,3 +1203,52 @@ Rules:
 - Thesis paused until after the viva (kvn): final thesis due Wed 28 Oct; the thesis lane resumes only when kvn says so.
 - Lahiru has not yet sent his demo sign list (DEMO.md TODO(Lahiru)).
 - Board: K-13 done (clips recorded and converted); Q-09 in-progress (blocked on the clip).
+
+### 2026-10-19 | Codex | Recognize card animation
+- Direct user request: added abstract CSS camera scan and pulsing tracking points to the Shell Recognize card, with dark-theme contrast and a reduced-motion still state.
+- Branch codex/recognize-card-animation, based on supplied uifixes/suvana.help @ 77811bd. Plan correction: user-assigned Shell follow-up uses current UI-fix baseline instead of older origin/main; no planner-owned files edited.
+- Gates: clean install, 157 Shell tests, typecheck/build, 255 sync guards, diff check passed. Existing build chunk advisory remains. Before/after phone captures both flag pre-existing page-wide overflow; Recognize art and controls fit.
+- Review: .agent-local/screens/recognize-card-animation/index.html; desktop 1280x800 and phone 390x844 in both themes, motion/reduced-motion browser checks. Handoff: docs/plan/handoffs/recognize-card-animation.md.
+- Needs kvn: visual adoption and any merge/push/deploy. No SSL content or figures changed; no R26 port.
+
+### 2026-10-19 | Codex | Recognize artwork refinement
+- User rejected the oversized scan panel; replaced it and its text with a small hand outline and sequentially pulsing fingertip points. Retained theme contrast and reduced-motion support.
+- Follow-up on codex/recognize-card-animation after dbba5ee; direct user-assigned Shell scope. No invented SSL content or figures.
+- Validation: 157 Shell tests, typecheck/build, 255 sync guards and diff check passed. Desktop/phone, light/dark and reduced-motion browser checks passed; existing chunk warning and phone page overflow flag remain.
+- Rendered review: .agent-local/screens/recognize-card-refinement/index.html; handoff docs/plan/handoffs/recognize-card-refinement.md. Needs kvn's visual adoption and manual merge/push/deploy.
+- Gate caveat: repeat npm ci hit a Windows locked Rollup binary. Restored exact native dependency without manifest/lockfile changes, then tests/typecheck/build passed again; the clean-install repeat remains limited by that lock.
+
+### 2026-10-19 | Codex | Recognize hand proportions
+- User-approved hand concept refined with longer fingers and palm: 112px wide, 140px high. Updated thumb point alignment; existing animation and themes retained.
+- Gates: 157 Shell tests, typecheck/build, 255 sync guards, diff check passed. Clean-install repeat skipped for previously established live-preview native-binary lock; existing bundle warning remains.
+- Desktop/phone light/dark and reduced-motion evidence: .agent-local/screens/recognize-hand-proportions/index.html. Handoff: docs/plan/handoffs/recognize-hand-proportions.md. Same task branch; no SSL content or figures changed. Needs kvn visual adoption and manual merge/push/deploy.
+
+### 2026-10-19 | Codex | Shell landing navigation
+- Reworked section navigation labels to About, What you can do, How it works, Feedback; improved current/focus states, mobile visibility, 44px tap targets, `aria-current`, and responsive smooth-scroll offset.
+- Browser captures/checks: desktop, 390px phone, 360px phone; light/dark; section jump/active state. Existing unrelated phone full-page overflow flag persists. `git diff --check` passed; tests/build not run this turn.
+- Review screenshots: .agent-local/screens/shell-nav/index.html. Handoff: docs/plan/handoffs/shell-nav.md.
+- Review finding outside scope: named testimonials and “Tested by…” copy conflicts with project plan stating no study participants. Verify source or owner review before public use. No SSL content or figures edited.
+
+### 2026-10-19 | Codex | Restore landing nav styling
+- Restored the landing nav's serif editorial look with animated teal-to-gold underline and hover lift; removed the rounded pills while retaining clearer section names and the mobile second row.
+- Added reduced-motion support. Browser checks covered desktop/390/360, light/dark, 44px targets, section jump/current state, hover animation, and reduced motion. Contact sheet refreshed at .agent-local/screens/shell-nav/index.html. `git diff --check` passed; tests/build not run.
+- Handoff addendum: docs/plan/handoffs/shell-nav.md. Needs kvn visual review and manual merge.
+
+### 2026-10-19 | Codex | Remove landing page section links
+- At user request removed section links, their responsive styling, and JS section scroll/current tracking. Logo, theme and account controls remain in the header.
+- Browser check: desktop/390/360 and light/dark; section links absent, remaining controls rendered. Existing page-wide phone overflow flag persists. `git diff --check` passed; tests/build not run.
+- Review screenshots: .agent-local/screens/shell-nav-removed/index.html. Handoff: docs/plan/handoffs/shell-nav-removed.md. No SSL content or figures touched; merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Shell landing responsiveness
+- Made the landing hero, module cards, grids, pipeline, testimonials and assistant panel fit phone, tablet, desktop, wide and landscape viewports; retained light/dark styling and the card fade while removing mobile copy drift.
+- Plan correction: kvn directly assigned this new Shell task in chat; no matching BOARD/tasks.json row exists. Planner-owned files left unchanged.
+- Gates: Shell `npm run build` passed (typecheck + production build); 255 sync guards passed. Browser geometry after module animation settled covered widths 280–2560 plus 480x320 and 844x390; page and module overflow cleared. No test suite run.
+- Before/after renders: .agent-local/screens/shell-responsive/index.html (light/dark, phone/tablet/desktop/wide; focused Recognize card captures). Handoff: docs/plan/handoffs/shell-responsive.md.
+- Needs kvn's screenshot review and manual merge/push/deploy if accepted; no SSL content or figures changed.
+
+### 2026-10-19 | Codex | Pipeline card staircase
+- Equalized all four Pipeline cards across wrapped grid rows. At 1172px and wider, kept them in four equal columns and added a deliberate 28px descending step between cards; phone and tablet retain an even stacked or wrapped grid.
+- Browser checks in light and dark themes: at 1280px each card measures 279x464px; all four dimensions match at 390, 768, 1280, and 1600px. Width checks from 320 to 1920px, including the 1171/1172px layout boundary, found no document overflow.
+- Shell build/typecheck passed; 255 sync guards and diff check passed. Existing Vite bundle advisory remains (644.91 kB main chunk). Test suite not run.
+- Before/after renders and contact sheet: .agent-local/screens/pipeline-card-stairs/index.html. Handoff: docs/plan/handoffs/pipeline-card-stairs.md.
+- Plan correction: kvn directly assigned this follow-up in chat; no matching BOARD.md/tasks.json row exists. Planner-owned files left unchanged. Needs kvn screenshot review and manual merge/push/deploy if accepted.

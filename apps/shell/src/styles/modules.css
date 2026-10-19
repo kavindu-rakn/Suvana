@@ -22,7 +22,7 @@
   margin-bottom: -60px;
 }
 .module-intro h2 {
-  font-size: clamp(3rem, 6vw, 5rem);
+  font-size: clamp(2.25rem, 6vw, 5rem);
   line-height: 1.1;
   color: var(--slate);
   margin: 10px 0 40px;
@@ -108,20 +108,42 @@
 
 /* 1. Recognize Art */
 .art-recognize {
+  --recognize-accent: #f4d77c;
   background: linear-gradient(135deg, var(--teal) 0%, var(--slate) 100%);
 }
-.art-glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  padding: 20px 40px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  font-family: var(--mono);
-  font-size: 1.2rem;
-  letter-spacing: 4px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+:root[data-theme='dark'] .art-recognize {
+  --recognize-accent: #ffe39a;
+  background: linear-gradient(135deg, #087f73 0%, #142e30 100%);
+}
+/* A compact recognition symbol, at the same scale as the other module art. */
+.recognize-hand {
+  width: 112px;
+  height: 140px;
+  overflow: visible;
+}
+.recognize-outline {
+  stroke: #fff;
+  stroke-width: 0.55;
+  opacity: 0.75;
+}
+.recognize-landmarks {
+  fill: var(--recognize-accent);
+}
+.recognize-landmarks circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: recognizeLandmark 2.8s ease-in-out infinite;
+}
+.recognize-landmarks circle:nth-child(2) { animation-delay: 0.16s; }
+.recognize-landmarks circle:nth-child(3) { animation-delay: 0.32s; }
+.recognize-landmarks circle:nth-child(4) { animation-delay: 0.48s; }
+.recognize-landmarks circle:nth-child(5) { animation-delay: 0.64s; }
+@keyframes recognizeLandmark {
+  0%, 65%, 100% { transform: scale(1); opacity: 0.4; }
+  30% { transform: scale(1.65); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .recognize-landmarks circle { animation: none; }
 }
 
 /* 2. Communicate Art */
@@ -203,22 +225,69 @@
 }
 
 @media (max-width: 900px) {
+  .modules-vertical-wrapper {
+    padding: 64px 24px 88px;
+  }
+
+  .modules-vertical-container {
+    gap: clamp(64px, 10vw, 112px);
+  }
+
+  .module-intro {
+    margin-bottom: -24px;
+  }
+
   .module-row, .module-row.reverse {
     flex-direction: column;
     text-align: center;
-    gap: 40px;
+    align-items: stretch;
+    gap: clamp(24px, 5vw, 40px);
   }
   .mr-content {
     order: 2;
+    flex: 0 1 auto;
+    width: 100%;
+    min-width: 0;
+    margin: 0 auto;
+    /* The desktop entrance slide can push half a card outside a phone before
+       its scroll trigger settles. Keep the fade while removing that drift. */
+    transform: none !important;
   }
   .mr-visual {
     order: 1;
+    flex: 0 1 auto;
     width: 100%;
+    min-width: 0;
   }
   .module-foot {
     justify-content: center;
   }
   .css-art {
     aspect-ratio: 16/9;
+  }
+
+  .mr-content h3 {
+    font-size: clamp(2rem, 7vw, 3rem);
+    margin-bottom: 14px;
+  }
+
+  .mr-content .desc {
+    font-size: clamp(1rem, 3.8vw, 1.15rem);
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .modules-vertical-wrapper {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .module-intro h2 {
+    margin-bottom: 24px;
+  }
+
+  .css-art {
+    border-radius: 24px;
   }
 }
