@@ -125,17 +125,6 @@ a:focus-visible,
 .nav .mark {
   height: 34px;
 }
-.nav .mark, .hero-mark {
-  mix-blend-mode: multiply;
-  /* Push any off-white to pure white so multiply makes it 100% transparent */
-  filter: contrast(1.2);
-}
-:root[data-theme='dark'] .nav .mark,
-:root[data-theme='dark'] .hero-mark {
-  /* Invert white to black, hue rotate for colors, and use contrast to force the background to pure black so screen makes it 100% transparent */
-  filter: invert(1) hue-rotate(180deg) contrast(1.5); 
-  mix-blend-mode: screen;
-}
 
 /* Wordmark Gradient */
 .nav .wordmark {
@@ -202,6 +191,19 @@ a:focus-visible,
 .auth-slot .auth-cta:hover {
   background: var(--gold-ink);
   color: var(--paper);
+}
+/* Sign out is a button (it posts), so it needs the link look spelled out. */
+.auth-slot button.auth-cta {
+  border: 0;
+  font: inherit;
+  font-weight: 600;
+  line-height: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.auth-slot button.auth-cta:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 .auth-who strong {
   color: var(--gold-ink);

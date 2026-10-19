@@ -110,6 +110,21 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       strictPort: true,
       proxy: {
+        // Production serves /login and /register from api/login.ts and
+        // api/register.ts, which fetch Communicate's page and add the routing
+        // marker it checks (lib/accountPage.ts). Vite has no api/ routes, so
+        // without this the buttons fall through to index.html and just reload.
+        // Communicate needs SUVANA_ORIGIN=http://localhost:5173 in its
+        // .env.local for the marker to match (see .env.local.example).
+        "^/(login|register)/?(\\?.*)?$": {
+          target: "http://localhost:3000",
+          changeOrigin: false,
+          rewrite: (path) => `/communicate${path}`,
+          headers: {
+            "x-suvana-account-origin": "http://localhost:5173",
+            "accept-encoding": "identity",
+          },
+        },
         // Each module is its own deployable; in production these are the
         // rewrites in vercel.json. Learn runs with base '/learn/' and
         // Communicate with basePath '/communicate', so paths line up and
