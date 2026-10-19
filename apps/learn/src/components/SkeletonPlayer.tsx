@@ -6,7 +6,6 @@ export interface SkeletonPlayerProps {
   videoWidth: number
   videoHeight: number
   mirrored?: boolean
-  fitToFrame?: boolean
   colorOverride?: string
 }
 

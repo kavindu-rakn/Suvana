@@ -20,11 +20,10 @@ referenceFeatures[1] = {
 }
 const { Player: VideoPlayer, usePlayer } = createPlayer({ features: referenceFeatures })
 
-function LandmarkSurface({ frames, videoWidth, videoHeight, mirrored = true, fitToFrame = false, colorOverride }: SkeletonPlayerProps) {
+function LandmarkSurface({ frames, videoWidth, videoHeight, mirrored = true, colorOverride }: SkeletonPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [media] = useState(() => new LandmarkMedia())
-  const [zoomed, setZoomed] = useState(fitToFrame)
-  const fit = useMemo(() => zoomed ? fitFor(frames, 0.85) : undefined, [frames, zoomed])
+  const fit = useMemo(() => fitFor(frames, 0.85), [frames])
   // The same attachment hook used by Video.js's own media adapters. Isolated
   // here because this hook is internal; @videojs/react is pinned to 10.1.0.
   const attach = useMediaAttach()
@@ -69,12 +68,7 @@ function LandmarkSurface({ frames, videoWidth, videoHeight, mirrored = true, fit
     <div className="reference-stage">
       <canvas ref={canvasRef} width={videoWidth} height={videoHeight}
         role="img" aria-label="Recorded hand landmarks"
-        className={`reference-canvas${mirrored ? ' mirrored' : ''}${zoomed ? '' : ' is-raw'}`} />
-    </div>
-    <div className="reference-framing">
-      <div><span>{zoomed ? 'Zoomed to the hands' : 'Position in the original video frame'}</span>
-        {mirrored && <span>Mirrored: copy it like a mirror</span>}</div>
-      <button type="button" aria-pressed={zoomed} onClick={() => setZoomed(value => !value)}>Zoom to hands</button>
+        className={`reference-canvas${mirrored ? ' mirrored' : ''}`} />
     </div>
   </div>
 }

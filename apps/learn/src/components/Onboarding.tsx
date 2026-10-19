@@ -37,8 +37,7 @@ const STEPS: { title: string; body: ReactNode }[] = [
           Choose <strong>My turn</strong> when you are ready, then turn on your camera.
         </p>
         <p>
-          The rectangle is the original video frame, so you see where the hands were and how far
-          they moved. <strong>Zoom to hands</strong> enlarges them.
+          References are enlarged and centred on the hands.
         </p>
         <p>
           Press <strong>Record</strong> (or Space). After a 3-second countdown, sign; press Space
