@@ -217,18 +217,18 @@ if (marqueeContent) {
   requestAnimationFrame(animateMarquee);
 }
 
-// 9. Recognize card: HTTP stays on Suvana; the page opens its socket directly.
+// 9. Recognize card and header share the same resolved destination.
 const recognizeFoot = document.querySelector<HTMLElement>('[data-recognize-foot]');
 if (recognizeFoot) {
   const configured = recognizeFoot.dataset.serviceUrl?.trim() || (import.meta.env.VITE_RECOGNIZE_URL as string | undefined)?.trim() || '';
   const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-  const link = recognizeFoot.querySelector('a');
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-module-recognize], [data-recognize-foot] a');
   const badge = recognizeFoot.querySelector<HTMLElement>('[data-recognize-badge]');
-  if (link) { link.href = '/recognize/'; link.hidden = false; }
+  links.forEach(link => { link.href = '/recognize/'; link.hidden = false; });
   if (badge) { badge.textContent = 'On Suvana'; badge.hidden = false; }
   recognizeFoot.querySelector('[data-recognize-placeholder]')?.remove();
   void recognizeTarget(configured, isLocal).then(target => {
-    if (link) link.href = target;
+    links.forEach(link => { link.href = target; });
     if (badge && target !== '/recognize/') badge.textContent = isLocal && !configured ? 'Local service' : 'Direct service';
   });
 }

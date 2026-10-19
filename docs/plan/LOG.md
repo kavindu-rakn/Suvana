@@ -1399,3 +1399,9 @@ Rules:
 - Gates: Shell 161 tests/typecheck/build; Learn clean install/lint, 377 passed / 13 skipped, build 153.20 kB main JS gzip; 23 browser cases at desktop/390/360 in light/dark, including existing camera lifecycle regressions; knowledge metadata freshness, 267 sync guards and diff check passed. Existing npm advisories and Shell chunk warning remain.
 - Review: .agent-local/screens/load-sequence/index.html, desktop 1280x800 and phone 390x844 before/after plus sign-up waits. Fake-camera and delayed-navigation fixtures are disclosed in docs/plan/handoffs/load-sequence.md; no production auth or real-camera performance claim. r26_port: yes for Learn. No push/merge/deploy.
 - Plan correction: direct request authorizes the new branch and scoped Shell/Learn changes in the main worktree, overriding board/lane/hot-file selection. Recognize and Communicate UI remain outside scope.
+
+### 2026-10-20 | Codex | Shell header module shortcuts
+- Added Recognize, Communicate, Learn and Alerts header links with existing card destinations and browsing behavior, including shared Recognize canonical/fallback resolution. Added Suvana gradient underline drawing left to right on hover/focus; reduced-motion support and a visible second header row on phones.
+- Gates: Shell 161 tests/typecheck/build (180.94 kB main JS gzip; existing chunk warning), 15 browser checks across 1280/1024/768/390/360 light/dark and navigation fixtures, knowledge freshness, 268 sync guards and diff check passed.
+- Review: .agent-local/screens/shell-header-links/index.html, before/after desktop 1280x800 and phone 390x844/360x844 in both themes. Handoff: docs/plan/handoffs/shell-header-links.md. Shell only; r26_port: no. No push/merge/deploy.
+- Plan correction: direct request authorizes the scoped Shell increment on redesign/load-sequence in the main worktree, overriding board/lane selection.
