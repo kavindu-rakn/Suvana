@@ -360,7 +360,14 @@ if (navLinks.length) {
     const target = document.querySelector(id);
     if (!target) return;
     e.preventDefault();
-    lenis.scrollTo(target as HTMLElement, { offset: -80, duration: 1.1 });
+    navLinks.forEach((navLink) => {
+      navLink.classList.remove('is-current');
+      navLink.removeAttribute('aria-current');
+    });
+    link.classList.add('is-current');
+    link.setAttribute('aria-current', 'location');
+    const headerOffset = (document.getElementById('header')?.getBoundingClientRect().height ?? 68) + 12;
+    lenis.scrollTo(target as HTMLElement, { offset: -headerOffset, duration: 1.1 });
     history.replaceState(null, '', id);
   });
 
@@ -377,8 +384,12 @@ if (navLinks.length) {
           if (!entry.isIntersecting) continue;
           const link = sections.get(entry.target);
           if (!link) continue;
-          navLinks.forEach((l) => l.classList.remove('is-current'));
+          navLinks.forEach((l) => {
+            l.classList.remove('is-current');
+            l.removeAttribute('aria-current');
+          });
           link.classList.add('is-current');
+          link.setAttribute('aria-current', 'location');
         }
       },
       // A band across the upper third of the viewport. That matches where a

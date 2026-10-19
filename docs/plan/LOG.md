@@ -1222,3 +1222,9 @@ Rules:
 - User-approved hand concept refined with longer fingers and palm: 112px wide, 140px high. Updated thumb point alignment; existing animation and themes retained.
 - Gates: 157 Shell tests, typecheck/build, 255 sync guards, diff check passed. Clean-install repeat skipped for previously established live-preview native-binary lock; existing bundle warning remains.
 - Desktop/phone light/dark and reduced-motion evidence: .agent-local/screens/recognize-hand-proportions/index.html. Handoff: docs/plan/handoffs/recognize-hand-proportions.md. Same task branch; no SSL content or figures changed. Needs kvn visual adoption and manual merge/push/deploy.
+
+### 2026-10-19 | Codex | Shell landing navigation
+- Reworked section navigation labels to About, What you can do, How it works, Feedback; improved current/focus states, mobile visibility, 44px tap targets, `aria-current`, and responsive smooth-scroll offset.
+- Browser captures/checks: desktop, 390px phone, 360px phone; light/dark; section jump/active state. Existing unrelated phone full-page overflow flag persists. `git diff --check` passed; tests/build not run this turn.
+- Review screenshots: .agent-local/screens/shell-nav/index.html. Handoff: docs/plan/handoffs/shell-nav.md.
+- Review finding outside scope: named testimonials and “Tested by…” copy conflicts with project plan stating no study participants. Verify source or owner review before public use. No SSL content or figures edited.
