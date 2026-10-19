@@ -74,13 +74,7 @@ export function PathView({ onPractise, onSession }: {
   if (detail === 'sentence-challenge' && sentencesUnlocked) return <Suspense fallback={<p role="status">{SENTENCE_EXPERIMENTAL_LABEL} — Loading…</p>}>
     <SentenceView onBack={() => setDetail(null)} />
   </Suspense>
-  return <section className="path-view" aria-labelledby="path-title">
-    {!unit && <header className="path-heading">
-      <p className="pane-label">One step at a time</p>
-      <h1 id="path-title">Your learning path</h1>
-      <p>Watch a sign, then try it. Earn a star on each sign to open the next unit.</p>
-      <p>Want to choose your own sign? Free practice is always open.</p>
-    </header>}
+  return <section className="path-view" aria-label={unit ? undefined : 'Your learning path'} aria-labelledby={unit ? 'path-title' : undefined}>
     <StorageNotice storageOk={storageOk} />
     {unit ? <div className="path-detail">
       <button className="btn ghost" onClick={() => { previewRequest.current++; setDetail(null); setPreview(null); setNotice('') }}>Back to path</button>

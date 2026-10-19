@@ -1303,3 +1303,9 @@ Rules:
 - Browser reproduced opacity 1 over hidden hint area before and 0 after; actual button hover/focus reveals hint, leaving for pill area hides it. Desktop/phone panel opening and existing phone no-tooltip behavior pass; no messages submitted.
 - Gates: Shell 157 tests/typecheck/build, 263 sync guards and diff check pass; existing bundle advisory remains. Review: .agent-local/screens/chatbot-hover/index.html. Handoff: docs/plan/handoffs/chatbot-hover.md.
 - Separate accountCopy.ts edits preserved; no SSL/auth/research changes. Plan correction: direct session task overrides normal board/lane setup. Visual review and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Learn Path intro removal
+- Removed screenshotted Path overview intro and unused CSS; preserved accessible section naming. Unit cards moved up about 226px desktop / 251px phone with no horizontal overflow.
+- Gates: npm ci, lint, 357 tests passed / 13 skipped, build (155.21 kB gzip), 263 sync guards. Windows file lock resolved by stopping Learn Vite; sandbox test EPERM resolved by normal-environment rerun.
+- Review: .agent-local/screens/learn-path-intro/{before,after}-{desktop,phone}.png. Handoff: docs/plan/handoffs/learn-path-intro.md. r26_port: yes.
+- Plan correction: kvn directly requested revamp/learn-path in main worktree, overriding board/lane selection. Visual review and merge/push/deploy remain manual.
