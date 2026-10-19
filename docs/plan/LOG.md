@@ -1393,3 +1393,26 @@ Rules:
 - Gates: clean install/lint, 375 tests passed / 13 skipped, TypeScript/build 152.95 kB main JS gzip; 22 distinct browser checks passed, with focused post-install checks and an actual canvas-enlargement assertion. Shell 157 tests/typecheck/build, Recognize 42 tests, source-hash-only metadata refresh, 267 sync guards and diff check passed.
 - Review: .agent-local/screens/learn-hand-zoom/index.html, desktop 1280x800 / phone 390x844 reference before-after in light/dark. Handoff: docs/plan/handoffs/learn-hand-zoom.md; r26_port: yes. Preview restored/rendered at 5174. No push/merge/deploy performed.
 - Plan correction: direct session request authorizes this shared player/Practice change on revamp/learn-path in the main worktree, overriding board/lane/hot-file selection.
+
+### 2026-10-20 | Codex | Load only during real waits
+- On redesign/load-sequence from main e3d7991, removed forced Shell arrival/reload and outbound animation waits. Added native sign-up navigation feedback with cancel/history restoration, and compact camera-start feedback only in Learn as clarified by the user. Counter values are decorative activity, not download measurements; no minimum wait or camera/scoring changes.
+- Gates: Shell 161 tests/typecheck/build; Learn clean install/lint, 377 passed / 13 skipped, build 153.20 kB main JS gzip; 23 browser cases at desktop/390/360 in light/dark, including existing camera lifecycle regressions; knowledge metadata freshness, 267 sync guards and diff check passed. Existing npm advisories and Shell chunk warning remain.
+- Review: .agent-local/screens/load-sequence/index.html, desktop 1280x800 and phone 390x844 before/after plus sign-up waits. Fake-camera and delayed-navigation fixtures are disclosed in docs/plan/handoffs/load-sequence.md; no production auth or real-camera performance claim. r26_port: yes for Learn. No push/merge/deploy.
+- Plan correction: direct request authorizes the new branch and scoped Shell/Learn changes in the main worktree, overriding board/lane/hot-file selection. Recognize and Communicate UI remain outside scope.
+
+### 2026-10-20 | Codex | Shell header module shortcuts
+- Added Recognize, Communicate, Learn and Alerts header links with existing card destinations and browsing behavior, including shared Recognize canonical/fallback resolution. Added Suvana gradient underline drawing left to right on hover/focus; reduced-motion support and a visible second header row on phones.
+- Gates: Shell 161 tests/typecheck/build (180.94 kB main JS gzip; existing chunk warning), 15 browser checks across 1280/1024/768/390/360 light/dark and navigation fixtures, knowledge freshness, 268 sync guards and diff check passed.
+- Review: .agent-local/screens/shell-header-links/index.html, before/after desktop 1280x800 and phone 390x844/360x844 in both themes. Handoff: docs/plan/handoffs/shell-header-links.md. Shell only; r26_port: no. No push/merge/deploy.
+- Plan correction: direct request authorizes the scoped Shell increment on redesign/load-sequence in the main worktree, overriding board/lane selection.
+
+### 2026-10-20 | Codex | Alerts header cleanup
+- Removed Modules and Install section links from the Alerts header. Brand, theme toggle, Back to Home and install content remain.
+- Gates: Shell TypeScript/build, four desktop/phone light/dark browser checks, 268 sync guards and diff check passed. Existing large-chunk warning remains. Before/after renders at .agent-local/screens/alerts-header-cleanup (1280x800, 390x844); handoff docs/plan/handoffs/alerts-header-cleanup.md.
+- Plan correction: direct request authorizes this scoped Shell HTML increment on redesign/load-sequence in the main worktree. r26_port: no. Existing user-run servers retained; no push/merge/deploy.
+
+### 2026-10-20 | Codex | Centered desktop and sliding mobile Learn switcher
+- Centered desktop tabs using equal header flanks. Mobile now shares the desktop gradient sliding selection with transparent selected buttons, font/resize remeasurement and visible-dock numeric shortcut focus. AppNavBar and its own stylesheet only; tab order and routes unchanged.
+- Gates: Learn clean install/lint, 377 passed / 13 skipped, TypeScript/build (153.32 kB main JS gzip); 16 distinct browser cases plus four post-install desktop/phone repeats; Shell TypeScript/build, metadata freshness, 268 sync guards and diff check passed. Existing advisories/chunk warning remain. Generated metadata changes only repair the preceding Alerts header source hash; facts/labels/meanings are identical.
+- Review: .agent-local/screens/learn-switcher/index.html, before/after 1280x800 and 390x844 light/dark. Handoff: docs/plan/handoffs/learn-switcher.md; r26_port: yes. Windows binding lock required temporarily stopping Learn for npm ci; Learn restored at 5174, Shell retained. No push/merge/deploy.
+- Plan correction: direct request authorizes this scoped increment on redesign/load-sequence in the main worktree, overriding board/lane selection.

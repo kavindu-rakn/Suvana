@@ -4,6 +4,7 @@ import type { Tab } from '../app/tabs'
 import { ALL_TABS, ICONS } from '../app/tabs'
 import { shortcutBlockedByTarget } from '../app/keyboard'
 import { ThemeToggle } from './ThemeToggle'
+import './AppNavBar.css'
 
 interface AppNavBarProps {
   tab: Tab
@@ -23,41 +24,52 @@ export function AppNavBar({
 }: AppNavBarProps) {
   const tabsContainerRef = useRef<HTMLDivElement>(null)
   const tabButtonRefs = useRef<Map<Tab, HTMLButtonElement>>(new Map())
+  const mobileContainerRef = useRef<HTMLDivElement>(null)
+  const mobileButtonRefs = useRef<Map<Tab, HTMLButtonElement>>(new Map())
   const [indicatorStyle, setIndicatorStyle] = useState<{
     left: number
     width: number
     opacity: number
   }>({ left: 0, width: 0, opacity: 0 })
+  const [mobileIndicatorStyle, setMobileIndicatorStyle] = useState(indicatorStyle)
 
   // Update the sliding active pill indicator position
   useEffect(() => {
     const updateIndicator = () => {
-      const container = tabsContainerRef.current
-      const activeButton = tabButtonRefs.current.get(tab)
-      if (container && activeButton) {
-        const containerRect = container.getBoundingClientRect()
-        const buttonRect = activeButton.getBoundingClientRect()
-        setIndicatorStyle({
-          left: buttonRect.left - containerRect.left,
-          width: buttonRect.width,
-          opacity: 1,
-        })
+      for (const [container, activeButton, setStyle] of [
+        [tabsContainerRef.current, tabButtonRefs.current.get(tab), setIndicatorStyle],
+        [mobileContainerRef.current, mobileButtonRefs.current.get(tab), setMobileIndicatorStyle],
+      ] as const) {
+        if (container && activeButton) {
+          const containerRect = container.getBoundingClientRect()
+          const buttonRect = activeButton.getBoundingClientRect()
+          setStyle({
+            left: buttonRect.left - containerRect.left - container.clientLeft,
+            width: buttonRect.width,
+            opacity: buttonRect.width > 0 ? 1 : 0,
+          })
+        }
       }
     }
 
     // Run on frame to ensure layout computation is complete
     const rId = requestAnimationFrame(updateIndicator)
     window.addEventListener('resize', updateIndicator)
+    document.fonts?.addEventListener('loadingdone', updateIndicator)
 
     let ro: ResizeObserver | null = null
-    if (typeof ResizeObserver !== 'undefined' && tabsContainerRef.current) {
+    if (typeof ResizeObserver !== 'undefined') {
       ro = new ResizeObserver(updateIndicator)
-      ro.observe(tabsContainerRef.current)
+      for (const element of [tabsContainerRef.current, mobileContainerRef.current,
+        ...tabButtonRefs.current.values(), ...mobileButtonRefs.current.values()]) {
+        if (element) ro.observe(element)
+      }
     }
 
     return () => {
       cancelAnimationFrame(rId)
       window.removeEventListener('resize', updateIndicator)
+      document.fonts?.removeEventListener('loadingdone', updateIndicator)
       ro?.disconnect()
     }
   }, [tab, tabs])
@@ -83,7 +95,8 @@ export function AppNavBar({
         const targetTab = tabs[num - 1]
         if (targetTab) {
           onSelectTab(targetTab)
-          tabButtonRefs.current.get(targetTab)?.focus()
+          const buttons = tabsContainerRef.current?.getBoundingClientRect().width ? tabButtonRefs : mobileButtonRefs
+          buttons.current.get(targetTab)?.focus()
         }
       }
     }
@@ -189,14 +202,28 @@ export function AppNavBar({
       {/* Mobile Floating Bottom Navigation Dock (rendered outside header so position: fixed works unconditionally) */}
       <nav
         className="aww-nav-segmented aww-nav-mobile"
+        ref={mobileContainerRef}
         aria-label="Mobile navigation"
         role="tablist"
       >
+        <div
+          className="aww-nav-active-slider"
+          style={{
+            transform: `translateX(${mobileIndicatorStyle.left}px)`,
+            width: `${mobileIndicatorStyle.width}px`,
+            opacity: mobileIndicatorStyle.opacity,
+          }}
+          aria-hidden="true"
+        />
         {tabs.map((id) => {
           const isActive = tab === id
           return (
             <button
               key={id}
+              ref={(el) => {
+                if (el) mobileButtonRefs.current.set(id, el)
+                else mobileButtonRefs.current.delete(id)
+              }}
               role="tab"
               aria-selected={isActive}
               tabIndex={isActive ? 0 : -1}

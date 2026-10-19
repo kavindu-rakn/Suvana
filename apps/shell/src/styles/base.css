@@ -1,6 +1,50 @@
 @import '../../../../packages/branding/shell-header.css';
 @import '../../../../packages/branding/shell-footer.css';
 
+/* Homepage module shortcuts; keep the shared account/module chrome unchanged. */
+#header .nav-with-modules {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 24px;
+}
+#header .nav-with-modules .nav-right { justify-self: end; }
+#header .module-nav { display: flex; align-items: center; gap: 28px; }
+#header .module-nav a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  color: var(--sh-slate);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+#header .module-nav a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 5px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(100deg, var(--sh-teal), var(--sh-gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .28s ease;
+}
+#header .module-nav a:is(:hover, :focus-visible)::after { transform: scaleX(1); }
+@media (max-width: 1000px) {
+  #header .nav-with-modules { grid-template-columns: minmax(0, 1fr) auto; gap: 0 12px; padding-bottom: 0; }
+  #header .module-nav { grid-row: 2; grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  #header .module-nav a { font-size: 13px; }
+}
+@media (max-width: 560px) {
+  #header .module-nav { gap: 4px; }
+  #header .module-nav a { font-size: clamp(11px, 3vw, 13px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #header .module-nav a::after { transition: none; }
+}
+
 :root {
   --teal: #00a693;
   --slate: #2f4f4f;

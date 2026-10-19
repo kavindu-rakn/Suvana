@@ -27,44 +27,12 @@ gsap.ticker.add((time) => {
 });
 gsap.ticker.lagSmoothing(0, 0);
 
-// Preloader Logic
-const preloader = document.getElementById('preloader');
-const loaderCount = document.getElementById('loader-count');
-
-// Create hero timeline but pause it initially
-const heroTl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
-
-if (preloader && loaderCount) {
-  document.body.style.overflow = 'hidden'; // lock scroll
-  lenis.stop(); // lock lenis
-  
-  const progress = { value: 0 };
-  
-  const loaderTl = gsap.timeline({
-    onComplete: () => {
-      document.body.style.overflow = '';
-      lenis.start();
-      preloader.style.display = 'none';
-    }
-  });
-
-  loaderTl.to(progress, {
-    value: 100,
-    duration: 1.5,
-    ease: 'power3.inOut',
-    onUpdate: () => {
-      loaderCount.innerText = Math.round(progress.value).toString();
-    }
-  })
-  .to(preloader, {
-    yPercent: -100,
-    duration: 0.8,
-    ease: 'power4.inOut',
-  })
-  .add(() => heroTl.play(), "-=0.4"); // start hero entrance before preloader fully leaves
-} else {
-  heroTl.play();
-}
+// Landing content is visible in the HTML/CSS, with no arrival/reload gate.
+// A separate small entry handles sign-up waiting without delaying navigation.
+window.addEventListener('suvana:navigation-loading', event => {
+  if ((event as CustomEvent<boolean>).detail) lenis.stop();
+  else lenis.start();
+});
 
 // Hide Header on Scroll Down & Update Scroll Progress
 let lastScroll = 0;
@@ -94,34 +62,7 @@ if (canvas) {
   initWebGLBackground(canvas);
 }
 
-// 4. Hero GSAP Animations
-// Hero animation continues...
-heroTl.to('.hero-mark', {
-  opacity: 1,
-  scale: 1,
-  duration: 1.5,
-  delay: 0.2
-})
-.to('.hero-suvana-en', {
-  opacity: 1,
-  y: 0,
-  duration: 1.2
-}, "-=1")
-.to('.hero-suvana-si', {
-  opacity: 1,
-  y: 0,
-  duration: 1.2
-}, "-=1")
-.to('.hero .tagline', {
-  opacity: 1,
-  y: 0,
-  duration: 1
-}, "-=0.8")
-.to('.hero .subline', {
-  opacity: 1,
-  y: 0,
-  duration: 1
-}, "-=0.8");
+// Hero content needs no JavaScript entrance animation to become visible.
 
 // Removed magnetic parallax per user request
 
@@ -276,70 +217,23 @@ if (marqueeContent) {
   requestAnimationFrame(animateMarquee);
 }
 
-// 9. Recognize card: HTTP stays on Suvana; the page opens its socket directly.
+// 9. Recognize card and header share the same resolved destination.
 const recognizeFoot = document.querySelector<HTMLElement>('[data-recognize-foot]');
 if (recognizeFoot) {
   const configured = recognizeFoot.dataset.serviceUrl?.trim() || (import.meta.env.VITE_RECOGNIZE_URL as string | undefined)?.trim() || '';
   const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-  const link = recognizeFoot.querySelector('a');
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-module-recognize], [data-recognize-foot] a');
   const badge = recognizeFoot.querySelector<HTMLElement>('[data-recognize-badge]');
-  if (link) { link.href = '/recognize/'; link.hidden = false; }
+  links.forEach(link => { link.href = '/recognize/'; link.hidden = false; });
   if (badge) { badge.textContent = 'On Suvana'; badge.hidden = false; }
   recognizeFoot.querySelector('[data-recognize-placeholder]')?.remove();
   void recognizeTarget(configured, isLocal).then(target => {
-    if (link) link.href = target;
+    links.forEach(link => { link.href = target; });
     if (badge && target !== '/recognize/') badge.textContent = isLocal && !configured ? 'Local service' : 'Direct service';
   });
 }
 
-// 10. Page Transitions (Outbound)
-document.body.addEventListener('click', (e) => {
-  const target = e.target as HTMLElement;
-  const link = target.closest('a');
-  
-  if (link) {
-    const href = link.getAttribute('href');
-    
-    // Intercept local navigation links
-    if (href && href.startsWith('/') && !href.startsWith('#')) {
-      e.preventDefault();
-      
-      const preloader = document.getElementById('preloader');
-      const loaderCount = document.getElementById('loader-count');
-      
-      if (preloader) {
-        // Hide the counter text for the exit animation
-        if (loaderCount) loaderCount.style.display = 'none'; 
-        
-        preloader.style.display = 'flex';
-        // Sweep up from the bottom
-        gsap.fromTo(preloader, 
-          { yPercent: 100 }, 
-          { 
-            yPercent: 0, 
-            duration: 0.8, 
-            ease: 'power4.inOut',
-            onComplete: () => {
-              window.location.href = href;
-            }
-          }
-        );
-      } else {
-        window.location.href = href;
-      }
-    }
-  }
-});
-
-// Back/forward cache: on Back, the browser restores this page exactly as it
-// left it, still covered by the exit sweep above (a blank screen). Uncover it.
-window.addEventListener('pageshow', (e) => {
-  if (!e.persisted || !preloader) return;
-  gsap.killTweensOf(preloader);
-  preloader.style.display = 'none';
-  document.body.style.overflow = '';
-  lenis.start();
-});
+// Navigation is native. The sign-up loader also clears on history restores.
 
 // 12. Live platform stat
 // The sign count is the one number on this page that changes when the model is

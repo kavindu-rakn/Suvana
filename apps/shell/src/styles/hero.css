@@ -50,8 +50,6 @@
   height: clamp(72px, 13vh, 120px);
   width: auto;
   margin-bottom: 20px;
-  opacity: 0;
-  transform: scale(0.8);
 }
 
 .hero-titles {
@@ -69,8 +67,6 @@
   letter-spacing: -0.02em;
   color: var(--slate);
   text-transform: uppercase;
-  opacity: 0;
-  transform: translateY(40px);
   position: relative;
   z-index: 1;
 }
@@ -86,8 +82,6 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  opacity: 0;
-  transform: translateY(40px);
   position: relative;
   z-index: 2; /* Ensure it overlaps English title */
 }
@@ -102,8 +96,6 @@
   color: var(--slate);
   margin: 0 0 20px;
   text-wrap: balance;
-  opacity: 0;
-  transform: translateY(20px);
 }
 
 .hero .subline {
@@ -113,8 +105,6 @@
   line-height: 1.7;
   text-transform: uppercase;
   color: var(--gold-ink);
-  opacity: 0;
-  transform: translateY(20px);
   max-width: 100%;
 }
 

@@ -1,0 +1,28 @@
+/* Equal flanks keep the switcher on the page center, independent of branding. */
+.aww-app-bar .aww-app-bar-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+.aww-app-bar-inner > .aww-app-brand { justify-self: start; }
+.aww-app-bar-inner > .aww-app-actions { justify-self: end; }
+
+@media (max-width: 860px) {
+  .aww-app-bar .aww-app-bar-inner { grid-template-columns: minmax(0, 1fr) auto; }
+
+  /* The same illuminated slider moves between mobile segments. Buttons stay
+     transparent so switching never flashes a second selected background. */
+  .aww-nav-segmented.aww-nav-mobile .aww-nav-active-slider {
+    top: 5px;
+    bottom: 5px;
+    border-radius: 16px;
+  }
+  :root[data-theme] .aww-nav-segmented.aww-nav-mobile .aww-nav-tab.is-active {
+    background: transparent;
+    box-shadow: none;
+    color: var(--text);
+  }
+  .aww-nav-segmented.aww-nav-mobile .aww-nav-tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+}
