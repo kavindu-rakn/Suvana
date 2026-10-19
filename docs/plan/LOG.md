@@ -1210,3 +1210,10 @@ Rules:
 - Gates: clean install, 157 Shell tests, typecheck/build, 255 sync guards, diff check passed. Existing build chunk advisory remains. Before/after phone captures both flag pre-existing page-wide overflow; Recognize art and controls fit.
 - Review: .agent-local/screens/recognize-card-animation/index.html; desktop 1280x800 and phone 390x844 in both themes, motion/reduced-motion browser checks. Handoff: docs/plan/handoffs/recognize-card-animation.md.
 - Needs kvn: visual adoption and any merge/push/deploy. No SSL content or figures changed; no R26 port.
+
+### 2026-10-19 | Codex | Recognize artwork refinement
+- User rejected the oversized scan panel; replaced it and its text with a small hand outline and sequentially pulsing fingertip points. Retained theme contrast and reduced-motion support.
+- Follow-up on codex/recognize-card-animation after dbba5ee; direct user-assigned Shell scope. No invented SSL content or figures.
+- Validation: 157 Shell tests, typecheck/build, 255 sync guards and diff check passed. Desktop/phone, light/dark and reduced-motion browser checks passed; existing chunk warning and phone page overflow flag remain.
+- Rendered review: .agent-local/screens/recognize-card-refinement/index.html; handoff docs/plan/handoffs/recognize-card-refinement.md. Needs kvn's visual adoption and manual merge/push/deploy.
+- Gate caveat: repeat npm ci hit a Windows locked Rollup binary. Restored exact native dependency without manifest/lockfile changes, then tests/typecheck/build passed again; the clean-install repeat remains limited by that lock.

@@ -115,78 +115,35 @@
   --recognize-accent: #ffe39a;
   background: linear-gradient(135deg, #087f73 0%, #142e30 100%);
 }
-.recognize-frame {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 76%;
-  height: 66%;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  overflow: hidden;
-  background: rgba(7, 34, 35, 0.18);
+/* A compact recognition symbol, at the same scale as the other module art. */
+.recognize-hand {
+  width: 112px;
+  height: 112px;
+  overflow: visible;
 }
-.recognize-scan {
-  position: absolute;
-  inset: 0 0 auto;
-  height: 30%;
-  background: linear-gradient(transparent, rgba(244, 215, 124, 0.18));
-  border-bottom: 1px solid var(--recognize-accent);
-  animation: recognizeScan 3.6s ease-in-out infinite;
+.recognize-outline {
+  stroke: #fff;
+  stroke-width: 0.55;
+  opacity: 0.75;
 }
-.recognize-points {
-  position: absolute;
-  inset: 18%;
-  border: 1px solid rgba(244, 215, 124, 0.25);
-  border-radius: 12px;
-  animation: recognizeTrack 3.6s ease-in-out infinite;
+.recognize-landmarks {
+  fill: var(--recognize-accent);
 }
-.recognize-points i {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--recognize-accent);
-  box-shadow: 0 0 12px rgba(244, 215, 124, 0.45);
-  animation: recognizePoint 3.6s ease-in-out infinite;
+.recognize-landmarks circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: recognizeLandmark 2.8s ease-in-out infinite;
 }
-.recognize-points i:nth-child(1) { top: -3px; left: -3px; }
-.recognize-points i:nth-child(2) { top: -3px; right: -3px; }
-.recognize-points i:nth-child(3) { bottom: -3px; left: -3px; animation-delay: 0.3s; }
-.recognize-points i:nth-child(4) { bottom: -3px; right: -3px; animation-delay: 0.3s; }
-.art-recognize .art-glass {
-  position: relative;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  padding: clamp(10px, 2vw, 20px) clamp(14px, 3vw, 40px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  font-family: var(--mono);
-  font-size: clamp(0.8rem, 1.5vw, 1.2rem);
-  letter-spacing: clamp(2px, 0.3vw, 4px);
-  white-space: nowrap;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-@keyframes recognizeScan {
-  0%, 100% { transform: translateY(-100%); opacity: 0; }
-  15%, 75% { opacity: 1; }
-  85%, 95% { transform: translateY(335%); opacity: 0; }
-}
-@keyframes recognizeTrack {
-  0%, 100% { transform: scale(1); opacity: 0.55; }
-  50% { transform: scale(0.92); opacity: 1; }
-}
-@keyframes recognizePoint {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+.recognize-landmarks circle:nth-child(2) { animation-delay: 0.16s; }
+.recognize-landmarks circle:nth-child(3) { animation-delay: 0.32s; }
+.recognize-landmarks circle:nth-child(4) { animation-delay: 0.48s; }
+.recognize-landmarks circle:nth-child(5) { animation-delay: 0.64s; }
+@keyframes recognizeLandmark {
+  0%, 65%, 100% { transform: scale(1); opacity: 0.4; }
+  30% { transform: scale(1.65); opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .recognize-scan, .recognize-points, .recognize-points i {
-    animation: none;
-  }
-  .recognize-scan { transform: translateY(115%); opacity: 0.55; }
+  .recognize-landmarks circle { animation: none; }
 }
 
 /* 2. Communicate Art */
