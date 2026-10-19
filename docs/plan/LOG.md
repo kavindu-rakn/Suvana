@@ -1245,3 +1245,10 @@ Rules:
 - Gates: Shell `npm run build` passed (typecheck + production build); 255 sync guards passed. Browser geometry after module animation settled covered widths 280–2560 plus 480x320 and 844x390; page and module overflow cleared. No test suite run.
 - Before/after renders: .agent-local/screens/shell-responsive/index.html (light/dark, phone/tablet/desktop/wide; focused Recognize card captures). Handoff: docs/plan/handoffs/shell-responsive.md.
 - Needs kvn's screenshot review and manual merge/push/deploy if accepted; no SSL content or figures changed.
+
+### 2026-10-19 | Codex | Pipeline card staircase
+- Equalized all four Pipeline cards across wrapped grid rows. At 1172px and wider, kept them in four equal columns and added a deliberate 28px descending step between cards; phone and tablet retain an even stacked or wrapped grid.
+- Browser checks in light and dark themes: at 1280px each card measures 279x464px; all four dimensions match at 390, 768, 1280, and 1600px. Width checks from 320 to 1920px, including the 1171/1172px layout boundary, found no document overflow.
+- Shell build/typecheck passed; 255 sync guards and diff check passed. Existing Vite bundle advisory remains (644.91 kB main chunk). Test suite not run.
+- Before/after renders and contact sheet: .agent-local/screens/pipeline-card-stairs/index.html. Handoff: docs/plan/handoffs/pipeline-card-stairs.md.
+- Plan correction: kvn directly assigned this follow-up in chat; no matching BOARD.md/tasks.json row exists. Planner-owned files left unchanged. Needs kvn screenshot review and manual merge/push/deploy if accepted.
