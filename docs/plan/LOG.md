@@ -1410,3 +1410,9 @@ Rules:
 - Removed Modules and Install section links from the Alerts header. Brand, theme toggle, Back to Home and install content remain.
 - Gates: Shell TypeScript/build, four desktop/phone light/dark browser checks, 268 sync guards and diff check passed. Existing large-chunk warning remains. Before/after renders at .agent-local/screens/alerts-header-cleanup (1280x800, 390x844); handoff docs/plan/handoffs/alerts-header-cleanup.md.
 - Plan correction: direct request authorizes this scoped Shell HTML increment on redesign/load-sequence in the main worktree. r26_port: no. Existing user-run servers retained; no push/merge/deploy.
+
+### 2026-10-20 | Codex | Centered desktop and sliding mobile Learn switcher
+- Centered desktop tabs using equal header flanks. Mobile now shares the desktop gradient sliding selection with transparent selected buttons, font/resize remeasurement and visible-dock numeric shortcut focus. AppNavBar and its own stylesheet only; tab order and routes unchanged.
+- Gates: Learn clean install/lint, 377 passed / 13 skipped, TypeScript/build (153.32 kB main JS gzip); 16 distinct browser cases plus four post-install desktop/phone repeats; Shell TypeScript/build, metadata freshness, 268 sync guards and diff check passed. Existing advisories/chunk warning remain. Generated metadata changes only repair the preceding Alerts header source hash; facts/labels/meanings are identical.
+- Review: .agent-local/screens/learn-switcher/index.html, before/after 1280x800 and 390x844 light/dark. Handoff: docs/plan/handoffs/learn-switcher.md; r26_port: yes. Windows binding lock required temporarily stopping Learn for npm ci; Learn restored at 5174, Shell retained. No push/merge/deploy.
+- Plan correction: direct request authorizes this scoped increment on redesign/load-sequence in the main worktree, overriding board/lane selection.
