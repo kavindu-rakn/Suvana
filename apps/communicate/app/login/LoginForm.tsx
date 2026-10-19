@@ -3,7 +3,7 @@
 import { type FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { accountLink, safeCallbackUrl } from "@/lib/accountPaths";
-import { Loader2 } from "lucide-react";
+import { KeyRound, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
@@ -59,6 +59,11 @@ export function LoginForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
           placeholder="••••••••"
         />
         {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
+        <Button type="button" disabled className="account-passkey w-full" aria-describedby="passkey-availability">
+          <KeyRound size={16} aria-hidden="true" /> Use Passkey
+          <span className="account-passkey-badge">Coming soon</span>
+        </Button>
+        <span id="passkey-availability" className="sr-only">Passkey sign-in is not available yet.</span>
         <Button type="submit" size="lg" disabled={loading} className="mt-2 w-full">
           {loading ? (
             <>

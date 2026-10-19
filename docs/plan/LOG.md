@@ -1279,3 +1279,10 @@ Rules:
 - Gates: Shell 157 tests/typecheck/build; Communicate lint/TypeScript/build; 263 sync guards and diff check pass. Existing Shell bundle advisory and prior clean-install lock limitation remain.
 - Browser checks: 22 viewport/mode fits with no document scrolling, clipping or header/footer overlap; visible synthetic errors fit at 320x568, 903x532, 480x320; pointer/keyboard switch, logo motion, reduced motion, themes and mocked account flows pass. No live account writes or real-device keyboard claims.
 - Before/after review: .agent-local/screens/account-review/index.html. Handoff: docs/plan/handoffs/account-review.md. Plan correction: direct user review overrides normal task/branch setup; planner files untouched. Needs kvn visual adoption and manual merge/push/deploy/live-account smoke test.
+
+### 2026-10-19 | Codex | Stable account modes and theme colors
+- On uifixes/suvana/main worktree: restored supplied light/dark slate action colors on Shell and account forms/alternate links; removed account header signup so theme toggle is at right. Both inert form/heading variants reserve identical card/switch geometry.
+- User chose UI-only for passkeys after password-only backend inspection. Use Passkey is a disabled Coming soon preview above Login; no auth/API/database/dependency changes.
+- Gates: Shell 157 tests/typecheck/build; Communicate lint/TypeScript/build; 263 sync guards and diff check pass. Prior clean-install lock limitation and existing Shell bundle advisory remain.
+- Browser: exact card/switch geometry and requested colors pass 14 viewport/theme cases; prior 22 fit cases, short-screen errors, mocked auth callbacks/errors, keyboard/theme/reduced motion also pass. Separate subtitle edits in accountCopy.ts preserved outside this commit; renders/builds include them.
+- Before/after review: .agent-local/screens/account-stable/index.html. Handoff: docs/plan/handoffs/account-stable.md. Plan correction: direct session task overrides board/lane setup. Needs kvn visual review/adoption and manual merge/push/deploy; real passkeys intentionally out of scope.

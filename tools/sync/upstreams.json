@@ -788,7 +788,7 @@
         "lib/suvanaOrigin.test.mjs": "D-A33 configured origin and ambiguous Host/forwarded-host regression tests",
         "components/auth/accountCopy.ts": "D-A32 two rendered platform account wording options for kvn review",
         "components/auth/AccountLinks.tsx": "D-A32 root account anchors preserving current module location without basePath injection",
-        "components/auth/ShellAccountHeader.tsx": "2026-10-19 root account surface uses Shell header markup, shared bundled CSS and callback-preserving signup link; module navigation remains separate",
+        "components/auth/ShellAccountHeader.tsx": "2026-10-19 root account surface uses Shell brand and shared bundled CSS with theme toggle at right; no signup link on account forms; module navigation remains separate",
         "components/auth/account.css": "2026-10-19 unified account layout, form styling, phone layout and reduced-motion rules"
       },
       "skip": {
@@ -960,8 +960,8 @@
             "role=\"switch\"",
             "<span>Login</span><span>Register</span>",
             "packages/branding/shell-footer.css",
-            "hidden={mode !== \"register\"}",
-            "hidden={mode !== \"login\"}"
+            "inert={mode !== \"register\"}",
+            "inert={mode !== \"login\"}"
           ],
           "lacks": [
             "detected emotion",
@@ -974,8 +974,9 @@
         },
         {
           "file": "components/auth/ShellAccountHeader.tsx",
-          "has": ["packages/branding/shell-header.css", "accountLink(\"register\", params.get(\"callbackUrl\"))", "Suvana home"],
-          "why": "Unified account UI must retain the Shell header and safe return destination"
+          "has": ["packages/branding/shell-header.css", "ThemeToggle className=\"theme-toggle\"", "Suvana home"],
+          "lacks": ["auth-slot", "Sign Up"],
+          "why": "Account header keeps Shell branding and a right-aligned theme control without a redundant signup link"
         },
         {
           "file": "app/login/LoginForm.tsx",

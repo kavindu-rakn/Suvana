@@ -189,8 +189,8 @@
   outline-offset: 4px;
 }
 #header .auth-cta { min-height: 40px; display: inline-flex; align-items: center; }
-#header .auth-slot a.auth-cta { padding: 7px 24px; background: #000; color: #fff; }
-#header .auth-slot a.auth-cta:hover { background: #222; color: #fff; }
+#header .auth-slot a.auth-cta { padding: 7px 24px; background: var(--sh-slate); color: var(--sh-paper); }
+#header .auth-slot a.auth-cta:hover { background: var(--sh-gold-ink); color: var(--sh-paper); }
 #header .theme-toggle { width: 44px; height: 44px; }
 @media (prefers-reduced-motion: reduce) {
   #header, #header a, #header button { transition: none; }

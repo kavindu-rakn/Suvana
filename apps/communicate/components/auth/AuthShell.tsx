@@ -15,7 +15,6 @@ export function AuthShell({ initialMode, loginForm, registerForm }: {
 }) {
   const [mode, setMode] = useState(initialMode);
   const panel = useRef<HTMLDivElement>(null);
-  const copy = accountCopy[mode];
 
   function switchMode(next: Mode) {
     // Keep an in-flight authentication request on screen until it finishes.
@@ -61,12 +60,16 @@ export function AuthShell({ initialMode, loginForm, registerForm }: {
             <span>Login</span><span>Register</span>
           </button>
           <div className="account-form-heading" aria-live="polite">
-            <h2>{copy.title}<span>.</span></h2>
-            <p>{copy.subtitle}</p>
+            {(["login", "register"] as const).map((headingMode) => (
+              <div key={headingMode} data-inactive={mode !== headingMode} aria-hidden={mode !== headingMode}>
+                <h2>{accountCopy[headingMode].title}<span>.</span></h2>
+                <p>{accountCopy[headingMode].subtitle}</p>
+              </div>
+            ))}
           </div>
           <div className="account-panel" ref={panel} onClick={followFormLink}>
-            <div hidden={mode !== "register"}>{registerForm}</div>
-            <div hidden={mode !== "login"}>{loginForm}</div>
+            <div data-inactive={mode !== "register"} aria-hidden={mode !== "register"} inert={mode !== "register"}>{registerForm}</div>
+            <div data-inactive={mode !== "login"} aria-hidden={mode !== "login"} inert={mode !== "login"}>{loginForm}</div>
           </div>
         </section>
       </div>
