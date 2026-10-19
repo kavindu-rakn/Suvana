@@ -1309,3 +1309,9 @@ Rules:
 - Gates: npm ci, lint, 357 tests passed / 13 skipped, build (155.21 kB gzip), 263 sync guards. Windows file lock resolved by stopping Learn Vite; sandbox test EPERM resolved by normal-environment rerun.
 - Review: .agent-local/screens/learn-path-intro/{before,after}-{desktop,phone}.png. Handoff: docs/plan/handoffs/learn-path-intro.md. r26_port: yes.
 - Plan correction: kvn directly requested revamp/learn-path in main worktree, overriding board/lane selection. Visual review and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Learn Path descriptions and milestone icons
+- Removed lesson description rows and status pills. Lucide milestone uses lowest per-sign stars: 3 Star, 2 StarCheck, 1 StarHalf, zero none. Accessible names retained; scoring/unlocks unchanged; no new dependencies.
+- Gates: npm ci/lint, 366 tests passed / 13 skipped, build (155.22 kB gzip), 263 sync guards, diff check. Browser: 14 desktop/phone uniform and mixed-star fixtures passed, no horizontal overflow. Fixtures are synthetic UI evidence only.
+- Review: .agent-local/screens/learn-path-stars/index.html. Handoff: docs/plan/handoffs/learn-path-stars.md; r26_port: yes. Full Playwright suite not run.
+- Plan correction: direct session request uses revamp/learn-path in main worktree, overriding board/lane setup. Visual review and merge/push/deploy remain manual.

@@ -7,7 +7,6 @@
 .path-card-copy { display: grid; flex: 1; gap: 8px; min-width: 0; }
 .path-card-copy strong { font-size: 1.15rem; font-weight: 600; }
 .path-card-copy > span { font-size: .9rem; color: var(--text-dim); line-height: 1.5; }
-.path-state { font-size: .85rem; border: 1px solid var(--border-interactive); border-radius: 24px; padding: 8px 12px; }
 .path-detail h2 { font-size: 2rem; margin-bottom: 8px; }
 .path-signs { list-style: none; padding: 0; margin-top: 24px; }
 .path-signs li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--border-subtle); }
@@ -19,9 +18,7 @@
 .path-preview { height: 420px; margin: 24px 0 80px; }
 @media(max-width: 600px) {
   .path-view { padding: 24px 16px 40px; }
-  .path-card { padding: 18px 14px; gap: 12px; flex-wrap: wrap; }
-  .path-card-copy { flex-basis: 65%; }
-  .path-state { margin-left: 36px; }
+  .path-card { padding: 18px 14px; gap: 12px; }
   .path-signs li { align-items: flex-start; flex-direction: column; }
   .path-actions { width: 100%; }
   .path-actions button { flex: 1; }

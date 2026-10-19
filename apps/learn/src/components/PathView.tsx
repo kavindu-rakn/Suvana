@@ -17,6 +17,7 @@ import { StorageNotice } from '../storage/StorageNotice'
 import { toMeta } from '../vision/types'
 import type { RecordingMeta, SignRecording } from '../vision/types'
 import { SkeletonPlayer } from './SkeletonPlayer'
+import { LessonStars } from './LessonStars'
 import './PathView.css'
 import './SentenceView.css'
 
@@ -78,7 +79,7 @@ export function PathView({ onPractise, onSession }: {
     <StorageNotice storageOk={storageOk} />
     {unit ? <div className="path-detail">
       <button className="btn ghost" onClick={() => { previewRequest.current++; setDetail(null); setPreview(null); setNotice('') }}>Back to path</button>
-      <h2 id="path-title">{unit.title}</h2><p>{unit.description}</p>
+      <h2 id="path-title">{unit.title}</h2>
       {coverage?.preview && <p>Preview: {coverage.covered} of {coverage.total} signs available</p>}
       {state === 'locked' && <p>Pass the earlier units to practise this one. You can watch its signs now.</p>}
       <button className="btn" disabled={state === 'locked' || state === 'preview'} onClick={() => {
@@ -103,16 +104,17 @@ export function PathView({ onPractise, onSession }: {
     </div> : <ol className="path-units">{CURRICULUM_UNITS.map((item, index) => {
       const state = pathUnitState(item, CURRICULUM_UNITS, attempts, contentIndex)
       const coverage = contentCoverage(item.signs, contentIndex)
-      const stars = item.signs.reduce((sum, gloss) => sum + starsFor(gloss, attempts), 0)
+      const signStars = item.signs.map(gloss => starsFor(gloss, attempts))
+      const stars = signStars.reduce<number>((sum, count) => sum + count, 0)
       return <li key={item.id}><button className="path-card" data-state={state} onClick={() => { setDetail(item.id); setPreview(null); setNotice('') }}>
         <span className="path-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-        <span className="path-card-copy"><strong>{item.title}</strong><span>{item.description}</span><span>{item.signs.length} signs · {stars}/{item.signs.length * 3} stars</span>{coverage.preview && <span>Preview: {coverage.covered} of {coverage.total} signs available</span>}</span>
-        <span className="path-state">{{ preview: 'Preview', locked: 'Locked', open: 'Open', passed: stars === item.signs.length * 3 ? 'Mastered' : 'Passed', mastered: stars === item.signs.length * 3 ? 'Mastered' : 'Passed' }[state]}</span>
+        <span className="path-card-copy"><strong>{item.title}</strong><span>{item.signs.length} signs · {stars}/{item.signs.length * 3} stars</span>{coverage.preview && <span>Preview: {coverage.covered} of {coverage.total} signs available</span>}</span>
+        <span className="sr-only">{state === 'locked' ? 'Locked' : state === 'preview' ? 'Preview' : 'Available'}</span>
+        <LessonStars stars={signStars} />
       </button></li>
     })}<li><button className="path-card sentence-entry" data-state={sentencesUnlocked ? 'open' : 'locked'} disabled={!sentencesUnlocked} onClick={() => setDetail('sentence-challenge')}>
       <span className="path-number" aria-hidden="true">{String(CURRICULUM_UNITS.length + 1).padStart(2, '0')}</span>
       <span className="path-card-copy"><strong>Sentence challenge</strong><span>{SENTENCE_EXPERIMENTAL_LABEL}</span><span>{sentencesUnlocked ? 'Watch, try, then practise from the dataset label.' : `Pass ${lastUnit?.title ?? 'the earlier units'} to open this challenge.`}</span></span>
-      <span className="path-state">{sentencesUnlocked ? 'Open' : 'Locked'}</span>
     </button></li></ol>}
   </section>
 }
