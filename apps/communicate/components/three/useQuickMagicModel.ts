@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { useFrame, useThree } from "@react-three/fiber";
+import { BASE_PATH } from "@/lib/basePath";
 
 /* ------------------------------------------------------------------ */
 /*  Avatars                                                           */
@@ -90,9 +91,18 @@ export const AVATARS: Record<AvatarId, AvatarConfig> = {
 
 export const DEFAULT_AVATAR: AvatarId = "girl";
 
+/**
+ * URL of a file in an avatar's folder. `public/` files are served under Next's
+ * basePath, but fetch() and the texture loader take the URL literally, so the
+ * prefix has to be added here (a bare "/models/A/..." 404s on suvana.help).
+ */
+function avatarAssetUrl(avatar: AvatarConfig, file: string): string {
+  return `${BASE_PATH}${avatar.dir}/${encodeURIComponent(file)}`;
+}
+
 /** Absolute URL of an avatar's FBX. */
 export function avatarUrl(avatar: AvatarConfig): string {
-  return `${avatar.dir}/${encodeURIComponent(avatar.file)}`;
+  return avatarAssetUrl(avatar, avatar.file);
 }
 
 /** 1×1 transparent PNG. Handed to the loader for texture paths we can't satisfy. */
@@ -536,7 +546,7 @@ function fixMaterials(group: THREE.Group, maxAnisotropy: number): MaterialReport
 async function sampleSkinTone(avatar: AvatarConfig): Promise<number | null> {
   if (!avatar.skinSource) return FALLBACK_TONES.head;
   try {
-    const response = await fetch(`${avatar.dir}/${avatar.skinSource}`);
+    const response = await fetch(avatarAssetUrl(avatar, avatar.skinSource));
     const bitmap = await createImageBitmap(await response.blob());
 
     const canvas = document.createElement("canvas");
@@ -1088,7 +1098,7 @@ async function buildModel(
       textures.push(resolveTexture(url, manifest));
     }
     const report = textures.find((t) => t.requested === url);
-    return report?.resolved ? `${avatar.dir}/${report.resolved}` : MISSING_TEXTURE_URL;
+    return report?.resolved ? avatarAssetUrl(avatar, report.resolved) : MISSING_TEXTURE_URL;
   });
 
   const group = new FBXLoader(manager).parse(buffer, "");

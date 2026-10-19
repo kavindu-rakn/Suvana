@@ -5,6 +5,7 @@ import { initWebGLBackground } from './webgl';
 import { initTheme } from './theme';
 import { mountAssistant } from './assistant/widget';
 import { recognizeTarget } from './recognizeLink';
+import { signOut } from './signOut';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -224,13 +225,25 @@ initTheme();
       return;
     }
     const who = user.name || user.email || 'Signed in';
-    const admin = user.role === 'admin' ? '<a href="/communicate/admin">Admin</a>' : '';
+    // Home is user-facing: no Admin or Account links here. Admins reach Admin
+    // from the Communicate header; everyone reaches the dashboard from the
+    // Communicate module card.
     slot.innerHTML = `
       <span class="auth-who">Hi, <strong></strong></span>
-      ${admin}
-      <a href="/communicate/dashboard">Account</a>
-      <a class="auth-cta" href="/communicate/api/auth/signout">Sign out</a>`;
+      <button type="button" class="auth-cta">Sign out</button>`;
     slot.querySelector('strong')!.textContent = who;
+    const signOutButton = slot.querySelector<HTMLButtonElement>('button')!;
+    signOutButton.addEventListener('click', async () => {
+      signOutButton.disabled = true;
+      signOutButton.textContent = 'Signing out…';
+      try {
+        await signOut();
+        window.location.assign('/');
+      } catch {
+        signOutButton.disabled = false;
+        signOutButton.textContent = 'Try again';
+      }
+    });
   } catch {
     slot.innerHTML = signedOut;
   }
