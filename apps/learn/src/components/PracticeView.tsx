@@ -1033,7 +1033,6 @@ export function PracticeView({
       {browsing ? (
         <PracticeBrowser
           references={references}
-          suggested={suggested}
           loading={loadingProgress}
           onSelect={chooseSign}
           onPreview={(sign) => {

@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import { mockHandDetectionScript } from './helpers/hands'
-import { selectPractice } from './helpers/navigation'
+import { selectPractice, openPracticeSign } from './helpers/navigation'
 
 declare global {
   interface Window { cameraRequests: number; cameraStreams: MediaStream[]; testHidden: boolean }
@@ -23,7 +23,7 @@ async function prepare(page: Page) {
   await page.addInitScript(mockHandDetectionScript)
   await page.goto('./')
   await selectPractice(page)
-  await page.getByRole('button', { name: /Practise/ }).first().click()
+  await openPracticeSign(page)
   await page.getByRole('button', { name: 'My turn', exact: true }).click()
   await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
   await expect(page.locator('#aww-hands-pill')).toHaveAttribute('data-ready', 'yes', { timeout: 15000 })

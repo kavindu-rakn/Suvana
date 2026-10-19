@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { selectPractice } from './helpers/navigation'
+import { selectPractice, openPracticeSign } from './helpers/navigation'
 
 test('Watch stays at 1x and My turn opens Try without requesting the camera', async ({ page }) => {
   await page.addInitScript(() => {
@@ -14,7 +14,7 @@ test('Watch stays at 1x and My turn opens Try without requesting the camera', as
   })
   await page.goto('./')
   await selectPractice(page)
-  await page.getByRole('button', { name: /Practise/ }).first().click()
+  await openPracticeSign(page)
   await expect(page.locator('.aww-practice-env')).toHaveAttribute('data-stage', 'watch')
   await expect(page.getByRole('button', { name: 'My turn', exact: true })).toBeEnabled()
   await expect(page.getByRole('button', { name: 'Turn on camera', exact: true })).not.toBeVisible()

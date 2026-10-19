@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowLeft,
   ArrowRight,
@@ -23,6 +23,7 @@ import { categoryOf, groupForPicker } from '../data/categories'
 import { glossLabel, matchesSearch, translationOf } from '../data/translations'
 import { hasMeaningCoverage, orderSignsVerifiedFirst } from '../data/meaningCoverage'
 import { isTextEntryTarget } from '../app/keyboard'
+import { PracticeSpotlight } from './PracticeSpotlight'
 import './PracticeBrowser.css'
 
 const categoryIcons = {
@@ -41,25 +42,23 @@ const categoryIcons = {
   '100-1 million': Hash,
 }
 
+const categoryTones = ['teal', 'gold', 'coral', 'iris'] as const
+
 export function PracticeBrowser({
   references,
-  suggested,
   loading,
   onSelect,
   onPreview,
 }: {
   references: RecordingMeta[]
-  suggested: string | null
   loading: boolean
   onSelect: (sign: RecordingMeta) => void
   onPreview: (sign: RecordingMeta) => void
 }) {
   const [category, setCategory] = useState<string | null>(null)
   const [query, setQuery] = useState('')
-  const searchRef = useRef<HTMLInputElement>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
   const { order, byCategory } = useMemo(() => groupForPicker(references), [references])
-  const recommendation = references.find((sign) => sign.gloss === suggested)
-  const searching = query.trim().length > 0
   const signs = useMemo(() => {
     const source = category ? (byCategory.get(category) ?? []) : references
     return orderSignsVerifiedFirst(
@@ -70,9 +69,18 @@ export function PracticeBrowser({
 
   useEffect(() => {
     const search = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || event.key !== '/' || isTextEntryTarget(event.target)) return
+      if (
+        event.defaultPrevented ||
+        event.key !== '/' ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        isTextEntryTarget(event.target) ||
+        document.querySelector('dialog[open]')
+      )
+        return
       event.preventDefault()
-      searchRef.current?.focus()
+      setSearchOpen(true)
     }
     window.addEventListener('keydown', search)
     return () => window.removeEventListener('keydown', search)
@@ -80,60 +88,19 @@ export function PracticeBrowser({
 
   return (
     <div className="practice-browser">
-      <header className="practice-welcome">
-        <div>
-          <p className="practice-kicker">
-            <span /> Your practice space
-          </p>
-          <h1>One sign at a time.</h1>
-          <p>Watch closely. Try it yourself. Find your rhythm.</p>
-        </div>
-        <ol className="practice-flow" aria-label="How practice works">
-          <li>
-            <span>01</span>
-            <div>
-              <strong>Watch</strong>
-              <small>Take a closer look</small>
-            </div>
-          </li>
-          <li>
-            <span>02</span>
-            <div>
-              <strong>Try</strong>
-              <small>Follow with your hands</small>
-            </div>
-          </li>
-          <li>
-            <span>03</span>
-            <div>
-              <strong>Recall</strong>
-              <small>Practise from memory</small>
-            </div>
-          </li>
-        </ol>
-      </header>
-
-      {recommendation && !category && !searching && (
-        <section className="practice-pick" aria-label="Suggested sign">
-          <div className="practice-pick-icon">
-            <Sparkles size={22} aria-hidden="true" />
-          </div>
-          <div className="practice-pick-copy">
-            <p className="practice-kicker">
-              A place to start{' '}
-              <span className="practice-pick-category">{categoryOf(recommendation)}</span>
-            </p>
-            <h2>{glossLabel(recommendation.gloss)}</h2>
-          </div>
-          <button
-            className="practice-button practice-primary"
-            onClick={() => onSelect(recommendation)}
-          >
-            Practise <ArrowRight size={16} aria-hidden="true" />
-          </button>
-        </section>
-      )}
-
+      <div className="practice-search-rail">
+        <button
+          className="practice-search"
+          aria-label="Find a sign"
+          aria-haspopup="dialog"
+          aria-keyshortcuts="/"
+          onClick={() => setSearchOpen(true)}
+        >
+          <Search size={18} aria-hidden="true" />
+          <span>Find a sign</span>
+          <kbd aria-hidden="true">/</kbd>
+        </button>
+      </div>
       <section className="practice-collection" aria-label="Choose a sign">
         <div className="practice-collection-toolbar">
           <div className="practice-collection-title">
@@ -149,63 +116,65 @@ export function PracticeBrowser({
                 <ArrowLeft size={18} />
               </button>
             )}
-            <div>
-              <h2>{category ?? (searching ? 'Search results' : 'Explore the signs')}</h2>
-              <p>
-                {loading
-                  ? 'Loading your signs…'
-                  : category || searching
-                    ? `${signs.length} ${signs.length === 1 ? 'sign' : 'signs'}`
-                    : `${references.length} signs · ${order.length} categories`}
-              </p>
+            <h1>{category ?? 'Explore the signs'}</h1>
+            <p className="practice-collection-totals" role="status">
+              {loading ? (
+                'Loading signs…'
+              ) : category ? (
+                <span>
+                  <strong>{signs.length}</strong> {signs.length === 1 ? 'sign' : 'signs'}
+                </span>
+              ) : (
+                <>
+                  <span>
+                    <strong>{references.length}</strong> signs
+                  </span>
+                  <span className="practice-totals-divider" aria-hidden="true" />
+                  <span>
+                    <strong>{order.length}</strong> categories
+                  </span>
+                </>
+              )}
+            </p>
+          </div>
+          {category && (
+            <div className="practice-category-search">
+              <Search size={16} aria-hidden="true" />
+              <input
+                type="search"
+                aria-label={`Search within ${category}`}
+                placeholder="Find a sign"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+              />
+              {query && (
+                <button onClick={() => setQuery('')} aria-label="Clear search">
+                  <X size={16} />
+                </button>
+              )}
             </div>
-          </div>
-          <div className="practice-search">
-            <Search size={18} aria-hidden="true" />
-            <input
-              ref={searchRef}
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              aria-label={category ? `Search within ${category}` : 'Search all signs'}
-              placeholder={
-                category ? `Search ${category.toLowerCase()}…` : 'Find a sign or meaning…'
-              }
-            />
-            {query ? (
-              <button
-                onClick={() => {
-                  setQuery('')
-                  searchRef.current?.focus()
-                }}
-                aria-label="Clear search"
-              >
-                <X size={16} />
-              </button>
-            ) : (
-              <kbd aria-hidden="true">/</kbd>
-            )}
-          </div>
+          )}
         </div>
-
-        {!loading && !category && !searching ? (
+        {!loading && !category ? (
           <div className="practice-category-grid">
             {order.map((name, index) => {
               const Icon = categoryIcons[name as keyof typeof categoryIcons] ?? Shapes
               return (
-                <button key={name} className="practice-category" onClick={() => setCategory(name)}>
-                  <div className="practice-category-top">
-                    <span className="practice-category-icon">
-                      <Icon size={21} aria-hidden="true" />
-                    </span>
-                    <span className="practice-category-number">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                  </div>
+                <button
+                  key={name}
+                  className="practice-category"
+                  data-tone={categoryTones[index % categoryTones.length]}
+                  onClick={() => setCategory(name)}
+                >
+                  <span className="practice-category-icon">
+                    <Icon size={21} aria-hidden="true" />
+                  </span>
                   <div className="practice-category-bottom">
                     <div>
                       <h3>{name}</h3>
-                      <span>{byCategory.get(name)?.length ?? 0} signs</span>
+                      <span>
+                        <strong>{byCategory.get(name)?.length ?? 0}</strong> signs
+                      </span>
                     </div>
                     <ArrowRight size={17} aria-hidden="true" />
                   </div>
@@ -221,7 +190,15 @@ export function PracticeBrowser({
                   {signs.map((sign) => {
                     const meaning = translationOf(sign.gloss)
                     return (
-                      <article className="practice-sign" key={sign.id}>
+                      <article
+                        className="practice-sign"
+                        data-tone={
+                          categoryTones[
+                            Math.max(0, order.indexOf(categoryOf(sign))) % categoryTones.length
+                          ]
+                        }
+                        key={sign.id}
+                      >
                         <span className="practice-sign-category">{categoryOf(sign)}</span>
                         <button
                           className="practice-sign-select"
@@ -283,9 +260,12 @@ export function PracticeBrowser({
           </p>
         )}
       </section>
-      <p className="practice-browser-note">
-        <BookOpen size={15} aria-hidden="true" /> Choose any sign. Go at your own pace.
-      </p>
+      <PracticeSpotlight
+        open={searchOpen}
+        references={references}
+        onClose={() => setSearchOpen(false)}
+        onSelect={onSelect}
+      />
     </div>
   )
 }

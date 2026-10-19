@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import { mockHandDetectionScript } from './helpers/hands'
-import { selectPractice, startFirstLesson } from './helpers/navigation'
+import { filterPracticeSigns, selectPractice, startFirstLesson } from './helpers/navigation'
 import { CURRICULUM_UNITS } from '../../../apps/learn/src/data/curriculum'
 
 async function fits(page: Page, width: number) {
@@ -35,7 +35,7 @@ for (const width of [360, 375, 390]) {
     expect(cameraButton!.y + cameraButton!.height).toBeLessThan(dock!.y)
     await fits(page, width)
     await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
-    await page.getByRole('searchbox', { name: 'Search all signs', exact: true }).fill('BAG EKA')
+    await filterPracticeSigns(page)
     const card = page.getByRole('button', { name: /^Preview / }).first()
     await card.tap()
     await expect(page.locator('.practice-is-browsing')).toHaveAttribute('data-preview', 'open')
@@ -85,7 +85,7 @@ test('desktop author tabs stay between the brand and utility controls', async ({
 test('keyboard opens a sign once and reduced motion removes animation delays', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' }); await enter(page)
   await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
-  await page.getByRole('searchbox', { name: 'Search all signs', exact: true }).fill('BAG EKA')
+  await filterPracticeSigns(page)
   const card = page.getByRole('button', { name: /^Watch BAG EKA/ }).first()
   await card.focus()
   expect(await card.evaluate(el => getComputedStyle(el).animationDelay)).toBe('0s')
@@ -174,8 +174,8 @@ for (const theme of ['light', 'dark']) {
     }
     await check(['.practice-why summary', '.practice-reference-card .practice-kicker', '.practice-watch-next p'])
     await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
-    await check(['.practice-welcome .practice-kicker', '.practice-collection-title p', '.practice-category-bottom span', '.practice-category h3'])
-    await page.getByRole('searchbox', { name: 'Search all signs', exact: true }).fill('BAG EKA')
+    await check(['.practice-collection-title h1', '.practice-collection-totals', '.practice-category-bottom span', '.practice-category h3', '.practice-category[data-tone="gold"] strong', '.practice-category[data-tone="coral"] strong', '.practice-category[data-tone="iris"] strong'])
+    await filterPracticeSigns(page)
     await check(['.practice-sign-category', '.practice-sign-select h3', '.practice-sign-select span'])
     await test.info().attach(`${theme}-contrast-spots`, { body: JSON.stringify(checks, null, 2), contentType: 'application/json' })
   })

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 import { mockHandDetectionScript } from './helpers/hands'
-import { selectPractice, startFirstLesson } from './helpers/navigation'
+import { selectPractice, startFirstLesson, openPracticeSign } from './helpers/navigation'
 
 test.describe('Learn smoke tests', () => {
   test('onboarding shows on first run', async ({ page }) => {
@@ -39,9 +39,7 @@ test.describe('Learn smoke tests', () => {
     await expect(page.locator('.aww-practice-env')).toBeVisible()
 
     // Select a sign to practice
-    const practiseBtn = page.getByRole('button', { name: /Practise/ }).first()
-    await expect(practiseBtn).toBeVisible()
-    await practiseBtn.click()
+    await openPracticeSign(page)
 
     // Start camera tracking
     await page.getByRole('button', { name: 'My turn', exact: true }).click()
@@ -87,9 +85,7 @@ test.describe('Learn smoke tests', () => {
     await expect(page.locator('.aww-practice-env')).toBeVisible()
 
     // Select a sign to practice
-    const practiseBtn = page.getByRole('button', { name: /Practise/ }).first()
-    await expect(practiseBtn).toBeVisible()
-    await practiseBtn.click()
+    await openPracticeSign(page)
 
     // Start camera tracking
     await page.getByRole('button', { name: 'My turn', exact: true }).click()
