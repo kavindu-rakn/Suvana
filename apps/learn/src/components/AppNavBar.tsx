@@ -181,7 +181,7 @@ export function AppNavBar({
               <ThemeToggle />
             </div>
 
-            {account}
+            <span hidden>{account}</span>
           </div>
         </div>
       </header>

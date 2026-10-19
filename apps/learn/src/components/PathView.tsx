@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { Star } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Play, Star, X } from 'lucide-react'
 import { CURRICULUM_UNITS } from '../data/curriculum'
 import { SENTENCE_EXPERIMENTAL_LABEL } from '../data/sentences'
 import { glossLabel } from '../data/translations'
@@ -40,6 +40,8 @@ export function PathView({ onPractise, onSession }: {
   const [notice, setNotice] = useState('')
   const previewRequest = useRef(0)
   const previewTitle = useRef<HTMLHeadingElement>(null)
+  const previewPanel = useRef<HTMLElement>(null)
+  const watchButton = useRef<HTMLButtonElement | null>(null)
   const returnToLesson = useRef<string | null>(null)
   useEffect(() => {
     if (detail !== null || returnToLesson.current === null) return
@@ -50,7 +52,11 @@ export function PathView({ onPractise, onSession }: {
       returnToLesson.current = null
     }
   }, [detail])
-  useEffect(() => { if (preview) previewTitle.current?.focus() }, [preview])
+  useEffect(() => {
+    if (!preview) return
+    previewTitle.current?.focus({ preventScroll: true })
+    previewPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' })
+  }, [preview])
   useEffect(() => () => { previewRequest.current++ }, [])
   useEffect(() => {
     let cancelled = false
@@ -70,6 +76,7 @@ export function PathView({ onPractise, onSession }: {
   const available = new Set(contentIndex.map(rec => rec.gloss))
   const state = unit ? pathUnitState(unit, CURRICULUM_UNITS, attempts, contentIndex) : null
   const coverage = unit ? contentCoverage(unit.signs, contentIndex) : null
+  const unitStars = unit?.signs.reduce((total, gloss) => total + starsFor(gloss, attempts), 0) ?? 0
   const watch = async (gloss: string) => {
     const request = ++previewRequest.current
     setPreview(null)
@@ -90,29 +97,40 @@ export function PathView({ onPractise, onSession }: {
   return <section className="path-view" aria-label={unit ? undefined : 'Your learning path'} aria-labelledby={unit ? 'path-title' : undefined}>
     <StorageNotice storageOk={storageOk} />
     {unit ? <div className="path-detail">
-      <button className="btn ghost" onClick={() => { previewRequest.current++; setDetail(null); setPreview(null); setNotice('') }}>Back to path</button>
-      <h2 id="path-title">{unit.title}</h2>
-      {coverage?.preview && <p>Preview: {coverage.covered} of {coverage.total} signs available</p>}
-      {state === 'locked' && <p>Pass the earlier units to practise this one. You can watch its signs now.</p>}
-      <button className="btn" disabled={state === 'locked' || state === 'preview'} onClick={() => {
-        onSession(startUnitSession(unit, summarizeAll(contentIndex.map(rec => rec.gloss), attempts)))
-      }}>Practise this unit</button>
-      <p className="path-note">Up to 8 signs, with reviews mixed in. One scored try finishes each step.</p>
-      <ul className="path-signs">{unit.signs.map(gloss => {
+      <button className="path-back" onClick={() => { previewRequest.current++; setDetail(null); setPreview(null); setNotice('') }}><ArrowLeft size={16} aria-hidden="true" />Back to path</button>
+      <header className="path-lesson-header">
+        <div className="path-lesson-heading">
+          <span className="path-lesson-kicker">Lesson {String(CURRICULUM_UNITS.indexOf(unit) + 1).padStart(2, '0')}</span>
+          <h2 id="path-title">{unit.title}</h2>
+          <div className="path-lesson-meta"><span>{unit.signs.length} signs</span><span className="path-lesson-total" role="img" aria-label={`${unitStars} of ${unit.signs.length * 3} stars`}><Star className="path-earned-star" size={15} aria-hidden="true" /><span aria-hidden="true">{unitStars}/{unit.signs.length * 3}</span></span></div>
+        </div>
+        <button className="path-start" disabled={state === 'locked' || state === 'preview'} onClick={() => {
+          onSession(startUnitSession(unit, summarizeAll(contentIndex.map(rec => rec.gloss), attempts)))
+        }}>Practise this unit<ArrowUpRight size={18} aria-hidden="true" /></button>
+        {coverage?.preview && <p className="path-lesson-notice">Preview: {coverage.covered} of {coverage.total} signs available</p>}
+        {state === 'locked' && <p className="path-lesson-notice">Pass the earlier units to practise this one. You can watch its signs now.</p>}
+      </header>
+      {notice && <p className="path-watch-status" role="status">{notice}</p>}
+      {preview && <section ref={previewPanel} className="path-preview" aria-label={`Watch ${glossLabel(preview.gloss)}`}>
+        <div className="path-preview-heading">
+          <div><span className="path-lesson-kicker">Reference</span><h3 ref={previewTitle} tabIndex={-1}>{glossLabel(preview.gloss)}</h3></div>
+          <button className="path-preview-close" aria-label="Close reference" onClick={() => { previewRequest.current++; setPreview(null); setNotice(''); watchButton.current?.focus() }}><X size={20} aria-hidden="true" /></button>
+        </div>
+        <SkeletonPlayer frames={preview.frames} videoWidth={preview.videoWidth} videoHeight={preview.videoHeight} />
+      </section>}
+      <h3 className="path-list-heading" id="path-signs-title">Signs in this lesson</h3>
+      <ul className="path-signs" aria-labelledby="path-signs-title">{unit.signs.map((gloss, index) => {
         const stars = starsFor(gloss, attempts)
         const locked = state === 'locked'
         return <li key={gloss}>
-          <div><strong>{glossLabel(gloss)}</strong><span aria-label={`${stars} of 3 stars`}>{'★'.repeat(stars)}{'☆'.repeat(3 - stars)}</span></div>
+          <span className="path-sign-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <div className="path-sign-copy"><strong>{glossLabel(gloss)}</strong><span className="path-sign-stars" role="img" aria-label={`${stars} of 3 stars`}>{[0, 1, 2].map(index => <Star key={index} size={13} className={index < stars ? 'path-earned-star' : undefined} aria-hidden="true" />)}</span></div>
           <div className="path-actions">
-            <button className="btn ghost" disabled={!available.has(gloss)} onClick={() => void watch(gloss)}>Watch<span className="sr-only"> {gloss}</span></button>
-            <button className="btn" disabled={locked || !available.has(gloss)} onClick={() => { clearSession(); onPractise(gloss) }}>Try<span className="sr-only"> {gloss}</span></button>
+            <button className="path-action path-action-watch" disabled={!available.has(gloss)} onClick={event => { watchButton.current = event.currentTarget; void watch(gloss) }}><Play size={14} aria-hidden="true" />Watch<span className="sr-only"> {gloss}</span></button>
+            <button className="path-action path-action-try" disabled={locked || !available.has(gloss)} onClick={() => { clearSession(); onPractise(gloss) }}>Try<ArrowUpRight size={15} aria-hidden="true" /><span className="sr-only"> {gloss}</span></button>
           </div>
         </li>
       })}</ul>
-      <p role="status">{notice}</p>
-      {preview && <section className="path-preview" aria-label={`Watch ${glossLabel(preview.gloss)}`}>
-        <h3 ref={previewTitle} tabIndex={-1}>{glossLabel(preview.gloss)}</h3><SkeletonPlayer frames={preview.frames} videoWidth={preview.videoWidth} videoHeight={preview.videoHeight} />
-      </section>}
     </div> : <PathMap>{[...CURRICULUM_UNITS.map((item, index) => {
       const state = pathUnitState(item, CURRICULUM_UNITS, attempts, contentIndex)
       const coverage = contentCoverage(item.signs, contentIndex)

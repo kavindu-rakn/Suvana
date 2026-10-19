@@ -951,8 +951,6 @@ export function PracticeView({
                     videoWidth={reference.videoWidth}
                     videoHeight={reference.videoHeight}
                     colorOverride="#e6eeec"
-                    fitToFrame={watching && window.innerWidth < 768}
-                    autoSpeedUp={!watching}
                   />
                 ) : refFailed ? (
                   <p className="camera-error">Could not load reference.</p>
@@ -1120,7 +1118,6 @@ export function PracticeView({
                 frames={attempt.frames}
                 videoWidth={attempt.videoWidth}
                 videoHeight={attempt.videoHeight}
-                slowStart={false}
               />
             </div>
           )}
