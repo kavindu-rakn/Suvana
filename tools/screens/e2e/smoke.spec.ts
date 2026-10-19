@@ -105,14 +105,14 @@ test.describe('Learn smoke tests', () => {
     await recordBtn.click()
 
     // Wait for recording phase (Stop & Score button appears)
-    const stopBtn = page.locator('button.aww-cam-btn-stop')
+    const stopBtn = page.getByRole('button', { name: 'Stop and score (Space)', exact: true })
     await expect(stopBtn).toBeVisible({ timeout: 5000 })
 
     // Stop recording and transition to result phase
     await stopBtn.click()
 
     // Result panel appears with Retry button
-    const retryBtn = page.locator('button.aww-btn-retry')
+    const retryBtn = page.locator('button[aria-label="Retry attempt (Left Arrow or Space)"]')
     await expect(retryBtn).toBeVisible({ timeout: 10000 })
 
     await expect.poll(() => page.evaluate(() => performance.getEntriesByName('suvana:result-shown').length)).toBe(1)

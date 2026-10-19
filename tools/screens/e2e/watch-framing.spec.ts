@@ -38,9 +38,10 @@ for (const width of [360, 390, 767, 768, 1280]) {
       expect(enlargement).toBeGreaterThan(2)
     }
     await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    if (width <= 680) await page.getByRole('button', { name: 'Show reference', exact: true }).click()
     await expect(player.locator('canvas')).toBeVisible()
     await expect(player.locator('canvas')).not.toHaveClass(/is-raw/)
-    await page.getByRole('button', { name: '1. Watch', exact: true }).click()
+    await page.getByRole('button', { name: 'Watch', exact: true }).click()
     await expect(player.locator('canvas')).not.toHaveClass(/is-raw/)
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   })

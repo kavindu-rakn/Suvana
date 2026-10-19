@@ -65,7 +65,7 @@ for (const theme of ['light', 'dark']) {
       await expect(preview).toHaveCount(0)
       await expect(watch).toBeFocused()
       await page.getByRole('button', { name: `Try ${CURRICULUM_UNITS[0].signs[0]}`, exact: true }).click()
-      await expect(page.locator('.aww-pane-title').first()).toContainText(CURRICULUM_UNITS[0].signs[0])
+      await expect(page.locator('.practice-lesson-title').first()).toContainText(CURRICULUM_UNITS[0].signs[0])
     })
   }
 

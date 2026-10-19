@@ -72,6 +72,6 @@ test('completed session shows earned stars and next unit without double counting
   await expect(page.locator('.session-complete-stats dd').last()).toHaveText('5/5')
   await expect(page.locator('.session-next')).toContainText('Greetings')
   await page.getByRole('button', { name: 'Keep practising', exact: true }).click()
-  await expect(page.locator('.aww-browse')).toBeVisible()
+  await expect(page.locator('.practice-is-browsing')).toBeVisible()
   expect(await page.evaluate(() => sessionStorage.getItem('ssl-learn-session'))).toBeNull()
 })

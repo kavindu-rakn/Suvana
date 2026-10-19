@@ -19,13 +19,13 @@ test('empty Path, unit Watch and an eight-sign session entry', async ({ page }) 
   await page.getByRole('button', { name: 'Watch BAG EKA', exact: true }).click()
   await expect(page.locator('.path-preview canvas')).toBeVisible()
   await page.getByRole('button', { name: 'Practise this unit', exact: true }).click()
-  await expect(page.locator('.aww-pane-title').first()).toContainText('BAG EKA')
+  await expect(page.locator('.practice-lesson-title').first()).toContainText('BAG EKA')
   const session = await page.evaluate(() => JSON.parse(sessionStorage.getItem('ssl-learn-session')!))
   expect(session.unitId).toBe(CURRICULUM_UNITS[0].id)
   expect(session.glosses).toHaveLength(7) // Starter has seven signs; cap is eight.
   expect(session.glosses).toEqual(CURRICULUM_UNITS[0].signs)
   await page.getByText('Why this sign?', { exact: true }).click()
-  await expect(page.locator('.practice-reason')).toContainText('new: next in unit')
+  await expect(page.locator('.practice-why')).toContainText('new: next in unit')
 })
 
 test('seeded Try stars pass Starter and open Greetings', async ({ page }) => {

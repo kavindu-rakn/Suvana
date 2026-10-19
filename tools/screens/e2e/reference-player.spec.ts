@@ -69,11 +69,9 @@ for (const width of [360, 390, 1280]) {
       await page.locator('.path-card').first().click()
       await page.getByRole('button', { name: 'Practise this unit', exact: true }).click()
       await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
-      await page.getByRole('textbox', { name: 'Search signs', exact: true }).fill('BAG EKA')
-      const card = page.locator('.cs-sign-card').first()
-      if (width < 900) await card.click()
-      else await card.hover()
-      const player = page.locator('.aww-preview-container .reference-player')
+      await page.getByRole('searchbox', { name: 'Search all signs', exact: true }).fill('BAG EKA')
+      await page.getByRole('button', { name: /^Preview / }).first().click()
+      const player = page.locator('.practice-preview-dialog .reference-player')
       await expect(player.locator('.reference-content')).toHaveAttribute('data-speed', '1')
       await expect(player.getByRole('button', { name: 'Pause', exact: true })).toBeInViewport()
       await chooseReferenceSpeed(player, '0.25')
@@ -84,8 +82,8 @@ for (const width of [360, 390, 1280]) {
         return rect.left >= 0 && rect.right <= innerWidth
       })).toBe(true)
       await page.getByRole('button', { name: 'Watch this sign', exact: true }).click()
-      await expect(page.locator('.aww-pane-left .reference-content')).toHaveAttribute('data-speed', '1')
-      await expect(page.locator('.aww-pane-left .reference-player').getByRole('button', { name: 'Pause', exact: true })).toBeInViewport()
+      await expect(page.locator('.practice-reference-card .reference-content')).toHaveAttribute('data-speed', '1')
+      await expect(page.locator('.practice-reference-card .reference-player').getByRole('button', { name: 'Pause', exact: true })).toBeInViewport()
     } finally { await context.close() }
   })
 }

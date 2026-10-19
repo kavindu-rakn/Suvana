@@ -132,16 +132,16 @@ for (const width of [360, 390, 1280]) for (const theme of ['light', 'dark']) {
     expect(rect!.x + rect!.width).toBeLessThanOrEqual(width)
     await page.screenshot({ path: `.agent-local/screens/load-sequence/after-camera-${width}-${theme}.png` })
     await page.evaluate(() => (window as unknown as { releaseCamera: () => void }).releaseCamera())
-    await expect(page.locator('.aww-pane-right')).toHaveAttribute('data-camera-status', 'running', { timeout: 15000 })
+    await expect(page.locator('.practice-camera-card')).toHaveAttribute('data-camera-status', 'running', { timeout: 15000 })
     await expect(loader).toHaveCount(0)
-    await expect(page.locator('.aww-pane-right video')).toBeVisible()
+    await expect(page.locator('.practice-camera-card video')).toBeVisible()
     await page.getByRole('button', { name: 'Turn off camera', exact: true }).click()
   })
 }
 
 test('Learn permission error removes the mini loader and offers retry', async ({ page }) => {
   await learnCamera(page, 'light', true)
-  await expect(page.locator('.aww-pane-right')).toHaveAttribute('data-camera-status', 'error')
+  await expect(page.locator('.practice-camera-card')).toHaveAttribute('data-camera-status', 'error')
   await expect(page.locator('.camera-load-sequence')).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Try again', exact: true })).toBeVisible()
 })
@@ -153,5 +153,5 @@ test('Learn startup cancellation releases a granted stream and removes the loade
   await page.evaluate(() => (window as unknown as { releaseCamera: () => void }).releaseCamera())
   await expect(page.locator('.camera-load-sequence')).toHaveCount(0)
   await expect.poll(() => page.evaluate(() => (window as unknown as { cameraStream: MediaStream }).cameraStream.getTracks().every(track => track.readyState === 'ended'))).toBe(true)
-  await expect(page.locator('.aww-pane-right')).toHaveAttribute('data-camera-status', 'idle')
+  await expect(page.locator('.practice-camera-card')).toHaveAttribute('data-camera-status', 'idle')
 })
