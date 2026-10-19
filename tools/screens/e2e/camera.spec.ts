@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import { mockHandDetectionScript } from './helpers/hands'
+import { selectPractice } from './helpers/navigation'
 
 declare global {
   interface Window { cameraRequests: number; cameraStreams: MediaStream[]; testHidden: boolean }
@@ -21,6 +22,7 @@ async function prepare(page: Page) {
   })
   await page.addInitScript(mockHandDetectionScript)
   await page.goto('./')
+  await selectPractice(page)
   await page.getByRole('button', { name: /Practise/ }).first().click()
   await page.getByRole('button', { name: 'My turn', exact: true }).click()
   await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
@@ -88,6 +90,7 @@ test('hover guidance stays off on a touch tablet', async ({ browser, baseURL }) 
   const page = await context.newPage()
   await page.addInitScript(() => sessionStorage.setItem('suvana.learn.entered', '1'))
   await page.goto('./')
+  await selectPractice(page)
   expect(await page.evaluate(() => matchMedia('(hover: hover)').matches)).toBe(false)
   await expect(page.locator('.practice-hover-hint')).not.toBeVisible()
   await context.close()

@@ -24,7 +24,7 @@ const months = new Set(['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
   'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'])
 const groupTitle = (title: string) => title.replace(/ \d+$/, '')
 const order = [
-  'Starter', 'Greetings', 'First numbers', 'Restaurant', 'Everyday words and directions',
+  'Starter', 'Greetings', 'First numbers', 'Restaurant', 'Everyday terms',
   'Letters A-M', 'Letters N-Z', 'Numbers 30-90', 'Days', 'Months', 'Colours',
   'People and family', 'Places', 'Transport', 'Big numbers', 'Action words',
   'Things', 'Describing words', 'Time words', 'Position words', 'Small words',

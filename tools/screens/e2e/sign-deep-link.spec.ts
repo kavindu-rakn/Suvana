@@ -29,7 +29,7 @@ test('ignored sign links preserve the normal landing and entered-tab behavior', 
   }
   await page.addInitScript(() => sessionStorage.setItem('suvana.learn.entered', '1'))
   await page.goto('./?sign=UNKNOWN-I14')
-  await expect(page.getByRole('tab', { name: /Practice/ }).first()).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByRole('tab', { name: /Path/ }).first()).toHaveAttribute('aria-selected', 'true')
   await expect(page.locator('.app-hero-mode')).toHaveCount(0)
 })
 

@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import { mockHandDetectionScript } from './helpers/hands'
+import { selectPractice } from './helpers/navigation'
 
 async function scoreFixture(page: Page, priorScore = 70) {
   await page.addInitScript(() => {
@@ -10,6 +11,7 @@ async function scoreFixture(page: Page, priorScore = 70) {
   })
   await page.addInitScript(mockHandDetectionScript)
   await page.goto('./')
+  await expect(page.locator('.path-card').first()).toBeVisible()
   await page.evaluate(priorScore => new Promise<void>(resolve => {
     const req = indexedDB.open('ssl-learn', 3)
     req.onsuccess = () => {
@@ -19,6 +21,7 @@ async function scoreFixture(page: Page, priorScore = 70) {
     }
   }), priorScore)
   await page.reload()
+  await selectPractice(page)
   await page.getByRole('button', { name: 'My turn', exact: true }).click()
   await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
   await expect(page.locator('#aww-hands-pill')).toHaveAttribute('data-ready', 'yes', { timeout: 15000 })

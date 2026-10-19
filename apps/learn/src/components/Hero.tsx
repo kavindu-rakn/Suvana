@@ -1,16 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import type { Tab } from '../app/tabs'
 import { ThemeToggle } from './ThemeToggle'
-import { ContentNotice } from './Attribution'
+import { LearnInfo } from './LearnInfo'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
-import { CURRICULUM_UNITS } from '../data/curriculum'
-import { listAttempts } from '../learner/attemptLog'
-import { queueHeroSession, startHeroSession } from '../learner/heroSession'
-import { saveSession } from '../learner/session'
-import { loadReferenceIndex } from '../storage/bundledReferences'
-import { listRecordings } from '../storage/recordingStore'
 
 const STEPS = [
   {
@@ -36,24 +30,7 @@ const STEPS = [
 ]
 
 export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
-  const [starting, setStarting] = useState(false)
-  const [startNotice, setStartNotice] = useState('')
-  async function startLearning() {
-    if (starting) return
-    setStarting(true)
-    setStartNotice('')
-    const [index, local, log] = await Promise.allSettled([loadReferenceIndex(), Promise.resolve().then(listRecordings), Promise.resolve().then(listAttempts)])
-    const glosses = [...(index.status === 'fulfilled' ? index.value : []), ...(local.status === 'fulfilled' ? local.value : [])].map(rec => rec.gloss)
-    const session = startHeroSession(CURRICULUM_UNITS, glosses, log.status === 'fulfilled' ? log.value : [])
-    if (!session) {
-      setStartNotice('Could not load the signs. Please try again.')
-      setStarting(false)
-      return
-    }
-    queueHeroSession(session)
-    saveSession(session)
-    onEnter('practice')
-  }
+  function startLearning() { onEnter('path') }
   const container = useRef<HTMLDivElement>(null)
   const marqueeRef = useRef<HTMLDivElement>(null)
   const stepRefs = useRef<(HTMLElement | null)[]>([])
@@ -213,11 +190,10 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
         <p className="aww-subline">
           Sign to your camera. Get a score against recordings from real signers, tips on timing and hand movement, and a side-by-side replay. Some signs also show finger labels.
         </p>
-        <ContentNotice />
+        <LearnInfo />
 
         <div className="aww-hero-cta">
-          <button className="btn massive" disabled={starting} onClick={() => void startLearning()}>{starting ? 'Loading your first sign…' : 'Start practising'}</button>
-          {startNotice && <p role="status">{startNotice}</p>}
+          <button className="btn massive" onClick={startLearning}>Start learning</button>
         </div>
 
         <div className="lhero-stats-strip">
@@ -380,9 +356,8 @@ export function Hero({ onEnter }: { onEnter: (tab: Tab) => void }) {
             <button
               type="button"
               className="aww-start-cta-link"
-              disabled={starting}
-              onClick={() => void startLearning()}
-              aria-label="Start practicing now"
+              onClick={startLearning}
+              aria-label="Start learning now"
             >
               start?
             </button>

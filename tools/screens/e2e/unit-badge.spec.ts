@@ -40,8 +40,8 @@ test('unit badges follow earned stars while mastery and unlock rules stay unchan
     // The 60 Recall earns a third star but lowers the history estimate below
     // mastered. Only displayed copy changes; internal state remains untouched.
     await expect(card).toHaveAttribute('data-state', recall ? 'passed' : 'mastered')
-    await expect(card).toContainText(recall ? '21/21 stars' : '14/21 stars')
-    await expect(card.locator('.path-state')).toHaveText(recall ? 'Mastered' : 'Passed')
+    await expect(card.locator('.path-star-count')).toHaveAttribute('aria-label', recall ? '21 of 21 stars' : '14 of 21 stars')
+    await expect(card.locator(recall ? '.lesson-stars .lucide-star' : '.lesson-stars .lucide-star-check')).toBeVisible()
     await expect(page.locator('.path-card').nth(1)).toHaveAttribute('data-state', 'open')
     await page.getByRole('tab', { name: /Progress/ }).first().click()
     await page.getByText('See the unit plan', { exact: true }).click()

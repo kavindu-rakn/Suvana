@@ -8,12 +8,12 @@ async function enter(page: Page) {
   })
   await page.goto('./')
   await page.getByRole('tab', { name: /Path/ }).first().click()
-  await expect(page.locator('.path-card').first()).toContainText('Open')
+  await expect(page.locator('.path-card').first()).toHaveAttribute('data-state', 'open')
 }
 
 test('empty Path, unit Watch and an eight-sign session entry', async ({ page }) => {
   await enter(page)
-  await expect(page.locator('.path-card').nth(1)).toContainText('Locked')
+  await expect(page.locator('.path-card').nth(1)).toHaveAttribute('data-state', 'locked')
   await page.locator('.path-card').first().click()
   await expect(page.locator('.path-signs li')).toHaveCount(CURRICULUM_UNITS[0].signs.length)
   await page.getByRole('button', { name: 'Watch BAG EKA', exact: true }).click()
@@ -47,9 +47,9 @@ test('seeded Try stars pass Starter and open Greetings', async ({ page }) => {
   }, CURRICULUM_UNITS[0].signs)
   await page.reload()
   await page.getByRole('tab', { name: /Path/ }).first().click()
-  await expect(page.locator('.path-card').first()).toContainText('14/21 stars')
-  await expect(page.locator('.path-card').first()).toContainText('Passed')
-  await expect(page.locator('.path-card').nth(1)).toContainText('Open')
+  await expect(page.locator('.path-card').first().locator('.path-star-count')).toHaveAttribute('aria-label', '14 of 21 stars')
+  await expect(page.locator('.path-card').first().locator('.lucide-star-check')).toBeVisible()
+  await expect(page.locator('.path-card').nth(1)).toHaveAttribute('data-state', 'open')
   await page.locator('.path-card').nth(2).click()
   await expect(page.getByRole('button', { name: 'Practise this unit', exact: true })).toBeDisabled()
   await expect(page.getByRole('tab', { name: /Practice/ }).first()).toBeEnabled()

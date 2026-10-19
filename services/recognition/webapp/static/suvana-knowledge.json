@@ -4,7 +4,7 @@
   "sources": {
     "apps/learn/public/reference-index.json": "764861c6bb4e3266500552e12c9fd2ee68f5bda64bc418253a0eb3499ee31a09",
     "apps/learn/src/data/translations.ts": "2271aab9f5a9cd5293e2982d8dc17721b2491c0ba90494f1bfc98986c36b8938",
-    "apps/learn/src/data/curriculum.ts": "28567da55b48ece8ae01f5aa6abbc710d703c06da6c79b815d4e251f2d84e460",
+    "apps/learn/src/data/curriculum.ts": "43f8f75b641a01148cb55029ce1d8f305a9304bbdd2b17051c1cd74efc30c550",
     "apps/learn/src/storage/references.ts": "54a93f7b2d3a2a4e02e24db5f1e6a233b6dd84de1c32792852c5ee56b9a1fd04",
     "apps/learn/src/data/sentences.ts": "775c139b0070979ebf98dfd22519c66d406c6671bf5549d98cf572291940b88e",
     "apps/learn/src/scoring/fingerCutoffs.ts": "d594a2a55736f6d07126fdae2a45451f5918cd9d1680ddeb8e679ed773969d62",
@@ -13,7 +13,7 @@
     "services/recognition/webapp/data/sinhala-corrections.json": "4978d0faabbc15cd37470a5a7c03e6d4840788edcf62f68626f93ae5e569876d",
     "services/recognition/config/config.yaml": "31304559edfb61b200e46e073ad75ee724897e1ebef8467e007c63a30ba4b683",
     "apps/learn/src/components/ProgressView.tsx": "dc70d0e6c527247e3d2c96d1a2ead1153e49818d6d5b033344b45b6148bd2249",
-    "apps/learn/src/components/PathView.tsx": "5e7ca7032b9a9c6bbeaece38176bba0cfab2156d67eb368083f1b9fb69042797",
+    "apps/learn/src/components/PathView.tsx": "7263638a2ac3a6d7ceeb50f36bb5453672e9f1750117037f9628fe556ee96d1f",
     "apps/learn/src/learner/pathContent.ts": "c1ea02b3f92f8b0c9cf11c075b8614e92b53aba150aa5e5cd9e4fb461e7a5c9d",
     "apps/learn/src/components/practiceStages.ts": "46123f585461cbb47696eb7617d956432514ccbfe12b2d33c2b8419cdb32de54",
     "apps/learn/src/components/SkeletonPlayer.tsx": "53567051d9c81ed21e361282efe7adc9232c3c038d2a9903f03bda2390bc94c7",
@@ -118,7 +118,7 @@
     },
     {
       "id": "u-additional-words-1",
-      "title": "Everyday words and directions 1",
+      "title": "Everyday terms 1",
       "sourceCategory": "Additional words",
       "signs": [
         "BAG EKA",
@@ -135,7 +135,7 @@
     },
     {
       "id": "u-additional-words-2",
-      "title": "Everyday words and directions 2",
+      "title": "Everyday terms 2",
       "sourceCategory": "Additional words",
       "signs": [
         "HATHARAMN HANDIYA",
@@ -1083,7 +1083,7 @@
       "units": [
         {
           "id": "u-additional-words-2",
-          "title": "Everyday words and directions 2"
+          "title": "Everyday terms 2"
         }
       ],
       "editions": [
@@ -1680,7 +1680,7 @@
       "units": [
         {
           "id": "u-additional-words-2",
-          "title": "Everyday words and directions 2"
+          "title": "Everyday terms 2"
         }
       ],
       "editions": [
@@ -2645,7 +2645,7 @@
       "units": [
         {
           "id": "u-additional-words-1",
-          "title": "Everyday words and directions 1"
+          "title": "Everyday terms 1"
         }
       ],
       "editions": [
@@ -3002,7 +3002,7 @@
         },
         {
           "id": "u-additional-words-1",
-          "title": "Everyday words and directions 1"
+          "title": "Everyday terms 1"
         }
       ],
       "editions": [
@@ -3224,7 +3224,7 @@
         },
         {
           "id": "u-additional-words-2",
-          "title": "Everyday words and directions 2"
+          "title": "Everyday terms 2"
         }
       ],
       "editions": [
@@ -4776,7 +4776,7 @@
       "units": [
         {
           "id": "u-additional-words-1",
-          "title": "Everyday words and directions 1"
+          "title": "Everyday terms 1"
         }
       ],
       "editions": [
@@ -4807,7 +4807,7 @@
       "units": [
         {
           "id": "u-additional-words-1",
-          "title": "Everyday words and directions 1"
+          "title": "Everyday terms 1"
         }
       ],
       "editions": [
@@ -6429,7 +6429,7 @@
       "units": [
         {
           "id": "u-additional-words-2",
-          "title": "Everyday words and directions 2"
+          "title": "Everyday terms 2"
         }
       ],
       "editions": [
@@ -7219,7 +7219,7 @@
       "units": [
         {
           "id": "u-additional-words-2",
-          "title": "Everyday words and directions 2"
+          "title": "Everyday terms 2"
         }
       ],
       "editions": [
@@ -8406,7 +8406,7 @@
       "units": [
         {
           "id": "u-additional-words-2",
-          "title": "Everyday words and directions 2"
+          "title": "Everyday terms 2"
         }
       ],
       "editions": [
@@ -8477,7 +8477,7 @@
       "units": [
         {
           "id": "u-additional-words-1",
-          "title": "Everyday words and directions 1"
+          "title": "Everyday terms 1"
         }
       ],
       "editions": [
@@ -8761,7 +8761,7 @@
       "units": [
         {
           "id": "u-additional-words-2",
-          "title": "Everyday words and directions 2"
+          "title": "Everyday terms 2"
         }
       ],
       "editions": [
@@ -10496,7 +10496,7 @@
       "units": [
         {
           "id": "u-additional-words-2",
-          "title": "Everyday words and directions 2"
+          "title": "Everyday terms 2"
         }
       ],
       "editions": [
@@ -11077,7 +11077,7 @@
       "units": [
         {
           "id": "u-additional-words-2",
-          "title": "Everyday words and directions 2"
+          "title": "Everyday terms 2"
         }
       ],
       "editions": [
@@ -11422,7 +11422,7 @@
         },
         {
           "id": "u-additional-words-1",
-          "title": "Everyday words and directions 1"
+          "title": "Everyday terms 1"
         }
       ],
       "editions": [
@@ -11553,7 +11553,7 @@
       "units": [
         {
           "id": "u-additional-words-1",
-          "title": "Everyday words and directions 1"
+          "title": "Everyday terms 1"
         }
       ],
       "editions": [
@@ -13493,7 +13493,7 @@
       "units": [
         {
           "id": "u-additional-words-2",
-          "title": "Everyday words and directions 2"
+          "title": "Everyday terms 2"
         }
       ],
       "editions": [
@@ -15310,7 +15310,7 @@
       "units": [
         {
           "id": "u-additional-words-1",
-          "title": "Everyday words and directions 1"
+          "title": "Everyday terms 1"
         }
       ],
       "editions": [
@@ -15341,7 +15341,7 @@
       "units": [
         {
           "id": "u-additional-words-1",
-          "title": "Everyday words and directions 1"
+          "title": "Everyday terms 1"
         }
       ],
       "editions": [
@@ -15375,7 +15375,7 @@
       "units": [
         {
           "id": "u-additional-words-1",
-          "title": "Everyday words and directions 1"
+          "title": "Everyday terms 1"
         }
       ],
       "editions": [

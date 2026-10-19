@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { Star } from 'lucide-react'
 import { CURRICULUM_UNITS } from '../data/curriculum'
 import { SENTENCE_EXPERIMENTAL_LABEL } from '../data/sentences'
 import { glossLabel } from '../data/translations'
@@ -17,6 +18,8 @@ import { StorageNotice } from '../storage/StorageNotice'
 import { toMeta } from '../vision/types'
 import type { RecordingMeta, SignRecording } from '../vision/types'
 import { SkeletonPlayer } from './SkeletonPlayer'
+import { LessonStars } from './LessonStars'
+import { PathMap } from './PathMap'
 import './PathView.css'
 import './SentenceView.css'
 
@@ -37,6 +40,16 @@ export function PathView({ onPractise, onSession }: {
   const [notice, setNotice] = useState('')
   const previewRequest = useRef(0)
   const previewTitle = useRef<HTMLHeadingElement>(null)
+  const returnToLesson = useRef<string | null>(null)
+  useEffect(() => {
+    if (detail !== null || returnToLesson.current === null) return
+    const button = document.getElementById(`path-unit-${returnToLesson.current}`)
+    if (button) {
+      button.scrollIntoView({ block: 'center' })
+      button.focus({ preventScroll: true })
+      returnToLesson.current = null
+    }
+  }, [detail])
   useEffect(() => { if (preview) previewTitle.current?.focus() }, [preview])
   useEffect(() => () => { previewRequest.current++ }, [])
   useEffect(() => {
@@ -74,17 +87,11 @@ export function PathView({ onPractise, onSession }: {
   if (detail === 'sentence-challenge' && sentencesUnlocked) return <Suspense fallback={<p role="status">{SENTENCE_EXPERIMENTAL_LABEL} — Loading…</p>}>
     <SentenceView onBack={() => setDetail(null)} />
   </Suspense>
-  return <section className="path-view" aria-labelledby="path-title">
-    {!unit && <header className="path-heading">
-      <p className="pane-label">One step at a time</p>
-      <h1 id="path-title">Your learning path</h1>
-      <p>Watch a sign, then try it. Earn a star on each sign to open the next unit.</p>
-      <p>Want to choose your own sign? Free practice is always open.</p>
-    </header>}
+  return <section className="path-view" aria-label={unit ? undefined : 'Your learning path'} aria-labelledby={unit ? 'path-title' : undefined}>
     <StorageNotice storageOk={storageOk} />
     {unit ? <div className="path-detail">
       <button className="btn ghost" onClick={() => { previewRequest.current++; setDetail(null); setPreview(null); setNotice('') }}>Back to path</button>
-      <h2 id="path-title">{unit.title}</h2><p>{unit.description}</p>
+      <h2 id="path-title">{unit.title}</h2>
       {coverage?.preview && <p>Preview: {coverage.covered} of {coverage.total} signs available</p>}
       {state === 'locked' && <p>Pass the earlier units to practise this one. You can watch its signs now.</p>}
       <button className="btn" disabled={state === 'locked' || state === 'preview'} onClick={() => {
@@ -106,19 +113,23 @@ export function PathView({ onPractise, onSession }: {
       {preview && <section className="path-preview" aria-label={`Watch ${glossLabel(preview.gloss)}`}>
         <h3 ref={previewTitle} tabIndex={-1}>{glossLabel(preview.gloss)}</h3><SkeletonPlayer frames={preview.frames} videoWidth={preview.videoWidth} videoHeight={preview.videoHeight} />
       </section>}
-    </div> : <ol className="path-units">{CURRICULUM_UNITS.map((item, index) => {
+    </div> : <PathMap>{[...CURRICULUM_UNITS.map((item, index) => {
       const state = pathUnitState(item, CURRICULUM_UNITS, attempts, contentIndex)
       const coverage = contentCoverage(item.signs, contentIndex)
-      const stars = item.signs.reduce((sum, gloss) => sum + starsFor(gloss, attempts), 0)
-      return <li key={item.id}><button className="path-card" data-state={state} onClick={() => { setDetail(item.id); setPreview(null); setNotice('') }}>
-        <span className="path-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-        <span className="path-card-copy"><strong>{item.title}</strong><span>{item.description}</span><span>{item.signs.length} signs · {stars}/{item.signs.length * 3} stars</span>{coverage.preview && <span>Preview: {coverage.covered} of {coverage.total} signs available</span>}</span>
-        <span className="path-state">{{ preview: 'Preview', locked: 'Locked', open: 'Open', passed: stars === item.signs.length * 3 ? 'Mastered' : 'Passed', mastered: stars === item.signs.length * 3 ? 'Mastered' : 'Passed' }[state]}</span>
-      </button></li>
-    })}<li><button className="path-card sentence-entry" data-state={sentencesUnlocked ? 'open' : 'locked'} disabled={!sentencesUnlocked} onClick={() => setDetail('sentence-challenge')}>
-      <span className="path-number" aria-hidden="true">{String(CURRICULUM_UNITS.length + 1).padStart(2, '0')}</span>
-      <span className="path-card-copy"><strong>Sentence challenge</strong><span>{SENTENCE_EXPERIMENTAL_LABEL}</span><span>{sentencesUnlocked ? 'Watch, try, then practise from the dataset label.' : `Pass ${lastUnit?.title ?? 'the earlier units'} to open this challenge.`}</span></span>
-      <span className="path-state">{sentencesUnlocked ? 'Open' : 'Locked'}</span>
-    </button></li></ol>}
+      const signStars = item.signs.map(gloss => starsFor(gloss, attempts))
+      const stars = signStars.reduce<number>((sum, count) => sum + count, 0)
+      return <button key={item.id} id={`path-unit-${item.id}`} className="path-card" data-state={state} onClick={() => { returnToLesson.current = item.id; setDetail(item.id); setPreview(null); setNotice('') }}>
+        <span className="path-card-heading"><span className="path-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><LessonStars stars={signStars} locked={state === 'locked'} /></span>
+        <span className="path-card-copy"><strong>{item.title}</strong></span>
+        <span className="path-card-meta"><span>{item.signs.length} signs</span><span className="path-star-count" role="img" aria-label={`${stars} of ${item.signs.length * 3} stars`}>
+          <Star className="path-earned-star" size={12} aria-hidden="true" /><span aria-hidden="true">{stars}/{item.signs.length * 3}</span>
+        </span>{coverage.preview && <span className="path-card-notice">Preview: {coverage.covered} of {coverage.total} signs available</span>}</span>
+        {state !== 'locked' && <span className="sr-only">{state === 'preview' ? 'Preview' : 'Available'}</span>}
+      </button>
+    }), <button key="sentence-challenge" id="path-unit-sentence-challenge" className="path-card sentence-entry" data-state={sentencesUnlocked ? 'open' : 'locked'} disabled={!sentencesUnlocked} onClick={() => { returnToLesson.current = 'sentence-challenge'; setDetail('sentence-challenge') }}>
+      <span className="path-card-heading"><span className="path-number" aria-hidden="true">{String(CURRICULUM_UNITS.length + 1).padStart(2, '0')}</span><LessonStars stars={[]} locked={!sentencesUnlocked} /></span>
+      <span className="path-card-copy"><strong>Sentence challenge</strong><span className="sr-only">{sentencesUnlocked ? 'Watch, try, then practise from the dataset label.' : `Pass ${lastUnit?.title ?? 'the earlier units'} to open this challenge.`}</span></span>
+      <span className="path-card-meta"><span className="path-card-notice">{SENTENCE_EXPERIMENTAL_LABEL}</span></span>
+    </button>]}</PathMap>}
   </section>
 }

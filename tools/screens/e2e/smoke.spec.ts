@@ -1,18 +1,15 @@
 import { test, expect } from '@playwright/test'
 
 import { mockHandDetectionScript } from './helpers/hands'
+import { selectPractice, startFirstLesson } from './helpers/navigation'
 
 test.describe('Learn smoke tests', () => {
   test('onboarding shows on first run', async ({ page }) => {
     // Fresh session: no entered flag, no onboarding-seen flag
     await page.goto('./')
 
-    // Arrive at Hero and enter practice
-    const startBtn = page.locator('button:has-text("Start practising")')
-    await expect(startBtn).toBeVisible()
-    await startBtn.click()
-
-    // Hero now opens the first curriculum sign directly in Watch.
+    // Arrive through Path and explicitly start the first lesson.
+    await startFirstLesson(page)
 
     // First sign chosen triggers the modal Onboarding guide (<dialog class="onb">)
     const dialog = page.locator('dialog.onb')
@@ -26,7 +23,7 @@ test.describe('Learn smoke tests', () => {
     // Reload the page: with onboarding-seen recorded, onboarding must not show again
     await page.reload()
     await expect(page.locator('dialog.onb')).not.toBeVisible()
-    await expect(page.locator('.aww-practice-env')).toBeVisible()
+    await expect(page.locator('.path-card').first()).toBeVisible()
   })
 
   test('Esc during countdown stays in Practice', async ({ page }) => {
@@ -38,6 +35,7 @@ test.describe('Learn smoke tests', () => {
     await page.addInitScript(mockHandDetectionScript)
 
     await page.goto('./')
+    await selectPractice(page)
     await expect(page.locator('.aww-practice-env')).toBeVisible()
 
     // Select a sign to practice
@@ -85,6 +83,7 @@ test.describe('Learn smoke tests', () => {
     await page.addInitScript(mockHandDetectionScript)
 
     await page.goto('./')
+    await selectPractice(page)
     await expect(page.locator('.aww-practice-env')).toBeVisible()
 
     // Select a sign to practice

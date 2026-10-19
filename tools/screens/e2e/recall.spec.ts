@@ -2,6 +2,7 @@ import { test, expect, type Page } from '@playwright/test'
 import { CURRICULUM_UNITS } from '../../../apps/learn/src/data/curriculum'
 import { translationOf } from '../../../apps/learn/src/data/translations'
 import { mockHandDetectionScript } from './helpers/hands'
+import { selectPractice } from './helpers/navigation'
 
 async function prepare(page: Page, gloss = 'BAG EKA') {
   await page.addInitScript(gloss => {
@@ -12,6 +13,7 @@ async function prepare(page: Page, gloss = 'BAG EKA') {
   }, gloss)
   await page.addInitScript(mockHandDetectionScript)
   await page.goto('./')
+  await expect(page.locator('.path-card').first()).toBeVisible()
   await page.evaluate(gloss => new Promise<void>((resolve, reject) => {
     const req = indexedDB.open('ssl-learn', 3)
     req.onerror = () => reject(req.error)
@@ -22,6 +24,7 @@ async function prepare(page: Page, gloss = 'BAG EKA') {
     }
   }), gloss)
   await page.reload()
+  await selectPractice(page)
   await page.getByRole('button', { name: 'My turn', exact: true }).click()
   await page.getByRole('button', { name: '3. Recall', exact: true }).click()
 }

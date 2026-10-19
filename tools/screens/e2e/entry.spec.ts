@@ -1,16 +1,21 @@
 import { test, expect } from '@playwright/test'
 import { CURRICULUM_UNITS } from '../../../apps/learn/src/data/curriculum'
 
-test('Hero opens the first Starter sign directly in Watch', async ({ page }) => {
+test('Hero opens Path without starting practice and reload returns to Path', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('suvana.learn.onboarding-seen', '1'))
   await page.goto('./')
-  await page.getByRole('button', { name: 'Start practising', exact: true }).first().click()
-  await expect(page.locator('.aww-practice-env')).toHaveAttribute('data-stage', 'watch')
-  await expect(page.locator('.aww-pane-title').first()).toContainText(CURRICULUM_UNITS[0].signs[0])
-  await expect(page.getByRole('button', { name: 'My turn', exact: true })).toBeEnabled()
+  await page.getByRole('button', { name: 'Start learning', exact: true }).click()
+  await expect(page.getByRole('tab', { name: /Path/ }).first()).toHaveAttribute('aria-selected', 'true')
+  await expect(page.locator('.path-card')).toHaveCount(CURRICULUM_UNITS.length + 1)
+  expect(await page.evaluate(() => sessionStorage.getItem('ssl-learn-session'))).toBeNull()
+  await page.getByRole('tab', { name: /Practice/ }).first().click()
+  await page.reload()
+  await expect(page.locator('.path-card').first()).toBeVisible()
+  await expect(page.getByRole('tab', { name: /Path/ }).first()).toHaveAttribute('aria-selected', 'true')
+  expect(await page.locator('.path-card').first().evaluate(node => getComputedStyle(node, '::before').content)).toBe('none')
 })
 
-test('Hero still hands off the first sign when session storage is blocked', async ({ page }) => {
+test('Hero still enters Path when session storage is blocked', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('suvana.learn.onboarding-seen', '1')
     const original = Storage.prototype.setItem
@@ -20,9 +25,16 @@ test('Hero still hands off the first sign when session storage is blocked', asyn
     }
   })
   await page.goto('./')
-  await page.getByRole('button', { name: 'Start practising', exact: true }).first().click()
-  await expect(page.locator('.aww-pane-title').first()).toContainText(CURRICULUM_UNITS[0].signs[0])
-  await expect(page.locator('.aww-practice-env')).toHaveAttribute('data-stage', 'watch')
+  await page.getByRole('button', { name: 'Start learning', exact: true }).click()
+  await expect(page.locator('.path-card').first()).toBeVisible()
+})
+
+test('author bookmarks retain tools without header entry buttons', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('suvana.learn.entered', '1'))
+  await page.goto('./?mode=author')
+  await expect(page.getByRole('tab', { name: /Study/ }).first()).toBeVisible()
+  await expect(page.locator('.aww-author-enter-btn, .aww-author-exit-btn, .aww-telemetry-pill')).toHaveCount(0)
+  await expect(page.locator('.path-card').first()).toBeVisible()
 })
 
 test('completed session shows earned stars and next unit without double counting', async ({ page }) => {
@@ -31,6 +43,7 @@ test('completed session shows earned stars and next unit without double counting
     localStorage.setItem('suvana.learn.onboarding-seen', '1')
   })
   await page.goto('./')
+  await expect(page.locator('.path-card').first()).toBeVisible()
   await page.evaluate(async signs => {
     const session = { id: 'synthetic-session', glosses: signs, done: signs, startMastery: {}, startedAt: new Date().toISOString() }
     sessionStorage.setItem('ssl-learn-session', JSON.stringify(session))
@@ -49,6 +62,7 @@ test('completed session shows earned stars and next unit without double counting
     })
   }, CURRICULUM_UNITS[0].signs)
   await page.reload()
+  await page.getByRole('tab', { name: /Practice/ }).first().click()
   await expect(page.getByRole('heading', { name: 'Nice work!', exact: true })).toBeFocused()
   expect(await page.locator('#session-complete-title').evaluate(el => getComputedStyle(el).outlineStyle)).toBe('none')
   await page.keyboard.press('Tab')

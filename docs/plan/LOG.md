@@ -1303,3 +1303,55 @@ Rules:
 - Browser reproduced opacity 1 over hidden hint area before and 0 after; actual button hover/focus reveals hint, leaving for pill area hides it. Desktop/phone panel opening and existing phone no-tooltip behavior pass; no messages submitted.
 - Gates: Shell 157 tests/typecheck/build, 263 sync guards and diff check pass; existing bundle advisory remains. Review: .agent-local/screens/chatbot-hover/index.html. Handoff: docs/plan/handoffs/chatbot-hover.md.
 - Separate accountCopy.ts edits preserved; no SSL/auth/research changes. Plan correction: direct session task overrides normal board/lane setup. Visual review and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Learn Path intro removal
+- Removed screenshotted Path overview intro and unused CSS; preserved accessible section naming. Unit cards moved up about 226px desktop / 251px phone with no horizontal overflow.
+- Gates: npm ci, lint, 357 tests passed / 13 skipped, build (155.21 kB gzip), 263 sync guards. Windows file lock resolved by stopping Learn Vite; sandbox test EPERM resolved by normal-environment rerun.
+- Review: .agent-local/screens/learn-path-intro/{before,after}-{desktop,phone}.png. Handoff: docs/plan/handoffs/learn-path-intro.md. r26_port: yes.
+- Plan correction: kvn directly requested revamp/learn-path in main worktree, overriding board/lane selection. Visual review and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Learn Path descriptions and milestone icons
+- Removed lesson description rows and status pills. Lucide milestone uses lowest per-sign stars: 3 Star, 2 StarCheck, 1 StarHalf, zero none. Accessible names retained; scoring/unlocks unchanged; no new dependencies.
+- Gates: npm ci/lint, 366 tests passed / 13 skipped, build (155.22 kB gzip), 263 sync guards, diff check. Browser: 14 desktop/phone uniform and mixed-star fixtures passed, no horizontal overflow. Fixtures are synthetic UI evidence only.
+- Review: .agent-local/screens/learn-path-stars/index.html. Handoff: docs/plan/handoffs/learn-path-stars.md; r26_port: yes. Full Playwright suite not run.
+- Plan correction: direct session request uses revamp/learn-path in main worktree, overriding board/lane setup. Visual review and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Learn lesson locks and Everyday terms titles
+- Added Lucide Lock to locked lessons and Sentence challenge; confirmed existing all-signs-at-least-one-star sequential unlock rule. Renamed titles to Everyday terms 1/2 through curriculum generator, tests and generated assistant metadata.
+- Compared curriculum against previous commit: only two titles changed; progress IDs, glosses, signs/order and all other fields identical. Historical docs left intact.
+- Gates: Learn clean install/lint, 367 passed / 13 skipped, build (155.23 kB gzip); Shell 157 tests/typecheck/build; Recognize 42 tests; knowledge freshness, 264 sync guards and diff check passed. 14 desktop/phone synthetic progress cases passed; no horizontal overflow. Existing Shell chunk advisory remains.
+- Review: .agent-local/screens/learn-path-locks/index.html. Handoff: docs/plan/handoffs/learn-path-locks.md. Learn dev server restored with fresh optimizer and rendered-page checks on port 5174; r26_port: yes.
+- Plan correction: direct session request uses revamp/learn-path/main worktree, overriding board/lane selection. Visual review and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Learn Path desktop pages and mobile serpentine route
+- Desktop: nine equal-size cards per page on a mirrored-S route with Previous/Next; mobile: continuous odd-left/even-right route. Teal/gold SVG curves follow rendered centres. All 54 entries reachable; current desktop page survives lesson return/resize. IDs, progress, locks and scoring unchanged.
+- Gates: Learn clean install/lint, 371 passed / 13 skipped, build 155.22 kB gzip; 23 focused browser checks; Shell 157 tests/typecheck/build; Recognize 42 tests; knowledge freshness and 264 sync guards passed. Existing Shell chunk advisory and 320px header overflow baseline documented; Path fits 320px, full page fits 360px+.
+- Review: .agent-local/screens/learn-path-map/index.html, with before desktop/phone, every desktop page and mobile top/middle/end in both themes. Fresh-progress screenshots; synthetic browser progress fixtures only, not learner evidence. Handoff: docs/plan/handoffs/learn-path-map.md. r26_port: yes.
+- Plan correction: user directly requested revamp/learn-path in main worktree for session tasks, overriding board/lane selection. Learn server restored on 5174 with fresh optimizer and rendered-page verification. Visual adoption and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Continuous Learn path and centred side connectors
+- Removed pagination/page state; all 54 lessons share one scrolling route. Desktop uses uniform three-column/three-row viewport density, with no page breaks. Rounded cards to 24px, inset mobile cards by 24px, and anchor curves at side midpoints with rounded outside rails. Lesson return restores focus/scroll position.
+- Gates: Learn clean install/lint, 371 passed / 13 skipped, build 155.21 kB gzip; 26 browser checks; Shell 157 tests/typecheck/build; Recognize 42 tests; metadata freshness, 265 sync guards and diff check passed. Browser geometry checks cover every card's actual route crossings; nine-card desktop views verified at multiple widths/heights. Existing Shell advisory/320px header baseline documented.
+- Review: .agent-local/screens/learn-path-flow/index.html. Before/after desktop/phone plus six continuous desktop scroll positions and mobile top/middle/end in both themes. Fresh-progress screenshots; synthetic attempts only in UI regression tests. Handoff: docs/plan/handoffs/learn-path-flow.md. r26_port: yes.
+- Plan correction: user superseded the earlier pagination requirement with continuous scrolling and nine-card desktop viewport density. Session branch/main-worktree instruction remains authoritative. Learn dev server restored on 5174 with fresh optimization/render checks; visual adoption and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Compact centred Learn lesson cards
+- Shrunk visible cards by 24px width/20px height around fixed centres. Measured 18 width/theme combinations against 952d965: SVG route strings and all slot rectangles identical; all 54 card centres unchanged. Nine-card desktop density and continuous scrolling preserved.
+- Centred titles and right-side milestone icons, right-aligned sign counts underneath, and moved earned/available tally to the top right with a yellow Lucide Star and accessible label. Full titles and Preview/experimental notices fit; no reward/ID/content changes.
+- Browser 37 checks passed. Learn ci/lint/build (155.22 kB gzip) passed; default unit run missed longsequence's unchanged 50ms timing gate at 52.843ms, then the complete one-worker rerun passed 371 / 13 skipped. No scoring/threshold edits; default-worker CI unverified. Shell 157 tests/typecheck/build, Recognize 42 tests, metadata freshness and 265 sync guards passed.
+- Review: .agent-local/screens/learn-path-card-content/index.html. Handoff: docs/plan/handoffs/learn-path-card-content.md. Fresh-progress screenshots; synthetic fixtures only for browser regression checks. Learn restored on 5174 with fresh optimizer and actual rendering verified. r26_port: yes.
+- Plan correction: directly requested follow-up on revamp/learn-path/main worktree overrides board/lane selection. Visual adoption and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Smaller editorial Learn path cards
+- Completely redesigned card hierarchy using Shell's serif headings, monospace labels, soft borders and restrained raised surfaces. Number/status in the header; left-aligned title; signs and yellow-star tally in the footer. Cards are 20px narrower and 16px shorter than the preceding increment; route/slots/centres, continuous scrolling and nine-card desktop density stay intact.
+- Full titles and Preview/experimental notices remain visible. No curriculum, progress, scoring or lock changes. Generated assistant assets refreshed for PathView provenance only.
+- Gates: Learn clean install/lint, 371 passed / 13 skipped with one worker, build 155.22 kB gzip; 37 browser checks; Shell 157 tests/typecheck/build; Recognize 42 tests; metadata freshness, 265 sync guards and diff check passed. Existing audit/Shell chunk/320px header limitations documented in handoff.
+- Review: .agent-local/screens/learn-path-card-redesign/index.html; before/after desktop 1280x800 and phone 390x844 in both themes plus all desktop scroll positions and mobile middle/end/360px. Fresh progress screenshots; synthetic fixtures only for UI regression checks. Handoff: docs/plan/handoffs/learn-path-card-redesign.md. r26_port: yes.
+- Plan correction: direct session redesign supersedes prior card-content placement and board/lane selection; revamp/learn-path/main worktree remains authoritative. Learn preview restored at 5174 with actual desktop/phone rendering verified. Visual adoption and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Learn Path entry, quiet header and information modal
+- Fixed Starter's stray gradient ornament. Hero Start learning and normal reload now select Path; exact verified sign links still open Practice Watch. Removed automatic Hero practice-session creation.
+- Removed the header AI pill and author entry/exit buttons plus the research footer entry. Existing author bookmarks remain supported. Replaced inline edition/licence/privacy text with a small info icon on Hero/app footer and a large native modal: existing credits/links, sticky X, scrollable phone content and blurred background. Modal keyboard input does not trigger app navigation; Hero's Lenis leaves modal scrolling native.
+- Gates: Learn clean install/lint, 371 passed / 13 skipped with one worker, build 154.86 kB gzip; 95 browser checks across navigation, modal, existing practice/camera/progress flows and continuous-path geometry/density; metadata freshness, 265 sync guards and diff check passed. Synthetic fixtures remain UI-only evidence; no real-camera latency claim.
+- Review: .agent-local/screens/learn-info-cleanup/index.html, desktop 1280x800 / phone 390x844 in both themes. Handoff: docs/plan/handoffs/learn-info-cleanup.md. Learn preview restored at 5174 and actual automatic Path/modal rendering rechecked after clean install. r26_port: yes.
+- Plan correction: direct session follow-up authorizes these scoped App/Hero/header/footer edits on revamp/learn-path in the main worktree, overriding board/lane/hot-file selection. Screenshot adoption and merge/push/deploy remain manual.

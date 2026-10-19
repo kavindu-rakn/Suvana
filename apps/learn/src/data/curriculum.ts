@@ -85,7 +85,7 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
   },
   {
     "id": "u-additional-words-1",
-    "title": "Everyday words and directions 1",
+    "title": "Everyday terms 1",
     "description": "Try a few everyday words and directions.",
     "status": "approved",
     "signs": [
@@ -104,7 +104,7 @@ export const CURRICULUM_UNITS: CurriculumUnit[] = [
   },
   {
     "id": "u-additional-words-2",
-    "title": "Everyday words and directions 2",
+    "title": "Everyday terms 2",
     "description": "Try a few everyday words and directions.",
     "status": "approved",
     "signs": [

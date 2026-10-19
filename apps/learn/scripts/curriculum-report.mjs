@@ -192,7 +192,7 @@ const groups = [
   ['u-greetings', 'Greetings', 'Try a few words for meeting people.', 'Greetings', categoryRefs('Greetings')],
   ['u-numbers', 'First numbers', 'Try the signs in this number group.', 'Numbers', numberRefs('Numbers')],
   ['u-scenario-restaurant', 'Restaurant', 'Try the signs from the restaurant chat.', 'Restaurant', restaurantRefs],
-  ['u-additional-words', 'Everyday words and directions', 'Try a few everyday words and directions.', 'Additional words', categoryRefs('Additional words')],
+  ['u-additional-words', 'Everyday terms', 'Try a few everyday words and directions.', 'Additional words', categoryRefs('Additional words')],
   ['u-alphabet-part1', 'Letters A-M', 'Try the letters in this group.', 'A-Z', alphabetRefs.filter((r) => r.gloss <= 'M')],
   ['u-alphabet-part2', 'Letters N-Z', 'Try the letters in this group.', 'A-Z', alphabetRefs.filter((r) => r.gloss > 'M')],
   ['u-numbers-20-99', 'Numbers 30-90', 'Try these two-digit numbers.', '20-99', numberRefs('20-99')],

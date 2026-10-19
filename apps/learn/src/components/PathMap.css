@@ -1,0 +1,22 @@
+/* A brand route, independent of reward colours and the lesson unlock rules. */
+.path-map { --path-line-teal: #00a693; --path-line-gold: #daa520; }
+.path-map-canvas { position: relative; }
+.path-route { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.path-route path { fill: none; stroke-width: 3; stroke-linecap: round; }
+.path-route .path-route-halo { stroke-width: 10; opacity: .12; }
+.path-units { position: relative; list-style: none; margin: 0; padding: 0 40px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 48px; }
+/* Keep route anchors on the original slots while the visible cards shrink. */
+.path-node { min-width: 0; height: 160px; display: grid; place-items: center; }
+@media (min-width: 900px) {
+  /* Uniform row pitch gives a three-by-three viewport without page breaks. */
+  .path-units { row-gap: max(40px, calc((100dvh - var(--app-bar-h)) / 3 - 160px)); }
+}
+@media (max-width: 899px) {
+  .path-units { display: flex; flex-direction: column; gap: 44px; padding: 0; }
+  /* Keep card width while reserving an outside gutter for each curved turn. */
+  .path-node { width: 72%; max-width: 300px; margin-inline: 24px; align-self: flex-start; }
+  .path-node:nth-child(even) { align-self: flex-end; }
+}
+@media (forced-colors: active) {
+  .path-route path { stroke: CanvasText; }
+}

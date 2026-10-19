@@ -1,15 +1,31 @@
-.path-view { max-width: 920px; margin: 0 auto; padding: 32px 24px 48px; }
-.path-heading { margin-bottom: 32px; }
-.path-heading h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 500; margin: 12px 0 16px; }
+.app > main[data-tab='path'] { padding-block: 32px calc(32px + var(--nav-offset)); }
+.path-view { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 16px 24px; }
 .path-view p { color: var(--text-dim); line-height: 1.7; }
-.path-units { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-.path-card { display: flex; align-items: center; gap: 20px; text-align: left; width: 100%; padding: 24px; color: var(--text); background: var(--surface); border: 1px solid var(--border-interactive); border-radius: var(--r-lg); cursor: pointer; font: inherit; }
-.path-card[data-state="open"] { border-color: var(--accent); background: var(--surface-2); }
-.path-number { font-size: 1.4rem; color: var(--text-dim); font-variant-numeric: tabular-nums; }
-.path-card-copy { display: grid; flex: 1; gap: 8px; min-width: 0; }
-.path-card-copy strong { font-size: 1.15rem; font-weight: 600; }
-.path-card-copy > span { font-size: .9rem; color: var(--text-dim); line-height: 1.5; }
-.path-state { font-size: .85rem; border: 1px solid var(--border-interactive); border-radius: 24px; padding: 8px 12px; }
+/* Shell's editorial headings, monospace labels and quiet raised surfaces. */
+.path-card {
+  position: relative; display: grid; grid-template-rows: 16px minmax(0, 1fr) auto;
+  gap: 6px; width: calc(100% - 44px); height: 124px; padding: 10px 12px;
+  text-align: left; color: var(--text); font: inherit;
+  background: linear-gradient(135deg, var(--glow-accent), transparent 65%), var(--surface);
+  border: 1px solid var(--border-subtle); border-radius: 24px;
+  box-shadow: 0 6px 20px rgb(0 0 0 / .06); cursor: pointer;
+  transition: border-color .2s, box-shadow .2s;
+}
+.path-card[data-state="open"] { border-color: var(--accent); }
+.path-card:not(:disabled):hover { border-color: var(--accent); box-shadow: 0 10px 28px var(--glow-accent); }
+.path-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.path-card-heading { display: flex; justify-content: space-between; align-items: center; }
+.path-number { font: 600 .6875rem/1 ui-monospace, Consolas, monospace; letter-spacing: .12em; color: var(--text-dim); }
+.path-card-heading .lesson-stars svg { width: 16px; height: 16px; }
+.path-card-copy { display: flex; align-items: center; min-width: 0; }
+.path-card-copy strong { font-size: 1rem; line-height: 1.2; font-weight: 600; text-wrap: balance; overflow-wrap: anywhere; }
+.path-card-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-width: 0; color: var(--text-dim); font-size: .6875rem; line-height: 1.25; }
+.path-star-count { display: inline-flex; align-items: center; gap: 4px; font: .6875rem/1.25 ui-monospace, Consolas, monospace; white-space: nowrap; }
+.path-earned-star { color: #a8790b; fill: #facc15; flex-shrink: 0; }
+.path-card-notice { flex-basis: 100%; font-size: .65625rem; line-height: 1.2; }
+.path-card[data-state="preview"] { padding-block: 8px; row-gap: 4px; }
+@media (prefers-reduced-motion: reduce) { .path-card { transition: none; } }
+.path-detail { max-width: 872px; margin: 0 auto; padding-top: 8px; }
 .path-detail h2 { font-size: 2rem; margin-bottom: 8px; }
 .path-signs { list-style: none; padding: 0; margin-top: 24px; }
 .path-signs li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--border-subtle); }
@@ -20,10 +36,7 @@
 .path-note { font-size: .9rem; }
 .path-preview { height: 420px; margin: 24px 0 80px; }
 @media(max-width: 600px) {
-  .path-view { padding: 24px 16px 40px; }
-  .path-card { padding: 18px 14px; gap: 12px; flex-wrap: wrap; }
-  .path-card-copy { flex-basis: 65%; }
-  .path-state { margin-left: 36px; }
+  .path-view { padding: 0 2px 24px; }
   .path-signs li { align-items: flex-start; flex-direction: column; }
   .path-actions { width: 100%; }
   .path-actions button { flex: 1; }

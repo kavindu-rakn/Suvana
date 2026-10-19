@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import fs from 'node:fs'
+import { startFirstLesson } from './helpers/navigation'
 
 // Opt-in: normal smoke runs must not silently start a benchmark or use mocks.
 test('Q-09 real-camera BAG EKA capture-end to result-shown', async ({ page, browser }, testInfo) => {
@@ -46,7 +47,7 @@ test('Q-09 real-camera BAG EKA capture-end to result-shown', async ({ page, brow
       }
     }, new URL(process.env.SUVANA_LATENCY_VISION!, page.url()).href)
 
-    await page.getByRole('button', { name: 'Start practising', exact: true }).first().click()
+    await startFirstLesson(page)
     await expect(page.locator('h2.aww-pane-title').first()).toContainText('BAG EKA')
     await page.getByRole('button', { name: 'My turn', exact: true }).click()
     await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
