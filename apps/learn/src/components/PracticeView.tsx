@@ -49,6 +49,7 @@ import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
 import type { HandFeedback } from './ScoreBadge'
 import { PracticeBrowser } from './PracticeBrowser'
+import { practiceReturnCategory } from './practiceBrowserNavigation'
 import { Onboarding } from './Onboarding'
 import { onboardingSeen } from './onboardingFlag'
 import { trimTake } from '../scoring/trimTake'
@@ -111,6 +112,7 @@ export function PracticeView({
   const [loadingProgress, setLoadingProgress] = useState(true)
   const mountIntent = useRef({ gloss: initialGloss, session })
   const [isBrowsing, setIsBrowsing] = useState(true)
+  const [browserStartCategory, setBrowserStartCategory] = useState<string | null>(null)
   // Why the last countdown or take was abandoned, shown until the next one.
   const [captureNotice, setCaptureNotice] = useState<string | null>(null)
   const [onboardingOpen, setOnboardingOpen] = useState(false)
@@ -144,6 +146,7 @@ export function PracticeView({
 
   useEffect(() => {
     if (!isBrowsing && selected) {
+      setBrowserStartCategory(null)
       lessonHeadingRef.current?.focus({ preventScroll: true })
       window.scrollTo({ top: 0 })
     }
@@ -736,6 +739,10 @@ export function PracticeView({
   const closeOnboarding = useCallback(() => setOnboardingOpen(false), [])
 
   const browsing = isBrowsing || !selected
+  const returnCategory = useMemo(
+    () => practiceReturnCategory(selected, references),
+    [selected, references],
+  )
   const watching = teaching.stage === 'watch'
   const exercise = selected ? nextExercise(selected.gloss, entries) : null
   const earnedStars = selected ? starsFor(selected.gloss, entries) : 0
@@ -889,11 +896,10 @@ export function PracticeView({
         cancelRecording()
       } else if (phaseRef.current === 'result') {
         e.preventDefault()
-        leaveResult()
-        setIsBrowsing(true)
+        returnToCategory()
       } else if (phaseRef.current === 'idle' && !isBrowsing) {
         e.preventDefault()
-        setIsBrowsing(true)
+        returnToCategory()
       }
     } else if (e.key === 'm' || e.key === 'M') {
       if (!isBrowsing && !watching && !recallHidden && phaseRef.current !== 'result') {
@@ -930,6 +936,14 @@ export function PracticeView({
 
   function browseSigns() {
     leaveResult()
+    setBrowserStartCategory(null)
+    setIsBrowsing(true)
+    window.scrollTo({ top: 0 })
+  }
+
+  function returnToCategory() {
+    leaveResult()
+    setBrowserStartCategory(returnCategory)
     setIsBrowsing(true)
     window.scrollTo({ top: 0 })
   }
@@ -965,7 +979,7 @@ export function PracticeView({
     </div>
   )
 
-  if (sessionDone && phase === 'idle' && session && browsing)
+  if (sessionDone && phase === 'idle' && session && browsing && browserStartCategory === null)
     return loadingProgress ? (
       <p role="status" className="empty-state">
         Loading your session…
@@ -978,6 +992,7 @@ export function PracticeView({
           setSession(null)
           clearSession()
           setSelected(null)
+          setBrowserStartCategory(null)
           setIsBrowsing(true)
         }}
       />
@@ -1034,6 +1049,8 @@ export function PracticeView({
         <PracticeBrowser
           references={references}
           loading={loadingProgress}
+          initialCategory={browserStartCategory}
+          initialSignId={browserStartCategory ? selected?.id : undefined}
           onSelect={chooseSign}
           onPreview={(sign) => {
             setPreviewSign(sign)
@@ -1048,34 +1065,36 @@ export function PracticeView({
                 <button
                   className="practice-text-button"
                   disabled={busy}
-                  onClick={browseSigns}
-                  aria-label="Choose a different sign (Esc)"
+                  onClick={returnToCategory}
+                  aria-label={
+                    returnCategory ? `Back to ${returnCategory} (Esc)` : 'Browse signs (Esc)'
+                  }
                 >
-                  <ArrowLeft size={15} aria-hidden="true" /> All signs
+                  <ArrowLeft size={15} aria-hidden="true" /> {returnCategory ?? 'All signs'}
                 </button>
-                <span className="practice-breadcrumb">/</span>
-                <span className="practice-lesson-category">{categoryOf(selected)}</span>
               </div>
-              <button
-                className="practice-text-button"
-                disabled={busy}
-                onClick={() => setOnboardingOpen(true)}
-              >
-                <span className="practice-help-icon">?</span> How it works
-              </button>
+              {!watching && (
+                <button
+                  className="practice-text-button"
+                  disabled={busy}
+                  onClick={() => setOnboardingOpen(true)}
+                >
+                  <span className="practice-help-icon">?</span> How it works
+                </button>
+              )}
             </header>
 
             <div className="practice-lesson-title">
               <div>
-                <p className="practice-kicker">
-                  {phase === 'result'
-                    ? 'Practice review'
-                    : watching
-                      ? 'Let’s take a closer look'
+                {!watching && (
+                  <p className="practice-kicker">
+                    {phase === 'result'
+                      ? 'Practice review'
                       : teaching.stage === 'recall'
                         ? 'From memory'
                         : 'Make it your turn'}
-                </p>
+                  </p>
+                )}
                 <h1 ref={lessonHeadingRef} tabIndex={-1}>
                   {translationOf(selected.gloss) ?? glossLabel(selected.gloss)}
                 </h1>
@@ -1190,7 +1209,6 @@ export function PracticeView({
                     <span className="practice-cue-icon">
                       <Hand size={28} aria-hidden="true" />
                     </span>
-                    <p className="practice-kicker">Watch, then give it a go</p>
                     <h2>
                       Find the movement.
                       <br />
@@ -1202,16 +1220,26 @@ export function PracticeView({
                     </p>
                     <button
                       className="practice-button practice-primary"
+                      aria-label="Try this sign"
                       disabled={!reference}
                       onClick={() =>
                         setTeaching((state) => practiceStageTransition(state, 'my-turn'))
                       }
                     >
-                      My turn <ArrowRight size={17} aria-hidden="true" />
+                      Try <ArrowRight size={17} aria-hidden="true" />
                     </button>
                     <span className="practice-private">
                       <ShieldCheck size={15} aria-hidden="true" /> Your camera stays private
                     </span>
+                    <button
+                      className="practice-text-button practice-watch-help"
+                      onClick={() => setOnboardingOpen(true)}
+                    >
+                      <span className="practice-help-icon" aria-hidden="true">
+                        ?
+                      </span>{' '}
+                      How it works
+                    </button>
                   </aside>
                 )}
               </div>

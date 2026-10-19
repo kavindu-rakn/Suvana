@@ -115,15 +115,6 @@
   gap: 14px;
   min-width: 0;
 }
-.practice-breadcrumb {
-  color: var(--border-interactive);
-  font-size: 0.75rem;
-}
-.practice-lesson-category {
-  color: var(--text-dim);
-  font-size: 0.75rem;
-  overflow-wrap: anywhere;
-}
 .practice-help-icon {
   display: grid;
   place-items: center;
@@ -142,6 +133,15 @@
 }
 .practice-lesson-title > div:first-child {
   min-width: 0;
+}
+.practice-workspace[data-stage='watch'] .practice-lesson-title {
+  margin: 8px 0 16px;
+}
+.practice-workspace[data-stage='watch'] .practice-lesson-title h1 {
+  margin-top: 0;
+}
+.practice-workspace[data-stage='watch'] .practice-stepper {
+  margin-bottom: 20px;
 }
 .practice-lesson-title h1 {
   margin: 10px 0 8px;
@@ -296,6 +296,14 @@
   border-radius: 22px;
   background: linear-gradient(145deg, var(--glow-accent), transparent 70%), var(--surface-2);
 }
+/* Watch gets a taller reference without changing the camera-first Try layout. */
+.practice-stage-watch .practice-reference-card .reference-stage {
+  height: clamp(340px, 44vh, 440px);
+}
+.practice-watch-help {
+  align-self: center;
+  margin-top: 16px;
+}
 .practice-cue-icon {
   display: inline-grid;
   place-items: center;
@@ -319,7 +327,7 @@
   font-size: 0.8125rem;
   line-height: 1.8;
 }
-.practice-watch-next > button {
+.practice-watch-next > .practice-primary {
   width: 100%;
 }
 .practice-private {
@@ -844,6 +852,12 @@
   }
   .practice-reference-card .reference-stage {
     height: clamp(160px, 22svh, 200px);
+  }
+  .practice-stage-watch .practice-reference-card .reference-stage {
+    height: clamp(240px, 30svh, 290px);
+  }
+  .practice-watch-help {
+    margin-top: 8px;
   }
   .practice-stage-watch .practice-reference-note {
     display: none;

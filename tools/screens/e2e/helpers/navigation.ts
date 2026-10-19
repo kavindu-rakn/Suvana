@@ -19,6 +19,10 @@ export async function openPracticeSign(page: Page, gloss = 'BAG EKA') {
 
 /** Open the real category containing our preview/player reference. */
 export async function openPracticeCategory(page: Page, category = 'Additional words') {
+  await page.locator('.practice-collection-title h1').waitFor()
+  if ((await page.locator('.practice-collection-title h1').textContent()) === category) return
+  const parent = page.getByRole('button', { name: 'Back to all categories', exact: true })
+  if (await parent.isVisible()) await parent.click()
   await page.locator('.practice-category').filter({ hasText: category }).click()
 }
 

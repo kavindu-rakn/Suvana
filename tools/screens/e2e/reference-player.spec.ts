@@ -69,7 +69,7 @@ for (const width of [360, 390, 1280]) {
       await page.goto('./')
       await page.locator('.path-card').first().click()
       await page.getByRole('button', { name: 'Practise this unit', exact: true }).click()
-      await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
+      await page.getByRole('button', { name: /^Back to .+ \(Esc\)$/ }).click()
       await openPracticeCategory(page)
       await page.getByRole('button', { name: /^Preview BAG EKA/ }).first().click()
       const player = page.locator('.practice-preview-dialog .reference-player')

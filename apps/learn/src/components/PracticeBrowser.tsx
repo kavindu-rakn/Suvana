@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowLeft,
   ArrowRight,
@@ -46,21 +46,35 @@ const categoryTones = ['teal', 'gold', 'coral', 'iris'] as const
 export function PracticeBrowser({
   references,
   loading,
+  initialCategory = null,
+  initialSignId,
   onSelect,
   onPreview,
 }: {
   references: RecordingMeta[]
   loading: boolean
+  initialCategory?: string | null
+  initialSignId?: string
   onSelect: (sign: RecordingMeta) => void
   onPreview: (sign: RecordingMeta) => void
 }) {
-  const [category, setCategory] = useState<string | null>(null)
+  const [category, setCategory] = useState<string | null>(initialCategory)
+  const browserRef = useRef<HTMLDivElement>(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const { order, byCategory } = useMemo(() => groupForPicker(references), [references])
   const signs = useMemo(() => {
     const source = category ? (byCategory.get(category) ?? []) : references
     return orderSignsVerifiedFirst(category ?? '', source)
   }, [references, byCategory, category])
+
+  useEffect(() => {
+    if (loading || !initialCategory || !initialSignId) return
+    const button = browserRef.current?.querySelector<HTMLButtonElement>(
+      `[data-sign-id="${CSS.escape(initialSignId)}"] .practice-sign-select`,
+    )
+    button?.focus({ preventScroll: true })
+    button?.scrollIntoView({ block: 'center' })
+  }, [loading, initialCategory, initialSignId])
 
   useEffect(() => {
     const search = (event: KeyboardEvent) => {
@@ -82,7 +96,7 @@ export function PracticeBrowser({
   }, [])
 
   return (
-    <div className="practice-browser">
+    <div className="practice-browser" ref={browserRef}>
       <div className="practice-search-rail">
         <button
           className="practice-search"
@@ -169,6 +183,7 @@ export function PracticeBrowser({
                         className="practice-sign"
                         data-tone={categoryTones[index % categoryTones.length]}
                         key={sign.id}
+                        data-sign-id={sign.id}
                       >
                         <button
                           className="practice-sign-select"

@@ -114,7 +114,7 @@ async function learnCamera(page: Page, theme: string, denied = false) {
   await page.addInitScript(mockHandDetectionScript)
   await page.goto('http://localhost:5174/learn/')
   await startFirstLesson(page)
-  await page.getByRole('button', { name: 'My turn', exact: true }).click()
+  await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
   await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
 }
 

@@ -25,7 +25,7 @@ async function prepare(page: Page, gloss = 'BAG EKA') {
   }), gloss)
   await page.reload()
   await selectPractice(page)
-  await page.getByRole('button', { name: 'My turn', exact: true }).click()
+  await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
   await page.getByRole('button', { name: 'Recall', exact: true }).click()
 }
 

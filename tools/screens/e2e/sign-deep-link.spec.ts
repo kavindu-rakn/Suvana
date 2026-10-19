@@ -13,7 +13,7 @@ test('a sign link opens the first Starter gloss in Practice Watch', async ({ pag
   await expect(page.getByRole('tab', { name: /Practice/ }).first()).toHaveAttribute('aria-selected', 'true')
   await expect(page.locator('.practice-lesson-title h1')).toHaveText(translationOf(gloss) ?? glossLabel(gloss))
   await expect(page.getByRole('button', { name: 'Watch', exact: true })).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.getByRole('button', { name: 'My turn', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Try this sign', exact: true })).toBeVisible()
   await expect(page.locator('.practice-reference-card .reference-canvas')).toBeVisible()
   await page.reload()
   await expect(page.locator('.practice-lesson-title h1')).toHaveText(translationOf(gloss) ?? glossLabel(gloss))

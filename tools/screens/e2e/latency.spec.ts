@@ -49,7 +49,7 @@ test('Q-09 real-camera BAG EKA capture-end to result-shown', async ({ page, brow
 
     await startFirstLesson(page)
     await expect(page.locator('.practice-lesson-title').first()).toContainText('BAG EKA')
-    await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
     await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
     await expect(page.locator('.practice-camera-card')).toHaveAttribute('data-camera-status', 'running', { timeout: 30_000 })
     try {

@@ -24,7 +24,7 @@ async function prepare(page: Page) {
   await page.goto('./')
   await selectPractice(page)
   await openPracticeSign(page)
-  await page.getByRole('button', { name: 'My turn', exact: true }).click()
+  await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
   await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
   await expect(page.locator('#aww-hands-pill')).toHaveAttribute('data-ready', 'yes', { timeout: 15000 })
 }
@@ -42,7 +42,7 @@ async function visibility(page: Page, hidden: boolean) {
 
 test('browsing releases every camera track and return does not reopen it', async ({ page }) => {
   await prepare(page)
-  await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
+  await page.getByRole('button', { name: /^Back to .+ \(Esc\)$/ }).click()
   await expect.poll(() => page.evaluate(() => window.cameraStreams.flatMap(stream => stream.getTracks()).every(track => track.readyState === 'ended'))).toBe(true)
   await expect(page.locator('.practice-is-browsing')).toBeVisible()
   await visibility(page, true)

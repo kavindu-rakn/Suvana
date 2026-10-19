@@ -42,7 +42,7 @@ test.describe('Learn smoke tests', () => {
     await openPracticeSign(page)
 
     // Start camera tracking
-    await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
     const turnOnCamBtn = page.locator('button:has-text("Turn on camera")')
     await expect(turnOnCamBtn).toBeVisible()
     await turnOnCamBtn.click()
@@ -88,7 +88,7 @@ test.describe('Learn smoke tests', () => {
     await openPracticeSign(page)
 
     // Start camera tracking
-    await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
     const turnOnCamBtn = page.locator('button:has-text("Turn on camera")')
     await expect(turnOnCamBtn).toBeVisible()
     await turnOnCamBtn.click()

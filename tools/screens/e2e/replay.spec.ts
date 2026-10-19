@@ -47,7 +47,7 @@ async function scoreFixture(page: Page, priorScore = 70) {
   )
   await page.reload()
   await selectPractice(page)
-  await page.getByRole('button', { name: 'My turn', exact: true }).click()
+  await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
   await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
   await expect(page.locator('#aww-hands-pill')).toHaveAttribute('data-ready', 'yes', {
     timeout: 15000,
@@ -62,6 +62,13 @@ async function scoreFixture(page: Page, priorScore = 70) {
     .click()
   await expect(page.locator('.replay-compare')).toBeVisible()
 }
+
+test('Back from a completed session returns to the reference category', async ({ page }) => {
+  await scoreFixture(page)
+  await page.getByRole('button', { name: 'Back to Additional words (Esc)', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Additional words', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Watch BAG EKA/ })).toBeFocused()
+})
 
 test('comparison has one keyboard scrubber, a focus pause and no finger judgments', async ({
   page,

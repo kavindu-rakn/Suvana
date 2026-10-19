@@ -10,7 +10,7 @@ async function enter(page: Page) {
   await page.addInitScript(() => localStorage.setItem('suvana.learn.onboarding-seen', '1'))
   await page.goto('./')
   await startFirstLesson(page)
-  await expect(page.getByRole('button', { name: 'My turn', exact: true })).toBeEnabled()
+  await expect(page.getByRole('button', { name: 'Try this sign', exact: true })).toBeEnabled()
 }
 async function tab(page: Page, name: string) {
   await page.getByRole('tab', { name: new RegExp('^' + name) }).filter({ visible: true }).click()
@@ -23,18 +23,18 @@ for (const width of [360, 375, 390]) {
     await page.addInitScript(() => localStorage.setItem('suvana.learn.onboarding-seen', '1'))
     await page.goto('./'); await fits(page, width)
     await startFirstLesson(page)
-    await expect(page.getByRole('button', { name: 'My turn', exact: true })).toBeEnabled()
+    await expect(page.getByRole('button', { name: 'Try this sign', exact: true })).toBeEnabled()
     await fits(page, width)
     const reference = await page.locator('.practice-reference-card canvas').boundingBox()
     const title = await page.locator('.practice-reference-card .practice-card-heading').boundingBox()
     expect(title!.y + title!.height).toBeLessThanOrEqual(reference!.y)
-    await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
     await page.getByRole('button', { name: 'Turn on camera', exact: true }).scrollIntoViewIfNeeded()
     const cameraButton = await page.getByRole('button', { name: 'Turn on camera', exact: true }).boundingBox()
     const dock = await page.locator('.aww-nav-mobile').boundingBox()
     expect(cameraButton!.y + cameraButton!.height).toBeLessThan(dock!.y)
     await fits(page, width)
-    await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
+    await page.getByRole('button', { name: /^Back to .+ \(Esc\)$/ }).click()
     await openPracticeCategory(page)
     const card = page.getByRole('button', { name: /^Preview BAG EKA/ }).first()
     await card.tap()
@@ -84,14 +84,14 @@ test('desktop author tabs stay between the brand and utility controls', async ({
 
 test('keyboard opens a sign once and reduced motion removes animation delays', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' }); await enter(page)
-  await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
+  await page.getByRole('button', { name: /^Back to .+ \(Esc\)$/ }).click()
   await openPracticeCategory(page)
   const card = page.getByRole('button', { name: /^Watch BAG EKA/ }).first()
   await card.focus()
   expect(await card.evaluate(el => getComputedStyle(el).animationDelay)).toBe('0s')
   await card.press('Space')
   await expect(page.locator('.aww-practice-env')).toHaveAttribute('data-stage', 'watch')
-  await expect(page.getByRole('button', { name: 'My turn', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Try this sign', exact: true })).toBeVisible()
 })
 
 for (const [empty, width] of [[false, 360], [false, 375], [false, 390], [true, 360]] as const) {
@@ -99,7 +99,7 @@ for (const [empty, width] of [[false, 360], [false, 375], [false, 390], [true, 3
     await page.setViewportSize({ width, height: 844 }); await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.addInitScript(mockHandDetectionScript)
     await page.addInitScript(() => { (window as unknown as { __mockHands: boolean }).__mockHands = true })
-    await enter(page); await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    await enter(page); await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
     await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
     await expect(page.locator('#aww-hands-pill')).toHaveAttribute('data-ready', 'yes', { timeout: 20000 })
     await page.getByRole('button', { name: 'Record attempt (Space)', exact: true }).click()
@@ -133,7 +133,7 @@ test('Recall, reveal and session complete fit every phone width', async ({ page 
   for (const width of [360, 375, 390]) {
     await page.setViewportSize({ width, height: 844 })
     await page.evaluate(() => sessionStorage.setItem('ssl-learn-session', JSON.stringify({ id: 'polish-recall', glosses: ['BAG EKA'], done: [], startMastery: {}, startedAt: new Date().toISOString() })))
-    await page.reload(); await selectPractice(page); await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    await page.reload(); await selectPractice(page); await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
     await page.getByRole('button', { name: 'Recall', exact: true }).click()
     await expect(page.locator('.practice-reference-card canvas')).toHaveCount(0); await fits(page, width)
     await page.getByRole('button', { name: 'Reveal reference', exact: true }).click()
@@ -184,7 +184,8 @@ for (const theme of ['light', 'dark']) {
       }
     }
     await check(['.practice-why summary', '.practice-reference-card .practice-kicker', '.practice-watch-next p'])
-    await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
+    await page.getByRole('button', { name: /^Back to .+ \(Esc\)$/ }).click()
+    await page.getByRole('button', { name: 'Back to all categories', exact: true }).click()
     await check(['.practice-collection-title h1', '.practice-collection-totals', '.practice-category-bottom span', '.practice-category h3', '.practice-category[data-tone="gold"] strong', '.practice-category[data-tone="coral"] strong', '.practice-category[data-tone="iris"] strong'])
     await openPracticeCategory(page)
     await check(['.practice-sign-select h3', '.practice-sign-select span', '.practice-sign-actions button'])
