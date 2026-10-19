@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import { CURRICULUM_UNITS } from '../../../apps/learn/src/data/curriculum'
 import { glossLabel } from '../../../apps/learn/src/data/translations'
+import { chooseReferenceSpeed } from './helpers/reference-player'
 
 async function enter(page: Page, theme: string) {
   await page.addInitScript(theme => {
@@ -48,16 +49,16 @@ for (const theme of ['light', 'dark']) {
       const preview = page.locator('.path-preview')
       await expect(preview.locator('h3')).toBeFocused()
       await expect(preview.locator('canvas')).toBeVisible()
-      const controls = await preview.locator('.player-controls').boundingBox()
+      const controls = await preview.locator('.video-controls-content').boundingBox()
       const header = await page.locator('.aww-app-bar').boundingBox()
       const dock = width < 900 ? await page.locator('.aww-nav-mobile').boundingBox() : null
       expect(controls!.x).toBeGreaterThanOrEqual(8)
       expect(controls!.x + controls!.width).toBeLessThanOrEqual(width - 8)
       expect(controls!.y).toBeGreaterThan(header!.y + header!.height)
       expect(controls!.y + controls!.height).toBeLessThanOrEqual(dock?.y ?? 800)
-      await preview.getByRole('button', { name: '0.25x', exact: true }).click()
-      await expect(preview.getByRole('button', { name: '0.25x', exact: true })).toHaveAttribute('aria-pressed', 'true')
-      await preview.getByRole('button', { name: 'Next frame', exact: true }).click()
+      await expect(preview.locator('.reference-content')).toHaveAttribute('data-speed', '1')
+      await chooseReferenceSpeed(preview, '0.25')
+      await preview.getByRole('button', { name: 'Pause', exact: true }).click()
       await expect(preview.getByRole('button', { name: 'Play', exact: true })).toBeVisible()
       await preview.getByRole('button', { name: 'Close reference', exact: true }).focus()
       await page.keyboard.press('Enter')

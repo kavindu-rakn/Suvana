@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { startFirstLesson } from './helpers/navigation'
+import { chooseReferenceSpeed } from './helpers/reference-player'
 
 for (const width of [360, 390, 767, 768, 1280]) {
   test(`Watch initial framing and manual choice at ${width}px`, async ({ page }) => {
@@ -8,13 +9,14 @@ for (const width of [360, 390, 767, 768, 1280]) {
     await page.goto('./')
     await startFirstLesson(page)
     const zoom = page.getByRole('button', { name: 'Zoom to hands', exact: true })
+    await expect(page.locator('.reference-player').first().getByRole('button', { name: 'Pause', exact: true })).toBeInViewport()
     await expect(zoom).toHaveAttribute('aria-pressed', String(width < 768))
     if (width < 768) {
-      await expect(page.locator('.aww-frame-caption')).toHaveText('Zoomed to the hands')
+      await expect(page.locator('.reference-framing')).toContainText('Zoomed to the hands')
       await zoom.click()
       await expect(zoom).toHaveAttribute('aria-pressed', 'false')
       await expect(page.locator('.aww-pane-left canvas')).toHaveClass(/is-raw/)
-      await page.getByRole('button', { name: '0.25x', exact: true }).click()
+      await chooseReferenceSpeed(page.locator('.reference-player').first(), '0.25')
       await expect(zoom).toHaveAttribute('aria-pressed', 'false')
     } else {
       await zoom.click()

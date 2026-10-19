@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
+import { selectPractice } from './helpers/navigation'
 
-test('Watch stays slow and My turn opens Try without requesting the camera', async ({ page }) => {
+test('Watch stays at 1x and My turn opens Try without requesting the camera', async ({ page }) => {
   await page.addInitScript(() => {
     sessionStorage.setItem('suvana.learn.entered', '1')
     localStorage.setItem('suvana.learn.onboarding-seen', '1')
@@ -12,12 +13,13 @@ test('Watch stays slow and My turn opens Try without requesting the camera', asy
     }
   })
   await page.goto('./')
+  await selectPractice(page)
   await page.getByRole('button', { name: /Practise/ }).first().click()
   await expect(page.locator('.aww-practice-env')).toHaveAttribute('data-stage', 'watch')
   await expect(page.getByRole('button', { name: 'My turn', exact: true })).toBeEnabled()
   await expect(page.getByRole('button', { name: 'Turn on camera', exact: true })).not.toBeVisible()
   await page.waitForTimeout(5000)
-  await expect(page.locator('.aww-pane-left .skeleton-player')).toHaveAttribute('data-speed', '0.5')
+  await expect(page.locator('.aww-pane-left .reference-content')).toHaveAttribute('data-speed', '1')
   expect(await page.evaluate(() => (window as unknown as { cameraRequests: number }).cameraRequests)).toBe(0)
   await page.getByRole('button', { name: 'My turn', exact: true }).focus()
   await page.keyboard.press('Enter')

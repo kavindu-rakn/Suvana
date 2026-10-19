@@ -1,0 +1,41 @@
+.reference-player { width: 100%; min-width: 0; min-height: 0; }
+.reference-player .reference-videojs {
+  --media-accent-color: #74d9cb;
+  --media-accent-text-color: #102724;
+  --media-control-size: 40px;
+  width: 100%; height: auto; min-height: 0;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 18px; overflow: visible;
+  background: #070e0d; cursor: auto;
+}
+.reference-content { display: flex; flex-direction: column; min-height: 0; width: 100%; }
+.reference-stage { display: block; min-height: 0; height: clamp(200px, 34vh, 380px); overflow: hidden; }
+.reference-player .reference-stage .reference-canvas {
+  width: 100% !important; height: 100% !important;
+  max-width: 100% !important; max-height: 100% !important;
+  object-fit: contain; border: 0; border-radius: 17px 17px 0 0; background: transparent;
+  min-height: 0; min-width: 0; margin: 0; display: block;
+}
+.reference-framing { display: flex; flex-shrink: 0; gap: 12px; justify-content: space-between; align-items: center; padding: 10px 14px; color: #b3c6c1; font-size: 11px; border-top: 1px solid #ffffff12; }
+.reference-framing > div { display: grid; gap: 3px; }
+.reference-framing button { flex-shrink: 0; border: 1px solid #48605b; border-radius: 20px; background: transparent; color: #e6eeec; padding: 8px 12px; font: inherit; cursor: pointer; min-height: 40px; }
+.reference-framing button[aria-pressed="true"] { color: #74d9cb; border-color: #74d9cb; }
+/* Dock the stock Video.js controls below the hands in every host view. */
+.reference-player .reference-videojs .video-controls-backdrop { display: none; }
+.reference-player .reference-videojs .video-controls-content {
+  position: relative; inset: auto; opacity: 1; translate: none; filter: none;
+  pointer-events: auto; width: 100%; box-sizing: border-box;
+  border-top: 1px solid #ffffff16; padding: 8px;
+  border-radius: 0 0 17px 17px; background: #152320; flex-shrink: 0;
+}
+.reference-player .reference-videojs .video-controls-content button { min-width: 44px; min-height: 44px; }
+.reference-player .reference-videojs:fullscreen { height: 100%; border-radius: 0; justify-content: center; }
+.reference-player .reference-videojs:fullscreen .reference-content { flex: 1; }
+.reference-player .reference-videojs:fullscreen .reference-stage { flex: 1; height: auto; }
+.reference-player .reference-videojs:fullscreen .reference-framing { flex-shrink: 0; }
+@media (max-width: 540px) {
+  .reference-stage { height: clamp(190px, 32svh, 300px); }
+  .reference-framing { padding: 8px 10px; gap: 8px; font-size: 10px; }
+  .reference-framing button { padding: 6px 10px; }
+}

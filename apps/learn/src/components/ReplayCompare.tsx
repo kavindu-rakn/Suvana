@@ -29,7 +29,7 @@ export function ReplayCompare({ reference, attempt, result }: {
     const started = performance.now(), from = offset.current
     let raf = 0
     const frame = () => {
-      const time = Math.min(duration, from + (performance.now() - started) * 0.5)
+      const time = Math.min(duration, from + (performance.now() - started))
       if (autoPause.current && focus >= 0 && time >= plan[focus].timeMs) {
         autoPause.current = false
         offset.current = plan[focus].timeMs
@@ -74,7 +74,7 @@ export function ReplayCompare({ reference, attempt, result }: {
       <figure><figcaption>Reference</figcaption><canvas ref={referenceCanvas} role="img" aria-label="Reference hand replay" className="mirrored" data-frame-index={pair.referenceIndex} width={reference.videoWidth} height={reference.videoHeight} /></figure>
       <figure><figcaption>Your try{result.mirrored && <small>Other hand matched</small>}</figcaption><canvas ref={attemptCanvas} role="img" aria-label="Your hand replay" className={result.mirrored ? undefined : 'mirrored'} data-frame-index={pair.attemptIndex} width={attempt.videoWidth} height={attempt.videoHeight} /></figure>
     </div>
-    <p className="replay-caption">{zoomed ? 'Zoomed to hands' : 'Position in the original video frame'} · 0.5×</p>
+    <p className="replay-caption">{zoomed ? 'Zoomed to hands' : 'Position in the original video frame'} · 1×</p>
     <div className="replay-controls">
       <button className="btn ghost" onClick={() => { setAtFocus(false); autoPause.current = false; setPlaying(value => !value) }}>{playing ? 'Pause replay' : 'Play replay'}</button>
       <button className="btn ghost" onClick={() => { offset.current = 0; setCursor(0); autoPause.current = focus > 0; setAtFocus(focus === 0); setPlaying(focus !== 0) }}>Replay from start</button>
@@ -82,6 +82,6 @@ export function ReplayCompare({ reference, attempt, result }: {
       <button className="btn ghost" aria-pressed={zoomed} onClick={() => setZoomed(value => !value)}>Zoom to hands</button>
     </div>
     <label className="replay-seek">Move through both takes<input aria-label="Scrub both takes" type="range" min={0} max={plan.length - 1} value={cursor} onChange={event => seek(Number(event.target.value))} /></label>
-    <p role="status" className="replay-status">{atFocus ? 'Paused at a moment to compare.' : playing ? 'Playing both takes at half speed.' : 'Replay paused.'}</p>
+    <p role="status" className="replay-status">{atFocus ? 'Paused at a moment to compare.' : playing ? 'Playing both takes at normal speed.' : 'Replay paused.'}</p>
   </section>
 }

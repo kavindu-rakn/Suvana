@@ -33,7 +33,7 @@ const STEPS: { title: string; body: ReactNode }[] = [
     body: (
       <>
         <p>
-          Watch the reference at half speed. Use the speed buttons if you like.
+          Watch the reference at normal speed. Change the playback speed in Settings if you like.
           Choose <strong>My turn</strong> when you are ready, then turn on your camera.
         </p>
         <p>
