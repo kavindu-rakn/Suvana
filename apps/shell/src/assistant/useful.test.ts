@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto'
 import {describe,expect,it,vi} from 'vitest'
 import original from '../../../../services/recognition/tests/assistant-questions.json'
 import heldOut from '../../../../services/recognition/tests/assistant-held-out.json'
+import safetyBaseline from './fixtures/safety-baseline.json'
 import {knowledge,SignKnowledgeBase} from './kb'
 import {buildContext,groundedModelText,localAnswer,policy} from './engine'
 import {handleAssistant} from './handler'
@@ -87,12 +88,11 @@ describe('shared verified question set',()=>{
     expect(knowledge.signs.find(s=>s.recognizeLabel==='andanawa')!.sinhala).toBe('අඬනවා')
     expect(knowledge.signs.find(s=>s.recognizeLabel==='waadi wenawa')!.sinhala).toBe('වාඩි වෙනවා')
   })
-  it('keeps the optional-model safety rule unchanged from origin/main',()=>{
-    const root=fileURLToPath(new URL('../../../../',import.meta.url))
-    const before=JSON.parse(execFileSync('git',['show','origin/main:services/recognition/webapp/static/assistant-policy.json'],{cwd:root,encoding:'utf8'}))
-    expect(policy.modelPrompt).toBe(before.modelPrompt)
-    const priorQuestions=JSON.parse(execFileSync('git',['show','origin/main:services/recognition/tests/assistant-questions.json'],{cwd:root,encoding:'utf8'})) as Array<{question:string}>
-    expect(original.map(c=>c.question)).toEqual(priorQuestions.map(c=>c.question))
+  it('keeps the optional-model safety rule and original questions at the pinned baseline',()=>{
+    // A fixed fixture preserves the comparison in shallow CI/source-only checkouts.
+    // Its sourceCommit records provenance; tests never need Git refs or history.
+    expect(policy.modelPrompt).toBe(safetyBaseline.modelPrompt)
+    expect(original.map(c=>c.question)).toEqual(safetyBaseline.questions)
     expect(original).toHaveLength(65);expect(heldOut).toHaveLength(32)
     expect(localAnswer(kb,'අඬනවා').cards[0].label).toBe('ANDANAWA')
   })

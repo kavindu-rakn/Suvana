@@ -1252,3 +1252,10 @@ Rules:
 - Shell build/typecheck passed; 255 sync guards and diff check passed. Existing Vite bundle advisory remains (644.91 kB main chunk). Test suite not run.
 - Before/after renders and contact sheet: .agent-local/screens/pipeline-card-stairs/index.html. Handoff: docs/plan/handoffs/pipeline-card-stairs.md.
 - Plan correction: kvn directly assigned this follow-up in chat; no matching BOARD.md/tasks.json row exists. Planner-owned files left unchanged. Needs kvn screenshot review and manual merge/push/deploy if accepted.
+
+### 2026-10-19 | codex | PR #10 Shell CI blocker
+- Direct kvn assignment; branch codex/pr-10-shell-ci from PR head 165f9467fed96db346e4a8c89372754779a338ac. Plan correction: unscheduled PR blocker, scoped to Shell test/fixture and this handoff/log; no planner or hot-file edits.
+- Failed job 117963610228 in run 39223350679: 156 tests passed, one failed because git show origin/main is unavailable in shallow Actions checkout; build did not start.
+- Pinned exact model prompt and ordered 65 original questions from main 7a74cc4fce5a85e74b719beace425e4e838617a0 in a test fixture, verified identical on PR head. Exact safety equality/count/grounding checks retained; no runtime/UI/content changes.
+- Gates: npm 10.9.9 ci, 157 Shell tests, typecheck/build, 255 sync guards, diff check pass. Reproduced original missing-ref failure in a depth-one clone without origin/main, then verified all 157 tests and build with the patch there. Existing bundle warning remains. Sandbox EPERM required normal-access reruns.
+- Handoff: docs/plan/handoffs/pr-10-shell-ci.md. Needs kvn: apply fix commit to codex/pipeline-card-stairs and push, then check hosted CI. No push/merge/deploy/messages; r26_port no.
