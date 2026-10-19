@@ -5,7 +5,8 @@
 .path-route path { fill: none; stroke-width: 3; stroke-linecap: round; }
 .path-route .path-route-halo { stroke-width: 10; opacity: .12; }
 .path-units { position: relative; list-style: none; margin: 0; padding: 0 40px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 48px; }
-.path-node { min-width: 0; }
+/* Keep route anchors on the original slots while the visible cards shrink. */
+.path-node { min-width: 0; height: 160px; display: grid; place-items: center; }
 @media (min-width: 900px) {
   /* Uniform row pitch gives a three-by-three viewport without page breaks. */
   .path-units { row-gap: max(40px, calc((100dvh - var(--app-bar-h)) / 3 - 160px)); }

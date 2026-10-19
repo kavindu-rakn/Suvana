@@ -13,7 +13,7 @@
     "services/recognition/webapp/data/sinhala-corrections.json": "4978d0faabbc15cd37470a5a7c03e6d4840788edcf62f68626f93ae5e569876d",
     "services/recognition/config/config.yaml": "31304559edfb61b200e46e073ad75ee724897e1ebef8467e007c63a30ba4b683",
     "apps/learn/src/components/ProgressView.tsx": "dc70d0e6c527247e3d2c96d1a2ead1153e49818d6d5b033344b45b6148bd2249",
-    "apps/learn/src/components/PathView.tsx": "605b4ebb6e225d6673cb89a3b14e83cdc66cbb32ad069ffe2d79cd280e1b4ff7",
+    "apps/learn/src/components/PathView.tsx": "6730eb250a8347fa9431d1f58f69f5e381345fdd7fa44192883fd759c504ea0f",
     "apps/learn/src/learner/pathContent.ts": "c1ea02b3f92f8b0c9cf11c075b8614e92b53aba150aa5e5cd9e4fb461e7a5c9d",
     "apps/learn/src/components/practiceStages.ts": "46123f585461cbb47696eb7617d956432514ccbfe12b2d33c2b8419cdb32de54",
     "apps/learn/src/components/SkeletonPlayer.tsx": "53567051d9c81ed21e361282efe7adc9232c3c038d2a9903f03bda2390bc94c7",

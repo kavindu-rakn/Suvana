@@ -47,7 +47,7 @@ test('seeded Try stars pass Starter and open Greetings', async ({ page }) => {
   }, CURRICULUM_UNITS[0].signs)
   await page.reload()
   await page.getByRole('tab', { name: /Path/ }).first().click()
-  await expect(page.locator('.path-card').first()).toContainText('14/21 stars')
+  await expect(page.locator('.path-card').first().locator('.path-star-count')).toHaveAttribute('aria-label', '14 of 21 stars')
   await expect(page.locator('.path-card').first().locator('.lucide-star-check')).toBeVisible()
   await expect(page.locator('.path-card').nth(1)).toHaveAttribute('data-state', 'open')
   await page.locator('.path-card').nth(2).click()
