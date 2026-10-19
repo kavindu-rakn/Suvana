@@ -212,8 +212,7 @@ initTheme();
   const slot = document.getElementById('auth-slot');
   if (!slot) return;
   const signedOut = `
-    <a href="/login?callbackUrl=%2F">Sign in</a>
-    <a class="auth-cta" href="/register?callbackUrl=%2F">Create account</a>`;
+    <a class="auth-cta" href="/register?callbackUrl=%2F">Sign Up</a>`;
   try {
     const res = await fetch('/communicate/api/auth/session', {
       headers: { accept: 'application/json' },

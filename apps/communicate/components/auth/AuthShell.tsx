@@ -1,49 +1,70 @@
-import { Sparkles } from "lucide-react";
-import type { ReactNode } from "react";
+"use client";
+
+import { type MouseEvent, type ReactNode, useRef, useState } from "react";
 import { accountCopy } from "./accountCopy";
+import "./account.css";
 
-export function AuthShell({
-  title,
-  subtitle,
-  children,
-}: {
-  title: string;
-  subtitle?: string;
-  children: ReactNode;
+type Mode = "login" | "register";
+
+/** One account surface; old URLs simply select the initial form. */
+export function AuthShell({ initialMode, loginForm, registerForm }: {
+  initialMode: Mode;
+  loginForm: ReactNode;
+  registerForm: ReactNode;
 }) {
+  const [mode, setMode] = useState(initialMode);
+  const panel = useRef<HTMLDivElement>(null);
+  const copy = accountCopy[mode];
+
+  function switchMode(next: Mode) {
+    // Keep an in-flight authentication request on screen until it finishes.
+    if (panel.current?.querySelector("[type=submit]:disabled")) return;
+    setMode(next);
+  }
+
+  function followFormLink(event: MouseEvent<HTMLDivElement>) {
+    const link = (event.target as HTMLElement).closest("a");
+    if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const path = new URL(link.href).pathname;
+    if (path !== "/login" && path !== "/register") return;
+    event.preventDefault();
+    switchMode(path === "/login" ? "login" : "register");
+  }
+
   return (
-    <div className="grid min-h-[calc(100vh-4rem)] lg:grid-cols-2">
-      <div className="relative hidden flex-col justify-between overflow-hidden bg-background-elevated p-12 lg:flex">
-        <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-accent-strong/10 blur-3xl" />
+    <div className="account-page">
+      <div className="account-topline" aria-hidden="true" />
+      <div className="account-layout">
+        <section className="account-story" aria-labelledby="account-welcome">
+          <p className="account-eyebrow"><span /> One account. All of Suvana.</p>
+          <h1 id="account-welcome" aria-label={accountCopy.heading}>Welcome<br /> to <span>Suvana.</span></h1>
+          <p className="account-description">{accountCopy.description}</p>
+          <div className="account-connections" aria-hidden="true">
+            <span>Learn</span><i /> <span>Communicate</span><i /> <span>Recognize</span>
+          </div>
+          <div className="account-orbit" aria-hidden="true"><span /><span /><b /></div>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Shell owns the root. */}
+          <a href="/" className="account-back"><span aria-hidden="true">↖</span> Back to Suvana</a>
+        </section>
 
-        <div className="relative z-10 flex items-center gap-2 text-lg font-semibold">
-          <Sparkles size={20} className="text-accent" />
-          Suvana
-        </div>
-
-        <div className="relative z-10">
-          <p className="text-3xl font-semibold leading-tight">
-            {accountCopy.heading}
-          </p>
-          <p className="mt-4 max-w-sm text-foreground-muted">
-            {accountCopy.description}
-          </p>
-        </div>
-
-        <p className="relative z-10 text-xs text-foreground-muted">
-          &copy; {new Date().getFullYear()} Suvana
-        </p>
+        <section className="account-card" aria-label="Your Suvana account">
+          <div className="account-mode-switch" role="group" aria-label="Account action">
+            <button type="button" aria-pressed={mode === "register"} onClick={() => switchMode("register")}>Sign up</button>
+            <button type="button" aria-pressed={mode === "login"} onClick={() => switchMode("login")}>Sign in</button>
+          </div>
+          <div className="account-form-heading" aria-live="polite">
+            <p className="account-eyebrow">{mode === "register" ? "Your next chapter" : "Pick up where you left off"}</p>
+            <h2>{copy.title}<span>.</span></h2>
+            <p>{copy.subtitle}</p>
+          </div>
+          <div className="account-panel" ref={panel} onClick={followFormLink}>
+            <div hidden={mode !== "register"}>{registerForm}</div>
+            <div hidden={mode !== "login"}>{loginForm}</div>
+          </div>
+          <p className="account-note">One account for Learn, Communicate and Recognize.</p>
+        </section>
       </div>
-
-      <div className="flex items-center justify-center px-6 py-16">
-        <div className="w-full max-w-md">
-          <h1 className="text-2xl font-semibold">{title}</h1>
-          {subtitle && <p className="mt-1 text-sm text-foreground-muted">{subtitle}</p>}
-          <p className="mt-3 text-sm text-foreground-muted lg:hidden">{accountCopy.description}</p>
-          <div className="mt-6">{children}</div>
-        </div>
-      </div>
+      <footer className="account-footer"><span>© {new Date().getFullYear()} Suvana</span><span>Bridge the gap.</span></footer>
     </div>
   );
 }

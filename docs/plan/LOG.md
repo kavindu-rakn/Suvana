@@ -1265,3 +1265,10 @@ Rules:
 - Plan correction: unscheduled chat task with explicit branch/worktree override; no planner-owned files edited.
 - Gates: 157 Shell tests, typecheck/build, 255 sync guards and diff check pass. Existing bundle advisory remains. Clean npm ci blocked by Windows EPERM; dependencies restored through npm install --no-package-lock without lockfile changes.
 - Desktop/390/360 light/dark before/after renders and browser focus/Enter/overflow/reduced-motion checks: .agent-local/screens/shell-start-cta/index.html. Handoff: docs/plan/handoffs/shell-start-cta.md. No SSL content/figures changed. Visual review and merge/push/deploy remain kvn's.
+
+### 2026-10-19 | Codex | Unified Shell account page
+- Direct user assignment on uifixes/suvana/main worktree: combined signup/signin UI with Shell styling/header; one Shell Sign Up entry. Existing /login and /register remain compatible initial modes with unchanged auth APIs, safe callbacks and registration fallback. Footer start? already targets /register.
+- Shared #header CSS is bundled by both apps from packages/branding; Next build/tracing root includes shared source. Narrow sync coupling/guard updates protect the integration. No package/lockfile, route rewrite, SSL content or research-figure changes.
+- Gates pass: Shell 157 tests/typecheck/build; Communicate lint/TypeScript/build; 6 account-helper tests; 260 sync guards; diff check. Existing Shell bundle advisory remains. Clean install not repeated after prior Windows dependency locks.
+- Local browser checks pass for mocked signup/signin errors, fallback/success callback flow and mode state; 360/390/768/1280 light/dark, keyboard/theme/reduced motion, normal hover/orbit and matching Shell/account header. All credential writes mocked; live auth not proven.
+- Before/after desktop/phone review: .agent-local/screens/unified-account/index.html. Handoff: docs/plan/handoffs/unified-account.md. Plan correction: unscheduled chat assignment explicitly overrides lane/branch setup. Needs kvn visual adoption and manual merge/push/deploy of both apps, then live-account smoke test; no breaking-change approval needed.

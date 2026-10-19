@@ -39,6 +39,7 @@ export function LoginForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
     <>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
+          id="login-email"
           label="Email"
           type="email"
           autoComplete="email"
@@ -48,6 +49,7 @@ export function LoginForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
           placeholder="you@example.com"
         />
         <Input
+          id="login-password"
           label="Password"
           type="password"
           autoComplete="current-password"
@@ -56,7 +58,7 @@ export function LoginForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
         />
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
         <Button type="submit" size="lg" disabled={loading} className="mt-2 w-full">
           {loading ? (
             <>

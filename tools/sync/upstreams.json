@@ -12,6 +12,17 @@
   },
   "guards": [
     {
+      "file": "packages/branding/shell-header.css",
+      "has": ["#header .nav", "#header .nav .wordmark", "#header .theme-toggle"],
+      "why": "Shared Shell/account header styling; imported into both builds so deployment order cannot remove the account header styles"
+    },
+    {
+      "file": "apps/shell/src/main.ts",
+      "has": ["/register?callbackUrl=%2F\">Sign Up</a>"],
+      "lacks": ["/login?callbackUrl=%2F\">Sign in</a>"],
+      "why": "2026-10-19 unified account UI has one signed-out Shell entry"
+    },
+    {
       "file": "apps/shell/vercel.json",
       "has": [
         "\"source\": \"/login\"",
@@ -719,7 +730,7 @@
       "couplings": {
         "app/register/page.tsx": "D-A32/D-A33 Suvana-only root registration, kept open, server session/host redirects and platform metadata",
         "components/Navbar.tsx": "D-A32 Suvana-only homepage brand link and root account links; keep theme/admin navigation",
-        "next.config.ts": "basePath from NEXT_PUBLIC_BASE_PATH; D-A33 Suvana-only root account aliases on the direct Communicate host redirect to SUVANA_ORIGIN",
+        "next.config.ts": "basePath from NEXT_PUBLIC_BASE_PATH; D-A33 root account aliases redirect to SUVANA_ORIGIN; repo build/tracing root includes shared packages/branding header CSS",
         "components/Providers.tsx": "SessionProvider under the base path",
         "components/LogoutButton.tsx": "sign-out under the base path",
         "app/register/RegisterForm.tsx": "D-A32 Suvana-only safe return after registration and auto sign-in; registration API retains apiPath()",
@@ -771,7 +782,9 @@
         "lib/suvanaOrigin.ts": "D-A33 non-secret SUVANA_ORIGIN and explicit Shell account-HTML routing marker",
         "lib/suvanaOrigin.test.mjs": "D-A33 configured origin and ambiguous Host/forwarded-host regression tests",
         "components/auth/accountCopy.ts": "D-A32 two rendered platform account wording options for kvn review",
-        "components/auth/AccountLinks.tsx": "D-A32 root account anchors preserving current module location without basePath injection"
+        "components/auth/AccountLinks.tsx": "D-A32 root account anchors preserving current module location without basePath injection",
+        "components/auth/ShellAccountHeader.tsx": "2026-10-19 root account surface uses Shell header markup, shared bundled CSS and callback-preserving signup link; module navigation remains separate",
+        "components/auth/account.css": "2026-10-19 unified account layout, form styling, phone layout and reduced-motion rules"
       },
       "skip": {
         ".claude/**": "Lithira's local agent settings",
@@ -847,7 +860,9 @@
         {
           "file": "components/Navbar.tsx",
           "has": [
-            "AccountLinks"
+            "AccountLinks",
+            "isShellAccountRequest(await headers())",
+            "ShellAccountHeader"
           ],
           "why": "D-A32 keep root Sign up / Log in links through AccountLinks, replacing basePath-prefixed Next links"
         },
@@ -856,6 +871,8 @@
           "has": [
             "accountPage(\"login\", searchParams)",
             "LoginForm callbackUrl={callbackUrl}",
+            "initialMode=\"login\"",
+            "registerForm={<RegisterForm callbackUrl={callbackUrl}",
             "One Suvana account"
           ],
           "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
@@ -865,6 +882,8 @@
           "has": [
             "accountPage(\"register\", searchParams)",
             "RegisterForm callbackUrl={callbackUrl}",
+            "initialMode=\"register\"",
+            "loginForm={<LoginForm callbackUrl={callbackUrl}",
             "One Suvana account"
           ],
           "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
@@ -930,13 +949,22 @@
           "file": "components/auth/AuthShell.tsx",
           "has": [
             "accountCopy.description",
-            "accountCopy.heading"
+            "accountCopy.heading",
+            "useState(initialMode)",
+            "followFormLink",
+            "hidden={mode !== \"register\"}",
+            "hidden={mode !== \"login\"}"
           ],
           "lacks": [
             "detected emotion",
             "Turn speech into"
           ],
           "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
+        },
+        {
+          "file": "components/auth/ShellAccountHeader.tsx",
+          "has": ["packages/branding/shell-header.css", "accountLink(\"register\", params.get(\"callbackUrl\"))", "Suvana home"],
+          "why": "Unified account UI must retain the Shell header and safe return destination"
         },
         {
           "file": "app/login/LoginForm.tsx",

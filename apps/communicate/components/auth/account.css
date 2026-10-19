@@ -1,0 +1,69 @@
+.account-page {
+  --account-gold: #8a6410;
+  --account-teal: #00776a;
+  min-height: 100svh;
+  padding: 130px 24px 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 0% 40%, #00a6930d, transparent 55%), var(--background);
+}
+:root[data-theme='dark'] .account-page { --account-gold: #e0b445; --account-teal: #2dd4bf; }
+.account-topline { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #00a693, #daa520); z-index: 101; }
+.account-layout { max-width: 1200px; min-height: calc(100svh - 230px); margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: clamp(40px, 6vw, 100px); }
+.account-story { position: relative; padding: 36px 0; isolation: isolate; }
+.account-eyebrow { display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: .16em; font-size: 11px; font-family: ui-monospace, Consolas, monospace; color: var(--foreground-muted); }
+.account-eyebrow > span { width: 7px; height: 7px; border-radius: 50%; background: var(--account-teal); box-shadow: 0 0 0 5px #00a69312; }
+.account-story h1 { margin: 30px 0 24px; font-size: clamp(3rem, 6vw, 5.6rem); font-weight: 600; line-height: 1.1; letter-spacing: -.055em; }
+.account-story h1 > span { background: linear-gradient(100deg, var(--account-teal), var(--account-gold)); color: transparent; background-clip: text; -webkit-background-clip: text; }
+.account-description { max-width: 410px; font-size: 15px; line-height: 1.9; color: var(--foreground-muted); }
+.account-connections { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 28px; font-size: 12px; color: var(--account-teal); }
+.account-connections i { width: 18px; height: 1px; background: var(--border); }
+.account-back { display: inline-flex; gap: 12px; align-items: center; margin-top: 60px; padding: 10px 0; font-size: 12px; color: var(--foreground-muted); text-decoration: none; transition: color .2s, gap .2s; }
+.account-back:hover { color: var(--account-teal); gap: 18px; }
+.account-orbit { position: absolute; width: 340px; height: 340px; top: 8%; right: -40px; pointer-events: none; z-index: -1; opacity: .2; }
+.account-orbit > span { position: absolute; inset: 0; border: 1px solid var(--account-teal); border-radius: 50%; }
+.account-orbit > span:nth-child(2) { inset: 35px; border-color: var(--account-gold); }
+.account-orbit b { position: absolute; inset: 0; border-radius: 50%; animation: account-orbit 24s linear infinite; }
+.account-orbit b::before { content: ''; position: absolute; width: 8px; height: 8px; top: -4px; left: 50%; border-radius: 50%; background: var(--account-gold); }
+.account-card { position: relative; padding: clamp(24px, 3vw, 44px); background: var(--background-elevated); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 24px 100px #002b2510; animation: account-arrive .6s ease both; }
+.account-card::before { content: ''; position: absolute; top: -1px; left: 28px; right: 28px; height: 2px; background: linear-gradient(90deg, #00a693, #daa520); }
+.account-mode-switch { display: flex; gap: 4px; padding: 4px; border: 1px solid var(--border); border-radius: 999px; margin-bottom: 30px; }
+.account-mode-switch button { flex: 1; min-height: 44px; padding: 8px 12px; border: 0; border-radius: 999px; background: transparent; color: var(--foreground-muted); font: inherit; font-size: 14px; cursor: pointer; transition: background .2s, color .2s, box-shadow .2s; }
+.account-mode-switch button[aria-pressed='true'] { background: var(--foreground); color: var(--background); box-shadow: 0 3px 8px #00000012; }
+.account-mode-switch button:hover:not([aria-pressed='true']) { color: var(--account-teal); background: #00a6930c; }
+.account-form-heading h2 { margin: 10px 0; font-size: clamp(1.65rem, 3vw, 2.25rem); font-weight: 600; letter-spacing: -.035em; line-height: 1.2; }
+.account-form-heading h2 span { color: var(--account-teal); }
+.account-form-heading > p:last-child { margin: 0 0 24px; color: var(--foreground-muted); font-size: 13px; line-height: 1.7; }
+.account-panel form { gap: 18px; }
+.account-panel label { font-size: 10px; letter-spacing: .13em; }
+.account-panel input { height: 48px; border-radius: 8px; font-size: 14px; background: var(--background); }
+.account-panel input:focus { border-color: var(--account-teal); box-shadow: 0 0 0 3px #00a69318; }
+.account-panel button[type='submit'] { min-height: 50px; background: var(--account-teal); color: #fff; border-radius: 999px; font-size: 14px; transition: transform .2s, background .2s, box-shadow .2s; }
+:root[data-theme='dark'] .account-panel button[type='submit'] { color: #0a1414; }
+.account-panel button[type='submit']:hover { transform: translateY(-2px); box-shadow: 0 6px 18px #00a69322; }
+.account-panel button[type='submit']:disabled { transform: none; }
+.account-panel > div > p { font-size: 12px; }
+.account-panel a { color: var(--account-teal); text-underline-offset: 4px; }
+.account-panel [role='alert'] { color: #b42318; }
+:root[data-theme='dark'] .account-panel [role='alert'] { color: #fda29b; }
+.account-note { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 24px; font-size: 10px; text-align: center; color: var(--foreground-muted); line-height: 1.6; }
+.account-footer { max-width: 1200px; margin: 48px auto 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 16px; padding: 24px 0; font-size: 10px; letter-spacing: .08em; color: var(--foreground-muted); }
+.account-page :is(a, button):focus-visible { outline: 2px solid var(--account-gold); outline-offset: 4px; }
+@keyframes account-orbit { to { transform: rotate(360deg); } }
+@keyframes account-arrive { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 800px) {
+  .account-page { padding: 100px 20px 0; }
+  .account-layout { grid-template-columns: 1fr; gap: 32px; max-width: 520px; }
+  .account-story { padding: 0; }
+  .account-story h1 { font-size: clamp(3rem, 10vw, 4.5rem); margin: 22px 0 16px; }
+  .account-story h1 br { display: none; }
+  .account-description { max-width: none; font-size: 14px; }
+  .account-back { margin-top: 14px; }
+  .account-orbit { width: 240px; height: 240px; right: -70px; opacity: .12; }
+  .account-connections { display: none; }
+  .account-card { padding: 24px; }
+  .account-panel input { font-size: 16px; }
+  .account-footer { margin-top: 36px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-page *, .account-page *::before { animation: none !important; transition: none !important; }
+}

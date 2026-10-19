@@ -56,6 +56,7 @@ export function RegisterForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
     <>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
+          id="register-name"
           label="Name"
           type="text"
           autoComplete="name"
@@ -65,6 +66,7 @@ export function RegisterForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
           placeholder="Jane Doe"
         />
         <Input
+          id="register-email"
           label="Email"
           type="email"
           autoComplete="email"
@@ -74,6 +76,7 @@ export function RegisterForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
           placeholder="you@example.com"
         />
         <Input
+          id="register-password"
           label="Password"
           type="password"
           autoComplete="new-password"
@@ -83,7 +86,7 @@ export function RegisterForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="At least 8 characters"
         />
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
         <Button type="submit" size="lg" disabled={loading} className="mt-2 w-full">
           {loading ? (
             <>

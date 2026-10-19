@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { LoginForm } from "./LoginForm";
+import { RegisterForm } from "../register/RegisterForm";
 import { accountPage, type AccountSearch } from "@/lib/accountPage";
-import { accountCopy } from "@/components/auth/accountCopy";
 
 export const metadata: Metadata = {
   title: "Sign in — Suvana",
@@ -12,8 +12,9 @@ export const metadata: Metadata = {
 export default async function LoginPage({ searchParams }: { searchParams: Promise<AccountSearch> }) {
   const callbackUrl = await accountPage("login", searchParams);
   return (
-    <AuthShell title={accountCopy.login.title} subtitle={accountCopy.login.subtitle}>
-      <LoginForm callbackUrl={callbackUrl} />
-    </AuthShell>
+    <AuthShell initialMode="login"
+      loginForm={<LoginForm callbackUrl={callbackUrl} />}
+      registerForm={<RegisterForm callbackUrl={callbackUrl} />}
+    />
   );
 }
