@@ -51,7 +51,7 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
-.svn-ai-launcher-wrap:hover .svn-ai-tip,
+.svn-ai-launcher-wrap:has(.svn-ai-launcher:hover) .svn-ai-tip,
 .svn-ai-launcher-wrap:has(.svn-ai-launcher:focus-visible) .svn-ai-tip {
   opacity: 1;
   transform: translateX(0);

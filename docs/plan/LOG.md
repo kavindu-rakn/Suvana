@@ -1297,3 +1297,9 @@ Rules:
 - Removed account-footer title in both layouts. Desktop copyright/link-row centers match (57px footer); mobile copyright enlarged to 12px and nearly matches link-row width (235.13px vs 236.27px, about 66.59px footer). Existing footer links/targets and Shell footer preserved.
 - Gates: Shell 157 tests/typecheck/build; Communicate lint/TypeScript/build; 263 sync guards and diff check pass. Browser brand/footer/static-animation checks, header fit from 280–390px, 14 mode/theme alignment cases and 22 viewport/mode fits pass. Existing Shell bundle advisory and prior clean-install limitation remain.
 - Review: .agent-local/screens/account-brand/index.html. Handoff: docs/plan/handoffs/account-brand.md. Separate accountCopy.ts edits kept outside commit. No SSL/research figures/auth changes; passkey stays UI-only. Plan correction: direct session follow-up on uifixes/suvana/main worktree; planner files untouched. Visual adoption and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Chatbot hint hover boundary
+- One CSS selector on uifixes/suvana/main worktree now reveals the Ask Suvana AI hint only when the launcher is hovered, retaining focus-visible support. Hidden pill/wrapper space no longer triggers it.
+- Browser reproduced opacity 1 over hidden hint area before and 0 after; actual button hover/focus reveals hint, leaving for pill area hides it. Desktop/phone panel opening and existing phone no-tooltip behavior pass; no messages submitted.
+- Gates: Shell 157 tests/typecheck/build, 263 sync guards and diff check pass; existing bundle advisory remains. Review: .agent-local/screens/chatbot-hover/index.html. Handoff: docs/plan/handoffs/chatbot-hover.md.
+- Separate accountCopy.ts edits preserved; no SSL/auth/research changes. Plan correction: direct session task overrides normal board/lane setup. Visual review and merge/push/deploy remain manual.
