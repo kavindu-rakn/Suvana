@@ -109,12 +109,13 @@ export function PathView({ onPractise, onSession }: {
       return <li key={item.id}><button className="path-card" data-state={state} onClick={() => { setDetail(item.id); setPreview(null); setNotice('') }}>
         <span className="path-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
         <span className="path-card-copy"><strong>{item.title}</strong><span>{item.signs.length} signs · {stars}/{item.signs.length * 3} stars</span>{coverage.preview && <span>Preview: {coverage.covered} of {coverage.total} signs available</span>}</span>
-        <span className="sr-only">{state === 'locked' ? 'Locked' : state === 'preview' ? 'Preview' : 'Available'}</span>
-        <LessonStars stars={signStars} />
+        {state !== 'locked' && <span className="sr-only">{state === 'preview' ? 'Preview' : 'Available'}</span>}
+        <LessonStars stars={signStars} locked={state === 'locked'} />
       </button></li>
     })}<li><button className="path-card sentence-entry" data-state={sentencesUnlocked ? 'open' : 'locked'} disabled={!sentencesUnlocked} onClick={() => setDetail('sentence-challenge')}>
       <span className="path-number" aria-hidden="true">{String(CURRICULUM_UNITS.length + 1).padStart(2, '0')}</span>
       <span className="path-card-copy"><strong>Sentence challenge</strong><span>{SENTENCE_EXPERIMENTAL_LABEL}</span><span>{sentencesUnlocked ? 'Watch, try, then practise from the dataset label.' : `Pass ${lastUnit?.title ?? 'the earlier units'} to open this challenge.`}</span></span>
+      <LessonStars stars={[]} locked={!sentencesUnlocked} />
     </button></li></ol>}
   </section>
 }

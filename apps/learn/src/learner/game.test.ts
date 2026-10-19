@@ -68,6 +68,8 @@ describe('unit states', () => {
     expect(unitState({ id: 'unknown', signs: [] }, units, [])).toBe('locked')
     expect(unitState(units[1], units, [entry(100, { gloss: 'ITEM_C' })])).toBe('locked')
     expect(unitState(units[0], units, [entry(60)])).toBe('open')
+    expect(unitState(units[1], units, [entry(100)])).toBe('locked')
+    expect(unitState(units[1], units, [entry(100), entry(59, { gloss: 'ITEM_B' })])).toBe('locked')
     expect(unitState(units[0], units, firstPassed)).toBe('passed')
     expect(unitState(units[1], units, firstPassed)).toBe('open')
     expect(unitState(units[2], units, [...firstPassed, entry(60, { gloss: 'ITEM_C' })])).toBe('open')

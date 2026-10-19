@@ -5,6 +5,14 @@ import type { Stars } from '../learner/game'
 import { LessonStars } from './LessonStars'
 
 describe('lesson star milestones', () => {
+  it('shows the lock before earned stars for a locked lesson', () => {
+    for (const stars of [[], [0], [3, 3]] as Stars[][]) {
+      const html = renderToStaticMarkup(createElement(LessonStars, { stars, locked: true }))
+      expect(html).toContain('lucide-lock')
+      expect(html).toContain('aria-label="Locked"')
+      expect(html).not.toContain('lucide-star')
+    }
+  })
   // Synthetic star counts only; no learner results.
   it.each<{ stars: Stars[] }>([{ stars: [] }, { stars: [0] }, { stars: [3, 3, 0] }, { stars: [0, 1, 2] }])('shows nothing for empty or incomplete lessons: $stars', ({ stars }) => {
     expect(renderToStaticMarkup(createElement(LessonStars, { stars }))).toBe('')

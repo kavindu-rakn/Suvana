@@ -1315,3 +1315,10 @@ Rules:
 - Gates: npm ci/lint, 366 tests passed / 13 skipped, build (155.22 kB gzip), 263 sync guards, diff check. Browser: 14 desktop/phone uniform and mixed-star fixtures passed, no horizontal overflow. Fixtures are synthetic UI evidence only.
 - Review: .agent-local/screens/learn-path-stars/index.html. Handoff: docs/plan/handoffs/learn-path-stars.md; r26_port: yes. Full Playwright suite not run.
 - Plan correction: direct session request uses revamp/learn-path in main worktree, overriding board/lane setup. Visual review and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Learn lesson locks and Everyday terms titles
+- Added Lucide Lock to locked lessons and Sentence challenge; confirmed existing all-signs-at-least-one-star sequential unlock rule. Renamed titles to Everyday terms 1/2 through curriculum generator, tests and generated assistant metadata.
+- Compared curriculum against previous commit: only two titles changed; progress IDs, glosses, signs/order and all other fields identical. Historical docs left intact.
+- Gates: Learn clean install/lint, 367 passed / 13 skipped, build (155.23 kB gzip); Shell 157 tests/typecheck/build; Recognize 42 tests; knowledge freshness, 264 sync guards and diff check passed. 14 desktop/phone synthetic progress cases passed; no horizontal overflow. Existing Shell chunk advisory remains.
+- Review: .agent-local/screens/learn-path-locks/index.html. Handoff: docs/plan/handoffs/learn-path-locks.md. Learn dev server restored with fresh optimizer and rendered-page checks on port 5174; r26_port: yes.
+- Plan correction: direct session request uses revamp/learn-path/main worktree, overriding board/lane selection. Visual review and merge/push/deploy remain manual.
