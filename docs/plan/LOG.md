@@ -1203,3 +1203,10 @@ Rules:
 - Thesis paused until after the viva (kvn): final thesis due Wed 28 Oct; the thesis lane resumes only when kvn says so.
 - Lahiru has not yet sent his demo sign list (DEMO.md TODO(Lahiru)).
 - Board: K-13 done (clips recorded and converted); Q-09 in-progress (blocked on the clip).
+
+### 2026-10-19 | Codex | Recognize card animation
+- Direct user request: added abstract CSS camera scan and pulsing tracking points to the Shell Recognize card, with dark-theme contrast and a reduced-motion still state.
+- Branch codex/recognize-card-animation, based on supplied uifixes/suvana.help @ 77811bd. Plan correction: user-assigned Shell follow-up uses current UI-fix baseline instead of older origin/main; no planner-owned files edited.
+- Gates: clean install, 157 Shell tests, typecheck/build, 255 sync guards, diff check passed. Existing build chunk advisory remains. Before/after phone captures both flag pre-existing page-wide overflow; Recognize art and controls fit.
+- Review: .agent-local/screens/recognize-card-animation/index.html; desktop 1280x800 and phone 390x844 in both themes, motion/reduced-motion browser checks. Handoff: docs/plan/handoffs/recognize-card-animation.md.
+- Needs kvn: visual adoption and any merge/push/deploy. No SSL content or figures changed; no R26 port.
