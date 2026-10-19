@@ -164,7 +164,6 @@ export function SentenceView({ onBack }: { onBack: () => void }) {
             {referenceVisible ? <div className="sentence-player"><SkeletonPlayer
               key={`${selected.refId}-${stage}`} frames={reference.frames}
               videoWidth={reference.videoWidth} videoHeight={reference.videoHeight}
-              fitToFrame={window.innerWidth < 768}
             /></div> : <div className="sentence-recall">
               <p>Use the dataset label above as your cue.</p>
               <button className="btn ghost" disabled={busy} onClick={() => setRevealed(true)}>Show reference</button>
