@@ -342,65 +342,6 @@ window.addEventListener('pageshow', (e) => {
   lenis.start();
 });
 
-// 11. Section navigation
-// The landing is one long page, so the header carries jump links. Two pieces:
-// the scroll itself has to go through Lenis (a native anchor jump sets
-// scrollTop directly, which Lenis then fights back to where it thinks the page
-// is), and an observer marks whichever section is in view.
-const navLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-links a'));
-
-if (navLinks.length) {
-  // Lenis is already intercepting the wheel, so hand it the target too. The
-  // offset clears the fixed header, which would otherwise cover the heading
-  // the reader just asked to see.
-  document.addEventListener('click', (e) => {
-    const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
-    const id = link?.getAttribute('href');
-    if (!id || id === '#') return;
-    const target = document.querySelector(id);
-    if (!target) return;
-    e.preventDefault();
-    navLinks.forEach((navLink) => {
-      navLink.classList.remove('is-current');
-      navLink.removeAttribute('aria-current');
-    });
-    link.classList.add('is-current');
-    link.setAttribute('aria-current', 'location');
-    const headerOffset = (document.getElementById('header')?.getBoundingClientRect().height ?? 68) + 12;
-    lenis.scrollTo(target as HTMLElement, { offset: -headerOffset, duration: 1.1 });
-    history.replaceState(null, '', id);
-  });
-
-  const sections = new Map<Element, HTMLAnchorElement>();
-  for (const link of navLinks) {
-    const target = document.querySelector(link.getAttribute('href') ?? '');
-    if (target) sections.set(target, link);
-  }
-
-  if (sections.size && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          const link = sections.get(entry.target);
-          if (!link) continue;
-          navLinks.forEach((l) => {
-            l.classList.remove('is-current');
-            l.removeAttribute('aria-current');
-          });
-          link.classList.add('is-current');
-          link.setAttribute('aria-current', 'location');
-        }
-      },
-      // A band across the upper third of the viewport. That matches where a
-      // reader perceives "the section I'm in" better than dead centre does,
-      // and it keeps exactly one section current at a time.
-      { rootMargin: '-15% 0px -75% 0px', threshold: 0 },
-    );
-    sections.forEach((_link, target) => io.observe(target));
-  }
-}
-
 // 12. Live platform stat
 // The sign count is the one number on this page that changes when the model is
 // retrained, so it is read from the committed index rather than typed into the

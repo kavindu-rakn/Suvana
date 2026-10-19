@@ -1233,3 +1233,8 @@ Rules:
 - Restored the landing nav's serif editorial look with animated teal-to-gold underline and hover lift; removed the rounded pills while retaining clearer section names and the mobile second row.
 - Added reduced-motion support. Browser checks covered desktop/390/360, light/dark, 44px targets, section jump/current state, hover animation, and reduced motion. Contact sheet refreshed at .agent-local/screens/shell-nav/index.html. `git diff --check` passed; tests/build not run.
 - Handoff addendum: docs/plan/handoffs/shell-nav.md. Needs kvn visual review and manual merge.
+
+### 2026-10-19 | Codex | Remove landing page section links
+- At user request removed section links, their responsive styling, and JS section scroll/current tracking. Logo, theme and account controls remain in the header.
+- Browser check: desktop/390/360 and light/dark; section links absent, remaining controls rendered. Existing page-wide phone overflow flag persists. `git diff --check` passed; tests/build not run.
+- Review screenshots: .agent-local/screens/shell-nav-removed/index.html. Handoff: docs/plan/handoffs/shell-nav-removed.md. No SSL content or figures touched; merge/push/deploy remain manual.
