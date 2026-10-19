@@ -12,6 +12,11 @@
   },
   "guards": [
     {
+      "file": "packages/branding/shell-footer.css",
+      "has": [".footer-bottom", ".fb-right a", ".copyright"],
+      "why": "2026-10-19 account review reuses the landing footer base while keeping Shell footer appearance unchanged"
+    },
+    {
       "file": "packages/branding/shell-header.css",
       "has": ["#header .nav", "#header .nav .wordmark", "#header .theme-toggle"],
       "why": "Shared Shell/account header styling; imported into both builds so deployment order cannot remove the account header styles"
@@ -952,12 +957,18 @@
             "accountCopy.heading",
             "useState(initialMode)",
             "followFormLink",
+            "role=\"switch\"",
+            "<span>Login</span><span>Register</span>",
+            "packages/branding/shell-footer.css",
             "hidden={mode !== \"register\"}",
             "hidden={mode !== \"login\"}"
           ],
           "lacks": [
             "detected emotion",
-            "Turn speech into"
+            "Turn speech into",
+            "account-orbit",
+            "account-connections",
+            "account-note"
           ],
           "why": "D-A32/D-A33 preserve Suvana-only account behavior when merging upstream"
         },

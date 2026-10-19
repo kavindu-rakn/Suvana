@@ -65,14 +65,14 @@ export function LoginForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
               <Loader2 size={16} className="animate-spin" /> Logging in…
             </>
           ) : (
-            "Log in"
+            "Login"
           )}
         </Button>
       </form>
       <p className="mt-6 text-center text-sm text-foreground-muted">
-        Don&apos;t have an account?{" "}
+        New to Suvana?{" "}
         <a href={accountLink("register", destination)} className="text-accent hover:underline">
-          Sign up
+          Register
         </a>
       </p>
     </>

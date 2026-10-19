@@ -93,14 +93,14 @@ export function RegisterForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
               <Loader2 size={16} className="animate-spin" /> Creating account…
             </>
           ) : (
-            "Create account"
+            "Register"
           )}
         </Button>
       </form>
       <p className="mt-6 text-center text-sm text-foreground-muted">
         Already have an account?{" "}
         <a href={accountLink("login", destination)} className="text-accent hover:underline">
-          Log in
+          Login
         </a>
       </p>
     </>

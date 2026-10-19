@@ -1,4 +1,5 @@
 @import '../../../../packages/branding/shell-header.css';
+@import '../../../../packages/branding/shell-footer.css';
 
 :root {
   --teal: #00a693;
@@ -201,63 +202,6 @@ a:focus-visible,
 :root[data-theme='dark'] .btn.massive:hover {
   background: var(--gold-ink);
   color: var(--ink) !important;
-}
-
-/* Bottom Bar */
-.footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding: 40px 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.fb-left {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.fb-logo {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 2rem;
-  letter-spacing: -0.02em;
-  color: #fff;
-}
-
-.copyright {
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.5);
-  text-transform: uppercase;
-}
-
-.fb-right {
-  display: flex;
-  gap: 24px;
-}
-
-.fb-right a {
-  color: rgba(255,255,255,0.7);
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.2s;
-}
-
-.fb-right a:hover {
-  color: var(--gold);
-}
-
-@media (max-width: 768px) {
-  .footer-bottom {
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-    text-align: center;
-  }
 }
 
 /* Button */
