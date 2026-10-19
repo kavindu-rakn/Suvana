@@ -222,12 +222,21 @@ export function wristAnchorFit(reference: TrackedHand[], live: TrackedHand[]): F
  * pictures a second and looks jerky. Display only; scoring never sees this.
  *
  * Each hand in `a` is blended with the hand of the same handedness in `b`
- * (`t` = 0 gives `a`, 1 gives `b`). A hand with no partner in `b`, or a
- * different landmark count, is drawn as recorded in `a`: nothing is blended
- * into or out of existence.
+ * (`t` = 0 gives `a`, 1 gives `b`). Only blend when the labels uniquely match
+ * every hand across both frames, with equal landmark counts. Duplicate labels
+ * can otherwise pull two hands toward the same target and make them collapse.
+ * For ambiguous or missing matches, keep the whole recorded frame `a` until
+ * playback reaches the next recorded frame; never invent a missing movement.
  */
 export function interpolateHands(a: TrackedHand[], b: TrackedHand[], t: number): TrackedHand[] {
   if (t <= 0 || b.length === 0) return a
+  if (a.length !== b.length
+    || new Set(a.map(hand => hand.handedness)).size !== a.length
+    || new Set(b.map(hand => hand.handedness)).size !== b.length
+    || a.some(hand => {
+      const other = b.find(next => next.handedness === hand.handedness)
+      return !other || other.landmarks.length !== hand.landmarks.length
+    })) return a
   const k = Math.min(t, 1)
   return a.map((hand) => {
     const other = b.find((h) => h.handedness === hand.handedness)
