@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
+import { readFileSync } from 'node:fs'
 import { HandLandmarker } from '@mediapipe/tasks-vision'
 import { HAND_CONNECTIONS, interpolateHands, wristAnchorFit } from './drawing'
 import type { Fit } from './drawing'
 import type { TrackedHand } from './types'
+import type { SignRecording } from './types'
 
 // drawing.ts inlines MediaPipe's hand topology so that rendering a skeleton
 // does not drag @mediapipe/tasks-vision into the initial bundle. That trade is
@@ -92,5 +94,53 @@ describe('interpolateHands', () => {
     expect(out).toHaveLength(2)
     expect(out[1]).toBe(a[1]) // no Left partner: drawn as recorded
     expect(interpolateHands([], [hand('Right', 0.4)], 0.5)).toEqual([])
+  })
+
+  it('does not collapse two same-label hands toward one target', () => {
+    const a = [hand('Right', 0.2), hand('Right', 0.7)]
+    const b = [hand('Right', 0.3), hand('Right', 0.8)]
+    for (const t of [0.25, 0.5, 0.9, 1]) expect(interpolateHands(a, b, t)).toBe(a)
+  })
+
+  it('holds the recorded frame when only one side has duplicate labels', () => {
+    const unique = [hand('Right', 0.2), hand('Left', 0.7)]
+    const duplicate = [hand('Right', 0.3), hand('Right', 0.8)]
+    expect(interpolateHands(unique, duplicate, 0.5)).toBe(unique)
+    expect(interpolateHands(duplicate, unique, 0.5)).toBe(duplicate)
+  })
+
+  it('holds the whole recorded frame across missing hands or changed labels', () => {
+    const a = [hand('Right', 0.2), hand('Left', 0.7)]
+    expect(interpolateHands(a, [hand('Right', 0.4)], 0.5)).toBe(a)
+    expect(interpolateHands([a[0]], a, 0.5)[0]).toBe(a[0])
+    const single = [a[0]]
+    expect(interpolateHands(single, [hand('Left', 0.3)], 0.5)).toBe(single)
+    expect(interpolateHands(a, [], 0.5)).toBe(a)
+  })
+
+  it('matches unique labels even when detection order changes, without mutating either frame', () => {
+    const a = [hand('Right', 0.2), hand('Left', 0.7)]
+    const b = [hand('Left', 0.9), hand('Right', 0.4)]
+    const before = structuredClone({ a, b })
+    const out = interpolateHands(a, b, 0.5)
+    expect(out[0].landmarks[0].x).toBeCloseTo(0.3)
+    expect(out[1].landmarks[0].x).toBeCloseTo(0.8)
+    expect({ a, b }).toEqual(before)
+  })
+
+  it('does not partially blend a frame with incompatible landmark counts', () => {
+    const a = [hand('Right', 0.2), hand('Left', 0.7)]
+    const b = [hand('Right', 0.4), { ...hand('Left', 0.9), landmarks: [] }]
+    expect(interpolateHands(a, b, 0.5)).toBe(a)
+  })
+
+  it('preserves the real Q frames that previously collapsed between 1040 and 1080ms', () => {
+    const reference = JSON.parse(readFileSync(new URL('../../public/references/kaggle_Q.json', import.meta.url), 'utf8')) as SignRecording
+    const a = reference.frames.find(frame => frame.timestampMs === 1040)!
+    const b = reference.frames.find(frame => frame.timestampMs === 1080)!
+    expect(a.hands.map(hand => hand.handedness)).toEqual(['Right', 'Right'])
+    const out = interpolateHands(a.hands, b.hands, 0.9)
+    expect(out).toBe(a.hands)
+    expect(out[1].landmarks[0].x).toBeCloseTo(0.28157)
   })
 })
