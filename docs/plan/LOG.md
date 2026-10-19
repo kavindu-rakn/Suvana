@@ -1286,3 +1286,8 @@ Rules:
 - Gates: Shell 157 tests/typecheck/build; Communicate lint/TypeScript/build; 263 sync guards and diff check pass. Prior clean-install lock limitation and existing Shell bundle advisory remain.
 - Browser: exact card/switch geometry and requested colors pass 14 viewport/theme cases; prior 22 fit cases, short-screen errors, mocked auth callbacks/errors, keyboard/theme/reduced motion also pass. Separate subtitle edits in accountCopy.ts preserved outside this commit; renders/builds include them.
 - Before/after review: .agent-local/screens/account-stable/index.html. Handoff: docs/plan/handoffs/account-stable.md. Plan correction: direct session task overrides board/lane setup. Needs kvn visual review/adoption and manual merge/push/deploy; real passkeys intentionally out of scope.
+
+### 2026-10-19 | Codex | Account submit-section alignment
+- Fixed the remaining 18px mode shift in submit button and alternate-account sentence. Inner form slots now fill the reserved height and anchor submit at the bottom; authentication and UI-only passkey scope unchanged.
+- Browser assertions pass for exact submit/sentence/card/switch bounds in 14 viewport/theme cases, plus 22 responsive-fit combinations and three short-screen error cases. Communicate lint/TypeScript/build, 263 sync guards and diff check pass.
+- Before/after: .agent-local/screens/account-actions/index.html. Handoff: docs/plan/handoffs/account-actions.md. Existing accountCopy.ts edits preserved outside commit. Plan correction: direct session follow-up on uifixes/suvana/main worktree; planner files untouched. Visual review and merge/push/deploy remain manual.

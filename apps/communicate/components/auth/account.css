@@ -27,11 +27,12 @@
 .account-form-heading h2 { margin: 0 0 8px; font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 600; letter-spacing: -.035em; line-height: 1.2; }
 .account-form-heading, .account-panel { display: grid; grid-template-columns: minmax(0, 1fr); }
 .account-form-heading > div, .account-panel > div { grid-area: 1 / 1; min-width: 0; }
+.account-panel > div { display: flex; flex-direction: column; }
 /* Both modes contribute to intrinsic size; the inactive one is invisible and inert. */
 .account-form-heading > div[data-inactive='true'], .account-panel > div[data-inactive='true'] { visibility: hidden; pointer-events: none; }
 .account-form-heading h2 span { color: var(--account-teal); }
 .account-form-heading p { margin: 0 0 20px; color: var(--foreground-muted); font-size: 13px; line-height: 1.6; }
-.account-panel form { gap: 12px; }
+.account-panel form { flex: 1; gap: 12px; }
 .account-panel label { font-size: 10px; line-height: 14px; letter-spacing: .13em; }
 .account-panel input { width: 100%; height: 42px; border-radius: 8px; font-size: 14px; background: var(--background); }
 .account-panel form > div { min-width: 0; }
@@ -39,6 +40,7 @@
 .account-panel button[type='submit'] { min-height: 44px; height: 44px; background: var(--account-action); color: var(--account-action-text); border-radius: 999px; font-size: 14px; transition: transform .2s, box-shadow .2s; }
 .account-panel button[type='submit']:hover { transform: translateY(-2px); box-shadow: 0 6px 18px #00a69322; }
 .account-panel button[type='submit']:disabled { transform: none; }
+.account-panel form > button[type='submit'] { margin-top: auto; }
 .account-panel > div > p { font-size: 12px; margin-top: 16px; }
 .account-panel a { color: var(--account-action); font-weight: 600; text-underline-offset: 4px; display: inline-flex; align-items: center; min-height: 24px; }
 .account-passkey { min-height: 44px; height: 44px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--foreground-muted); font-size: 13px; }
