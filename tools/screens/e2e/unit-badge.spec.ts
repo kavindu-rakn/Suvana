@@ -43,6 +43,15 @@ test('unit badges follow earned stars while mastery and unlock rules stay unchan
     await expect(card.locator('.path-star-count')).toHaveAttribute('aria-label', recall ? '21 of 21 stars' : '14 of 21 stars')
     await expect(card.locator(recall ? '.lesson-stars .lucide-star' : '.lesson-stars .lucide-star-check')).toBeVisible()
     await expect(page.locator('.path-card').nth(1)).toHaveAttribute('data-state', 'open')
+    expect(await page.locator('.path-card').nth(1).evaluate(node => {
+      const styles = getComputedStyle(node)
+      const probe = document.createElement('span')
+      probe.style.color = 'var(--border-subtle)'
+      node.append(probe)
+      const neutral = getComputedStyle(probe).color
+      probe.remove()
+      return styles.borderTopColor === neutral
+    })).toBe(true)
     await page.getByRole('tab', { name: /Progress/ }).first().click()
     await page.getByText('See the unit plan', { exact: true }).click()
     await expect(page.locator('.pg-unit-list li').first()).toContainText(recall ? '7 signs · Mastered' : '7 signs · Passed')

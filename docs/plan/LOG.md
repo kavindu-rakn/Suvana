@@ -1355,3 +1355,9 @@ Rules:
 - Gates: Learn clean install/lint, 371 passed / 13 skipped with one worker, build 154.86 kB gzip; 95 browser checks across navigation, modal, existing practice/camera/progress flows and continuous-path geometry/density; metadata freshness, 265 sync guards and diff check passed. Synthetic fixtures remain UI-only evidence; no real-camera latency claim.
 - Review: .agent-local/screens/learn-info-cleanup/index.html, desktop 1280x800 / phone 390x844 in both themes. Handoff: docs/plan/handoffs/learn-info-cleanup.md. Learn preview restored at 5174 and actual automatic Path/modal rendering rechecked after clean install. r26_port: yes.
 - Plan correction: direct session follow-up authorizes these scoped App/Hero/header/footer edits on revamp/learn-path in the main worktree, overriding board/lane/hot-file selection. Screenshot adoption and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Learn account visibility and resting card borders
+- Hid the account slot using native hidden markup, preserving its platform coupling. Theme is now the only visible header utility at the right edge. Removed the open-state card border override, so unlocked Greetings rests neutral; hover accent and keyboard focus remain.
+- Gates: Learn clean install/lint, 371 passed / 13 skipped with one worker, build 154.86 kB gzip; five focused Playwright tests plus eight width/theme interaction cases; metadata freshness, 266 sync guards and diff check passed. Synthetic milestone progress is UI-only evidence.
+- Before/after desktop 1280x800 and phone 390x844 in light/dark: .agent-local/screens/learn-header-hover/index.html. Handoff: docs/plan/handoffs/learn-header-hover.md. Preview restored at 5174 and real desktop/phone rendering verified after clean install. r26_port: yes.
+- Plan correction: direct session follow-up on revamp/learn-path/main worktree overrides board/lane selection. Screenshot adoption and merge/push/deploy remain manual.
