@@ -1322,3 +1322,9 @@ Rules:
 - Gates: Learn clean install/lint, 367 passed / 13 skipped, build (155.23 kB gzip); Shell 157 tests/typecheck/build; Recognize 42 tests; knowledge freshness, 264 sync guards and diff check passed. 14 desktop/phone synthetic progress cases passed; no horizontal overflow. Existing Shell chunk advisory remains.
 - Review: .agent-local/screens/learn-path-locks/index.html. Handoff: docs/plan/handoffs/learn-path-locks.md. Learn dev server restored with fresh optimizer and rendered-page checks on port 5174; r26_port: yes.
 - Plan correction: direct session request uses revamp/learn-path/main worktree, overriding board/lane selection. Visual review and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Learn Path desktop pages and mobile serpentine route
+- Desktop: nine equal-size cards per page on a mirrored-S route with Previous/Next; mobile: continuous odd-left/even-right route. Teal/gold SVG curves follow rendered centres. All 54 entries reachable; current desktop page survives lesson return/resize. IDs, progress, locks and scoring unchanged.
+- Gates: Learn clean install/lint, 371 passed / 13 skipped, build 155.22 kB gzip; 23 focused browser checks; Shell 157 tests/typecheck/build; Recognize 42 tests; knowledge freshness and 264 sync guards passed. Existing Shell chunk advisory and 320px header overflow baseline documented; Path fits 320px, full page fits 360px+.
+- Review: .agent-local/screens/learn-path-map/index.html, with before desktop/phone, every desktop page and mobile top/middle/end in both themes. Fresh-progress screenshots; synthetic browser progress fixtures only, not learner evidence. Handoff: docs/plan/handoffs/learn-path-map.md. r26_port: yes.
+- Plan correction: user directly requested revamp/learn-path in main worktree for session tasks, overriding board/lane selection. Learn server restored on 5174 with fresh optimizer and rendered-page verification. Visual adoption and merge/push/deploy remain manual.
