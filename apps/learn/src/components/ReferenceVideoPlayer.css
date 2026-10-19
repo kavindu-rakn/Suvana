@@ -5,12 +5,12 @@
   --media-control-size: 40px;
   width: 100%; height: auto; min-height: 0;
   display: flex; flex-direction: column;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   border-radius: 18px; overflow: visible;
   background: #070e0d; cursor: auto;
 }
 .reference-content { display: flex; flex-direction: column; min-height: 0; width: 100%; }
-.reference-stage { display: block; min-height: 0; height: clamp(200px, 34vh, 380px); overflow: hidden; }
+.reference-stage { display: block; min-height: 0; height: clamp(200px, 34vh, 380px); overflow: hidden; background: #070e0d; }
 .reference-player .reference-stage .reference-canvas {
   width: 100% !important; height: 100% !important;
   max-width: 100% !important; max-height: 100% !important;
@@ -34,6 +34,47 @@
 .reference-player .reference-videojs:fullscreen .reference-content { flex: 1; }
 .reference-player .reference-videojs:fullscreen .reference-stage { flex: 1; height: auto; }
 .reference-player .reference-videojs:fullscreen .reference-framing { flex-shrink: 0; }
+
+/* Player chrome follows Learn's paper/gold palette. The reference canvas
+   stays dark so the existing landmark colours remain readable. */
+:root[data-theme='light'] .reference-player .reference-videojs {
+  --media-accent-color: var(--accent);
+  --media-accent-text-color: var(--on-accent);
+  --media-background: var(--surface-2);
+  --media-foreground: var(--text);
+  --media-controls: var(--surface-2);
+  --media-controls-foreground: var(--text);
+  --media-popover: var(--surface);
+  --media-popover-foreground: var(--text);
+  --media-muted: var(--border-subtle);
+  --media-muted-foreground: var(--text-dim);
+  --media-border: var(--border-subtle);
+  --media-ring: var(--accent);
+  --media-backdrop: var(--surface-2);
+  --media-primary: var(--accent);
+  --media-primary-foreground: var(--on-accent);
+  --media-accent: var(--glow-accent);
+  --media-accent-foreground: var(--accent);
+  --media-text-shadow-dialog: none;
+  background: var(--surface-2);
+}
+:root[data-theme='light'] .reference-player .reference-framing {
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border-color: var(--border-subtle);
+}
+:root[data-theme='light'] .reference-player .reference-framing button {
+  color: var(--text);
+  border-color: var(--border-interactive);
+}
+:root[data-theme='light'] .reference-player .reference-framing button[aria-pressed='true'] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+:root[data-theme='light'] .reference-player .reference-videojs .video-controls-content {
+  background: var(--surface-2);
+  border-color: var(--border-subtle);
+}
 @media (max-width: 540px) {
   .reference-stage { height: clamp(190px, 32svh, 300px); }
   .reference-framing { padding: 8px 10px; gap: 8px; font-size: 10px; }

@@ -1380,3 +1380,10 @@ Rules:
 - Gates: clean install/lint, 375 tests passed / 13 skipped, TypeScript/build passed (153.09 kB main JS gzip); metadata freshness, 267 sync guards and diff check passed. Desktop 1280x800 / phone 390x844 in both themes verified tab order, click and numeric shortcut before/after clean install.
 - Review: .agent-local/screens/learn-hide-scenario/index.html. Handoff: docs/plan/handoffs/learn-hide-scenario.md. Preview restored and rendered at 5174; r26_port: yes. No push/merge/deploy performed.
 - Plan correction: direct session request on revamp/learn-path/main worktree overrides board/lane selection for this scoped navigation change.
+
+### 2026-10-19 | Codex | Learn player light theme and read-only glitch diagnosis
+- Corrected light-mode player controls, framing row, menus and focus colours to Learn's cream/gold palette; retained a dark landmark stage and existing dark-mode styling.
+- Investigated hand glitches without changing playback: reproduced duplicate-handedness interpolation collapsing two hands into one in Q at 1040-1080ms. The current matcher reuses the first same-label target. Read-only inventory and actual-frame visual/numeric evidence are saved locally. Proposed conservative ambiguity guard is documented; implementation waits for the user's requested approval.
+- Gates: clean install/lint, 375 tests passed / 13 skipped, TypeScript/build 153.09 kB main JS gzip; eight lesson-detail browser regressions plus four width/theme computed-style/menu checks passed, repeated after clean install. Metadata freshness, 267 sync guards and diff check passed.
+- Review: .agent-local/screens/learn-player-theme/index.html, before/after 1280x800 and 390x844 in both themes, plus current-glitch reproduction. Handoff: docs/plan/handoffs/learn-player-theme.md; r26_port: yes. Preview restored/rendered at 5174. No push/merge/deploy performed.
+- Plan correction: direct session request on revamp/learn-path/main worktree overrides board/lane selection for this scoped styling change and read-only investigation; no hand-playback fix authorized yet.
