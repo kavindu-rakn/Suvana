@@ -22,7 +22,7 @@
   margin-bottom: -60px;
 }
 .module-intro h2 {
-  font-size: clamp(3rem, 6vw, 5rem);
+  font-size: clamp(2.25rem, 6vw, 5rem);
   line-height: 1.1;
   color: var(--slate);
   margin: 10px 0 40px;
@@ -225,22 +225,69 @@
 }
 
 @media (max-width: 900px) {
+  .modules-vertical-wrapper {
+    padding: 64px 24px 88px;
+  }
+
+  .modules-vertical-container {
+    gap: clamp(64px, 10vw, 112px);
+  }
+
+  .module-intro {
+    margin-bottom: -24px;
+  }
+
   .module-row, .module-row.reverse {
     flex-direction: column;
     text-align: center;
-    gap: 40px;
+    align-items: stretch;
+    gap: clamp(24px, 5vw, 40px);
   }
   .mr-content {
     order: 2;
+    flex: 0 1 auto;
+    width: 100%;
+    min-width: 0;
+    margin: 0 auto;
+    /* The desktop entrance slide can push half a card outside a phone before
+       its scroll trigger settles. Keep the fade while removing that drift. */
+    transform: none !important;
   }
   .mr-visual {
     order: 1;
+    flex: 0 1 auto;
     width: 100%;
+    min-width: 0;
   }
   .module-foot {
     justify-content: center;
   }
   .css-art {
     aspect-ratio: 16/9;
+  }
+
+  .mr-content h3 {
+    font-size: clamp(2rem, 7vw, 3rem);
+    margin-bottom: 14px;
+  }
+
+  .mr-content .desc {
+    font-size: clamp(1rem, 3.8vw, 1.15rem);
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .modules-vertical-wrapper {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .module-intro h2 {
+    margin-bottom: 24px;
+  }
+
+  .css-art {
+    border-radius: 24px;
   }
 }

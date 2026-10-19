@@ -1238,3 +1238,10 @@ Rules:
 - At user request removed section links, their responsive styling, and JS section scroll/current tracking. Logo, theme and account controls remain in the header.
 - Browser check: desktop/390/360 and light/dark; section links absent, remaining controls rendered. Existing page-wide phone overflow flag persists. `git diff --check` passed; tests/build not run.
 - Review screenshots: .agent-local/screens/shell-nav-removed/index.html. Handoff: docs/plan/handoffs/shell-nav-removed.md. No SSL content or figures touched; merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Shell landing responsiveness
+- Made the landing hero, module cards, grids, pipeline, testimonials and assistant panel fit phone, tablet, desktop, wide and landscape viewports; retained light/dark styling and the card fade while removing mobile copy drift.
+- Plan correction: kvn directly assigned this new Shell task in chat; no matching BOARD/tasks.json row exists. Planner-owned files left unchanged.
+- Gates: Shell `npm run build` passed (typecheck + production build); 255 sync guards passed. Browser geometry after module animation settled covered widths 280–2560 plus 480x320 and 844x390; page and module overflow cleared. No test suite run.
+- Before/after renders: .agent-local/screens/shell-responsive/index.html (light/dark, phone/tablet/desktop/wide; focused Recognize card captures). Handoff: docs/plan/handoffs/shell-responsive.md.
+- Needs kvn's screenshot review and manual merge/push/deploy if accepted; no SSL content or figures changed.

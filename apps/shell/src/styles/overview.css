@@ -107,7 +107,7 @@
 /* ---- step cards ---- */
 .steps-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 28px;
 }
 
@@ -241,6 +241,11 @@
   .stats-band .stat-tile:nth-child(odd) {
     border-left: none;
   }
+
+  .stats-band .stat-tile + .stat-tile {
+    border-left: none;
+    border-top: 1px solid var(--line);
+  }
 }
 
 /* ---- editorial feature list ---- */
@@ -330,5 +335,60 @@
   }
   .feature-item-title h3 {
     white-space: normal;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .overview-wrapper,
+  .features-wrapper {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .overview-wrapper {
+    padding-top: 56px;
+  }
+
+  .overview-container {
+    gap: 48px;
+  }
+
+  .overview-content h2,
+  .features-heading h2 {
+    font-size: clamp(2rem, 8vw, 2.75rem);
+  }
+
+  .steps-row {
+    gap: 16px;
+  }
+
+  .step-card {
+    padding: 26px 22px;
+  }
+
+  .stats-band {
+    padding: 24px 16px;
+  }
+
+  .stats-band .stat-tile {
+    padding: 18px 12px;
+  }
+
+  .features-wrapper {
+    padding-top: 32px;
+    padding-bottom: 72px;
+  }
+
+  .features-container {
+    gap: 24px;
+  }
+
+  .feature-item-title {
+    gap: 12px;
+  }
+
+  .feature-rule {
+    display: none;
   }
 }
