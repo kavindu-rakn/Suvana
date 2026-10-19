@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { filterPracticeSigns, selectPractice } from './helpers/navigation'
+import { openPracticeCategory, selectPractice } from './helpers/navigation'
 
 // No learner results are seeded here. Existing camera/replay specs use
 // disclosed synthetic fixtures; these cases check layout and navigation.
@@ -43,7 +43,7 @@ for (const width of [360, 390, 768, 1280])
       await search.fill('BAG EKA')
       await expect(page.getByRole('option')).toHaveCount(1)
       await search.press('Escape')
-      await filterPracticeSigns(page)
+      await openPracticeCategory(page)
       const preview = page.getByRole('button', { name: /^Preview BAG EKA/ }).first()
       await preview.click()
       const dialog = page.getByRole('dialog', { name: 'Sign preview', exact: true })
@@ -95,7 +95,7 @@ test('a failed preview can be closed and loaded again', async ({ page }) => {
   )
   await page.goto('./')
   await selectPractice(page)
-  await filterPracticeSigns(page)
+  await openPracticeCategory(page)
   await page.getByRole('button', { name: /^Preview BAG EKA/ }).click()
   await expect(page.getByRole('dialog')).toContainText('Could not load this preview.')
   await page.getByRole('button', { name: 'Close preview', exact: true }).click()

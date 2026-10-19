@@ -15,12 +15,11 @@ import {
   Sparkles,
   Type,
   Users,
-  X,
   Zap,
 } from 'lucide-react'
 import type { RecordingMeta } from '../vision/types'
-import { categoryOf, groupForPicker } from '../data/categories'
-import { glossLabel, matchesSearch, translationOf } from '../data/translations'
+import { groupForPicker } from '../data/categories'
+import { glossLabel, translationOf } from '../data/translations'
 import { hasMeaningCoverage, orderSignsVerifiedFirst } from '../data/meaningCoverage'
 import { isTextEntryTarget } from '../app/keyboard'
 import { PracticeSpotlight } from './PracticeSpotlight'
@@ -56,16 +55,12 @@ export function PracticeBrowser({
   onPreview: (sign: RecordingMeta) => void
 }) {
   const [category, setCategory] = useState<string | null>(null)
-  const [query, setQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   const { order, byCategory } = useMemo(() => groupForPicker(references), [references])
   const signs = useMemo(() => {
     const source = category ? (byCategory.get(category) ?? []) : references
-    return orderSignsVerifiedFirst(
-      category ?? '',
-      source.filter((sign) => matchesSearch(sign.gloss, query.trim())),
-    )
-  }, [references, byCategory, category, query])
+    return orderSignsVerifiedFirst(category ?? '', source)
+  }, [references, byCategory, category])
 
   useEffect(() => {
     const search = (event: KeyboardEvent) => {
@@ -107,10 +102,7 @@ export function PracticeBrowser({
             {category && (
               <button
                 className="practice-icon-button"
-                onClick={() => {
-                  setCategory(null)
-                  setQuery('')
-                }}
+                onClick={() => setCategory(null)}
                 aria-label="Back to all categories"
               >
                 <ArrowLeft size={18} />
@@ -137,23 +129,6 @@ export function PracticeBrowser({
               )}
             </p>
           </div>
-          {category && (
-            <div className="practice-category-search">
-              <Search size={16} aria-hidden="true" />
-              <input
-                type="search"
-                aria-label={`Search within ${category}`}
-                placeholder="Find a sign"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-              />
-              {query && (
-                <button onClick={() => setQuery('')} aria-label="Clear search">
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-          )}
         </div>
         {!loading && !category ? (
           <div className="practice-category-grid">
@@ -187,19 +162,14 @@ export function PracticeBrowser({
             <>
               {signs.length ? (
                 <div className="practice-sign-grid">
-                  {signs.map((sign) => {
+                  {signs.map((sign, index) => {
                     const meaning = translationOf(sign.gloss)
                     return (
                       <article
                         className="practice-sign"
-                        data-tone={
-                          categoryTones[
-                            Math.max(0, order.indexOf(categoryOf(sign))) % categoryTones.length
-                          ]
-                        }
+                        data-tone={categoryTones[index % categoryTones.length]}
                         key={sign.id}
                       >
-                        <span className="practice-sign-category">{categoryOf(sign)}</span>
                         <button
                           className="practice-sign-select"
                           onClick={() => onSelect(sign)}
@@ -231,15 +201,12 @@ export function PracticeBrowser({
                 </div>
               ) : (
                 <div className="practice-empty" role="status">
-                  <Search size={28} aria-hidden="true" />
-                  <h3>No signs found</h3>
-                  <p>Try another gloss or English meaning.</p>
+                  <BookOpen size={28} aria-hidden="true" />
+                  <h3>No signs available</h3>
+                  <p>Choose another category to keep exploring.</p>
                   <button
                     className="practice-button practice-secondary"
-                    onClick={() => {
-                      setQuery('')
-                      setCategory(null)
-                    }}
+                    onClick={() => setCategory(null)}
                   >
                     Show all categories
                   </button>

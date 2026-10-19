@@ -1,4 +1,4 @@
-import { filterPracticeSigns } from './helpers/navigation'
+import { openPracticeCategory } from './helpers/navigation'
 import { test, expect } from '@playwright/test'
 import { chooseReferenceSpeed } from './helpers/reference-player'
 
@@ -70,8 +70,8 @@ for (const width of [360, 390, 1280]) {
       await page.locator('.path-card').first().click()
       await page.getByRole('button', { name: 'Practise this unit', exact: true }).click()
       await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
-      await filterPracticeSigns(page)
-      await page.getByRole('button', { name: /^Preview / }).first().click()
+      await openPracticeCategory(page)
+      await page.getByRole('button', { name: /^Preview BAG EKA/ }).first().click()
       const player = page.locator('.practice-preview-dialog .reference-player')
       await expect(player.locator('.reference-content')).toHaveAttribute('data-speed', '1')
       await expect(player.getByRole('button', { name: 'Pause', exact: true })).toBeInViewport()

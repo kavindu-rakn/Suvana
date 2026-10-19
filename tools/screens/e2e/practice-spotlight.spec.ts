@@ -95,16 +95,14 @@ test('search ignores text entry and other open dialogs, and closes on the backdr
   })
   await page.goto('./')
   await selectPractice(page)
+  await page.getByRole('button', { name: 'Find a sign', exact: true }).click()
+  const search = page.getByRole('combobox', { name: 'Find a sign', exact: true })
+  await search.fill('BAG')
+  await search.press('/')
+  await expect(search).toHaveValue('BAG/')
+  await expect(page.locator('dialog[open]')).toHaveCount(1)
+  await search.press('Escape')
   await page.locator('.practice-category').filter({ hasText: 'Additional words' }).click()
-  const scoped = page.getByRole('searchbox', {
-    name: 'Search within Additional words',
-    exact: true,
-  })
-  await scoped.fill('BAG')
-  await scoped.press('/')
-  await expect(scoped).toHaveValue('BAG/')
-  await expect(page.getByRole('dialog', { name: 'Find a sign', exact: true })).not.toBeVisible()
-  await scoped.fill('BAG EKA')
   await page.getByRole('button', { name: /^Preview BAG EKA/ }).click()
   await page.getByRole('button', { name: 'Close preview', exact: true }).focus()
   await page.keyboard.press('/')

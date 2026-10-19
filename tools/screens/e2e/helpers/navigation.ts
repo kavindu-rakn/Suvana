@@ -17,12 +17,9 @@ export async function openPracticeSign(page: Page, gloss = 'BAG EKA') {
   await search.press('Enter')
 }
 
-/** Keep preview/player checks in the category browser, with an explicit action. */
-export async function filterPracticeSigns(page: Page, gloss = 'BAG EKA') {
-  await page.locator('.practice-category').filter({ hasText: 'Additional words' }).click()
-  await page
-    .getByRole('searchbox', { name: 'Search within Additional words', exact: true })
-    .fill(gloss)
+/** Open the real category containing our preview/player reference. */
+export async function openPracticeCategory(page: Page, category = 'Additional words') {
+  await page.locator('.practice-category').filter({ hasText: category }).click()
 }
 
 export async function startFirstLesson(page: Page) {

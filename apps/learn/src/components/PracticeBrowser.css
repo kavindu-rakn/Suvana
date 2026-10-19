@@ -117,53 +117,6 @@
   background: var(--border-interactive);
   opacity: 0.55;
 }
-.practice-category-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 250px;
-  max-width: 100%;
-  min-height: 44px;
-  padding: 0 12px;
-  border: 1px solid var(--border-interactive);
-  border-radius: 12px;
-  background: var(--surface);
-  color: var(--text-dim);
-}
-.practice-category-search:focus-within {
-  outline: 2px solid var(--browser-teal);
-  outline-offset: 3px;
-}
-.practice-category-search input {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  padding: 10px 0;
-  outline: 0;
-  box-shadow: none;
-  color: var(--text);
-  background: transparent;
-  font: 0.75rem/1.5 var(--sans);
-}
-.practice-category-search input::placeholder {
-  color: var(--text-dim);
-  opacity: 1;
-}
-.practice-category-search input::-webkit-search-cancel-button {
-  display: none;
-}
-.practice-category-search button {
-  display: grid;
-  place-items: center;
-  min-width: 44px;
-  min-height: 44px;
-  margin-right: -10px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--text-dim);
-  cursor: pointer;
-}
 .practice-category-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -281,77 +234,111 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
+/* Sign cards are reading tiles: a coloured spine, generous title area and
+   a separate action shelf. Their tones are decorative, never score states. */
 .practice-sign {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 20px 18px 8px;
-  border: 1px solid color-mix(in srgb, var(--category-ink) 23%, var(--border-subtle));
-  border-radius: 18px;
-  background: linear-gradient(135deg, var(--category-wash), var(--surface) 70%);
+  border: 1px solid color-mix(in srgb, var(--category-ink) 24%, var(--border-subtle));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--category-ink) 6%, var(--surface));
+  box-shadow: 0 3px 12px rgb(0 0 0 / 0.025);
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
 }
-.practice-sign-category {
-  color: var(--category-ink);
-  font: 0.625rem/1.5 var(--mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.practice-sign::before {
+  content: '';
+  position: absolute;
+  inset: 20px auto 20px -1px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--category-ink);
+  pointer-events: none;
+}
+.practice-sign:hover,
+.practice-sign:focus-within {
+  border-color: var(--category-ink);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.07);
 }
 .practice-sign-select {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
   flex: 1;
-  padding: 15px 0;
-  min-height: 80px;
-  text-align: left;
+  min-width: 0;
+  min-height: 128px;
+  padding: 24px;
+  border: 0;
+  border-radius: 12px 12px 0 0;
   color: var(--text);
   background: transparent;
-  border: 0;
   font: inherit;
+  text-align: left;
   cursor: pointer;
 }
 .practice-sign-select h3 {
+  width: 100%;
   margin: 0;
-  font-size: 1.25rem;
+  font-size: clamp(1.125rem, 1.8vw, 1.5rem);
   font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
   overflow-wrap: anywhere;
 }
 .practice-sign-select span {
-  display: block;
-  margin-top: 8px;
+  width: 100%;
+  margin-top: 10px;
   color: var(--text-dim);
-  font: 0.625rem/1.5 var(--mono);
+  font: 0.625rem/1.6 var(--mono);
   overflow-wrap: anywhere;
 }
 .practice-sign-select:hover h3 {
   color: var(--category-ink);
 }
 .practice-unverified {
-  margin-bottom: 12px;
+  padding: 0 24px 16px;
   color: var(--text-dim);
   font-size: 0.6875rem;
+  line-height: 1.5;
 }
 .practice-sign-actions {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 8px;
-  border-top: 1px solid var(--border-subtle);
+  padding: 10px 12px;
+  border-top: 1px solid color-mix(in srgb, var(--category-ink) 16%, var(--border-subtle));
+  border-radius: 0 0 12px 12px;
+  background: color-mix(in srgb, var(--category-ink) 4%, var(--surface));
 }
 .practice-sign-actions button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  min-width: 44px;
   min-height: 44px;
-  padding: 8px 0;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
   color: var(--text-dim);
-  font: 0.75rem/1.5 var(--sans);
   background: transparent;
-  border: 0;
+  font: 0.75rem/1.5 var(--sans);
   cursor: pointer;
 }
 .practice-sign-actions button:last-child {
   color: var(--category-ink);
+  border-color: color-mix(in srgb, var(--category-ink) 30%, transparent);
+  background: color-mix(in srgb, var(--category-ink) 11%, var(--surface));
 }
 .practice-sign-actions button:hover {
-  text-decoration: underline;
+  color: var(--text);
+  border-color: var(--category-ink);
+  background: var(--surface-hover);
 }
 .practice-empty {
   display: grid;
@@ -412,9 +399,6 @@
     gap: 8px;
     font-size: 0.625rem;
   }
-  .practice-category-search {
-    width: 100%;
-  }
   .practice-category-grid,
   .practice-sign-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -449,22 +433,39 @@
   .practice-category-bottom > svg {
     width: 15px;
   }
-  .practice-sign {
-    padding: 16px 12px 4px;
+  .practice-sign-select {
+    min-height: 124px;
+    padding: 20px 16px;
   }
   .practice-sign-select h3 {
-    font-size: 1rem;
+    font-size: 1.125rem;
+  }
+  .practice-unverified {
+    padding: 0 16px 14px;
+    font-size: 0.625rem;
   }
   .practice-sign-actions {
     gap: 4px;
+    padding: 8px;
   }
   .practice-sign-actions button {
     gap: 4px;
+    padding: 8px;
     font-size: 0.6875rem;
+  }
+  .practice-sign-actions button:first-child {
+    padding: 8px 2px;
+  }
+  .practice-sign-actions button:first-child svg {
+    display: none;
+  }
+  .practice-sign-actions button:last-child svg {
+    width: 13px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .practice-category {
+  .practice-category,
+  .practice-sign {
     transition: none;
   }
   .practice-category:hover {

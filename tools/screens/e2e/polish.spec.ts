@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import { mockHandDetectionScript } from './helpers/hands'
-import { filterPracticeSigns, selectPractice, startFirstLesson } from './helpers/navigation'
+import { openPracticeCategory, selectPractice, startFirstLesson } from './helpers/navigation'
 import { CURRICULUM_UNITS } from '../../../apps/learn/src/data/curriculum'
 
 async function fits(page: Page, width: number) {
@@ -35,8 +35,8 @@ for (const width of [360, 375, 390]) {
     expect(cameraButton!.y + cameraButton!.height).toBeLessThan(dock!.y)
     await fits(page, width)
     await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
-    await filterPracticeSigns(page)
-    const card = page.getByRole('button', { name: /^Preview / }).first()
+    await openPracticeCategory(page)
+    const card = page.getByRole('button', { name: /^Preview BAG EKA/ }).first()
     await card.tap()
     await expect(page.locator('.practice-is-browsing')).toHaveAttribute('data-preview', 'open')
     await expect(page.locator('.practice-preview-dialog canvas')).toBeVisible()
@@ -85,7 +85,7 @@ test('desktop author tabs stay between the brand and utility controls', async ({
 test('keyboard opens a sign once and reduced motion removes animation delays', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' }); await enter(page)
   await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
-  await filterPracticeSigns(page)
+  await openPracticeCategory(page)
   const card = page.getByRole('button', { name: /^Watch BAG EKA/ }).first()
   await card.focus()
   expect(await card.evaluate(el => getComputedStyle(el).animationDelay)).toBe('0s')
@@ -155,7 +155,18 @@ for (const theme of ['light', 'dark']) {
     async function check(selectors: string[]) {
       for (const selector of selectors) {
         const ratio = await page.locator(selector).first().evaluate(el => {
-          const rgb = (s: string) => (s.match(/[\d.]+/g) || []).map(Number)
+          // Modern color-mix values serialize as color(srgb ...), not rgb(...).
+          // Let the browser resolve them instead of treating 0..1 channels as bytes.
+          const canvas = document.createElement('canvas')
+          canvas.width = canvas.height = 1
+          const context = canvas.getContext('2d')!
+          const rgb = (color: string) => {
+            context.clearRect(0, 0, 1, 1)
+            context.fillStyle = color
+            context.fillRect(0, 0, 1, 1)
+            const [r, g, b, alpha] = context.getImageData(0, 0, 1, 1).data
+            return [r, g, b, alpha / 255]
+          }
           let bg = [0, 0, 0], alpha = 1
           let node: Element | null = el
           // Resolve transparent ancestor surfaces against the opaque page.
@@ -175,8 +186,8 @@ for (const theme of ['light', 'dark']) {
     await check(['.practice-why summary', '.practice-reference-card .practice-kicker', '.practice-watch-next p'])
     await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
     await check(['.practice-collection-title h1', '.practice-collection-totals', '.practice-category-bottom span', '.practice-category h3', '.practice-category[data-tone="gold"] strong', '.practice-category[data-tone="coral"] strong', '.practice-category[data-tone="iris"] strong'])
-    await filterPracticeSigns(page)
-    await check(['.practice-sign-category', '.practice-sign-select h3', '.practice-sign-select span'])
+    await openPracticeCategory(page)
+    await check(['.practice-sign-select h3', '.practice-sign-select span', '.practice-sign-actions button'])
     await test.info().attach(`${theme}-contrast-spots`, { body: JSON.stringify(checks, null, 2), contentType: 'application/json' })
   })
 }
