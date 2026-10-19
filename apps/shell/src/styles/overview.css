@@ -2,46 +2,6 @@
    editorial feature list. These are the structures ported from the recognition
    module's own landing page, rebuilt on Suvana's tokens. ---- */
 
-/* On a phone the bar is brand + toggle + one or two account links, and at
-   375px that does not fit: the wordmark ran into the toggle and the account
-   links wrapped to two lines each. Drop to the mark alone and let the links
-   stay on one line — the wordmark is the part the logo already says. */
-@media (max-width: 560px) {
-  .nav {
-    padding: 10px 16px;
-    gap: 10px;
-  }
-  .nav .brand {
-    gap: 8px;
-    flex-shrink: 0;
-  }
-  .nav .wordmark {
-    display: none;
-  }
-  .nav-right {
-    gap: 10px;
-    min-width: 0;
-  }
-  .auth-slot {
-    gap: 8px;
-    font-size: 13px;
-    min-width: 0;
-  }
-  .auth-slot a {
-    white-space: nowrap;
-  }
-  .auth-slot .auth-cta {
-    padding: 6px 11px;
-  }
-  /* "Back to Home" on the module pages — the mark already goes home, so the
-     button only needs to be reachable, not wide. */
-  .nav-right .btn {
-    padding: 7px 13px;
-    font-size: 13px;
-    white-space: nowrap;
-  }
-}
-
 /* ---- overview ---- */
 .overview-wrapper {
   position: relative;

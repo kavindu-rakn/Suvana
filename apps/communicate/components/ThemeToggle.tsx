@@ -47,7 +47,7 @@ function getServerSnapshot(): Theme | undefined {
   return undefined;
 }
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string } = {}) {
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   function toggle() {
@@ -68,7 +68,7 @@ export function ThemeToggle() {
       onClick={toggle}
       aria-label={label}
       title={label}
-      className="grid h-9 w-9 place-items-center rounded-full border border-border text-foreground-muted transition-colors hover:border-accent hover:text-accent"
+      className={className ?? "grid h-9 w-9 place-items-center rounded-full border border-border text-foreground-muted transition-colors hover:border-accent hover:text-accent"}
     >
       {theme === undefined ? null : theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
     </button>

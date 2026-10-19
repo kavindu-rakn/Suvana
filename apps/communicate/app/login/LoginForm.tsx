@@ -3,7 +3,7 @@
 import { type FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { accountLink, safeCallbackUrl } from "@/lib/accountPaths";
-import { Loader2 } from "lucide-react";
+import { KeyRound, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
@@ -39,6 +39,7 @@ export function LoginForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
     <>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input
+          id="login-email"
           label="Email"
           type="email"
           autoComplete="email"
@@ -48,6 +49,7 @@ export function LoginForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
           placeholder="you@example.com"
         />
         <Input
+          id="login-password"
           label="Password"
           type="password"
           autoComplete="current-password"
@@ -56,21 +58,26 @@ export function LoginForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
         />
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
+        <Button type="button" disabled className="account-passkey w-full" aria-describedby="passkey-availability">
+          <KeyRound size={16} aria-hidden="true" /> Use Passkey
+          <span className="account-passkey-badge">Coming soon</span>
+        </Button>
+        <span id="passkey-availability" className="sr-only">Passkey sign-in is not available yet.</span>
         <Button type="submit" size="lg" disabled={loading} className="mt-2 w-full">
           {loading ? (
             <>
               <Loader2 size={16} className="animate-spin" /> Logging in…
             </>
           ) : (
-            "Log in"
+            "Login"
           )}
         </Button>
       </form>
       <p className="mt-6 text-center text-sm text-foreground-muted">
-        Don&apos;t have an account?{" "}
+        New to Suvana?{" "}
         <a href={accountLink("register", destination)} className="text-accent hover:underline">
-          Sign up
+          Register
         </a>
       </p>
     </>

@@ -8,9 +8,9 @@ export const accountCopyOptions = {
   },
   B: {
     heading: "Welcome to Suvana.",
-    description: "Your Suvana account is shared by Learn, Communicate and Recognize. You can use Alerts without signing in.",
-    login: { title: "Welcome back", subtitle: "Sign in to your Suvana account to continue." },
-    register: { title: "Join Suvana", subtitle: "Create an account for Learn, Communicate and Recognize." },
+    description: "Join Suvana to enhance your experience",
+    login: { title: "Welcome back", subtitle: "Log in to your Suvana account to continue." },
+    register: { title: "Join Suvana", subtitle: "Create an account to enhance your experience." },
   },
 } as const;
 

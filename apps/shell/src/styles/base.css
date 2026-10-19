@@ -1,3 +1,6 @@
+@import '../../../../packages/branding/shell-header.css';
+@import '../../../../packages/branding/shell-footer.css';
+
 :root {
   --teal: #00a693;
   --slate: #2f4f4f;
@@ -82,133 +85,6 @@ a:focus-visible,
   white-space: nowrap;
 }
 
-/* ---- header ----
-   Scoped to #header, not the bare element: a widget that mounts its own
-   <header> (the assistant panel does) must not inherit a fixed, full-width,
-   top-left position from the site chrome. */
-#header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 100;
-  background: var(--header-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
-  transition: transform 0.3s ease;
-}
-/* Hide header on scroll down, show on scroll up logic via JS class */
-#header.nav-hidden {
-  transform: translateY(-100%);
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 24px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-.nav img {
-  height: 26px;
-  width: auto;
-  display: block;
-}
-.nav .brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-}
-.nav .mark {
-  height: 34px;
-}
-
-/* Wordmark Gradient */
-.nav .wordmark {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  background: linear-gradient(100deg, var(--teal), var(--gold));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.theme-toggle {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  color: var(--slate);
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
-}
-.theme-toggle:hover {
-  color: var(--gold-ink);
-  border-color: var(--gold-ink);
-}
-.theme-toggle svg {
-  width: 17px;
-  height: 17px;
-}
-
-.auth-slot {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-}
-.auth-slot a {
-  color: var(--slate);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-.auth-slot a:hover {
-  color: var(--gold-ink);
-}
-.auth-slot .auth-cta {
-  padding: 7px 14px;
-  border-radius: 8px;
-  background: var(--slate);
-  color: var(--paper);
-  transition: background 0.2s, color 0.2s;
-}
-.auth-slot .auth-cta:hover {
-  background: var(--gold-ink);
-  color: var(--paper);
-}
-/* Sign out is a button (it posts), so it needs the link look spelled out. */
-.auth-slot button.auth-cta {
-  border: 0;
-  font: inherit;
-  font-weight: 600;
-  line-height: inherit;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.auth-slot button.auth-cta:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-.auth-who strong {
-  color: var(--gold-ink);
-}
-
 /* Massive Editorial Footer */
 .footer-editorial {
   position: relative;
@@ -250,25 +126,60 @@ a:focus-visible,
 
 /* Mega CTA */
 .footer-mega {
-  padding: 120px 24px;
+  padding: 120px 24px 140px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 40px;
 }
 
 .footer-mega h2 {
-  font-size: clamp(4rem, 10vw, 10rem);
-  line-height: 0.9;
+  font-size: clamp(3rem, 11vw, 8.5rem);
+  line-height: 1.05;
   font-family: var(--sans);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  background: linear-gradient(135deg, #fff, rgba(255,255,255,0.4));
+  color: #fff;
+  margin: 0;
+}
+
+.footer-start-link {
+  display: inline-block;
+  background-image: linear-gradient(90deg, #daa520, #f59e0b, #00a693, #f59e0b, #daa520);
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin: 0;
+  text-decoration: none;
+  animation: footer-start-gradient 6s linear infinite;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.footer-start-link:hover {
+  animation-duration: 2s;
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 24px rgba(218, 165, 32, 0.4));
+}
+
+.footer-start-link:focus-visible {
+  outline: 2px dashed var(--gold);
+  outline-offset: 8px;
+  border-radius: 8px;
+}
+
+@keyframes footer-start-gradient {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-start-link {
+    animation: none;
+    transition: none;
+  }
+
+  .footer-start-link:hover {
+    transform: none;
+  }
 }
 
 .btn.massive {
@@ -291,63 +202,6 @@ a:focus-visible,
 :root[data-theme='dark'] .btn.massive:hover {
   background: var(--gold-ink);
   color: var(--ink) !important;
-}
-
-/* Bottom Bar */
-.footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding: 40px 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.fb-left {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.fb-logo {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 2rem;
-  letter-spacing: -0.02em;
-  color: #fff;
-}
-
-.copyright {
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.5);
-  text-transform: uppercase;
-}
-
-.fb-right {
-  display: flex;
-  gap: 24px;
-}
-
-.fb-right a {
-  color: rgba(255,255,255,0.7);
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.2s;
-}
-
-.fb-right a:hover {
-  color: var(--gold);
-}
-
-@media (max-width: 768px) {
-  .footer-bottom {
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-    text-align: center;
-  }
 }
 
 /* Button */

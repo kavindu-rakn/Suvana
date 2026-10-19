@@ -1,0 +1,200 @@
+/* Shared Shell/account chrome. Scoped so Communicate module navigation is unaffected. */
+#header {
+  --sh-teal: #00a693;
+  --sh-gold: #daa520;
+  --sh-gold-ink: #8a6410;
+  --sh-slate: #2f4f4f;
+  --sh-paper: #fdfdfd;
+  --sh-line: #e0e8e6;
+  --sh-header-bg: rgba(253,253,253,0.8);
+  font-family: var(--font-noto-serif, "Noto Serif"), Georgia, serif;
+  line-height: 1.55;
+}
+:root[data-theme='dark'] #header {
+  --sh-slate: #cfe3df;
+  --sh-paper: #0a1414;
+  --sh-line: #26403e;
+  --sh-gold-ink: #e0b445;
+  --sh-header-bg: rgba(10,20,20,0.8);
+}
+/* ---- header ----
+   Scoped to #header, not the bare element: a widget that mounts its own
+   <header> (the assistant panel does) must not inherit a fixed, full-width,
+   top-left position from the site chrome. */
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background: var(--sh-header-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--sh-line);
+  transition: transform 0.3s ease;
+}
+/* Hide header on scroll down, show on scroll up logic via JS class */
+#header.nav-hidden {
+  transform: translateY(-100%);
+}
+
+#header .nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+#header .nav img {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+#header .nav .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+#header .nav .mark {
+  height: 34px;
+}
+
+/* Wordmark Gradient */
+#header .nav .wordmark {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: linear-gradient(100deg, var(--sh-teal), var(--sh-gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+#header .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+#header .theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--sh-slate);
+  background: transparent;
+  border: 1px solid var(--sh-line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+#header .theme-toggle:hover {
+  color: var(--sh-gold-ink);
+  border-color: var(--sh-gold-ink);
+}
+#header .theme-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+
+#header .auth-slot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+#header .auth-slot a {
+  color: var(--sh-slate);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+#header .auth-slot a:hover {
+  color: var(--sh-gold-ink);
+}
+#header .auth-slot .auth-cta {
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: var(--sh-slate);
+  color: var(--sh-paper);
+  transition: background 0.2s, color 0.2s;
+}
+#header .auth-slot .auth-cta:hover {
+  background: var(--sh-gold-ink);
+  color: var(--sh-paper);
+}
+/* Sign out is a button (it posts), so it needs the link look spelled out. */
+#header .auth-slot button.auth-cta {
+  border: 0;
+  font: inherit;
+  font-weight: 600;
+  line-height: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+#header .auth-slot button.auth-cta:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+#header .auth-who strong {
+  color: var(--sh-gold-ink);
+}
+
+/* Compact the full brand on phones while keeping room for the controls. */
+@media (max-width: 560px) {
+  #header .nav {
+    padding: 10px 16px;
+    gap: 10px;
+  }
+  #header .nav .brand {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  #header .nav .wordmark {
+    font-size: clamp(14px, 4.4vw, 18px);
+    letter-spacing: 1.5px;
+  }
+  #header .nav-right {
+    gap: 10px;
+    min-width: 0;
+  }
+  #header .auth-slot {
+    gap: 8px;
+    font-size: 13px;
+    min-width: 0;
+  }
+  #header .auth-slot a {
+    white-space: nowrap;
+  }
+  #header .auth-slot .auth-cta {
+    padding: 6px 11px;
+  }
+  /* "Back to Home" on the module pages — the mark already goes home, so the
+     button only needs to be reachable, not wide. */
+  #header .nav-right .btn {
+    padding: 7px 13px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 360px) {
+  #header .nav .mark { height: 28px; }
+  #header .nav .auth-slot a.auth-cta { padding-inline: 14px; }
+}
+
+#header :is(a, button):focus-visible {
+  outline: 2px solid var(--sh-gold);
+  outline-offset: 4px;
+}
+#header .auth-cta { min-height: 40px; display: inline-flex; align-items: center; }
+#header .auth-slot a.auth-cta { padding: 7px 24px; background: var(--sh-slate); color: var(--sh-paper); }
+#header .auth-slot a.auth-cta:hover { background: var(--sh-gold-ink); color: var(--sh-paper); }
+#header .theme-toggle { width: 44px; height: 44px; }
+@media (prefers-reduced-motion: reduce) {
+  #header, #header a, #header button { transition: none; }
+}

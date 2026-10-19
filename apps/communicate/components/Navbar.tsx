@@ -4,8 +4,12 @@ import { auth } from "@/lib/auth";
 import { LogoutButton } from "@/components/LogoutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AccountLinks } from "@/components/auth/AccountLinks";
+import { headers } from "next/headers";
+import { isShellAccountRequest } from "@/lib/suvanaOrigin";
+import { ShellAccountHeader } from "@/components/auth/ShellAccountHeader";
 
 export async function Navbar() {
+  if (isShellAccountRequest(await headers())) return <ShellAccountHeader />;
   const session = await auth();
 
   return (

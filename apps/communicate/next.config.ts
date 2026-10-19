@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { suvanaOrigin } from "./lib/suvanaOrigin";
+import { fileURLToPath } from "node:url";
 
 // Suvana one-domain topology: NEXT_PUBLIC_BASE_PATH=/communicate makes Next
 // namespace every page, asset and API route under that prefix, so the shell
@@ -8,6 +9,9 @@ import { suvanaOrigin } from "./lib/suvanaOrigin";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
 
 const nextConfig: NextConfig = {
+  // Both builds consume the same header CSS from packages/branding.
+  turbopack: { root: fileURLToPath(new URL("../../", import.meta.url)) },
+  outputFileTracingRoot: fileURLToPath(new URL("../../", import.meta.url)),
   ...(basePath ? { basePath } : {}),
   async redirects() {
     // Root anchors on a direct Communicate visit must also reach the Shell.

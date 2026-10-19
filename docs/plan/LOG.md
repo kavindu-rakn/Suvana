@@ -1259,3 +1259,47 @@ Rules:
 - Pinned exact model prompt and ordered 65 original questions from main 7a74cc4fce5a85e74b719beace425e4e838617a0 in a test fixture, verified identical on PR head. Exact safety equality/count/grounding checks retained; no runtime/UI/content changes.
 - Gates: npm 10.9.9 ci, 157 Shell tests, typecheck/build, 255 sync guards, diff check pass. Reproduced original missing-ref failure in a depth-one clone without origin/main, then verified all 157 tests and build with the patch there. Existing bundle warning remains. Sandbox EPERM required normal-access reruns.
 - Handoff: docs/plan/handoffs/pr-10-shell-ci.md. Needs kvn: apply fix commit to codex/pipeline-card-stairs and push, then check hosted CI. No push/merge/deploy/messages; r26_port no.
+
+### 2026-10-19 | Codex | Shell footer start link
+- Direct user assignment on uifixes/suvana in main worktree: replaced Start Now button with inline gradient start? registration link; matched Learn heading spacing/type and added focus/reduced-motion styling. Marquee and bottom footer unchanged.
+- Plan correction: unscheduled chat task with explicit branch/worktree override; no planner-owned files edited.
+- Gates: 157 Shell tests, typecheck/build, 255 sync guards and diff check pass. Existing bundle advisory remains. Clean npm ci blocked by Windows EPERM; dependencies restored through npm install --no-package-lock without lockfile changes.
+- Desktop/390/360 light/dark before/after renders and browser focus/Enter/overflow/reduced-motion checks: .agent-local/screens/shell-start-cta/index.html. Handoff: docs/plan/handoffs/shell-start-cta.md. No SSL content/figures changed. Visual review and merge/push/deploy remain kvn's.
+
+### 2026-10-19 | Codex | Unified Shell account page
+- Direct user assignment on uifixes/suvana/main worktree: combined signup/signin UI with Shell styling/header; one Shell Sign Up entry. Existing /login and /register remain compatible initial modes with unchanged auth APIs, safe callbacks and registration fallback. Footer start? already targets /register.
+- Shared #header CSS is bundled by both apps from packages/branding; Next build/tracing root includes shared source. Narrow sync coupling/guard updates protect the integration. No package/lockfile, route rewrite, SSL content or research-figure changes.
+- Gates pass: Shell 157 tests/typecheck/build; Communicate lint/TypeScript/build; 6 account-helper tests; 260 sync guards; diff check. Existing Shell bundle advisory remains. Clean install not repeated after prior Windows dependency locks.
+- Local browser checks pass for mocked signup/signin errors, fallback/success callback flow and mode state; 360/390/768/1280 light/dark, keyboard/theme/reduced motion, normal hover/orbit and matching Shell/account header. All credential writes mocked; live auth not proven.
+- Before/after desktop/phone review: .agent-local/screens/unified-account/index.html. Handoff: docs/plan/handoffs/unified-account.md. Plan correction: unscheduled chat assignment explicitly overrides lane/branch setup. Needs kvn visual adoption and manual merge/push/deploy of both apps, then live-account smoke test; no breaking-change approval needed.
+
+### 2026-10-19 | Codex | Account browser-review refinements
+- Implemented comments 1–13 on uifixes/suvana/main worktree: removed marked copy/decorations, exact replacement paragraph, one sliding Login/Register switch, animated brand mark, slimmer black/white Sign Up and landing-footer bottom links.
+- Shared footer CSS preserves Shell's existing footer; account layout adapts to viewport height/width and short landscape without hiding overflow. Error states condense optional decoration to keep controls visible. Routes/auth handlers/callback behavior unchanged.
+- Gates: Shell 157 tests/typecheck/build; Communicate lint/TypeScript/build; 263 sync guards and diff check pass. Existing Shell bundle advisory and prior clean-install lock limitation remain.
+- Browser checks: 22 viewport/mode fits with no document scrolling, clipping or header/footer overlap; visible synthetic errors fit at 320x568, 903x532, 480x320; pointer/keyboard switch, logo motion, reduced motion, themes and mocked account flows pass. No live account writes or real-device keyboard claims.
+- Before/after review: .agent-local/screens/account-review/index.html. Handoff: docs/plan/handoffs/account-review.md. Plan correction: direct user review overrides normal task/branch setup; planner files untouched. Needs kvn visual adoption and manual merge/push/deploy/live-account smoke test.
+
+### 2026-10-19 | Codex | Stable account modes and theme colors
+- On uifixes/suvana/main worktree: restored supplied light/dark slate action colors on Shell and account forms/alternate links; removed account header signup so theme toggle is at right. Both inert form/heading variants reserve identical card/switch geometry.
+- User chose UI-only for passkeys after password-only backend inspection. Use Passkey is a disabled Coming soon preview above Login; no auth/API/database/dependency changes.
+- Gates: Shell 157 tests/typecheck/build; Communicate lint/TypeScript/build; 263 sync guards and diff check pass. Prior clean-install lock limitation and existing Shell bundle advisory remain.
+- Browser: exact card/switch geometry and requested colors pass 14 viewport/theme cases; prior 22 fit cases, short-screen errors, mocked auth callbacks/errors, keyboard/theme/reduced motion also pass. Separate subtitle edits in accountCopy.ts preserved outside this commit; renders/builds include them.
+- Before/after review: .agent-local/screens/account-stable/index.html. Handoff: docs/plan/handoffs/account-stable.md. Plan correction: direct session task overrides board/lane setup. Needs kvn visual review/adoption and manual merge/push/deploy; real passkeys intentionally out of scope.
+
+### 2026-10-19 | Codex | Account submit-section alignment
+- Fixed the remaining 18px mode shift in submit button and alternate-account sentence. Inner form slots now fill the reserved height and anchor submit at the bottom; authentication and UI-only passkey scope unchanged.
+- Browser assertions pass for exact submit/sentence/card/switch bounds in 14 viewport/theme cases, plus 22 responsive-fit combinations and three short-screen error cases. Communicate lint/TypeScript/build, 263 sync guards and diff check pass.
+- Before/after: .agent-local/screens/account-actions/index.html. Handoff: docs/plan/handoffs/account-actions.md. Existing accountCopy.ts edits preserved outside commit. Plan correction: direct session follow-up on uifixes/suvana/main worktree; planner files untouched. Visual review and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Account branding and compact footer
+- Restored responsive mobile wordmark; centered mobile account welcome without duplicate mark. Desktop uses the existing logo silhouette as a large masked backdrop with moving gold/teal gradient and fixed geometry; no floating/rotation.
+- Removed account-footer title in both layouts. Desktop copyright/link-row centers match (57px footer); mobile copyright enlarged to 12px and nearly matches link-row width (235.13px vs 236.27px, about 66.59px footer). Existing footer links/targets and Shell footer preserved.
+- Gates: Shell 157 tests/typecheck/build; Communicate lint/TypeScript/build; 263 sync guards and diff check pass. Browser brand/footer/static-animation checks, header fit from 280–390px, 14 mode/theme alignment cases and 22 viewport/mode fits pass. Existing Shell bundle advisory and prior clean-install limitation remain.
+- Review: .agent-local/screens/account-brand/index.html. Handoff: docs/plan/handoffs/account-brand.md. Separate accountCopy.ts edits kept outside commit. No SSL/research figures/auth changes; passkey stays UI-only. Plan correction: direct session follow-up on uifixes/suvana/main worktree; planner files untouched. Visual adoption and merge/push/deploy remain manual.
+
+### 2026-10-19 | Codex | Chatbot hint hover boundary
+- One CSS selector on uifixes/suvana/main worktree now reveals the Ask Suvana AI hint only when the launcher is hovered, retaining focus-visible support. Hidden pill/wrapper space no longer triggers it.
+- Browser reproduced opacity 1 over hidden hint area before and 0 after; actual button hover/focus reveals hint, leaving for pill area hides it. Desktop/phone panel opening and existing phone no-tooltip behavior pass; no messages submitted.
+- Gates: Shell 157 tests/typecheck/build, 263 sync guards and diff check pass; existing bundle advisory remains. Review: .agent-local/screens/chatbot-hover/index.html. Handoff: docs/plan/handoffs/chatbot-hover.md.
+- Separate accountCopy.ts edits preserved; no SSL/auth/research changes. Plan correction: direct session task overrides normal board/lane setup. Visual review and merge/push/deploy remain manual.
