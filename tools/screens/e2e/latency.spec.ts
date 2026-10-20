@@ -48,10 +48,10 @@ test('Q-09 real-camera BAG EKA capture-end to result-shown', async ({ page, brow
     }, new URL(process.env.SUVANA_LATENCY_VISION!, page.url()).href)
 
     await startFirstLesson(page)
-    await expect(page.locator('h2.aww-pane-title').first()).toContainText('BAG EKA')
-    await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    await expect(page.locator('.practice-lesson-title').first()).toContainText('BAG EKA')
+    await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
     await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
-    await expect(page.locator('.aww-pane-right')).toHaveAttribute('data-camera-status', 'running', { timeout: 30_000 })
+    await expect(page.locator('.practice-camera-card')).toHaveAttribute('data-camera-status', 'running', { timeout: 30_000 })
     try {
       // More than two loops of kvn's clip. A missing hand gate stops the suite.
       await expect(page.locator('#aww-hands-pill')).toHaveAttribute('data-ready', 'yes', { timeout: 30_000 })
@@ -77,12 +77,12 @@ test('Q-09 real-camera BAG EKA capture-end to result-shown', async ({ page, brow
         await page.getByRole('button', { name: 'Record attempt (Space)', exact: true }).click()
       } else {
         // The real Retry control starts the next countdown on this same sign.
-        await page.locator('button.aww-btn-retry').click()
+        await page.locator('button[aria-label="Retry attempt (Left Arrow or Space)"]').click()
       }
       await expect(page.locator('.aww-practice-env')).toHaveAttribute('data-phase', 'recording', { timeout: 10_000 })
       // Let the normal capture window end; never score a shortened button take.
       await expect(page.locator('.aww-practice-env')).toHaveAttribute('data-phase', 'result', { timeout: 20_000 })
-      if (await page.locator('.aww-result-nohands').count()) {
+      if (await page.locator('.practice-no-hands').count()) {
         throw new Error('STOP: no hands detected in the captured take')
       }
       await expect.poll(() => page.evaluate(() => performance.getEntriesByName('suvana:result-shown').length)).toBe(1)

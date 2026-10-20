@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test'
 import { mockHandDetectionScript } from './helpers/hands'
-import { selectPractice } from './helpers/navigation'
+import { selectPractice, openPracticeSign } from './helpers/navigation'
 
 declare global {
   interface Window { cameraRequests: number; cameraStreams: MediaStream[]; testHidden: boolean }
@@ -23,8 +23,8 @@ async function prepare(page: Page) {
   await page.addInitScript(mockHandDetectionScript)
   await page.goto('./')
   await selectPractice(page)
-  await page.getByRole('button', { name: /Practise/ }).first().click()
-  await page.getByRole('button', { name: 'My turn', exact: true }).click()
+  await openPracticeSign(page)
+  await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
   await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
   await expect(page.locator('#aww-hands-pill')).toHaveAttribute('data-ready', 'yes', { timeout: 15000 })
 }
@@ -42,9 +42,9 @@ async function visibility(page: Page, hidden: boolean) {
 
 test('browsing releases every camera track and return does not reopen it', async ({ page }) => {
   await prepare(page)
-  await page.getByRole('button', { name: 'Choose a different sign (Esc)', exact: true }).click()
+  await page.getByRole('button', { name: /^Back to .+ \(Esc\)$/ }).click()
   await expect.poll(() => page.evaluate(() => window.cameraStreams.flatMap(stream => stream.getTracks()).every(track => track.readyState === 'ended'))).toBe(true)
-  await expect(page.locator('.aww-pane-right')).toHaveAttribute('data-camera-status', 'idle')
+  await expect(page.locator('.practice-is-browsing')).toBeVisible()
   await visibility(page, true)
   await visibility(page, false)
   expect(await page.evaluate(() => window.cameraRequests)).toBe(1)
@@ -56,7 +56,7 @@ test('hidden streams stop and repeated returns restart exactly once without erro
     await visibility(page, true)
     await expect.poll(() => page.evaluate(() => window.cameraStreams.flatMap(stream => stream.getTracks()).every(track => track.readyState === 'ended'))).toBe(true)
     await visibility(page, false)
-    await expect(page.locator('.aww-pane-right')).toHaveAttribute('data-camera-status', 'running', { timeout: 15000 })
+    await expect(page.locator('.practice-camera-card')).toHaveAttribute('data-camera-status', 'running', { timeout: 15000 })
     expect(await page.evaluate(() => window.cameraRequests)).toBe(cycle + 2)
     await expect(page.locator('.camera-error')).not.toBeVisible()
   }
@@ -69,8 +69,8 @@ test('leaving during countdown cancels unscored and restarts the camera on retur
   await visibility(page, true)
   await expect(page.locator('.aww-practice-env')).toHaveAttribute('data-phase', 'idle')
   await visibility(page, false)
-  await expect(page.locator('.aww-pane-right')).toHaveAttribute('data-camera-status', 'running', { timeout: 15000 })
-  await expect(page.locator('.aww-cam-notice')).toContainText('not scored')
+  await expect(page.locator('.practice-camera-card')).toHaveAttribute('data-camera-status', 'running', { timeout: 15000 })
+  await expect(page.locator('.practice-capture-notice')).toContainText('not scored')
 })
 
 test('manual stop revokes return intent and Watch also releases the stream', async ({ page }) => {
@@ -81,7 +81,7 @@ test('manual stop revokes return intent and Watch also releases the stream', asy
   expect(await page.evaluate(() => window.cameraRequests)).toBe(1)
   await page.getByRole('button', { name: 'Turn on camera', exact: true }).click()
   await expect(page.locator('#aww-hands-pill')).toHaveAttribute('data-ready', 'yes', { timeout: 15000 })
-  await page.getByRole('button', { name: '1. Watch', exact: true }).click()
+  await page.getByRole('button', { name: 'Watch', exact: true }).click()
   await expect.poll(() => page.evaluate(() => window.cameraStreams.flatMap(stream => stream.getTracks()).every(track => track.readyState === 'ended'))).toBe(true)
 })
 
@@ -106,7 +106,7 @@ test('L-29b blur-only ended-stream recovery still restarts the native hook', asy
     }
     window.dispatchEvent(new Event('focus'))
   })
-  await expect(page.locator('.aww-pane-right')).toHaveAttribute('data-camera-status', 'running', { timeout: 15000 })
+  await expect(page.locator('.practice-camera-card')).toHaveAttribute('data-camera-status', 'running', { timeout: 15000 })
   await expect.poll(() => page.evaluate(() => window.cameraRequests)).toBe(2)
   await expect(page.locator('.camera-error')).not.toBeVisible()
 })
@@ -119,6 +119,6 @@ test('bfcache pagehide/pageshow stops and restores without a visibility event', 
     window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true }))
     window.dispatchEvent(new Event('focus'))
   })
-  await expect(page.locator('.aww-pane-right')).toHaveAttribute('data-camera-status', 'running', { timeout: 15000 })
+  await expect(page.locator('.practice-camera-card')).toHaveAttribute('data-camera-status', 'running', { timeout: 15000 })
   expect(await page.evaluate(() => window.cameraRequests)).toBe(2)
 })

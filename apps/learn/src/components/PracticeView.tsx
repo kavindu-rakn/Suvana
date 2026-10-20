@@ -2,12 +2,20 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import {
   ArrowLeft,
   ArrowRight,
-  ChevronLeft,
   Circle,
   Grid,
   RotateCcw,
   Square,
   X,
+  Brain,
+  Camera,
+  Check,
+  Eye,
+  Hand,
+  Lock,
+  Play,
+  ShieldCheck,
+  Star,
 } from 'lucide-react'
 import { useHandTracking } from '../vision/useHandTracking'
 import type { HandFrame, RecordingMeta, SignRecording } from '../vision/types'
@@ -40,14 +48,15 @@ import { CameraStage } from './CameraStage'
 import { SkeletonPlayer } from './SkeletonPlayer'
 import { ScoreBadge } from './ScoreBadge'
 import type { HandFeedback } from './ScoreBadge'
-import { CategorySignNavigator } from './CategorySignNavigator'
+import { PracticeBrowser } from './PracticeBrowser'
+import { practiceReturnCategory } from './practiceBrowserNavigation'
 import { Onboarding } from './Onboarding'
 import { onboardingSeen } from './onboardingFlag'
 import { trimTake } from '../scoring/trimTake'
 import { shortcutBlockedByTarget } from '../app/keyboard'
 import { captureDeadline } from '../vision/cameraLifecycle'
 import { progressAgainstEarlier, shouldLogAttempt } from '../learner/attemptProgress'
-import './PracticeReason.css'
+import './PracticeView.css'
 import { initialPracticeStage, practiceStageTransition } from './practiceStages'
 import { starsFor } from '../learner/game'
 import { nextExercise } from '../learner/nextExercise'
@@ -96,11 +105,14 @@ export function PracticeView({
   const [session, setSession] = useState<PracticeSession | null>(() => {
     const saved = readHeroSession() ?? loadSession()
     // An explicit sign entry must not get trapped behind an old completion.
-    return initialGloss && saved && (isComplete(saved) || !saved.glosses.includes(initialGloss)) ? null : saved
+    return initialGloss && saved && (isComplete(saved) || !saved.glosses.includes(initialGloss))
+      ? null
+      : saved
   })
   const [loadingProgress, setLoadingProgress] = useState(true)
   const mountIntent = useRef({ gloss: initialGloss, session })
   const [isBrowsing, setIsBrowsing] = useState(true)
+  const [browserStartCategory, setBrowserStartCategory] = useState<string | null>(null)
   // Why the last countdown or take was abandoned, shown until the next one.
   const [captureNotice, setCaptureNotice] = useState<string | null>(null)
   const [onboardingOpen, setOnboardingOpen] = useState(false)
@@ -117,10 +129,28 @@ export function PracticeView({
   const liveHandsRef = useRef<HandFrame['hands']>([])
   const ghostRafRef = useRef(0)
 
-  // While browsing, the right pane previews a sign instead of sitting empty
-  const [hoverRec, setHoverRec] = useState<RecordingMeta | null>(null)
+  // Explicit previews use one native dialog on pointer, keyboard and touch.
+  const [previewSign, setPreviewSign] = useState<RecordingMeta | null>(null)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewFrames, setPreviewFrames] = useState<SignRecording | null>(null)
+  const [previewFailed, setPreviewFailed] = useState(false)
+  const previewDialogRef = useRef<HTMLDialogElement>(null)
+  const lessonHeadingRef = useRef<HTMLHeadingElement>(null)
+  const [referenceExpanded, setReferenceExpanded] = useState(false)
+
+  useEffect(() => {
+    const dialog = previewDialogRef.current
+    if (previewOpen && previewSign) dialog?.showModal()
+    else if (dialog?.open) dialog.close()
+  }, [previewOpen, previewSign])
+
+  useEffect(() => {
+    if (!isBrowsing && selected) {
+      setBrowserStartCategory(null)
+      lessonHeadingRef.current?.focus({ preventScroll: true })
+      window.scrollTo({ top: 0 })
+    }
+  }, [isBrowsing, selected])
 
   const phaseRef = useRef<Phase>('idle')
   const setPhase = (p: Phase) => {
@@ -144,9 +174,7 @@ export function PracticeView({
 
   // Long enough for a hesitant start; the take is trimmed to its tracked span
   // before scoring, so the extra hands-down time does not count against it.
-  const captureMs = selected
-    ? Math.max(2 * selected.durationMs, selected.durationMs + 3000)
-    : 3500
+  const captureMs = selected ? Math.max(2 * selected.durationMs, selected.durationMs + 3000) : 3500
 
   const setReady = (ready: boolean) => {
     if (ready === handsReadyRef.current) return
@@ -211,7 +239,10 @@ export function PracticeView({
       if (!cameraSurface.current) issueCameraIntent('leave-surface')
       issueCameraIntent('return')
     }
-    const visibility = () => { if (document.hidden) away(); else returned() }
+    const visibility = () => {
+      if (document.hidden) away()
+      else returned()
+    }
     document.addEventListener('visibilitychange', visibility)
     window.addEventListener('pagehide', away)
     window.addEventListener('pageshow', returned)
@@ -249,13 +280,18 @@ export function PracticeView({
       if (!mountIntent.current.gloss) {
         const active = mountIntent.current.session
         const first = active ? currentGloss(active) : null
-        const rec = refs.find(item => item.gloss === first)
-        if (rec) { setSelected(rec); setIsBrowsing(false) }
+        const rec = refs.find((item) => item.gloss === first)
+        if (rec) {
+          setSelected(rec)
+          setIsBrowsing(false)
+        }
       }
       clearHeroSession()
       setLoadingProgress(false)
     })()
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   // Fetch reference frames for the selected sign
@@ -285,7 +321,7 @@ export function PracticeView({
     if (rec) {
       setSelected(rec)
       setIsBrowsing(false)
-      setHoverRec(null)
+      setPreviewSign(null)
     }
     onIntentConsumed?.()
   }, [initialGloss, references, onIntentConsumed])
@@ -301,12 +337,15 @@ export function PracticeView({
   // Update suggestions based on mastery
   useEffect(() => {
     if (references.length === 0) return
-    const summaries = summarizeAll(references.map((r) => r.gloss), entries)
+    const summaries = summarizeAll(
+      references.map((r) => r.gloss),
+      entries,
+    )
     const next = buildSession(summaries, 1, new Date(), categoryFor)[0] ?? null
     setSuggested(next)
   }, [references, entries, categoryFor])
 
-  const previewRec = hoverRec ?? selected
+  const previewRec = previewSign
 
   useEffect(() => {
     if (!previewRec) {
@@ -318,11 +357,16 @@ export function PracticeView({
       return
     }
     let cancelled = false
+    setPreviewFrames(null)
+    setPreviewFailed(false)
     void (async () => {
       const full = previewRec.file
         ? await loadReferenceFrames(previewRec.file)
         : (localRecs.find((r) => r.id === previewRec.id) ?? null)
-      if (!cancelled) setPreviewFrames(full)
+      if (!cancelled) {
+        setPreviewFrames(full)
+        setPreviewFailed(!full)
+      }
     })()
     return () => {
       cancelled = true
@@ -332,7 +376,14 @@ export function PracticeView({
   // Ghost Mode animation loop on webcam overlay canvas
   useEffect(() => {
     const canvas = ghostCanvasRef.current
-    if (!canvas || !ghostActive || recallHidden || !reference || tracking.status !== 'running' || phase === 'result') {
+    if (
+      !canvas ||
+      !ghostActive ||
+      recallHidden ||
+      !reference ||
+      tracking.status !== 'running' ||
+      phase === 'result'
+    ) {
       if (canvas) {
         const ctx = canvas.getContext('2d')
         ctx?.clearRect(0, 0, canvas.width, canvas.height)
@@ -357,7 +408,10 @@ export function PracticeView({
       // video with the same object-fit and mirroring, so a landmark lands where
       // the same point of the video is. Re-checked each frame in case the
       // camera changes resolution.
-      if (video?.videoWidth && (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight)) {
+      if (
+        video?.videoWidth &&
+        (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight)
+      ) {
         canvas.width = video.videoWidth
         canvas.height = video.videoHeight
       }
@@ -368,12 +422,16 @@ export function PracticeView({
       // as soon as the learner's hand appears, if it was missing at loop start.
       if (loopIndex !== anchoredLoop || (fit === undefined && liveHandsRef.current.length > 0)) {
         anchoredLoop = loopIndex
-        fit = liveHandsRef.current.length > 0
-          ? wristAnchorFit(anchorHands, liveHandsRef.current)
-          : undefined
+        fit =
+          liveHandsRef.current.length > 0
+            ? wristAnchorFit(anchorHands, liveHandsRef.current)
+            : undefined
       }
       let idx = 0
-      while (idx + 1 < reference.frames.length && reference.frames[idx + 1].timestampMs <= elapsed) {
+      while (
+        idx + 1 < reference.frames.length &&
+        reference.frames[idx + 1].timestampMs <= elapsed
+      ) {
         idx++
       }
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -455,7 +513,10 @@ export function PracticeView({
         if (!document.hidden) performance.mark('suvana:result-shown')
       })
     })
-    return () => { cancelAnimationFrame(first); cancelAnimationFrame(second) }
+    return () => {
+      cancelAnimationFrame(first)
+      cancelAnimationFrame(second)
+    }
   }, [phase, result])
 
   useEffect(() => {
@@ -491,7 +552,7 @@ export function PracticeView({
     if (phase === 'result') {
       const heading = resultHeadingRef.current
       heading?.closest('.aww-practice-env')?.scrollTo({ top: 0 })
-      heading?.closest('.aww-result-overlay')?.scrollTo({ top: 0 })
+      window.scrollTo({ top: 0 })
       heading?.focus({ preventScroll: true })
     }
   }, [phase])
@@ -502,7 +563,8 @@ export function PracticeView({
 
   function beginCountdown() {
     if (teaching.stage === 'watch') return
-    if (phaseRef.current === 'result') setTeaching(state => practiceStageTransition(state, 'retry'))
+    if (phaseRef.current === 'result')
+      setTeaching((state) => practiceStageTransition(state, 'retry'))
     if (tracking.status !== 'running' || !referenceRef.current) return
     setCaptureNotice(null)
     setResult(null)
@@ -530,6 +592,15 @@ export function PracticeView({
   function recordFromIdle() {
     if (!handsReadyRef.current) return
     beginCountdown()
+  }
+
+  function retryAttempt() {
+    if (tracking.status === 'running') beginCountdown()
+    else {
+      setTeaching((state) => practiceStageTransition(state, 'retry'))
+      leaveResult()
+      requestCamera()
+    }
   }
 
   function cancelCountdown() {
@@ -623,7 +694,9 @@ export function PracticeView({
   const noAttemptHands =
     result != null && result.hands.length > 0 && result.hands.every((h) => h.missing)
 
-  const resultTips = result ? (result.typedHints ?? [{ kind: 'compare-reference' } as const]).slice(0, 2).map(feedbackTip) : []
+  const resultTips = result
+    ? (result.typedHints ?? [{ kind: 'compare-reference' } as const]).slice(0, 2).map(feedbackTip)
+    : []
 
   // Measured per-hand scores for ScoreBadge. When the take was scored
   // mirrored, the learner signed with the other hand than the reference's, so
@@ -639,7 +712,13 @@ export function PracticeView({
   }, [result, reference])
 
   // L-33/D-A31: calibrated reference IDs only; scores/replay remain unchanged.
-  const fadeTips = useMemo(() => selected ? ['improving', 'mastered'].includes(summarizeGloss(selected.gloss, entries).level) : false, [selected, entries])
+  const fadeTips = useMemo(
+    () =>
+      selected
+        ? ['improving', 'mastered'].includes(summarizeGloss(selected.gloss, entries).level)
+        : false,
+    [selected, entries],
+  )
 
   const progress = useMemo(() => {
     if (!result || !selected || !attempt) return { delta: null, best: false }
@@ -660,24 +739,40 @@ export function PracticeView({
   const closeOnboarding = useCallback(() => setOnboardingOpen(false), [])
 
   const browsing = isBrowsing || !selected
+  const returnCategory = useMemo(
+    () => practiceReturnCategory(selected, references),
+    [selected, references],
+  )
   const watching = teaching.stage === 'watch'
   const exercise = selected ? nextExercise(selected.gloss, entries) : null
   const earnedStars = selected ? starsFor(selected.gloss, entries) : 0
-  const starsAdded = selected && attempt ? Math.max(0, earnedStars - starsFor(selected.gloss, entries.filter(entry => entry.id !== attempt.id))) : 0
+  const starsAdded =
+    selected && attempt
+      ? Math.max(
+          0,
+          earnedStars -
+            starsFor(
+              selected.gloss,
+              entries.filter((entry) => entry.id !== attempt.id),
+            ),
+        )
+      : 0
   const recallUnlocked = earnedStars >= 2
 
   function enterRecall() {
     if (!recallUnlocked || watching) return
     const retry = phaseRef.current === 'result'
     leaveResult()
-    setTeaching(state => state.stage === 'recall' && retry
-      ? practiceStageTransition(state, 'retry')
-      : practiceStageTransition(state, 'recall', recallUnlocked))
+    setTeaching((state) =>
+      state.stage === 'recall' && retry
+        ? practiceStageTransition(state, 'retry')
+        : practiceStageTransition(state, 'recall', recallUnlocked),
+    )
   }
 
   function watchAgain() {
     leaveResult()
-    setTeaching(state => practiceStageTransition(state, 'watch'))
+    setTeaching((state) => practiceStageTransition(state, 'watch'))
   }
 
   // Cycle to next sign (suggested or next in category list)
@@ -688,7 +783,7 @@ export function PracticeView({
     if (session) {
       const next = currentGloss(session)
       leaveResult()
-      if (next) setSelected(references.find(rec => rec.gloss === next) ?? null)
+      if (next) setSelected(references.find((rec) => rec.gloss === next) ?? null)
       else setIsBrowsing(true)
       return
     }
@@ -699,7 +794,10 @@ export function PracticeView({
 
     if (!targetRec && selected) {
       const cat = categoryOf(selected)
-      const catSigns = orderSigns(cat, references.filter((r) => categoryOf(r) === cat))
+      const catSigns = orderSigns(
+        cat,
+        references.filter((r) => categoryOf(r) === cat),
+      )
       const currIdx = catSigns.findIndex((r) => r.id === selected.id)
       if (currIdx !== -1 && currIdx + 1 < catSigns.length) {
         targetRec = catSigns[currIdx + 1]
@@ -723,7 +821,10 @@ export function PracticeView({
   const handlePrevSign = useCallback(() => {
     if (!selected || references.length === 0) return
     const cat = categoryOf(selected)
-    const catSigns = orderSigns(cat, references.filter((r) => categoryOf(r) === cat))
+    const catSigns = orderSigns(
+      cat,
+      references.filter((r) => categoryOf(r) === cat),
+    )
     const currIdx = catSigns.findIndex((r) => r.id === selected.id)
     if (currIdx > 0) {
       setSelected(catSigns[currIdx - 1])
@@ -747,12 +848,26 @@ export function PracticeView({
       return
     }
     if (e.defaultPrevented) return
+    // The preview is a native modal: keep practice and tab shortcuts behind it.
+    if (previewDialogRef.current?.open) {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        setPreviewOpen(false)
+        setPreviewSign(null)
+      }
+      return
+    }
     const key = e.code === 'Space' ? ' ' : e.key
     // A focused button or link keeps Enter/Space; text fields keep every key.
     if (shortcutBlockedByTarget(key, e.target)) return
 
     if (key === ' ') {
-      if (phaseRef.current === 'idle' && !isBrowsing && referenceRef.current && tracking.status === 'running') {
+      if (
+        phaseRef.current === 'idle' &&
+        !isBrowsing &&
+        referenceRef.current &&
+        tracking.status === 'running'
+      ) {
         e.preventDefault()
         recordFromIdle()
       } else if (phaseRef.current === 'recording') {
@@ -760,14 +875,12 @@ export function PracticeView({
         finishRecording()
       } else if (phaseRef.current === 'result') {
         e.preventDefault()
-        if (tracking.status === 'running') beginCountdown()
-        else requestCamera()
+        retryAttempt()
       }
     } else if (e.key === 'ArrowLeft') {
       if (phaseRef.current === 'result') {
         e.preventDefault()
-        if (tracking.status === 'running') beginCountdown()
-        else requestCamera()
+        retryAttempt()
       }
     } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
       if (phaseRef.current === 'result') {
@@ -783,11 +896,10 @@ export function PracticeView({
         cancelRecording()
       } else if (phaseRef.current === 'result') {
         e.preventDefault()
-        leaveResult()
-        setIsBrowsing(true)
+        returnToCategory()
       } else if (phaseRef.current === 'idle' && !isBrowsing) {
         e.preventDefault()
-        setIsBrowsing(true)
+        returnToCategory()
       }
     } else if (e.key === 'm' || e.key === 'M') {
       if (!isBrowsing && !watching && !recallHidden && phaseRef.current !== 'result') {
@@ -812,380 +924,612 @@ export function PracticeView({
     return () => window.removeEventListener('keydown', onKeyDown, { capture: true })
   }, [])
 
-  // Iconized Action Buttons with ArrowLeft / ArrowRight Key Badges
-  const resultActions = (
-    <div className="aww-result-actions">
-      {tracking.status === 'running' ? (
-        <button
-          className="btn massive aww-btn-action aww-btn-retry"
-          onClick={beginCountdown}
-          aria-label="Retry attempt (Left Arrow or Space)"
-        >
-          <RotateCcw size={16} aria-hidden="true" />
-          <span>Retry</span>
-          <span className="aww-btn-kbd">
-            <ArrowLeft size={12} aria-hidden="true" />
-          </span>
-        </button>
-      ) : (
-        <button
-          className="btn massive aww-btn-action"
-          onClick={() => requestCamera()}
-        >
-          <RotateCcw size={16} aria-hidden="true" />
-          <span>Turn on camera</span>
-        </button>
-      )}
+  function chooseSign(sign: RecordingMeta) {
+    leaveResult()
+    setTeaching(initialPracticeStage())
+    setSelected(sign)
+    setIsBrowsing(false)
+    setPreviewSign(null)
+    setPreviewOpen(false)
+    setReferenceExpanded(false)
+  }
 
+  function browseSigns() {
+    leaveResult()
+    setBrowserStartCategory(null)
+    setIsBrowsing(true)
+    window.scrollTo({ top: 0 })
+  }
+
+  function returnToCategory() {
+    leaveResult()
+    setBrowserStartCategory(returnCategory)
+    setIsBrowsing(true)
+    window.scrollTo({ top: 0 })
+  }
+
+  const busy = phase === 'countdown' || phase === 'recording'
+  const reason = session?.recommendations?.find((item) => item.gloss === selected?.gloss)?.reason
+  const resultActions = (
+    <div className="practice-result-actions">
       <button
-        className="btn massive aww-btn-action aww-btn-next"
+        className="practice-button practice-primary"
+        onClick={retryAttempt}
+        aria-label={
+          tracking.status === 'running' ? 'Retry attempt (Left Arrow or Space)' : 'Turn on camera'
+        }
+      >
+        <RotateCcw size={16} aria-hidden="true" />
+        {tracking.status === 'running' ? 'Try again' : 'Turn on camera'}
+      </button>
+      <button
+        className="practice-button practice-secondary"
         onClick={handleNextSign}
         aria-label="Next sign (Right Arrow or Enter)"
       >
-        <span>Next</span>
-        <ArrowRight size={16} aria-hidden="true" />
-        <span className="aww-btn-kbd">
-          <ArrowRight size={12} aria-hidden="true" />
-        </span>
+        Next sign <ArrowRight size={16} aria-hidden="true" />
       </button>
-
       <button
-        className="btn ghost massive aww-btn-action"
-        onClick={() => {
-          leaveResult()
-          setIsBrowsing(true)
-        }}
+        className="practice-text-button"
+        onClick={browseSigns}
         aria-label="Browse signs (Esc)"
       >
-        <Grid size={15} aria-hidden="true" />
-        <span>Browse</span>
-        <span className="aww-btn-kbd">Esc</span>
+        <Grid size={15} aria-hidden="true" /> All signs
       </button>
     </div>
   )
 
-  if (sessionDone && phase === 'idle' && session) return loadingProgress
-    ? <p role="status" className="empty-state">Loading your session…</p>
-    : <SessionComplete session={session} attempts={entries} onContinue={() => {
-    setSession(null)
-    clearSession()
-    setSelected(null)
-    setIsBrowsing(true)
-  }} />
+  if (sessionDone && phase === 'idle' && session && browsing && browserStartCategory === null)
+    return loadingProgress ? (
+      <p role="status" className="empty-state">
+        Loading your session…
+      </p>
+    ) : (
+      <SessionComplete
+        session={session}
+        attempts={entries}
+        onContinue={() => {
+          setSession(null)
+          clearSession()
+          setSelected(null)
+          setBrowserStartCategory(null)
+          setIsBrowsing(true)
+        }}
+      />
+    )
+
+  const referencePlayer = recallHidden ? (
+    <div className="practice-memory-cue">
+      <span className="practice-cue-icon">
+        <Brain size={30} aria-hidden="true" />
+      </span>
+      <p className="practice-kicker">A little less help</p>
+      <h2>What do you remember?</h2>
+      <p>Try the sign from memory. Your reference is tucked away.</p>
+      <button
+        className="practice-button practice-secondary"
+        onClick={() => setTeaching((state) => practiceStageTransition(state, 'reveal'))}
+      >
+        <Eye size={16} aria-hidden="true" /> Reveal reference
+      </button>
+      <small>Revealing costs the third star for this try.</small>
+    </div>
+  ) : reference ? (
+    <SkeletonPlayer
+      key={`${selected?.id}-${teaching.stage}`}
+      frames={reference.frames}
+      videoWidth={reference.videoWidth}
+      videoHeight={reference.videoHeight}
+      colorOverride="#e6eeec"
+    />
+  ) : (
+    <div className="practice-empty" role="status">
+      <p>{refFailed ? 'Could not load this reference.' : 'Loading reference…'}</p>
+      {refFailed && (
+        <button
+          className="practice-button practice-secondary"
+          onClick={() => {
+            if (selected) setSelected({ ...selected })
+          }}
+        >
+          Try loading again
+        </button>
+      )}
+    </div>
+  )
 
   return (
-    <div className={`aww-practice-env${browsing ? ' aww-browse' : ''}`} data-phase={phase} data-stage={teaching.stage} data-preview={previewOpen && previewRec ? 'open' : 'closed'}>
-      {!browsing && <div className="practice-steps" aria-label="Practice steps">
-        <button className="btn ghost" aria-pressed={watching} disabled={phase === 'countdown' || phase === 'recording'} onClick={watchAgain}>1. Watch</button>
-        <button className="btn ghost" aria-pressed={teaching.stage === 'try'} disabled={watching || phase === 'countdown' || phase === 'recording'} onClick={() => {
-          leaveResult(); setTeaching(state => practiceStageTransition(state, 'my-turn'))
-        }}>2. Try</button>
-        <button className="btn ghost" aria-pressed={teaching.stage === 'recall'} disabled={!recallUnlocked || watching || phase === 'countdown' || phase === 'recording'} onClick={enterRecall}>3. Recall</button>
-        {phase === 'result' && <span className="practice-stars" aria-label={`${earnedStars} of 3 stars`}>{'★'.repeat(earnedStars)}{'☆'.repeat(3 - earnedStars)}</span>}
-      </div>}
-      {!browsing && !recallHidden && session?.recommendations?.find(item => item.gloss === selected?.gloss) && (
-        <details className="practice-reason"><summary>Why this sign?</summary>
-          <p>{session.recommendations.find(item => item.gloss === selected?.gloss)?.reason}</p>
-        </details>
-      )}
-      {/* The Split Screen */}
-      <div className="aww-split-screen">
-        {/* Left Pane: Target Reference or In-Pane Category & Sign Browser */}
-        <div className="aww-pane aww-pane-left">
-          {browsing ? (
-            <CategorySignNavigator
-              references={references}
-              suggested={suggested}
-              selectedId={selected?.id}
-              mode="practice"
-              onSelect={(rec) => {
-                setTeaching(initialPracticeStage())
-                setSelected(rec)
-                setIsBrowsing(false)
-                setHoverRec(null)
-                setPreviewOpen(false)
-              }}
-              onPreview={(rec) => { setHoverRec(rec); setPreviewOpen(rec !== null) }}
-              previewedId={previewOpen ? hoverRec?.id : null}
-            />
-          ) : (
-            <>
-              <div className="aww-pane-header aww-ref-header">
-                {phase !== 'result' && (
-                  <div className="aww-ref-nav-buttons">
-                    <button
-                      className="aww-back-round"
-                      onClick={() => setIsBrowsing(true)}
-                      aria-label="Choose a different sign (Esc)"
-                      title="Choose a different sign (Esc)"
-                    >
-                      <ChevronLeft size={18} aria-hidden="true" />
-                    </button>
-                  </div>
-                )}
-                <div className="aww-ref-heading">
-                  <p className="aww-pane-label">{recallHidden ? 'From memory' : 'Reference'}</p>
-                  <div className="aww-ref-title-wrap">
-                    {/* glossLabel() already carries the English meaning */}
-                    <h2 className="aww-pane-title">
-                      {recallHidden ? translationOf(selected.gloss) ?? glossLabel(selected.gloss) : glossLabel(selected.gloss)}
-                    </h2>
-                    {!recallHidden && selected.gloss === suggested && (
-                      <span className="badge cs-suggested-chip">Suggested</span>
-                    )}
-                  </div>
-                </div>
+    <div
+      className={`aww-practice-env practice-workspace${browsing ? ' practice-is-browsing' : ''}`}
+      data-phase={phase}
+      data-stage={teaching.stage}
+      data-preview={previewOpen && previewRec ? 'open' : 'closed'}
+    >
+      {browsing ? (
+        <PracticeBrowser
+          references={references}
+          loading={loadingProgress}
+          initialCategory={browserStartCategory}
+          initialSignId={browserStartCategory ? selected?.id : undefined}
+          onSelect={chooseSign}
+          onPreview={(sign) => {
+            setPreviewSign(sign)
+            setPreviewOpen(true)
+          }}
+        />
+      ) : (
+        selected && (
+          <>
+            <header className="practice-lesson-header">
+              <div className="practice-lesson-identity">
+                <button
+                  className="practice-text-button"
+                  disabled={busy}
+                  onClick={returnToCategory}
+                  aria-label={
+                    returnCategory ? `Back to ${returnCategory} (Esc)` : 'Browse signs (Esc)'
+                  }
+                >
+                  <ArrowLeft size={15} aria-hidden="true" /> {returnCategory ?? 'All signs'}
+                </button>
               </div>
-
-              <div className="aww-pane-content">
-                {recallHidden ? (
-                  <div className="practice-recall-cue">
-                    <p>Try the sign from memory.</p>
-                    <p>Need another look?</p>
-                    <button className="btn ghost" onClick={() => setTeaching(state => practiceStageTransition(state, 'reveal'))}>Reveal (costs the 3rd star)</button>
-                  </div>
-                ) : reference ? (
-                  <SkeletonPlayer
-                    key={`${selected.id}-${teaching.stage}`}
-                    frames={reference.frames}
-                    videoWidth={reference.videoWidth}
-                    videoHeight={reference.videoHeight}
-                    colorOverride="#e6eeec"
-                  />
-                ) : refFailed ? (
-                  <p className="camera-error">Could not load reference.</p>
-                ) : (
-                  <p className="hint-text">Loading...</p>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Right Pane: sign preview while browsing, otherwise the camera / replay */}
-        <div className="aww-pane aww-pane-right" data-camera-status={tracking.status}>
-          <div className="aww-pane-header">
-            <div>
-              <div className="aww-you-row">
-                <p className="aww-pane-label">{browsing ? 'Preview' : watching ? 'Watch first' : 'Your turn'}</p>
-                {!browsing && (
-                  <button
-                    type="button"
-                    className="aww-how-link"
-                    onClick={() => setOnboardingOpen(true)}
-                  >
-                    How it works
-                  </button>
-                )}
-              </div>
-              {browsing && previewRec && (
-                <h2 className="aww-pane-title">{glossLabel(previewRec.gloss)}</h2>
+              {!watching && (
+                <button
+                  className="practice-text-button"
+                  disabled={busy}
+                  onClick={() => setOnboardingOpen(true)}
+                >
+                  <span className="practice-help-icon">?</span> How it works
+                </button>
               )}
-            </div>
-            {browsing && previewOpen && previewRec && <div className="practice-preview-actions">
-              <button className="btn" onClick={() => {
-                setTeaching(initialPracticeStage())
-                setSelected(previewRec); setIsBrowsing(false); setHoverRec(null); setPreviewOpen(false)
-              }}>Watch this sign</button>
-              <button className="btn ghost" onClick={() => { setPreviewOpen(false); setHoverRec(null) }} aria-label="Close preview">Close</button>
-            </div>}
-          </div>
+            </header>
 
-          {browsing && (
-            <div className="aww-preview-container">
-              {previewFrames ? (
-                <SkeletonPlayer
-                  key={previewRec?.id}
-                  frames={previewFrames.frames}
-                  videoWidth={previewFrames.videoWidth}
-                  videoHeight={previewFrames.videoHeight}
-                  colorOverride="#e6eeec"
-                />
-              ) : (
-                <p className="hint-text practice-hover-hint">Hover a sign to preview it here.</p>
-              )}
-            </div>
-          )}
-
-          {/* Live Camera */}
-          {!browsing && watching && <div className="practice-watch-prompt">
-            <p>Watch the sign. Take your time.</p>
-            <p>Ready to try it?</p>
-            <button className="btn massive" disabled={!reference} onClick={() => setTeaching(state => practiceStageTransition(state, 'my-turn'))}>My turn</button>
-          </div>}
-          <div
-            className={`aww-camera-container ${browsing || watching || phase === 'result' ? 'hidden' : ''}`}
-          >
-            <CameraStage
-              videoRef={tracking.videoRef}
-              canvasRef={tracking.canvasRef}
-              ghostCanvasRef={ghostCanvasRef}
-              status={tracking.status}
-              prepareTracker={!browsing && !watching && selected !== null}
-              error={tracking.error}
-              onStart={requestCamera}
-              onStop={stopCamera}
-              ghostActive={ghostActive && !recallHidden}
-              onToggleGhost={() => setGhostActive((g) => !g)}
-              ghostAvailable={reference !== null && !recallHidden}
-              idleHint=""
-              inferring={tracking.inferring}
-              intro={
-                <div className="aww-camera-intro">
-                  <p className="aww-camera-intro-lead">Practise in front of your camera.</p>
-                  <p className="aww-camera-intro-note">
-                    Hand tracking runs entirely in your browser. No video is uploaded or
-                    recorded.
+            <div className="practice-lesson-title">
+              <div>
+                {!watching && (
+                  <p className="practice-kicker">
+                    {phase === 'result'
+                      ? 'Practice review'
+                      : teaching.stage === 'recall'
+                        ? 'From memory'
+                        : 'Make it your turn'}
                   </p>
-                  <button className="btn massive" onClick={() => requestCamera()}>
-                    Turn on camera
-                  </button>
-                </div>
-              }
-            />
-          </div>
-
-          {!browsing && phase === 'idle' && captureNotice && (
-            <p className="aww-cam-notice">{captureNotice}</p>
-          )}
-
-          {/* Camera controls */}
-          {!browsing && !watching && phase !== 'result' && tracking.status === 'running' && (
-            <>
-              {phase === 'countdown' && (
-                <div className="aww-cam-countdown" aria-hidden="true">{count}</div>
-              )}
-              {phase === 'recording' && (
-                <div className="aww-cam-rec">
-                  <span className="aww-rec-dot" aria-hidden="true" />
-                  REC {(elapsedMs / 1000).toFixed(1)}s
-                </div>
-              )}
-              <div className="aww-cam-action">
-                {phase === 'idle' && (
-                  <>
-                    <button
-                      className="aww-cam-btn"
-                      onClick={recordFromIdle}
-                      disabled={!reference || !handsReady}
-                      aria-label="Record attempt (Space)"
-                      aria-describedby="aww-hands-pill"
-                    >
-                      <Circle size={14} fill="currentColor" strokeWidth={0} aria-hidden="true" />
-                      <span>{reference ? 'Record' : 'Loading…'}</span>
-                      <span className="aww-key-badge-sm">Space</span>
-                    </button>
-                    <span
-                      id="aww-hands-pill"
-                      className="aww-hands-pill"
-                      data-ready={handsReady ? 'yes' : 'no'}
-                    >
-                      <span className="aww-hands-dot" aria-hidden="true" />
-                      {handsReady ? 'Hands in frame' : 'Show your hands'}
-                    </span>
-                  </>
                 )}
-                {phase === 'countdown' && (
-                  <button
-                    className="aww-cam-btn aww-cam-btn-ghost"
-                    onClick={cancelCountdown}
-                    aria-label="Cancel countdown (Esc)"
-                  >
-                    <X size={15} aria-hidden="true" />
-                    <span>Cancel</span>
-                    <span className="aww-key-badge-sm">Esc</span>
-                  </button>
-                )}
-                {phase === 'recording' && (
-                  <button
-                    className="aww-cam-btn aww-cam-btn-stop"
-                    onClick={finishRecording}
-                    aria-label="Stop and score (Space)"
-                  >
-                    <Square size={13} fill="currentColor" strokeWidth={0} aria-hidden="true" />
-                    <span>Stop &amp; Score</span>
-                    <span className="aww-key-badge-sm">Space</span>
-                  </button>
+                <h1 ref={lessonHeadingRef} tabIndex={-1}>
+                  {translationOf(selected.gloss) ?? glossLabel(selected.gloss)}
+                </h1>
+                {translationOf(selected.gloss) && (
+                  <span className="practice-gloss">{selected.gloss}</span>
                 )}
               </div>
-            </>
-          )}
-
-          {/* Replay Overlay */}
-          {phase === 'result' && attempt && (
-            <div className="aww-replay-container">
-              <SkeletonPlayer
-                frames={attempt.frames}
-                videoWidth={attempt.videoWidth}
-                videoHeight={attempt.videoHeight}
-              />
+              <div className="practice-earned" aria-label={`${earnedStars} of 3 stars`}>
+                <span>
+                  {[0, 1, 2].map((index) => (
+                    <Star
+                      key={index}
+                      size={19}
+                      aria-hidden="true"
+                      fill={index < earnedStars ? 'currentColor' : 'none'}
+                      data-earned={index < earnedStars}
+                    />
+                  ))}
+                </span>
+                <small>
+                  {earnedStars === 3 ? 'All stars earned' : `${earnedStars} of 3 stars`}
+                </small>
+              </div>
             </div>
-          )}
-        </div>
 
-        {/* Centre result panel */}
-        {phase === 'result' && result && (
-          <div className="aww-result-overlay" data-reveal={revealArmed ? 'on' : undefined}>
-            {noAttemptHands ? (
-              <div className="aww-result-panel aww-result-nohands">
-                <div className="aww-nohands-icon-wrap">
-                  <X size={32} aria-hidden="true" />
-                </div>
-                <h3 className="aww-result-nohands-title" ref={resultHeadingRef} tabIndex={-1}>Couldn't see your hands</h3>
-                <p className="aww-result-lead">We couldn't track your hands in this try.</p>
-                <div className="aww-diagnostics-grid">
-                  <div className="aww-diag-item">
-                    <div>
-                      <strong>Check the light</strong>
-                      <p>Keep a light in front of you.</p>
-                    </div>
+            <nav className="practice-stepper" aria-label="Practice steps">
+              <button aria-pressed={watching} disabled={busy} onClick={watchAgain}>
+                <span className="practice-step-icon">
+                  {!watching ? (
+                    <Check size={16} aria-hidden="true" />
+                  ) : (
+                    <Play size={16} aria-hidden="true" />
+                  )}
+                </span>
+                <span>Watch</span>
+                <small aria-hidden="true">01</small>
+              </button>
+              <button
+                aria-pressed={teaching.stage === 'try'}
+                disabled={watching || busy}
+                onClick={() => {
+                  leaveResult()
+                  setTeaching((state) => practiceStageTransition(state, 'my-turn'))
+                }}
+              >
+                <span className="practice-step-icon">
+                  <Hand size={17} aria-hidden="true" />
+                </span>
+                <span>Try</span>
+                <small aria-hidden="true">02</small>
+              </button>
+              <button
+                aria-pressed={teaching.stage === 'recall'}
+                disabled={!recallUnlocked || watching || busy}
+                onClick={enterRecall}
+                title={recallUnlocked ? 'Practise from memory' : 'Earn 2 stars to unlock Recall'}
+              >
+                <span className="practice-step-icon">
+                  {recallUnlocked ? (
+                    <Brain size={17} aria-hidden="true" />
+                  ) : (
+                    <Lock size={15} aria-hidden="true" />
+                  )}
+                </span>
+                <span>Recall</span>
+                <small aria-hidden="true">03</small>
+              </button>
+            </nav>
+
+            {reason && !recallHidden && (
+              <details className="practice-why">
+                <summary>Why this sign?</summary>
+                <p>{reason}</p>
+              </details>
+            )}
+
+            {phase !== 'result' && (
+              <div className={`practice-stage-layout${watching ? ' practice-stage-watch' : ''}`}>
+                <section
+                  className="practice-reference-card"
+                  aria-label="Sign reference"
+                  data-expanded={referenceExpanded || watching || recallHidden}
+                >
+                  <div className="practice-card-heading">
+                    <span className="practice-kicker">
+                      {recallHidden ? 'Reference hidden' : 'The reference'}
+                    </span>
+                    <span className="practice-subtle-label">
+                      {watching ? 'Watch at your own pace' : 'Here when you need it'}
+                    </span>
                   </div>
-                  <div className="aww-diag-item">
-                    <div>
-                      <strong>Check the camera</strong>
-                      <p>Move back until your head and shoulders fit.</p>
-                    </div>
-                  </div>
-                  <div className="aww-diag-item">
-                    <div>
-                      <strong>Show your hands</strong>
-                      <p>Keep your hands inside the camera view.</p>
-                    </div>
-                  </div>
-                </div>
-                {resultActions}
-              </div>
-            ) : (
-              <div className="aww-result-panel">
-                <h2 className="practice-result-title" ref={resultHeadingRef} tabIndex={-1}>Your try</h2>
-                {reference && attempt && <ReplayCompare key={attempt.id} reference={reference} attempt={attempt} result={result} />}
-                <ScoreBadge
-                  score={result.score}
-                  delta={progress.delta}
-                  best={progress.best}
-                  hands={handFeedback}
-                />
-                <div className="aww-result-feedback">
-                  <div className="practice-next-step">
-                    <p>Your stars: {earnedStars} of 3 · +{starsAdded} this try</p>
-                    <p>{exercise?.stage === 'recall' ? 'Ready to practise from memory.' : exercise?.suggestedSpeed === 0.25 ? 'Watch again at quarter speed. You can turn on the hand guide too.' : 'Watch again, or give it another try.'}</p>
-                    <button className="btn ghost" onClick={watchAgain}>Watch again</button>
-                    {recallUnlocked && <button className="btn" onClick={enterRecall}>Try from memory</button>}
-                    {teaching.stage === 'recall' && teaching.revealed && <p>This revealed try cannot add the third star.</p>}
-                  </div>
-                  <details className="practice-tips" key={attempt?.id} open={!fadeTips}>
-                    <summary>{fadeTips ? 'Show tips' : 'Tips'}</summary>
-                    {resultTips.map((tip, index) => <p key={index}>{tip}</p>)}
-                  </details>
-                  {resultActions}
-                </div>
+                  {!watching && !recallHidden && (
+                    <button
+                      className="practice-reference-toggle practice-text-button"
+                      onClick={() => setReferenceExpanded((value) => !value)}
+                      aria-expanded={referenceExpanded}
+                    >
+                      <Eye size={16} aria-hidden="true" />
+                      {referenceExpanded ? 'Hide reference' : 'Show reference'}
+                    </button>
+                  )}
+                  <div className="practice-reference-body">{referencePlayer}</div>
+                  {!recallHidden && (
+                    <p className="practice-reference-note">
+                      Slow it down or replay as often as you like.
+                    </p>
+                  )}
+                </section>
+
+                {watching && (
+                  <aside className="practice-watch-next">
+                    <span className="practice-cue-icon">
+                      <Hand size={28} aria-hidden="true" />
+                    </span>
+                    <h2>
+                      Find the movement.
+                      <br />
+                      Take your time.
+                    </h2>
+                    <p>
+                      Follow the reference with your eyes. When you’re ready, practise with your
+                      camera.
+                    </p>
+                    <button
+                      className="practice-button practice-primary"
+                      aria-label="Try this sign"
+                      disabled={!reference}
+                      onClick={() =>
+                        setTeaching((state) => practiceStageTransition(state, 'my-turn'))
+                      }
+                    >
+                      Try <ArrowRight size={17} aria-hidden="true" />
+                    </button>
+                    <span className="practice-private">
+                      <ShieldCheck size={15} aria-hidden="true" /> Your camera stays private
+                    </span>
+                    <button
+                      className="practice-text-button practice-watch-help"
+                      onClick={() => setOnboardingOpen(true)}
+                    >
+                      <span className="practice-help-icon" aria-hidden="true">
+                        ?
+                      </span>{' '}
+                      How it works
+                    </button>
+                  </aside>
+                )}
               </div>
             )}
-          </div>
-        )}
-      </div>
 
-      <p className="sr-only" role="status">{liveMessage}</p>
+            {/* Keep the video mounted through Watch / results so tracking retains its refs. */}
+            <section
+              className="practice-camera-card"
+              hidden={watching || phase === 'result'}
+              aria-label="Your practice camera"
+              data-camera-status={tracking.status}
+            >
+              <div className="practice-card-heading">
+                <span className="practice-kicker">
+                  <Camera size={15} aria-hidden="true" /> Your turn
+                </span>
+                <span className="practice-subtle-label">
+                  {teaching.stage === 'recall' ? 'Try it from memory' : 'Follow the reference'}
+                </span>
+              </div>
+              <div className="practice-camera-surface">
+                <CameraStage
+                  videoRef={tracking.videoRef}
+                  canvasRef={tracking.canvasRef}
+                  ghostCanvasRef={ghostCanvasRef}
+                  status={tracking.status}
+                  prepareTracker={!browsing && !watching}
+                  error={tracking.error}
+                  onStart={requestCamera}
+                  onStop={stopCamera}
+                  ghostActive={ghostActive && !recallHidden}
+                  onToggleGhost={() => setGhostActive((value) => !value)}
+                  ghostAvailable={reference !== null && !recallHidden}
+                  idleHint=""
+                  inferring={tracking.inferring}
+                  intro={
+                    <div className="practice-camera-intro">
+                      <span className="practice-cue-icon">
+                        <Camera size={28} aria-hidden="true" />
+                      </span>
+                      <h2>Ready when you are.</h2>
+                      <p>
+                        Turn on your camera to practise.
+                        <br />
+                        Your video stays on this device.
+                      </p>
+                      <button
+                        className="practice-button practice-primary"
+                        onClick={() => requestCamera()}
+                      >
+                        <Camera size={17} aria-hidden="true" /> Turn on camera
+                      </button>
+                    </div>
+                  }
+                />
+                {tracking.status === 'running' && (
+                  <>
+                    {phase === 'countdown' && (
+                      <div className="practice-countdown" aria-hidden="true">
+                        <span>{count}</span>
+                        <small>Get ready</small>
+                      </div>
+                    )}
+                    {phase === 'recording' && (
+                      <div className="practice-recording-status">
+                        <span /> Signing · {(elapsedMs / 1000).toFixed(1)}s
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              {captureNotice && phase === 'idle' && (
+                <p className="practice-capture-notice" role="status">
+                  {captureNotice}
+                </p>
+              )}
+              {tracking.status === 'running' && (
+                <div className="practice-capture-controls">
+                  {phase === 'idle' && (
+                    <>
+                      <span
+                        id="aww-hands-pill"
+                        className="practice-hands-pill"
+                        data-ready={handsReady ? 'yes' : 'no'}
+                      >
+                        <span />
+                        {handsReady ? 'Hands in frame' : 'Show your hands'}
+                      </span>
+                      <button
+                        className="practice-button practice-primary aww-cam-btn"
+                        onClick={recordFromIdle}
+                        disabled={!reference || !handsReady}
+                        aria-label="Record attempt (Space)"
+                        aria-describedby="aww-hands-pill"
+                      >
+                        <Circle size={13} fill="currentColor" aria-hidden="true" /> Record{' '}
+                        <kbd>Space</kbd>
+                      </button>
+                    </>
+                  )}
+                  {phase === 'countdown' && (
+                    <button
+                      className="practice-button practice-secondary"
+                      onClick={cancelCountdown}
+                      aria-label="Cancel countdown (Esc)"
+                    >
+                      <X size={16} aria-hidden="true" /> Cancel countdown
+                    </button>
+                  )}
+                  {phase === 'recording' && (
+                    <>
+                      <button className="practice-text-button" onClick={cancelRecording}>
+                        Discard
+                      </button>
+                      <button
+                        className="practice-button practice-primary"
+                        onClick={finishRecording}
+                        aria-label="Stop and score (Space)"
+                      >
+                        <Square size={13} fill="currentColor" aria-hidden="true" /> Stop &amp; score
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+              <p className="practice-camera-note">
+                <ShieldCheck size={14} aria-hidden="true" /> Hand tracking runs in your browser. No
+                video is uploaded.
+              </p>
+            </section>
+
+            {phase === 'result' && result && (
+              <section
+                className="practice-review"
+                data-reveal={revealArmed ? 'on' : undefined}
+                aria-label="Practice result"
+              >
+                {noAttemptHands ? (
+                  <div className="practice-no-hands">
+                    <span className="practice-cue-icon">
+                      <Hand size={30} aria-hidden="true" />
+                    </span>
+                    <h2 ref={resultHeadingRef} tabIndex={-1}>
+                      Couldn't see your hands
+                    </h2>
+                    <p>That try could not be tracked. Adjust your setup and try again.</p>
+                    <ul>
+                      <li>Keep a light in front of you.</li>
+                      <li>Move back so your hands fit in the camera view.</li>
+                      <li>Keep your hands visible while you sign.</li>
+                    </ul>
+                    {resultActions}
+                  </div>
+                ) : (
+                  <>
+                    <div className="practice-review-heading">
+                      <div>
+                        <p className="practice-kicker">A moment to reflect</p>
+                        <h2 ref={resultHeadingRef} tabIndex={-1}>
+                          Your try, side by side.
+                        </h2>
+                      </div>
+                      <p>
+                        Compare the movement.
+                        <br />
+                        Then give it another go.
+                      </p>
+                    </div>
+                    <div className="practice-review-grid">
+                      <div className="practice-review-replay">
+                        {reference && attempt && (
+                          <ReplayCompare
+                            key={attempt.id}
+                            reference={reference}
+                            attempt={attempt}
+                            result={result}
+                          />
+                        )}
+                      </div>
+                      <aside className="practice-review-feedback">
+                        <ScoreBadge
+                          score={result.score}
+                          delta={progress.delta}
+                          best={progress.best}
+                          hands={handFeedback}
+                        />
+                        <p className="practice-score-note">
+                          Match against this reference, not a measure of language ability.
+                        </p>
+                        <div className="practice-next-advice">
+                          <p className="practice-stars-summary">
+                            <Star size={16} aria-hidden="true" /> {earnedStars} of 3 stars{' '}
+                            <span>+{starsAdded} this try</span>
+                          </p>
+                          <p>
+                            {exercise?.stage === 'recall'
+                              ? 'Ready to practise from memory.'
+                              : exercise?.suggestedSpeed === 0.25
+                                ? 'Watch again at quarter speed. You can turn on the hand guide too.'
+                                : 'Watch again, or give it another try.'}
+                          </p>
+                          {teaching.stage === 'recall' && teaching.revealed && (
+                            <p>This revealed try cannot add the third star.</p>
+                          )}
+                        </div>
+                        <details className="practice-tips" key={attempt?.id} open={!fadeTips}>
+                          <summary>Tips for your next try</summary>
+                          {resultTips.map((tip, index) => (
+                            <p key={index}>{tip}</p>
+                          ))}
+                        </details>
+                      </aside>
+                    </div>
+                    <div className="practice-review-footer">
+                      {resultActions}
+                      <div className="practice-review-secondary">
+                        <button className="practice-text-button" onClick={watchAgain}>
+                          <Eye size={16} aria-hidden="true" /> Watch again
+                        </button>
+                        {recallUnlocked && (
+                          <button className="practice-text-button" onClick={enterRecall}>
+                            <Brain size={16} aria-hidden="true" /> Try from memory
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </section>
+            )}
+          </>
+        )
+      )}
+
+      <dialog
+        className="practice-preview-dialog"
+        ref={previewDialogRef}
+        aria-label="Sign preview"
+        onCancel={(event) => {
+          event.preventDefault()
+          setPreviewOpen(false)
+          setPreviewSign(null)
+        }}
+      >
+        <div className="practice-preview-heading">
+          <div>
+            <p className="practice-kicker">A quick look</p>
+            <h2>{previewRec ? glossLabel(previewRec.gloss) : 'Sign preview'}</h2>
+          </div>
+          <button
+            className="practice-icon-button"
+            onClick={() => {
+              setPreviewOpen(false)
+              setPreviewSign(null)
+            }}
+            aria-label="Close preview"
+          >
+            <X size={19} />
+          </button>
+        </div>
+        {previewFrames ? (
+          <SkeletonPlayer
+            key={previewRec?.id}
+            frames={previewFrames.frames}
+            videoWidth={previewFrames.videoWidth}
+            videoHeight={previewFrames.videoHeight}
+            colorOverride="#e6eeec"
+          />
+        ) : (
+          <p className="practice-empty" role="status">
+            {previewFailed
+              ? 'Could not load this preview. Close it and try again.'
+              : 'Loading reference…'}
+          </p>
+        )}
+        <div className="practice-preview-footer">
+          <button
+            className="practice-button practice-primary"
+            disabled={!previewRec || !previewFrames}
+            onClick={() => {
+              if (previewRec) chooseSign(previewRec)
+            }}
+          >
+            Watch this sign <ArrowRight size={16} aria-hidden="true" />
+          </button>
+        </div>
+      </dialog>
+      <p className="sr-only" role="status">
+        {liveMessage}
+      </p>
       <Onboarding open={onboardingOpen} onClose={closeOnboarding} />
     </div>
   )

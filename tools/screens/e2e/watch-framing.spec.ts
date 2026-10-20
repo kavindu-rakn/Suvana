@@ -9,6 +9,11 @@ for (const width of [360, 390, 767, 768, 1280]) {
     await page.goto('./')
     await startFirstLesson(page)
     const player = page.locator('.reference-player').first()
+    // The taller Watch reference can extend below the first tablet screen.
+    // Bring its controls clear of the fixed navigation before exercising them.
+    await player.getByRole('button', { name: 'Pause', exact: true }).evaluate(button =>
+      button.scrollIntoView({ block: 'center', behavior: 'instant' }),
+    )
     await expect(player.getByRole('button', { name: 'Pause', exact: true })).toBeInViewport()
     await expect(player.locator('canvas')).toHaveClass(/mirrored/)
     await expect(player.locator('canvas')).not.toHaveClass(/is-raw/)
@@ -37,10 +42,11 @@ for (const width of [360, 390, 767, 768, 1280]) {
       })
       expect(enlargement).toBeGreaterThan(2)
     }
-    await page.getByRole('button', { name: 'My turn', exact: true }).click()
+    await page.getByRole('button', { name: 'Try this sign', exact: true }).click()
+    if (width <= 680) await page.getByRole('button', { name: 'Show reference', exact: true }).click()
     await expect(player.locator('canvas')).toBeVisible()
     await expect(player.locator('canvas')).not.toHaveClass(/is-raw/)
-    await page.getByRole('button', { name: '1. Watch', exact: true }).click()
+    await page.getByRole('button', { name: 'Watch', exact: true }).click()
     await expect(player.locator('canvas')).not.toHaveClass(/is-raw/)
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
   })

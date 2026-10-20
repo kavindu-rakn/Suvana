@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { initialPracticeStage, practiceStageTransition } from './practiceStages'
 
 describe('Watch then Try', () => {
-  it('starts each selection at Watch and enters Try only on My turn', () => {
+  it('starts each selection at Watch and enters Try only on the explicit Try action', () => {
     const watch = initialPracticeStage()
     expect(watch).toEqual({ stage: 'watch', revealed: false })
     const trying = practiceStageTransition(watch, 'my-turn')
